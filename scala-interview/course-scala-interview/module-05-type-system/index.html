@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 5: Traits, Implicits & Types</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF7F2;--bg-warm:#F5F0E8;--bg-code:#1E1E2E;--text:#2C2A28;--accent:#6C71C4;--success:#2D8B55;--error:#C93B3B;--info:#2A7B9B;--font-head:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-mono:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.06)}.nav-inner{max-width:1100px;margin:0 auto;padding:.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between}.nav-title{font-family:var(--font-head);font-weight:700;text-decoration:none;color:var(--text);font-size:.95rem}.nav-dots{display:flex;gap:.4rem}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background .2s}.nav-dot.active{background:var(--accent);transform:scale(1.2)}.nav-dot:hover{background:var(--accent);opacity:.7}.progress-bar{position:absolute;bottom:0;left:0;height:3px;background:var(--accent);transition:width .1s}
+section{min-height:100vh;min-height:100dvh;padding:5rem 2rem 3rem;display:flex;align-items:center;justify-content:center}
+.container{max-width:900px;width:100%;margin:0 auto}
+.screen-label{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.15}
+.subtitle{font-size:1.1rem;opacity:.7;margin-bottom:2rem;max-width:600px}
+.translation{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:12px;overflow:hidden;margin:1.5rem 0}
+.translation .code-side{padding:1.5rem;background:var(--bg-code);color:#cdd6f4;font-family:var(--font-mono);font-size:.82rem;white-space:pre-wrap;line-height:1.7}
+.translation .english-side{padding:1.5rem;background:var(--bg-warm);font-size:.9rem;line-height:1.8;border-left:3px solid var(--accent)}
+.english-side .line{margin-bottom:.5rem;display:flex;gap:.5rem}.line-arrow{color:var(--accent);font-weight:700}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.2rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:12px;padding:1.5rem;border:1px solid rgba(0,0,0,.06);position:relative;overflow:hidden}.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)}
+.card h3{font-family:var(--font-head);font-size:1.05rem;font-weight:700;margin-bottom:.4rem}.card p{font-size:.88rem;opacity:.75}
+.aha{background:linear-gradient(135deg,#F5F0FF,#EDE8FD);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.aha-title{font-family:var(--font-head);font-weight:700;color:var(--accent);margin-bottom:.3rem}
+.quiz-box{background:#fff;border-radius:12px;padding:1.8rem;border:1px solid rgba(0,0,0,.08);margin:1.5rem 0}
+.quiz-q{font-family:var(--font-head);font-weight:700;font-size:1.1rem;margin-bottom:1rem}
+.quiz-opt{display:block;padding:.8rem 1rem;margin:.4rem 0;border:2px solid rgba(0,0,0,.08);border-radius:10px;cursor:pointer;transition:border-color .2s,background .2s;font-size:.92rem}
+.quiz-opt:hover{border-color:var(--accent)}
+.quiz-opt.selected{border-color:var(--accent);background:rgba(108,113,196,.08)}
+.quiz-opt.correct{border-color:var(--success);background:rgba(45,139,85,.08)}
+.quiz-opt.wrong{border-color:var(--error);background:rgba(201,59,59,.08)}
+.quiz-btn{padding:.7rem 1.5rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;margin-top:.8rem;font-size:.9rem}
+.quiz-feedback{margin-top:.8rem;padding:.8rem 1rem;border-radius:8px;font-size:.9rem;display:none}
+.compare-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:12px;overflow:hidden;margin:1.5rem 0;font-size:.88rem}
+.compare-table th{background:var(--bg-code);color:#cdd6f4;padding:.8rem 1rem;text-align:left;font-family:var(--font-head)}
+.compare-table td{padding:.7rem 1rem;border-bottom:1px solid rgba(0,0,0,.05)}
+.compare-table tr:nth-child(even) td{background:rgba(0,0,0,.02)}
+.code-block{background:var(--bg-code);border-radius:12px;padding:1.5rem;color:#cdd6f4;font-family:var(--font-mono);font-size:.85rem;overflow-x:auto;white-space:pre-wrap;margin:1rem 0;line-height:1.7}
+.kw{color:#cba6f7}.str{color:#a6e3a1}.cm{color:#6c7086;font-style:italic}.fn{color:#89b4fa}.tp{color:#f9e2af}.num{color:#fab387}
+section:nth-child(odd){background:var(--bg)}section:nth-child(even){background:var(--bg-warm)}
+.module-nav{display:flex;justify-content:space-between;padding:2rem;max-width:900px;margin:0 auto}.module-nav a{text-decoration:none;color:var(--accent);font-weight:600;font-size:.95rem;padding:.8rem 1.2rem;border-radius:10px;border:1px solid rgba(108,113,196,.2)}.module-nav a:hover{background:rgba(108,113,196,.06)}
+.variance-demo{display:flex;flex-direction:column;gap:1rem;margin:1.5rem 0}
+.var-row{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.var-box{background:#fff;border-radius:10px;padding:.8rem 1.2rem;font-family:var(--font-mono);font-size:.85rem;border:2px solid;min-width:160px;text-align:center}
+.var-arrow{font-size:1.5rem;font-weight:700}
+.var-label{font-size:.8rem;font-weight:600;background:var(--bg-warm);padding:.3rem .8rem;border-radius:6px}
+@media(max-width:700px){.translation{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}.var-row{flex-direction:column}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎯 Scala Interview Mastery</a><div class="nav-dots"><a href="../module-01-what-is-scala/" class="nav-dot"></a><a href="../module-02-building-blocks/" class="nav-dot"></a><a href="../module-03-functional-power/" class="nav-dot"></a><a href="../module-04-collections/" class="nav-dot"></a><a href="./" class="nav-dot active"></a><a href="../module-06-concurrency/" class="nav-dot"></a><a href="../module-07-spark/" class="nav-dot"></a><a href="../module-08-battle-plan/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Traits -->
+<section id="s1">
+<div class="container">
+  <div class="screen-label">Screen 1 of 5</div>
+  <h2>Traits — Scala's Mix-and-Match Superpowers</h2>
+  <p class="subtitle">Think of traits like <strong>skill badges</strong>. A Scout can earn "Swimming", "Cooking", and "First Aid" badges — mixing multiple skills into one person. That's traits.</p>
+  <div class="translation">
+    <div class="code-side"><span class="kw">trait</span> <span class="tp">Logger</span> {
+  <span class="kw">def</span> <span class="fn">log</span>(msg: <span class="tp">String</span>): <span class="tp">Unit</span> =
+    println(s<span class="str">"LOG: $msg"</span>)
+}
+
+<span class="kw">trait</span> <span class="tp">Auditable</span> {
+  <span class="kw">def</span> <span class="fn">audit</span>(action: <span class="tp">String</span>): <span class="tp">Unit</span>
+}
+
+<span class="kw">class</span> <span class="tp">UserService</span> <span class="kw">extends</span> <span class="tp">Logger</span> <span class="kw">with</span> <span class="tp">Auditable</span> {
+  <span class="kw">def</span> <span class="fn">audit</span>(action: <span class="tp">String</span>) =
+    log(s<span class="str">"Audit: $action"</span>)
+
+  <span class="kw">def</span> <span class="fn">createUser</span>(name: <span class="tp">String</span>) = {
+    log(s<span class="str">"Creating $name"</span>)
+    audit(s<span class="str">"user_created: $name"</span>)
+  }
+}</div>
+    <div class="english-side">
+      <div class="line"><span class="line-arrow">→</span> Logger trait: comes with a ready-to-use log method (concrete method).</div>
+      <div class="line"><span class="line-arrow">→</span> Auditable trait: just a contract — "you must implement audit" (abstract method).</div>
+      <div class="line"><span class="line-arrow">→</span> UserService mixes in BOTH traits. Gets logging for free, implements audit.</div>
+      <div class="line"><span class="line-arrow">→</span> Now UserService has both superpowers: logging AND auditing!</div>
+    </div>
+  </div>
+  <table class="compare-table">
+    <tr><th>Feature</th><th>Scala Trait</th><th>Java Interface</th></tr>
+    <tr><td>Concrete methods</td><td>✅ Yes</td><td>✅ Since Java 8 (default)</td></tr>
+    <tr><td>State (fields)</td><td>✅ Can have val/var</td><td>❌ No instance state</td></tr>
+    <tr><td>Multiple inheritance</td><td>✅ Mix many traits</td><td>✅ Implement many</td></tr>
+    <tr><td>Constructor params</td><td>✅ Scala 3 traits</td><td>❌ No</td></tr>
+    <tr><td>Linearization</td><td>✅ Clear resolution order</td><td>❌ Diamond problem</td></tr>
+  </table>
+</div>
+</section>
+
+<!-- Screen 2: Implicits -->
+<section id="s2">
+<div class="container">
+  <div class="screen-label">Screen 2 of 5</div>
+  <h2>Implicit Parameters — The Invisible Helpers</h2>
+  <p class="subtitle">Think of implicits like <strong>auto-fill on a form</strong>. The browser fills in your name, email, and address without you typing — because it "implicitly" knows the values from context.</p>
+  <div class="translation">
+    <div class="code-side"><span class="cm">// Define a function with an implicit parameter</span>
+<span class="kw">def</span> <span class="fn">greet</span>(<span class="kw">implicit</span> name: <span class="tp">String</span>) =
+  s<span class="str">"Hello, $name"</span>
+
+<span class="cm">// Provide an implicit value in scope</span>
+<span class="kw">implicit val</span> myName: <span class="tp">String</span> = <span class="str">"Alice"</span>
+
+println(greet)  <span class="cm">// "Hello, Alice"</span>
+<span class="cm">// The compiler found myName automatically!</span>
+
+<span class="cm">// You can also pass explicitly:</span>
+println(greet(<span class="str">"Bob"</span>))  <span class="cm">// "Hello, Bob"</span></div>
+    <div class="english-side">
+      <div class="line"><span class="line-arrow">→</span> The <code>implicit</code> keyword says: "this parameter is optional — look for a matching value nearby."</div>
+      <div class="line"><span class="line-arrow">→</span> We declare an implicit String = "Alice" in scope.</div>
+      <div class="line"><span class="line-arrow">→</span> When we call greet without arguments, the compiler auto-fills "Alice."</div>
+      <div class="line"><span class="line-arrow">→</span> You can always override by passing a value explicitly.</div>
+    </div>
+  </div>
+  <div class="card-grid">
+    <div class="card"><h3>✅ Good uses</h3><p>ExecutionContext for Futures, JSON formatters, database connections, configuration objects</p></div>
+    <div class="card"><h3>⚠️ Pitfalls</h3><p>Too many implicits make code hard to follow. "Where did that value come from?!" Use sparingly and clearly.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- Screen 3: Implicit Conversions -->
+<section id="s3">
+<div class="container">
+  <div class="screen-label">Screen 3 of 5</div>
+  <h2>Implicit Conversions — Auto-Transformers</h2>
+  <p class="subtitle">Imagine a universal <strong>travel adapter</strong> that automatically converts your plug to fit any outlet. That's an implicit conversion — automatic type transformation.</p>
+  <div class="translation">
+    <div class="code-side"><span class="kw">implicit def</span> <span class="fn">intToString</span>(x: <span class="tp">Int</span>): <span class="tp">String</span> =
+  x.toString
+
+<span class="kw">val</span> str: <span class="tp">String</span> = <span class="num">42</span>
+<span class="cm">// Compiler sees: Int where String expected</span>
+<span class="cm">// Finds intToString, applies it automatically</span>
+<span class="cm">// Result: str = "42"</span></div>
+    <div class="english-side">
+      <div class="line"><span class="line-arrow">→</span> Define a rule: "whenever you need a String but have an Int, convert it."</div>
+      <div class="line"><span class="line-arrow">→</span> The compiler hits a type mismatch and searches for an implicit conversion.</div>
+      <div class="line"><span class="line-arrow">→</span> Finds our rule, applies it silently. 42 becomes "42".</div>
+    </div>
+  </div>
+  <div class="aha"><div class="aha-title">⚠️ Interview Warning</div>Implicit conversions are <strong>discouraged in modern Scala</strong> (Scala 3 requires explicit import). They make code hard to debug because transformations happen invisibly. Prefer explicit conversion methods or extension methods instead.</div>
+</div>
+</section>
+
+<!-- Screen 4: Type Variance -->
+<section id="s4">
+<div class="container">
+  <div class="screen-label">Screen 4 of 5</div>
+  <h2>Type Variance: +, -, and = Explained</h2>
+  <p class="subtitle">Think of a <strong>parking garage</strong>. A "Vehicles" garage (+covariant) accepts Cars. A "compact car wash" (-contravariant) can wash any Vehicle. A "Tesla-only charger" (=invariant) only works with Teslas.</p>
+  <div class="variance-demo">
+    <div class="var-row">
+      <div class="var-label">Covariant [+A]</div>
+      <div class="var-box" style="border-color:#2D8B55">List[Dog]</div>
+      <div class="var-arrow" style="color:#2D8B55">→</div>
+      <div class="var-box" style="border-color:#2D8B55">List[Animal] ✅</div>
+    </div>
+    <div class="var-row">
+      <div class="var-label">Contravariant [-A]</div>
+      <div class="var-box" style="border-color:#268BD2">Trainer[Animal]</div>
+      <div class="var-arrow" style="color:#268BD2">→</div>
+      <div class="var-box" style="border-color:#268BD2">Trainer[Dog] ✅</div>
+    </div>
+    <div class="var-row">
+      <div class="var-label">Invariant [A]</div>
+      <div class="var-box" style="border-color:var(--error)">Array[Dog]</div>
+      <div class="var-arrow" style="color:var(--error)">→</div>
+      <div class="var-box" style="border-color:var(--error)">Array[Animal] ❌</div>
+    </div>
+  </div>
+  <div class="card-grid">
+    <div class="card"><h3>+A Covariant</h3><p>"If Dog is a subtype of Animal, then List[Dog] IS a subtype of List[Animal]." Used for <strong>producers</strong> (things that give you values).</p></div>
+    <div class="card"><h3>-A Contravariant</h3><p>"If Dog is a subtype of Animal, then Trainer[Animal] can be used as Trainer[Dog]." Used for <strong>consumers</strong> (things that take values).</p></div>
+    <div class="card"><h3>A Invariant</h3><p>"Array[Dog] and Array[Animal] are completely unrelated." Used when the type both reads and writes. Strictest and safest.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- Screen 5: Quiz -->
+<section id="s5">
+<div class="container">
+  <div class="screen-label">Screen 5 of 5</div>
+  <h2>Test Yourself 🧠</h2>
+  <div class="quiz-box">
+    <div class="quiz-q">Q1: How are Scala traits different from Java interfaces (pre-Java 8)?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Traits can only have abstract methods</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">Traits can have concrete method implementations AND maintain state (fields)</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Traits cannot be mixed into classes</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Traits are the same as abstract classes</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box" style="margin-top:1.5rem">
+    <div class="quiz-q">Q2: An implicit val of type String = "Alice" is in scope. You call <code>greet</code> (which needs an implicit String). What happens?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Compile error — no argument provided</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">The compiler automatically uses "Alice" as the argument</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Runtime error — null pointer</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">It prints an empty string</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box" style="margin-top:1.5rem">
+    <div class="quiz-q">Q3: List[+A] is covariant. If Cat extends Animal, can you pass List[Cat] where List[Animal] is expected?</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">Yes — covariance means List[Cat] IS a subtype of List[Animal]</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">No — they are different types</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Only with an explicit cast</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Only if Cat is a case class</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+</div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-04-collections/index.html">← Previous: Collections</a>
+  <a href="../module-06-concurrency/index.html">Next: Concurrency →</a>
+</footer>
+
+<script>
+(function(){
+  window.addEventListener('scroll',function(){var s=document.documentElement,p=(s.scrollTop/(s.scrollHeight-s.clientHeight))*100;document.getElementById('progressBar').style.width=p+'%'},{passive:true});
+  window.selectOpt=function(el){el.closest('.quiz-box').querySelectorAll('.quiz-opt').forEach(function(o){o.classList.remove('selected')});el.classList.add('selected')};
+  window.checkQuiz=function(btn){var box=btn.closest('.quiz-box'),sel=box.querySelector('.quiz-opt.selected'),fb=box.querySelector('.quiz-feedback');if(!sel){fb.textContent='Pick an answer first!';fb.style.display='block';fb.style.background='var(--bg-warm)';return}var c=sel.getAttribute('data-correct')==='true';box.querySelectorAll('.quiz-opt').forEach(function(o){o.style.pointerEvents='none';if(o.getAttribute('data-correct')==='true')o.classList.add('correct');if(o===sel&&!c)o.classList.add('wrong')});fb.style.display='block';fb.textContent=c?'✅ Correct!':'❌ Not quite. See the green answer.';fb.style.background=c?'rgba(45,139,85,.1)':'rgba(201,59,59,.1)';fb.style.color=c?'var(--success)':'var(--error)';btn.disabled=true};
+})();
+</script>
+</body>
+</html>

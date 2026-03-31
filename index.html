@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interview Courses</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --border: #1f2937;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(160deg, #020617, #0f172a);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 32px 16px;
+    }
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      margin-bottom: 10px;
+    }
+    p.lead {
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+    }
+    a.card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    a.card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
+    .title {
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .path {
+      color: var(--muted);
+      font-size: 0.9rem;
+      word-break: break-all;
+    }
+    footer {
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    code {
+      background: rgba(30, 41, 59, 0.7);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Static HTML Courses</h1>
+    <p class="lead">Choose a course below. This page is the GitHub Pages entry point for the repository.</p>
+
+    <section class="grid">
+      <a class="card" href="./scala-interview/course-scala-interview/">
+        <div class="title">Scala Interview Mastery</div>
+        <div class="path">scala-interview/course-scala-interview/</div>
+      </a>
+
+      <a class="card" href="./spark/course-spark-interview/">
+        <div class="title">Spark Interview Mastery</div>
+        <div class="path">spark/course-spark-interview/</div>
+      </a>
+    </section>
+
+    <footer>
+      After deployment, this site will be available at
+      <code>https://&lt;username&gt;.github.io/&lt;repo&gt;/</code>.
+    </footer>
+  </main>
+</body>
+</html>

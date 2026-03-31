@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 3: Functional Programming Power</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF7F2;--bg-warm:#F5F0E8;--bg-code:#1E1E2E;--text:#2C2A28;--accent:#859900;--success:#2D8B55;--error:#C93B3B;--info:#2A7B9B;--font-head:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-mono:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.06)}.nav-inner{max-width:1100px;margin:0 auto;padding:.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between}.nav-title{font-family:var(--font-head);font-weight:700;text-decoration:none;color:var(--text);font-size:.95rem}.nav-dots{display:flex;gap:.4rem}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background .2s}.nav-dot.active{background:var(--accent);transform:scale(1.2)}.nav-dot:hover{background:var(--accent);opacity:.7}.progress-bar{position:absolute;bottom:0;left:0;height:3px;background:var(--accent);transition:width .1s}
+section{min-height:100vh;min-height:100dvh;padding:5rem 2rem 3rem;display:flex;align-items:center;justify-content:center}
+.container{max-width:900px;width:100%;margin:0 auto}
+.screen-label{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.15}
+.subtitle{font-size:1.1rem;opacity:.7;margin-bottom:2rem;max-width:600px}
+.translation{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:12px;overflow:hidden;margin:1.5rem 0}
+.translation .code-side{padding:1.5rem;background:var(--bg-code);color:#cdd6f4;font-family:var(--font-mono);font-size:.82rem;white-space:pre-wrap;line-height:1.7}
+.translation .english-side{padding:1.5rem;background:var(--bg-warm);font-size:.9rem;line-height:1.8;border-left:3px solid var(--accent)}
+.english-side .line{margin-bottom:.5rem;display:flex;gap:.5rem}.line-arrow{color:var(--accent);font-weight:700}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.2rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:12px;padding:1.5rem;border:1px solid rgba(0,0,0,.06);position:relative;overflow:hidden}.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)}
+.card h3{font-family:var(--font-head);font-size:1.05rem;font-weight:700;margin-bottom:.4rem}.card p{font-size:.88rem;opacity:.75}
+.aha{background:linear-gradient(135deg,#F5FFF0,#EDFDE5);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.aha-title{font-family:var(--font-head);font-weight:700;color:var(--accent);margin-bottom:.3rem}
+.quiz-box{background:#fff;border-radius:12px;padding:1.8rem;border:1px solid rgba(0,0,0,.08);margin:1.5rem 0}
+.quiz-q{font-family:var(--font-head);font-weight:700;font-size:1.1rem;margin-bottom:1rem}
+.quiz-opt{display:block;padding:.8rem 1rem;margin:.4rem 0;border:2px solid rgba(0,0,0,.08);border-radius:10px;cursor:pointer;transition:border-color .2s,background .2s;font-size:.92rem}
+.quiz-opt:hover{border-color:var(--accent);background:rgba(133,153,0,.05)}
+.quiz-opt.selected{border-color:var(--accent);background:rgba(133,153,0,.08)}
+.quiz-opt.correct{border-color:var(--success);background:rgba(45,139,85,.08)}
+.quiz-opt.wrong{border-color:var(--error);background:rgba(201,59,59,.08)}
+.quiz-btn{padding:.7rem 1.5rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;margin-top:.8rem;font-size:.9rem}.quiz-btn:hover{transform:scale(1.03)}
+.quiz-feedback{margin-top:.8rem;padding:.8rem 1rem;border-radius:8px;font-size:.9rem;display:none}
+.code-block{background:var(--bg-code);border-radius:12px;padding:1.5rem;color:#cdd6f4;font-family:var(--font-mono);font-size:.85rem;overflow-x:auto;white-space:pre-wrap;margin:1rem 0;line-height:1.7}
+.kw{color:#cba6f7}.str{color:#a6e3a1}.cm{color:#6c7086;font-style:italic}.fn{color:#89b4fa}.tp{color:#f9e2af}.num{color:#fab387}
+.flow-container{background:var(--bg-warm);border-radius:16px;padding:2rem;margin:1.5rem 0;text-align:center}
+.flow-steps{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;margin:1rem 0}
+.flow-step{background:#fff;border-radius:10px;padding:.8rem 1.2rem;font-size:.85rem;font-weight:600;border:2px solid transparent;transition:border-color .3s,transform .3s;opacity:.4}
+.flow-step.active{opacity:1;border-color:var(--accent);transform:scale(1.05)}
+.flow-arrow{font-size:1.2rem;color:var(--accent);opacity:.4}
+.flow-arrow.active{opacity:1}
+.flow-desc{margin-top:1rem;font-size:.9rem;min-height:3rem;color:var(--text)}
+.flow-controls{display:flex;gap:.5rem;justify-content:center;margin-top:1rem}
+.flow-btn{padding:.5rem 1rem;border:1px solid rgba(0,0,0,.1);background:#fff;border-radius:8px;cursor:pointer;font-size:.8rem;font-weight:500;transition:background .2s}.flow-btn:hover{background:var(--accent);color:#fff}
+section:nth-child(odd){background:var(--bg)}section:nth-child(even){background:var(--bg-warm)}
+.module-nav{display:flex;justify-content:space-between;padding:2rem;max-width:900px;margin:0 auto}.module-nav a{text-decoration:none;color:var(--accent);font-weight:600;font-size:.95rem;padding:.8rem 1.2rem;border-radius:10px;border:1px solid rgba(133,153,0,.2)}.module-nav a:hover{background:rgba(133,153,0,.06)}
+@media(max-width:700px){.translation{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}.flow-steps{flex-direction:column}.flow-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎯 Scala Interview Mastery</a><div class="nav-dots"><a href="../module-01-what-is-scala/" class="nav-dot" aria-label="Module 1"></a><a href="../module-02-building-blocks/" class="nav-dot" aria-label="Module 2"></a><a href="./" class="nav-dot active" aria-label="Module 3"></a><a href="../module-04-collections/" class="nav-dot" aria-label="Module 4"></a><a href="../module-05-type-system/" class="nav-dot" aria-label="Module 5"></a><a href="../module-06-concurrency/" class="nav-dot" aria-label="Module 6"></a><a href="../module-07-spark/" class="nav-dot" aria-label="Module 7"></a><a href="../module-08-battle-plan/" class="nav-dot" aria-label="Module 8"></a></div></div></nav>
+
+<!-- Screen 1: Higher-Order Functions -->
+<section id="s1">
+<div class="container">
+  <div class="screen-label">Screen 1 of 5</div>
+  <h2>Higher-Order Functions</h2>
+  <p class="subtitle">Think of these like a <strong>music playlist app</strong>: you hand it a sorting rule (by artist, by date, by mood), and it sorts accordingly. The app is the higher-order function; the rule is the function you pass in.</p>
+  <div class="translation">
+    <div class="code-side"><span class="cm">// A higher-order function: takes a function as input</span>
+<span class="kw">def</span> <span class="fn">applyFunction</span>(f: <span class="tp">Int</span> => <span class="tp">Int</span>, x: <span class="tp">Int</span>): <span class="tp">Int</span> = f(x)
+
+<span class="cm">// Pass in a "double it" rule</span>
+<span class="kw">val</span> result = applyFunction(x => x * <span class="num">2</span>, <span class="num">5</span>)
+<span class="cm">// result = 10</span>
+
+<span class="cm">// Pass in a "square it" rule</span>
+<span class="kw">val</span> result2 = applyFunction(x => x * x, <span class="num">5</span>)
+<span class="cm">// result2 = 25</span></div>
+    <div class="english-side">
+      <div class="line"><span class="line-arrow">→</span> "Give me any function f and a number x, I'll apply f to x."</div>
+      <div class="line"><span class="line-arrow">→</span> <code>f: Int => Int</code> means "f takes an Int and returns an Int."</div>
+      <div class="line"><span class="line-arrow">→</span> We pass in "multiply by 2" as the rule. Apply to 5 → 10.</div>
+      <div class="line"><span class="line-arrow">→</span> Same function, different rule! "Square it" applied to 5 → 25.</div>
+      <div class="line"><span class="line-arrow">→</span> This is the power: ONE function handles infinite behaviors.</div>
+    </div>
+  </div>
+  <div class="aha"><div class="aha-title">💡 Key Insight</div>A higher-order function either (1) takes a function as a parameter, or (2) returns a function as its result. This is the foundation of functional programming — functions are "first-class citizens" like any other value.</div>
+</div>
+</section>
+
+<!-- Screen 2: Pattern Matching -->
+<section id="s2">
+<div class="container">
+  <div class="screen-label">Screen 2 of 5</div>
+  <h2>Pattern Matching — Scala's Superpower</h2>
+  <p class="subtitle">Think of pattern matching like a <strong>mail sorting machine</strong>. Each slot has a pattern — letters go here, packages go there, everything else goes to "Other."</p>
+  <div class="translation">
+    <div class="code-side"><span class="kw">val</span> x = <span class="num">3</span>
+
+x <span class="kw">match</span> {
+  <span class="kw">case</span> <span class="num">1</span> => println(<span class="str">"One"</span>)
+  <span class="kw">case</span> <span class="num">2</span> => println(<span class="str">"Two"</span>)
+  <span class="kw">case</span> _ => println(<span class="str">"Other"</span>)
+}
+<span class="cm">// Prints: "Other"</span>
+
+<span class="cm">// With case classes:</span>
+<span class="kw">case class</span> <span class="tp">User</span>(name: <span class="tp">String</span>, age: <span class="tp">Int</span>)
+<span class="kw">val</span> u = <span class="tp">User</span>(<span class="str">"Alice"</span>, <span class="num">25</span>)
+
+u <span class="kw">match</span> {
+  <span class="kw">case</span> <span class="tp">User</span>(<span class="str">"Alice"</span>, _) => <span class="str">"Hi Alice!"</span>
+  <span class="kw">case</span> <span class="tp">User</span>(_, age) <span class="kw">if</span> age > <span class="num">18</span> => <span class="str">"Adult"</span>
+  <span class="kw">case</span> _ => <span class="str">"Unknown"</span>
+}</div>
+    <div class="english-side">
+      <div class="line"><span class="line-arrow">→</span> Check x: if it's 1, print "One".</div>
+      <div class="line"><span class="line-arrow">→</span> If it's 2, print "Two".</div>
+      <div class="line"><span class="line-arrow">→</span> <code>_</code> is the wildcard = "everything else." Like "default" in switch.</div>
+      <div class="line"><span class="line-arrow">→</span> The real power: match on STRUCTURE, not just values!</div>
+      <div class="line"><span class="line-arrow">→</span> If it's a User named Alice (any age), say hi.</div>
+      <div class="line"><span class="line-arrow">→</span> <code>if age > 18</code> is a guard — extra condition on the match.</div>
+    </div>
+  </div>
+  <div class="card-grid" style="grid-template-columns:1fr 1fr">
+    <div class="card"><h3>Use Cases</h3><p>• Handling different response types<br>• Decomposing case classes<br>• Option (Some/None) handling<br>• List/tuple extraction</p></div>
+    <div class="card"><h3>🎯 Interview Tip</h3><p>"How is pattern matching different from switch?" → It matches on types, structures, and guards — not just values. It also returns a value (it's an expression, not a statement).</p></div>
+  </div>
+</div>
+</section>
+
+<!-- Screen 3: Option/Some/None Flow -->
+<section id="s3">
+<div class="container">
+  <div class="screen-label">Screen 3 of 5</div>
+  <h2>Option, Some & None — No More Null Crashes</h2>
+  <p class="subtitle">Imagine ordering online. You either get a <strong>package with your item</strong> (Some) or an <strong>empty box with a note saying "out of stock"</strong> (None). Scala's Option forces you to handle both.</p>
+  <div class="flow-container" id="optionFlow">
+    <div class="flow-steps">
+      <div class="flow-step" data-idx="0">Call findUser()</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" data-idx="1">Returns Option[User]</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" data-idx="2">Pattern Match</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" data-idx="3">Some(user) or None</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" data-idx="4">Handle Both!</div>
+    </div>
+    <div class="flow-desc" id="optionDesc">Click "Next Step" to walk through how Option works.</div>
+    <div class="flow-controls">
+      <button class="flow-btn" onclick="flowNext('optionFlow')">Next Step →</button>
+      <button class="flow-btn" onclick="flowReset('optionFlow')">&#8635; Restart</button>
+    </div>
+  </div>
+  <div class="translation">
+    <div class="code-side"><span class="kw">def</span> <span class="fn">findUser</span>(id: <span class="tp">Int</span>): <span class="tp">Option</span>[<span class="tp">User</span>] = {
+  <span class="kw">if</span> (id == <span class="num">1</span>) <span class="tp">Some</span>(<span class="tp">User</span>(<span class="str">"Alice"</span>, <span class="num">25</span>))
+  <span class="kw">else</span> <span class="tp">None</span>
+}
+
+findUser(<span class="num">1</span>) <span class="kw">match</span> {
+  <span class="kw">case</span> <span class="tp">Some</span>(user) => s<span class="str">"Found: ${user.name}"</span>
+  <span class="kw">case</span> <span class="tp">None</span> => <span class="str">"User not found"</span>
+}</div>
+    <div class="english-side">
+      <div class="line"><span class="line-arrow">→</span> This function might or might not find a user. It says so in the return type: Option[User].</div>
+      <div class="line"><span class="line-arrow">→</span> Found? Wrap in Some(). Not found? Return None.</div>
+      <div class="line"><span class="line-arrow">→</span> Pattern match forces you to handle BOTH cases. No surprise null crashes!</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- Screen 4: Monads -->
+<section id="s4">
+<div class="container">
+  <div class="screen-label">Screen 4 of 5</div>
+  <h2>Monads — The Scary Word That's Actually Simple</h2>
+  <p class="subtitle">A monad is like an <strong>assembly line conveyor belt</strong>. Items go in a box, get transformed at each station, and the box keeps them safe throughout the journey. If one station fails, the belt stops gracefully.</p>
+  <div class="card-grid">
+    <div class="card"><h3>📦 Option is a monad</h3><p>Wraps a value that might not exist. Chain operations with flatMap — if any step returns None, the whole chain returns None.</p></div>
+    <div class="card"><h3>⏳ Future is a monad</h3><p>Wraps a value that will arrive later. Chain transformations that automatically wait for previous results.</p></div>
+    <div class="card"><h3>📋 List is a monad</h3><p>Wraps multiple values. flatMap transforms each item and flattens results into one list.</p></div>
+  </div>
+  <div class="translation">
+    <div class="code-side"><span class="cm">// Chaining with flatMap (the monad magic)</span>
+<span class="kw">val</span> result = <span class="tp">Some</span>(<span class="num">5</span>)
+  .flatMap(x => <span class="tp">Some</span>(x * <span class="num">2</span>))   <span class="cm">// Some(10)</span>
+  .flatMap(x => <span class="tp">Some</span>(x + <span class="num">3</span>))   <span class="cm">// Some(13)</span>
+
+<span class="cm">// If any step returns None, everything stops</span>
+<span class="kw">val</span> fail = <span class="tp">Some</span>(<span class="num">5</span>)
+  .flatMap(x => <span class="tp">None</span>)            <span class="cm">// None</span>
+  .flatMap(x => <span class="tp">Some</span>(x + <span class="num">3</span>))   <span class="cm">// None (skipped)</span></div>
+    <div class="english-side">
+      <div class="line"><span class="line-arrow">→</span> Start with 5 in a box (Some(5)).</div>
+      <div class="line"><span class="line-arrow">→</span> Station 1: double it → 10, re-box as Some(10).</div>
+      <div class="line"><span class="line-arrow">→</span> Station 2: add 3 → 13, re-box as Some(13).</div>
+      <div class="line"><span class="line-arrow">→</span> If ANY station returns None, the belt stops. No crash, just a graceful None.</div>
+    </div>
+  </div>
+  <div class="aha"><div class="aha-title">🎯 Interview Answer</div>"What is a monad?" → A monad is a design pattern that wraps values and lets you chain transformations with flatMap. Option, Future, and List are all monads. The key rule: if one step fails, the chain fails gracefully.</div>
+</div>
+</section>
+
+<!-- Screen 5: Quiz -->
+<section id="s5">
+<div class="container">
+  <div class="screen-label">Screen 5 of 5</div>
+  <h2>Knowledge Check 🧠</h2>
+  <div class="quiz-box">
+    <div class="quiz-q">Q1: A function takes another function as a parameter. What is it called?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">A recursive function</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">A higher-order function</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">A companion function</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">A case function</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box" style="margin-top:1.5rem">
+    <div class="quiz-q">Q2: Your function returns Option[User]. The user isn't found. What does the function return?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">null</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">An empty User object</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">None</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">An exception is thrown</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box" style="margin-top:1.5rem">
+    <div class="quiz-q">Q3: What happens when you call <code>Some(5).flatMap(_ => None).flatMap(x => Some(x + 1))</code>?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Some(6)</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">A compile error</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">None — the chain stops at the first None</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Some(1)</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+</div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-02-building-blocks/index.html">← Previous: Building Blocks</a>
+  <a href="../module-04-collections/index.html">Next: Collections →</a>
+</footer>
+
+<script>
+(function(){
+  window.addEventListener('scroll',function(){var s=document.documentElement,p=(s.scrollTop/(s.scrollHeight-s.clientHeight))*100;document.getElementById('progressBar').style.width=p+'%'},{passive:true});
+  // Quiz
+  window.selectOpt=function(el){var box=el.closest('.quiz-box');box.querySelectorAll('.quiz-opt').forEach(function(o){o.classList.remove('selected')});el.classList.add('selected')};
+  window.checkQuiz=function(btn){var box=btn.closest('.quiz-box'),sel=box.querySelector('.quiz-opt.selected'),fb=box.querySelector('.quiz-feedback');if(!sel){fb.textContent='Pick an answer first!';fb.style.display='block';fb.style.background='var(--bg-warm)';return}var correct=sel.getAttribute('data-correct')==='true';box.querySelectorAll('.quiz-opt').forEach(function(o){o.style.pointerEvents='none';if(o.getAttribute('data-correct')==='true')o.classList.add('correct');if(o===sel&&!correct)o.classList.add('wrong')});fb.style.display='block';if(correct){fb.textContent='✅ Correct!';fb.style.background='rgba(45,139,85,.1)';fb.style.color='var(--success)'}else{fb.textContent='❌ Not quite. See the green answer.';fb.style.background='rgba(201,59,59,.1)';fb.style.color='var(--error)'}btn.disabled=true};
+  // Flow animation
+  var flowState={};
+  var flowDescs={optionFlow:['You call findUser(id) — searching for a user in the database.','The function returns Option[User] — a box that might contain a User or might be empty.','You pattern match on the result — Scala forces you to handle both possibilities.','Some(user) means found! None means not found. No null, no crash.','You handle both cases explicitly. Your app is now null-safe!']};
+  window.flowNext=function(id){var el=document.getElementById(id);if(!flowState[id])flowState[id]=0;var steps=el.querySelectorAll('.flow-step');var arrows=el.querySelectorAll('.flow-arrow');var desc=el.querySelector('.flow-desc');if(flowState[id]<steps.length){steps[flowState[id]].classList.add('active');if(flowState[id]>0)arrows[flowState[id]-1].classList.add('active');desc.textContent=flowDescs[id][flowState[id]];flowState[id]++}};
+  window.flowReset=function(id){var el=document.getElementById(id);flowState[id]=0;el.querySelectorAll('.flow-step,.flow-arrow').forEach(function(s){s.classList.remove('active')});el.querySelector('.flow-desc').textContent='Click "Next Step" to walk through.'};
+})();
+</script>
+</body>
+</html>

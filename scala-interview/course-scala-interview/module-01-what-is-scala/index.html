@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 1: What Is Scala & Why It Matters</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF7F2;--bg-warm:#F5F0E8;--bg-code:#1E1E2E;--text:#2C2A28;--accent:#DC322F;--success:#2D8B55;--error:#C93B3B;--info:#2A7B9B;--font-head:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-mono:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.06)}.nav-inner{max-width:1100px;margin:0 auto;padding:.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between}.nav-title{font-family:var(--font-head);font-weight:700;text-decoration:none;color:var(--text);font-size:.95rem}.nav-dots{display:flex;gap:.4rem}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background .2s}.nav-dot.active{background:var(--accent);transform:scale(1.2)}.nav-dot:hover{background:var(--accent);opacity:.7}.progress-bar{position:absolute;bottom:0;left:0;height:3px;background:var(--accent);transition:width .1s}
+section{min-height:100vh;min-height:100dvh;padding:5rem 2rem 3rem;display:flex;align-items:center;justify-content:center}
+.container{max-width:900px;width:100%;margin:0 auto}
+.screen-label{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.15}
+.subtitle{font-size:1.1rem;opacity:.7;margin-bottom:2rem;max-width:600px}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.2rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:12px;padding:1.5rem;border:1px solid rgba(0,0,0,.06);position:relative;overflow:hidden}.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)}
+.card h3{font-family:var(--font-head);font-size:1.05rem;font-weight:700;margin-bottom:.4rem}
+.card p{font-size:.88rem;opacity:.75}
+.code-block{background:var(--bg-code);border-radius:12px;padding:1.5rem;color:#cdd6f4;font-family:var(--font-mono);font-size:.85rem;overflow-x:auto;white-space:pre-wrap;margin:1rem 0;line-height:1.7}
+.kw{color:#cba6f7}.str{color:#a6e3a1}.cm{color:#6c7086;font-style:italic}.fn{color:#89b4fa}.tp{color:#f9e2af}.num{color:#fab387}
+.translation{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:12px;overflow:hidden;margin:1.5rem 0}
+.translation .code-side{padding:1.5rem;background:var(--bg-code);color:#cdd6f4;font-family:var(--font-mono);font-size:.82rem;white-space:pre-wrap;line-height:1.7}
+.translation .english-side{padding:1.5rem;background:var(--bg-warm);font-size:.9rem;line-height:1.8;border-left:3px solid var(--accent)}
+.english-side .line{margin-bottom:.5rem;display:flex;gap:.5rem}.line-arrow{color:var(--accent);font-weight:700}
+.aha{background:linear-gradient(135deg,#FFF5F5,#FFF0EB);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.aha-title{font-family:var(--font-head);font-weight:700;color:var(--accent);margin-bottom:.3rem}
+.quiz-box{background:#fff;border-radius:12px;padding:1.8rem;border:1px solid rgba(0,0,0,.08);margin:1.5rem 0}
+.quiz-q{font-family:var(--font-head);font-weight:700;font-size:1.1rem;margin-bottom:1rem}
+.quiz-opt{display:block;padding:.8rem 1rem;margin:.4rem 0;border:2px solid rgba(0,0,0,.08);border-radius:10px;cursor:pointer;transition:border-color .2s,background .2s;font-size:.92rem}
+.quiz-opt:hover{border-color:var(--accent);background:rgba(220,50,47,.03)}
+.quiz-opt.selected{border-color:var(--accent);background:rgba(220,50,47,.06)}
+.quiz-opt.correct{border-color:var(--success);background:rgba(45,139,85,.08)}
+.quiz-opt.wrong{border-color:var(--error);background:rgba(201,59,59,.08)}
+.quiz-btn{padding:.7rem 1.5rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;margin-top:.8rem;font-size:.9rem;transition:transform .1s}.quiz-btn:hover{transform:scale(1.03)}
+.quiz-feedback{margin-top:.8rem;padding:.8rem 1rem;border-radius:8px;font-size:.9rem;display:none}
+.chat-container{background:var(--bg-warm);border-radius:16px;padding:1.5rem;max-width:500px;margin:1.5rem auto;min-height:280px;display:flex;flex-direction:column}
+.chat-messages{flex:1;display:flex;flex-direction:column;gap:.6rem;margin-bottom:1rem;min-height:200px}
+.chat-msg{max-width:80%;padding:.7rem 1rem;border-radius:16px;font-size:.88rem;opacity:0;transform:translateY(10px);transition:opacity .3s,transform .3s}.chat-msg.show{opacity:1;transform:translateY(0)}
+.chat-msg.left{align-self:flex-start;background:#fff;border-bottom-left-radius:4px}.chat-msg.right{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px}
+.chat-sender{font-size:.7rem;font-weight:600;margin-bottom:.2rem;opacity:.6}
+.chat-controls{display:flex;gap:.5rem;justify-content:center}
+.chat-btn{padding:.5rem 1rem;border:1px solid rgba(0,0,0,.1);background:#fff;border-radius:8px;cursor:pointer;font-size:.8rem;font-weight:500;transition:background .2s}.chat-btn:hover{background:var(--accent);color:#fff}
+.tooltip-term{border-bottom:2px dashed var(--accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--bg-code);color:#cdd6f4;padding:.8rem 1rem;border-radius:10px;font-size:.82rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity .2s;line-height:1.5;box-shadow:0 8px 30px rgba(0,0,0,.3)}
+.tooltip-box.visible{opacity:1}
+.module-nav{display:flex;justify-content:space-between;padding:2rem;max-width:900px;margin:0 auto}.module-nav a{text-decoration:none;color:var(--accent);font-weight:600;font-size:.95rem;padding:.8rem 1.2rem;border-radius:10px;border:1px solid rgba(220,50,47,.2);transition:background .2s}.module-nav a:hover{background:rgba(220,50,47,.06)}
+section:nth-child(odd){background:var(--bg)}section:nth-child(even){background:var(--bg-warm)}
+.compare-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:12px;overflow:hidden;margin:1.5rem 0;font-size:.88rem}
+.compare-table th{background:var(--bg-code);color:#cdd6f4;padding:.8rem 1rem;text-align:left;font-family:var(--font-head)}
+.compare-table td{padding:.7rem 1rem;border-bottom:1px solid rgba(0,0,0,.05)}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table tr:nth-child(even) td{background:rgba(0,0,0,.02)}
+@media(max-width:700px){.translation{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎯 Scala Interview Mastery</a><div class="nav-dots"><a href="./" class="nav-dot active" aria-label="Module 1"></a><a href="../module-02-building-blocks/" class="nav-dot" aria-label="Module 2"></a><a href="../module-03-functional-power/" class="nav-dot" aria-label="Module 3"></a><a href="../module-04-collections/" class="nav-dot" aria-label="Module 4"></a><a href="../module-05-type-system/" class="nav-dot" aria-label="Module 5"></a><a href="../module-06-concurrency/" class="nav-dot" aria-label="Module 6"></a><a href="../module-07-spark/" class="nav-dot" aria-label="Module 7"></a><a href="../module-08-battle-plan/" class="nav-dot" aria-label="Module 8"></a></div></div></nav>
+
+<!-- Screen 1: What is Scala -->
+<section id="s1">
+<div class="container">
+  <div class="screen-label">Screen 1 of 5</div>
+  <h2>What Is <span style="color:var(--accent)">Scala</span>, Exactly?</h2>
+  <p class="subtitle">Think of Scala as a <strong>Swiss Army knife</strong> for programming — it has blades for two completely different styles of coding, all in one tool.</p>
+  <div class="card-grid">
+    <div class="card"><h3>🎭 Object-Oriented</h3><p>Organize code into "things" (objects) that have properties and behaviors — like a Car with speed and color.</p></div>
+    <div class="card" style="--accent:#268BD2"><h3>⚙️ Functional</h3><p>Treat code like math formulas — put data in, get results out, no side effects. Like a vending machine.</p></div>
+    <div class="card" style="--accent:#859900"><h3>☕ Runs on JVM</h3><p>Scala runs on the same engine as Java. So all Java libraries work in Scala — like using the same power outlet.</p></div>
+    <div class="card" style="--accent:#6C71C4"><h3>📝 Concise Syntax</h3><p>What takes 20 lines in Java often takes 5 in Scala. Less code = fewer bugs = happier developers.</p></div>
+  </div>
+  <div class="aha"><div class="aha-title">💡 Interview Tip</div>When asked "What is Scala?", always mention these three things: <strong>JVM-based</strong>, <strong>combines OOP + FP</strong>, and <strong>concise syntax</strong>. That's the golden answer.</div>
+</div>
+</section>
+
+<!-- Screen 2: Scala vs Java -->
+<section id="s2">
+<div class="container">
+  <div class="screen-label">Screen 2 of 5</div>
+  <h2>Scala vs Java — The Showdown</h2>
+  <p class="subtitle">This is one of the <strong>most asked interview questions</strong>. Here's everything you need.</p>
+  <table class="compare-table">
+    <tr><th>Feature</th><th>Java</th><th>Scala</th></tr>
+    <tr><td>Paradigm</td><td>Object-Oriented only</td><td>OOP + Functional</td></tr>
+    <tr><td>Code verbosity</td><td>Very verbose</td><td>Very concise</td></tr>
+    <tr><td>Type inference</td><td>Limited</td><td>Advanced</td></tr>
+    <tr><td>Null handling</td><td>null (crash-prone)</td><td>Option[T] (safe)</td></tr>
+    <tr><td>Pattern matching</td><td>Basic switch</td><td>Powerful match</td></tr>
+    <tr><td>Immutability</td><td>Not default</td><td>Default (val)</td></tr>
+    <tr><td>Concurrency</td><td>Threads</td><td>Actors (Akka) + Futures</td></tr>
+    <tr><td>Collections</td><td>Mutable by default</td><td>Immutable by default</td></tr>
+  </table>
+  <div class="aha"><div class="aha-title">🎯 Most Asked!</div>"How is Scala different from Java?" appears in <strong>90%+ of Scala interviews</strong>. Don't just list differences — explain <em>why</em> each matters. E.g., "Immutability by default means fewer bugs in concurrent systems."</div>
+</div>
+</section>
+
+<!-- Screen 3: Group Chat -->
+<section id="s3">
+<div class="container">
+  <div class="screen-label">Screen 3 of 5</div>
+  <h2>How Scala Code Runs — A Conversation</h2>
+  <p class="subtitle">Watch Scala's components chat about what happens when you run your code:</p>
+  <div class="chat-container" id="chat1">
+    <div class="chat-messages" id="chatMsgs">
+      <div class="chat-msg left"><div class="chat-sender">📝 You (Developer)</div>I just wrote a .scala file. What happens next?</div>
+      <div class="chat-msg right"><div class="chat-sender">⚙️ Scala Compiler (scalac)</div>I compile your code into .class files — that's bytecode the JVM understands!</div>
+      <div class="chat-msg left"><div class="chat-sender">☕ JVM</div>I take those .class files and run them. I don't care if the code was Scala or Java — bytecode is bytecode!</div>
+      <div class="chat-msg right"><div class="chat-sender">⚙️ Scala Compiler</div>That's why you can use ANY Java library in Scala. We all speak the same bytecode language.</div>
+      <div class="chat-msg left"><div class="chat-sender">📦 Java Library (e.g., Jackson)</div>Yep! Scala calls me just like Java would. No translation needed.</div>
+      <div class="chat-msg right"><div class="chat-sender">⚙️ Scala Compiler</div>And I add extra powers — pattern matching, type inference, implicits — all compiled away into efficient bytecode.</div>
+    </div>
+    <div class="chat-controls">
+      <button class="chat-btn" onclick="playChat('chatMsgs')">&#9654; Play All</button>
+      <button class="chat-btn" onclick="nextMsg('chatMsgs')">Next →</button>
+      <button class="chat-btn" onclick="replayChat('chatMsgs')">&#8635; Replay</button>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- Screen 4: Key Features Deep Dive -->
+<section id="s4">
+<div class="container">
+  <div class="screen-label">Screen 4 of 5</div>
+  <h2>6 Features That Make Scala Stand Out</h2>
+  <p class="subtitle">Interviewers love asking "What are the key features of Scala?" Here's your answer, visualized:</p>
+  <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
+    <div class="card"><h3>🔍 Type Inference</h3><p>Scala figures out types for you. Write <code>val x = 5</code> — it knows x is an Int. Less typing, same safety.</p></div>
+    <div class="card"><h3>🧩 Pattern Matching</h3><p>Like a super-powered switch statement. Match on types, values, structures — even nested data.</p></div>
+    <div class="card"><h3>🔒 Immutability</h3><p>Variables don't change by default (val). This eliminates entire categories of bugs.</p></div>
+    <div class="card"><h3>🎭 First-Class Functions</h3><p>Functions are values — pass them around, store them, return them. Like passing a recipe to a chef.</p></div>
+    <div class="card"><h3>📡 Actor Model</h3><p>Handle thousands of tasks simultaneously using actors that send messages. No shared memory = no headaches.</p></div>
+    <div class="card"><h3>🔗 Java Interop</h3><p>Use any Java library directly. Billions of lines of Java code are instantly available to you.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- Screen 5: Quiz -->
+<section id="s5">
+<div class="container">
+  <div class="screen-label">Screen 5 of 5</div>
+  <h2>Knowledge Check 🧠</h2>
+  <div class="quiz-box" id="q1">
+    <div class="quiz-q">Q1: A startup wants to build a high-concurrency trading system. They already have Java libraries. Why would Scala be a good choice?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Scala is faster than Java at runtime</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">Scala combines functional safety with Java library reuse and built-in actor-based concurrency</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Scala doesn't need the JVM</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Scala has a bigger community than Java</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box" id="q2" style="margin-top:1.5rem">
+    <div class="quiz-q">Q2: Your interviewer says "Scala runs on the JVM." What does that practically mean for a developer?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">You must write Java code inside Scala</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Scala and Java have identical syntax</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">You can use any Java library, framework, or tool directly in your Scala project</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Scala programs cannot be compiled</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box" id="q3" style="margin-top:1.5rem">
+    <div class="quiz-q">Q3: Which of these is NOT a key feature of Scala?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Pattern matching</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Type inference</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">Manual memory management (like C)</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Actor-based concurrency</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+</div>
+</section>
+
+<footer class="module-nav">
+  <a href="../index.html">← Course Home</a>
+  <a href="../module-02-building-blocks/index.html">Next: Building Blocks →</a>
+</footer>
+
+<script>
+(function(){
+  // Progress bar
+  window.addEventListener('scroll',function(){var s=document.documentElement,p=(s.scrollTop/(s.scrollHeight-s.clientHeight))*100;document.getElementById('progressBar').style.width=p+'%'},{passive:true});
+  // Chat
+  var chatIdx={};
+  window.nextMsg=function(id){var msgs=document.getElementById(id).querySelectorAll('.chat-msg');if(!chatIdx[id])chatIdx[id]=0;if(chatIdx[id]<msgs.length){msgs[chatIdx[id]].classList.add('show');chatIdx[id]++}};
+  window.playChat=function(id){var msgs=document.getElementById(id).querySelectorAll('.chat-msg');chatIdx[id]=0;msgs.forEach(function(m,i){setTimeout(function(){m.classList.add('show')},i*800)});chatIdx[id]=msgs.length};
+  window.replayChat=function(id){var msgs=document.getElementById(id).querySelectorAll('.chat-msg');msgs.forEach(function(m){m.classList.remove('show')});chatIdx[id]=0};
+  // Quiz
+  window.selectOpt=function(el){var box=el.closest('.quiz-box');box.querySelectorAll('.quiz-opt').forEach(function(o){o.classList.remove('selected')});el.classList.add('selected')};
+  window.checkQuiz=function(btn){var box=btn.closest('.quiz-box'),sel=box.querySelector('.quiz-opt.selected'),fb=box.querySelector('.quiz-feedback');if(!sel){fb.textContent='Please select an answer first.';fb.style.display='block';fb.style.background='var(--bg-warm)';return}var correct=sel.getAttribute('data-correct')==='true';box.querySelectorAll('.quiz-opt').forEach(function(o){o.style.pointerEvents='none';if(o.getAttribute('data-correct')==='true')o.classList.add('correct');if(o===sel&&!correct)o.classList.add('wrong')});fb.style.display='block';if(correct){fb.textContent='✅ Correct! Great job.';fb.style.background='rgba(45,139,85,.1)';fb.style.color='var(--success)'}else{fb.textContent='❌ Not quite. The correct answer is highlighted in green.';fb.style.background='rgba(201,59,59,.1)';fb.style.color='var(--error)'}btn.disabled=true};
+  // Tooltips
+  var tip=document.createElement('div');tip.className='tooltip-box';document.body.appendChild(tip);
+  document.querySelectorAll('.tooltip-term').forEach(function(t){t.addEventListener('mouseenter',function(e){var r=t.getBoundingClientRect();tip.textContent=t.getAttribute('data-tip');tip.classList.add('visible');tip.style.left=r.left+'px';tip.style.top=(r.bottom+8)+'px'});t.addEventListener('mouseleave',function(){tip.classList.remove('visible')})});
+})();
+</script>
+</body>
+</html>

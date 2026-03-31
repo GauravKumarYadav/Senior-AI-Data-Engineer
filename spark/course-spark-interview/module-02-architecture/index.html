@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 2: Spark Architecture | Spark Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}.nav-dots{display:flex;gap:6px}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}.screen h2 .accent{color:var(--color-accent)}.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}.aha p{font-size:0.95rem;margin:0}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}.quiz-feedback.show{display:block}.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer}.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}.tooltip-box.visible{opacity:1}
+.flow-container{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;position:relative;overflow:hidden}
+.flow-nodes{display:flex;justify-content:space-around;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem}
+.flow-node{background:var(--color-bg-warm);border:2px solid #ddd;border-radius:14px;padding:1rem 1.2rem;text-align:center;min-width:120px;transition:all 0.4s;position:relative}
+.flow-node.active{border-color:var(--color-accent);background:#FFF5F0;box-shadow:0 0 20px rgba(217,79,48,0.15)}
+.flow-node .icon{font-size:1.5rem;margin-bottom:0.3rem}
+.flow-node .label{font-family:var(--font-heading);font-weight:700;font-size:0.85rem}
+.flow-node .desc{font-size:0.75rem;color:var(--color-muted);margin-top:0.2rem}
+.flow-arrow{font-size:1.5rem;color:var(--color-muted);flex-shrink:0}
+.flow-step-text{background:var(--color-bg-warm);border-radius:10px;padding:1rem;font-size:0.92rem;min-height:60px;transition:opacity 0.3s}
+.flow-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.flow-btn{padding:0.5rem 1.2rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.85rem;transition:all 0.2s}.flow-btn:hover{background:var(--color-accent);color:#fff}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}.translate-eng .line{padding:0.15rem 0}
+.steps{margin:1.5rem 0}.step{display:flex;gap:1rem;margin-bottom:1rem;align-items:flex-start}.step-num{width:36px;height:36px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:0.9rem;flex-shrink:0}.step-content{flex:1;background:#fff;border-radius:12px;padding:1rem 1.2rem;border-left:3px solid var(--color-accent);box-shadow:0 2px 6px rgba(0,0,0,0.03)}.step-content h4{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.2rem}.step-content p{font-size:0.88rem;color:var(--color-muted);margin:0}
+.screen-alt{background:var(--color-bg-warm)}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem}
+@media(max-width:600px){.flow-nodes{flex-direction:column}.flow-arrow{transform:rotate(90deg)}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">⚡ Spark Interview Mastery</a><div class="nav-dots"><a href="../module-01-what-is-spark/" class="nav-dot" aria-label="Module 1"></a><a href="../module-02-architecture/" class="nav-dot active" aria-label="Module 2"></a><a href="../module-03-rdds/" class="nav-dot" aria-label="Module 3"></a><a href="../module-04-dataframes-sql/" class="nav-dot" aria-label="Module 4"></a><a href="../module-05-performance/" class="nav-dot" aria-label="Module 5"></a><a href="../module-06-streaming-libs/" class="nav-dot" aria-label="Module 6"></a><a href="../module-07-interview-gauntlet/" class="nav-dot" aria-label="Module 7"></a></div></div></nav>
+
+<section class="screen" id="s1">
+  <h2>The <span class="accent">Orchestra</span> Metaphor</h2>
+  <p>Think of Spark like a symphony orchestra. You don't just throw 100 musicians on stage and hope for the best. There's a <strong>conductor</strong> (Driver), <strong>section leaders</strong> (Cluster Manager), and <strong>musicians</strong> (Executors) — each with a specific role.</p>
+  <div class="card-grid">
+    <div class="card"><h4>🎼 Driver (Conductor)</h4><p>Runs your main() program. Creates SparkContext. Builds the DAG. Schedules tasks. Collects results back to you.</p></div>
+    <div class="card blue"><h4>🎫 Cluster Manager (Stage Manager)</h4><p>Allocates resources. Launches executors on worker nodes. Types: Standalone, YARN, Mesos, Kubernetes.</p></div>
+    <div class="card green"><h4>🎵 Executors (Musicians)</h4><p>Run on worker nodes. Execute assigned tasks. Store data in memory/disk. Report results back to Driver.</p></div>
+    <div class="card purple"><h4>💻 Worker Node (Music Stand)</h4><p>A machine in the cluster. Can run one or more Executors. Does the actual data processing work.</p></div>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <h2>Data Flow <span class="accent">Animation</span></h2>
+  <p>Watch how a Spark job travels through the architecture, step by step:</p>
+  <div class="flow-container" id="flow1">
+    <div class="flow-nodes">
+      <div class="flow-node" id="fn-user"><div class="icon">👤</div><div class="label">Your Code</div></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-node" id="fn-driver"><div class="icon">🎼</div><div class="label">Driver</div><div class="desc">SparkContext</div></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-node" id="fn-cm"><div class="icon">🎫</div><div class="label">Cluster Mgr</div><div class="desc">YARN / Mesos</div></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-node" id="fn-exec"><div class="icon">🎵</div><div class="label">Executors</div><div class="desc">Worker Nodes</div></div>
+    </div>
+    <div class="flow-step-text" id="flow1-text">Click "Next Step" to trace the journey of your Spark job…</div>
+    <div class="flow-controls">
+      <button class="flow-btn" onclick="nextFlowStep('flow1')">Next Step →</button>
+      <button class="flow-btn" onclick="resetFlow('flow1')">Restart</button>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2>The <span class="accent">DAG</span> — Spark's Secret Weapon</h2>
+  <p><span class="tooltip-term" data-tip="Directed Acyclic Graph — a map of operations where data flows in one direction and never loops back. Think of it as a recipe with ordered steps.">DAG</span> stands for Directed Acyclic Graph. It's Spark's execution plan — a roadmap of every transformation and action your job needs to perform.</p>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-content"><h4>Code Interpretation</h4><p>Your Spark code is interpreted. Each transformation (map, filter, join) becomes a node in the DAG.</p></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content"><h4>DAG Construction</h4><p>Spark builds the operator graph — connecting all transformations in order.</p></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content"><h4>Stage Splitting</h4><p>The DAG Scheduler splits the graph into stages based on shuffle boundaries. Each stage contains pipelined tasks.</p></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-content"><h4>Task Scheduling</h4><p>The Task Scheduler sends individual tasks to Executors via the Cluster Manager.</p></div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-content"><h4>Execution</h4><p>Executors run tasks on their data partitions and send results back to the Driver.</p></div></div>
+  </div>
+  <div class="aha"><div class="aha-title">💡 Why DAG matters in interviews</div><p>"Spark's DAG optimizer can rearrange and pipeline operations for efficiency — unlike MapReduce which has a rigid map→shuffle→reduce pattern. This is a key reason Spark is faster."</p></div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <h2>Deployment Modes: <span class="accent">Client vs Cluster</span></h2>
+  <p>Interviewers love this one. There are two modes for running Spark:</p>
+  <div class="card-grid">
+    <div class="card"><h4>💻 Client Mode</h4><p><strong>Driver runs on YOUR machine</strong> (the machine that submitted the job). Good for debugging and interactive shells. If your machine disconnects, the job dies.</p></div>
+    <div class="card blue"><h4>☁️ Cluster Mode</h4><p><strong>Driver runs ON the cluster</strong> (managed by YARN/Mesos). Better for production. Survives client disconnection. Less network latency between Driver and Executors.</p></div>
+  </div>
+  <div class="aha"><div class="aha-title">🎯 When to use which?</div><p>Client mode: development, debugging, interactive analysis (Spark Shell). Cluster mode: production jobs, when your machine is far from the cluster, when the job must survive disconnections.</p></div>
+
+  <h3 style="font-family:var(--font-heading);margin-top:2rem;margin-bottom:0.5rem">Cluster Manager Types</h3>
+  <div class="card-grid">
+    <div class="card green"><h4>Standalone</h4><p>Spark's built-in manager. Simple to set up. Start master + workers manually. Good for dev/testing.</p></div>
+    <div class="card purple"><h4>YARN</h4><p>Hadoop's resource manager. Most popular in enterprise. Two sub-modes: yarn-client and yarn-cluster.</p></div>
+    <div class="card"><h4>Mesos</h4><p>Apache Mesos provides dynamic partitioning between Spark and other frameworks. Less common today.</p></div>
+    <div class="card blue"><h4>Kubernetes</h4><p>Modern container orchestration. Growing fast in cloud-native deployments. Each executor runs as a pod.</p></div>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>Quiz: <span class="accent">Architecture</span></h2>
+  <div class="quiz-box" id="q1"><h4>Q1: What is the SparkContext responsible for?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Storing data on HDFS</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) Coordinating the Spark application — connecting to the cluster manager, creating RDDs, and scheduling tasks</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) Running SQL queries only</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Managing network security</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+  <div class="quiz-box" id="q2"><h4>Q2: Your Spark job is running in Client mode and your laptop goes to sleep. What happens?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Nothing — the cluster takes over</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) The entire job fails because the Driver was on your laptop</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) The job pauses and resumes when you wake up</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+  <div class="quiz-box" id="q3"><h4>Q3: What does the DAG Scheduler do with the execution plan?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Sends the entire plan to one executor</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) Converts it directly to machine code</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">C) Splits the DAG into stages based on shuffle boundaries, then passes tasks to the Task Scheduler</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Writes the plan to HDFS for later execution</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+  <div class="quiz-box" id="q4"><h4>Q4: For a production pipeline running 24/7 on a remote cluster, which deployment mode should you use?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Client mode — so you can watch the logs on your laptop</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) Cluster mode — the Driver runs on the cluster and survives client disconnections</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) It doesn't matter — both modes are identical for production</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s6">
+  <h2>Key <span class="accent">Internal Daemons</span></h2>
+  <p>These behind-the-scenes processes keep Spark running. Know them for senior-level questions:</p>
+  <div class="card-grid">
+    <div class="card"><h4>🧠 DAGScheduler</h4><p>Converts logical DAG into physical stages. Determines which tasks can be pipelined together vs. which need shuffles.</p></div>
+    <div class="card blue"><h4>📦 TaskScheduler</h4><p>Takes stages from DAGScheduler and sends tasks to Executors. Implements scheduling policies (FIFO or Fair).</p></div>
+    <div class="card green"><h4>📦 BlockManager</h4><p>Manages storage of data blocks across the cluster. Handles caching, shuffle data, and broadcast variables.</p></div>
+    <div class="card purple"><h4>💾 MemoryStore</h4><p>Manages in-memory storage for cached RDDs and broadcast variables within each Executor.</p></div>
+  </div>
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086">// Executor memory calculation</span>
+Nodes = <span style="color:#A6E3A1">10</span>
+Cores per node = <span style="color:#A6E3A1">15</span>
+RAM per node = <span style="color:#A6E3A1">61 GB</span>
+
+Cores per executor = <span style="color:#A6E3A1">5</span>  <span style="color:#6C7086">// rule of thumb</span>
+Executors/node = 15/5 = <span style="color:#A6E3A1">3</span>
+Total executors = 10 × 3 = <span style="color:#CBA6F7">30</span></div>
+    <div class="translate-eng">
+      <div class="line">We have 10 machines in our cluster</div>
+      <div class="line">Each machine has 15 CPU cores</div>
+      <div class="line">Each machine has 61 GB of RAM</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Best practice: 5 cores per executor</div>
+      <div class="line">So each machine runs 3 executors</div>
+      <div class="line">🎯 Total: 30 executors for the whole job</div>
+    </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-01-what-is-spark/index.html">← Previous: What Is Spark?</a>
+  <a href="../module-03-rdds/index.html">Next: RDDs →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;pb.style.width=((h.scrollTop/(h.scrollHeight-h.clientHeight))*100)+'%';},{passive:true});
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));});
+
+  // Flow animation
+  const flowSteps=[{nodes:['fn-user'],text:'\ud83d\udc64 You write your Spark code (e.g., PySpark script) and submit it to the cluster.'},{nodes:['fn-driver'],text:'\ud83c\udfbc The Driver program starts. It creates a SparkContext, builds the DAG of operations, and connects to the Cluster Manager.'},{nodes:['fn-cm'],text:'\ud83c\udfab The Cluster Manager (YARN, Mesos, K8s, or Standalone) allocates resources and launches Executors on Worker Nodes.'},{nodes:['fn-exec'],text:'\ud83c\udfb5 Executors start running on Worker Nodes. They load their data partitions, execute tasks, store intermediate results in memory.'},{nodes:['fn-exec','fn-driver'],text:'\ud83d\udce8 Executors send results back to the Driver. The Driver combines them and returns the final result to you.'},{nodes:['fn-user','fn-driver','fn-cm','fn-exec'],text:'\u2705 Job complete! The full pipeline: You \u2192 Driver \u2192 Cluster Manager \u2192 Executors \u2192 Results back to Driver \u2192 You.'}];
+  const flowState={flow1:0};
+  window.nextFlowStep=function(id){const s=flowState[id];if(s>=flowSteps.length)return;document.querySelectorAll('#'+id+' .flow-node').forEach(n=>n.classList.remove('active'));flowSteps[s].nodes.forEach(n=>document.getElementById(n).classList.add('active'));document.getElementById(id+'-text').textContent=flowSteps[s].text;flowState[id]++;};
+  window.resetFlow=function(id){flowState[id]=0;document.querySelectorAll('#'+id+' .flow-node').forEach(n=>n.classList.remove('active'));document.getElementById(id+'-text').textContent='Click "Next Step" to trace the journey of your Spark job\u2026';};
+
+  window.checkQuiz=function(el,qid,correct){const box=document.getElementById(qid);if(box.dataset.answered)return;box.dataset.answered='true';const fb=document.getElementById(qid+'-fb');if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='\u2705 Correct! Great answer for an interview.';}else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='\u274c Not quite. Review the architecture components above.';}box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');};
+})();
+</script>
+</body>
+</html>

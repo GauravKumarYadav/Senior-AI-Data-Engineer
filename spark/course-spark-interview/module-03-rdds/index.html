@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 3: RDDs — The Foundation | Spark Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}.nav-dots{display:flex;gap:6px}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none}.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}.screen h2 .accent{color:var(--color-accent)}.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.5rem 0}.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem}.card p{font-size:0.9rem;color:var(--color-muted);margin:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}.aha p{font-size:0.95rem;margin:0}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.2rem 0}.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.05rem}.quiz-opt{display:block;padding:0.7rem 1rem;margin:0.4rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.93rem}.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}.quiz-feedback{margin-top:0.8rem;padding:0.7rem 1rem;border-radius:8px;font-size:0.88rem;display:none}.quiz-feedback.show{display:block}.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer}.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}.tooltip-box.visible{opacity:1}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}.translate-eng .line{padding:0.15rem 0}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:1.5rem 0}
+.screen-alt{background:var(--color-bg-warm)}
+.table-wrap{overflow-x:auto;margin:1.5rem 0}.tbl{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04)}.tbl th{background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;font-family:var(--font-heading);font-weight:700;font-size:0.85rem;text-align:left}.tbl td{padding:0.7rem 1rem;border-bottom:1px solid #f0ede8;font-size:0.88rem}.tbl tr:last-child td{border:none}.tbl code{font-family:var(--font-code);background:var(--color-bg-warm);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.82rem}
+footer.module-nav{display:flex;justify-content:space-between;padding:2rem 1.5rem;max-width:900px;margin:0 auto}footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem}
+@media(max-width:600px){.translate{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">⚡ Spark Interview Mastery</a><div class="nav-dots"><a href="../module-01-what-is-spark/" class="nav-dot"></a><a href="../module-02-architecture/" class="nav-dot"></a><a href="../module-03-rdds/" class="nav-dot active"></a><a href="../module-04-dataframes-sql/" class="nav-dot"></a><a href="../module-05-performance/" class="nav-dot"></a><a href="../module-06-streaming-libs/" class="nav-dot"></a><a href="../module-07-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<section class="screen" id="s1">
+  <h2>RDD = <span class="accent">Resilient Distributed Dataset</span></h2>
+  <p>Think of an RDD like a <strong>deck of cards split among friends</strong>. Each friend holds a few cards (<span class="tooltip-term" data-tip="A chunk of data stored on one machine. Spark splits large datasets into partitions so different machines can process them simultaneously.">partitions</span>). If one friend drops their cards, the group remembers which cards were dealt and can recreate them.</p>
+  <div class="card-grid">
+    <div class="card"><h4>🛡️ Resilient</h4><p>If a partition is lost (machine crashes), Spark rebuilds it using the lineage graph — no data replication needed.</p></div>
+    <div class="card blue"><h4>🌐 Distributed</h4><p>Data is split across multiple machines in the cluster. Each machine processes its chunk in parallel.</p></div>
+    <div class="card green"><h4>📋 Dataset</h4><p>A collection of records — could be strings, numbers, objects. Similar to a list/array but spread across machines.</p></div>
+    <div class="card purple"><h4>🔒 Immutable</h4><p>Once created, an RDD cannot be changed. You can only create a NEW RDD by transforming an existing one.</p></div>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <h2>Two Ways to <span class="accent">Create</span> an RDD</h2>
+  <div class="two-col">
+    <div class="card"><h4>📥 From Internal Data</h4><p><strong>Parallelize</strong> an existing collection in your program. Takes a local list and distributes it across the cluster.</p>
+      <div style="background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem;border-radius:8px;font-family:var(--font-code);font-size:0.8rem;margin-top:0.8rem;white-space:pre-wrap">data = [1, 2, 3, 4, 5]
+rdd = sc.parallelize(data)</div>
+    </div>
+    <div class="card blue"><h4>📂 From External Data</h4><p><strong>Read</strong> from HDFS, S3, local file system, HBase, Cassandra — any supported data source.</p>
+      <div style="background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem;border-radius:8px;font-family:var(--font-code);font-size:0.8rem;margin-top:0.8rem;white-space:pre-wrap">rdd = sc.textFile("hdfs:///data/logs.txt")
+rdd = sc.textFile("s3://bucket/file.csv")</div>
+    </div>
+  </div>
+  <p>There are also two <em>types</em> of RDDs: <strong>Parallelized Collections</strong> (from local data) and <strong>Hadoop Datasets</strong> (from HDFS/external).</p>
+</section>
+
+<section class="screen" id="s3">
+  <h2>Transformations vs <span class="accent">Actions</span></h2>
+  <p>This is one of the <strong>most frequently asked</strong> Spark interview questions. Everything you do with an RDD is either a Transformation or an Action.</p>
+  <div class="table-wrap"><table class="tbl">
+    <tr><th>Aspect</th><th>Transformations</th><th>Actions</th></tr>
+    <tr><td><strong>What it does</strong></td><td>Creates a NEW RDD from an existing one</td><td>Returns a value to the Driver or writes to storage</td></tr>
+    <tr><td><strong>Execution</strong></td><td>⏳ Lazy — nothing happens until an action</td><td>⚡ Triggers actual computation</td></tr>
+    <tr><td><strong>Returns</strong></td><td>Another RDD</td><td>A value (number, list, etc.) or side effect</td></tr>
+    <tr><td><strong>Examples</strong></td><td><code>map()</code> <code>filter()</code> <code>flatMap()</code> <code>union()</code> <code>join()</code></td><td><code>collect()</code> <code>count()</code> <code>reduce()</code> <code>first()</code> <code>take(n)</code></td></tr>
+  </table></div>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086"># Transformations (lazy — nothing runs yet)</span>
+raw = sc.textFile(<span style="color:#A6E3A1">"movies.txt"</span>)
+parsed = raw.<span style="color:#89B4FA">map</span>(<span style="color:#CBA6F7">lambda</span> x: x.split(<span style="color:#A6E3A1">"\t"</span>))
+filtered = parsed.<span style="color:#89B4FA">filter</span>(<span style="color:#CBA6F7">lambda</span> x: x[2] > <span style="color:#A6E3A1">"4.0"</span>)
+
+<span style="color:#6C7086"># Action (NOW everything executes!)</span>
+result = filtered.<span style="color:#89B4FA">count</span>()</div>
+    <div class="translate-eng">
+      <div class="line">📄 Read file → creates RDD (but doesn't read yet!)</div>
+      <div class="line">✂️ Split each line by tab → new RDD (still nothing runs)</div>
+      <div class="line">🔍 Keep only ratings > 4.0 → new RDD (still lazy!)</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⚡ count() is an ACTION — NOW Spark reads the file,</div>
+      <div class="line">splits, filters, and counts — all at once, optimized!</div>
+    </div>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <h2><span class="accent">Lazy Evaluation</span> — Why Spark Waits</h2>
+  <p>Imagine you're giving a cooking assistant a list of instructions: "dice onions, then sauté them, then add tomatoes." A lazy assistant writes down all the steps but doesn't start cooking until you say <strong>"Serve the dish!"</strong></p>
+  <p>That's Spark. <span class="tooltip-term" data-tip="A strategy where computations are delayed until the result is actually needed. Spark records transformations but only executes them when an action (like count or collect) is called.">Lazy evaluation</span> lets Spark <strong>optimize the entire pipeline</strong> before doing any work.</p>
+  <div class="card-grid">
+    <div class="card"><h4>⏰ Reduces wasted work</h4><p>If you filter 90% of data away, Spark doesn't process those rows at all.</p></div>
+    <div class="card blue"><h4>🧩 Enables pipelining</h4><p>Multiple transformations are fused into one pass over the data.</p></div>
+    <div class="card green"><h4>📊 Fewer queries</h4><p>Spark can combine operations and reduce disk reads.</p></div>
+  </div>
+  <div class="aha"><div class="aha-title">💡 Lineage Graph (RDD Lineage)</div>
+    <p>Because Spark is lazy, it tracks how every RDD was created from other RDDs. This chain is called the <strong>lineage graph</strong>. If any partition is lost, Spark replays the lineage to rebuild ONLY that partition — no need to copy all data across machines like Hadoop does.</p></div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>Common <span class="accent">Transformations</span> Cheat Sheet</h2>
+  <div class="table-wrap"><table class="tbl">
+    <tr><th>Transformation</th><th>What it does</th><th>Example</th></tr>
+    <tr><td><code>map(func)</code></td><td>Apply func to each element, return new RDD</td><td><code>rdd.map(lambda x: x*2)</code></td></tr>
+    <tr><td><code>filter(func)</code></td><td>Keep elements where func returns True</td><td><code>rdd.filter(lambda x: x>10)</code></td></tr>
+    <tr><td><code>flatMap(func)</code></td><td>Like map, but can return 0+ elements per input</td><td><code>rdd.flatMap(lambda x: x.split())</code></td></tr>
+    <tr><td><code>union(other)</code></td><td>Combine two RDDs</td><td><code>rdd1.union(rdd2)</code></td></tr>
+    <tr><td><code>intersection(other)</code></td><td>Elements common to both RDDs</td><td><code>rdd1.intersection(rdd2)</code></td></tr>
+    <tr><td><code>reduceByKey(func)</code></td><td>Group by key, apply reduce function</td><td><code>pairs.reduceByKey(lambda a,b: a+b)</code></td></tr>
+    <tr><td><code>groupByKey()</code></td><td>Group values by key</td><td><code>pairs.groupByKey()</code></td></tr>
+    <tr><td><code>join(other)</code></td><td>Inner join on keys</td><td><code>rdd1.join(rdd2)</code></td></tr>
+    <tr><td><code>coalesce(n)</code></td><td>Reduce partitions (no shuffle if decreasing)</td><td><code>rdd.coalesce(4)</code></td></tr>
+    <tr><td><code>repartition(n)</code></td><td>Change partition count (always shuffles)</td><td><code>rdd.repartition(10)</code></td></tr>
+  </table></div>
+
+  <div class="aha"><div class="aha-title">🎯 Interview Favorite: coalesce vs repartition</div>
+    <p><strong>coalesce</strong> can only REDUCE partitions and avoids a full shuffle (faster). <strong>repartition</strong> can increase OR decrease partitions but always triggers a shuffle. Use coalesce when reducing, repartition when increasing.</p></div>
+</section>
+
+<section class="screen screen-alt" id="s6">
+  <h2>Quiz: <span class="accent">RDD Mastery</span></h2>
+  <div class="quiz-box" id="q1"><h4>Q1: You call rdd.map(lambda x: x*2) but nothing happens. Why?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">A) There's a bug in the lambda function</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',true)">B) map() is a transformation — it's lazy. Nothing executes until you call an action like collect() or count().</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">C) The RDD is empty</div>
+    <div class="quiz-feedback" id="q1-fb"></div></div>
+
+  <div class="quiz-box" id="q2"><h4>Q2: An executor crashes and loses partition 3 of your RDD. How does Spark recover?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">A) It reads the backup copy from HDFS replication</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',true)">B) It replays the lineage graph to recompute only partition 3 from its parent RDDs</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">C) The entire job fails and must be restarted</div>
+    <div class="quiz-feedback" id="q2-fb"></div></div>
+
+  <div class="quiz-box" id="q3"><h4>Q3: You want to go from 1000 partitions to 100. What should you use?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',true)">A) coalesce(100) — it can reduce partitions without a full shuffle, making it faster</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">B) repartition(100) — always use repartition for any partition change</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">C) filter() — remove data until you have fewer partitions</div>
+    <div class="quiz-feedback" id="q3-fb"></div></div>
+
+  <div class="quiz-box" id="q4"><h4>Q4: What's a Pair RDD and when would you use it?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">A) An RDD with exactly two elements</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',true)">B) An RDD where each element is a (key, value) pair. Enables operations like reduceByKey(), groupByKey(), and join().</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">C) Two RDDs linked together for backup purposes</div>
+    <div class="quiz-feedback" id="q4-fb"></div></div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-02-architecture/index.html">← Previous: Architecture</a>
+  <a href="../module-04-dataframes-sql/index.html">Next: DataFrames & SQL →</a>
+</footer>
+<div class="tooltip-box" id="tooltipBox"></div>
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;pb.style.width=((h.scrollTop/(h.scrollHeight-h.clientHeight))*100)+'%';},{passive:true});
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));});
+  window.checkQ=function(el,qid,correct){const box=document.getElementById(qid);if(box.dataset.answered)return;box.dataset.answered='true';const fb=document.getElementById(qid+'-fb');if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='\u2705 Correct! You nailed it.';}else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='\u274c Not quite. Review the concepts above and try to reason through it.';}box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');};
+})();
+</script>
+</body>
+</html>

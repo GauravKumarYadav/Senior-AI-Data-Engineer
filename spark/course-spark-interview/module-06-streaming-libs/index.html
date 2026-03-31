@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 6: Streaming & Spark Libraries | Spark Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}.nav-dots{display:flex;gap:6px}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none}.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}.screen h2 .accent{color:var(--color-accent)}.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.5rem 0}.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem}.card p{font-size:0.9rem;color:var(--color-muted);margin:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}.aha p{font-size:0.95rem;margin:0}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.2rem 0}.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.05rem}.quiz-opt{display:block;padding:0.7rem 1rem;margin:0.4rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:all 0.2s;font-size:0.93rem}.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}.quiz-feedback{margin-top:0.8rem;padding:0.7rem 1rem;border-radius:8px;font-size:0.88rem;display:none}.quiz-feedback.show{display:block}.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer}.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}.tooltip-box.visible{opacity:1}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}.translate-eng .line{padding:0.15rem 0}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:520px}.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}.chat-msg.visible{opacity:1;transform:translateY(0)}.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#fff;flex-shrink:0}.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:360px;line-height:1.5}.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+footer.module-nav{display:flex;justify-content:space-between;padding:2rem 1.5rem;max-width:900px;margin:0 auto}footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem}
+@media(max-width:600px){.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">⚡ Spark Interview Mastery</a><div class="nav-dots"><a href="../module-01-what-is-spark/" class="nav-dot"></a><a href="../module-02-architecture/" class="nav-dot"></a><a href="../module-03-rdds/" class="nav-dot"></a><a href="../module-04-dataframes-sql/" class="nav-dot"></a><a href="../module-05-performance/" class="nav-dot"></a><a href="../module-06-streaming-libs/" class="nav-dot active"></a><a href="../module-07-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<section class="screen" id="s1">
+  <h2>Spark <span class="accent">Streaming</span></h2>
+  <p>Think of Spark Streaming like a <strong>newspaper printing press that runs continuously</strong>. News (data) arrives non-stop, the press slices it into pages (micro-batches), prints each page, and delivers it — all without stopping.</p>
+  <p>Spark Streaming takes live data from sources like <span class="tooltip-term" data-tip="A distributed event streaming platform. Kafka acts as a message broker — producers write events, consumers (like Spark) read them in real-time.">Kafka</span>, Flume, or Kinesis, slices it into tiny batches (e.g., every 1 second), and processes each batch using the regular Spark engine.</p>
+  <div class="card-grid">
+    <div class="card"><h4>🌊 DStream</h4><p><span class="tooltip-term" data-tip="Discretized Stream — a continuous sequence of RDDs. Each RDD contains data received during a time interval (e.g., 1 second).">DStream</span> = Discretized Stream. A continuous stream represented as a sequence of RDDs, one per time interval.</p></div>
+    <div class="card blue"><h4>🔄 Micro-Batching</h4><p>Data arrives continuously but is processed in small batches. Not true real-time, but near-real-time (latency in seconds).</p></div>
+    <div class="card green"><h4>🛡️ Fault Tolerant</h4><p>Each micro-batch is an RDD — inherits RDD fault tolerance via lineage. Checkpointing adds extra safety.</p></div>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <h2>DStream <span class="accent">Transformations</span></h2>
+  <p>DStreams support the same transformations as RDDs, plus some streaming-specific ones:</p>
+  <div class="card-grid">
+    <div class="card"><h4>Stateless</h4><p>Each batch is independent. No memory of previous batches. Examples: <code style="font-family:var(--font-code)">map()</code>, <code style="font-family:var(--font-code)">filter()</code>, <code style="font-family:var(--font-code)">reduceByKey()</code></p></div>
+    <div class="card blue"><h4>Stateful</h4><p>Processing depends on previous batches. Requires checkpointing. Examples: <strong>sliding window</strong> operations, <code style="font-family:var(--font-code)">updateStateByKey()</code></p></div>
+  </div>
+  <div class="aha"><div class="aha-title">🎯 Sliding Window Operations</div><p>A window slides over the stream, combining data from multiple batches. E.g., "count tweets in the last 30 seconds, updating every 10 seconds." Two params: <strong>window length</strong> (30s) and <strong>slide interval</strong> (10s). This is frequently asked in interviews!</p></div>
+
+  <h3 style="font-family:var(--font-heading);font-weight:700;margin:1.5rem 0 0.5rem">Receivers</h3>
+  <p>Receivers consume data from sources and store it in Spark's memory for processing. Two types:</p>
+  <div class="card-grid">
+    <div class="card green"><h4>✅ Reliable Receivers</h4><p>Send acknowledgment to the data source AFTER data is received and replicated in Spark. Guarantees no data loss.</p></div>
+    <div class="card purple"><h4>⚠️ Unreliable Receivers</h4><p>No acknowledgment sent. Simpler but data can be lost if the receiver fails.</p></div>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2><span class="accent">Structured Streaming</span> vs DStreams</h2>
+  <p>Structured Streaming (Spark 2.x+) is the <strong>modern replacement</strong> for DStreams. Think of DStreams as the flip phone and Structured Streaming as the smartphone.</p>
+  <div class="card-grid">
+    <div class="card"><h4>📱 Structured Streaming</h4><p>Built on DataFrame/Dataset API. Uses Catalyst optimizer. Supports event-time windows. Better exactly-once guarantees. The recommended approach.</p></div>
+    <div class="card blue"><h4>📟 DStreams (Legacy)</h4><p>Built on RDD API. Manual state management. Simpler model but less optimized. Still works but not actively improved.</p></div>
+  </div>
+
+  <div class="chat-container" id="chat1">
+    <div class="chat-msg" data-step="1"><div class="chat-avatar" style="background:#E07B39">⚡</div><div class="chat-bubble"><strong>Kafka:</strong> Hey Spark! Here's a stream of credit card transactions…</div></div>
+    <div class="chat-msg" data-step="2"><div class="chat-avatar" style="background:var(--color-info)">SS</div><div class="chat-bubble"><strong>Structured Streaming:</strong> Got it! I'll treat this as an ever-growing DataFrame. Let me run the fraud detection query…</div></div>
+    <div class="chat-msg" data-step="3"><div class="chat-avatar" style="background:var(--color-info)">SS</div><div class="chat-bubble">Found 3 suspicious transactions in the last 30-second window! Flagging them…</div></div>
+    <div class="chat-msg" data-step="4"><div class="chat-avatar" style="background:var(--color-success)">DB</div><div class="chat-bubble"><strong>Dashboard:</strong> Alert displayed! Analyst notified. Total processing time: 2.3 seconds.</div></div>
+    <div class="chat-msg" data-step="5"><div class="chat-avatar" style="background:var(--color-info)">SS</div><div class="chat-bubble">Checkpointed my state. If I crash, I'll pick up right where I left off. No data loss. 🛡️</div></div>
+    <div class="chat-controls"><button class="chat-btn" onclick="playChat('chat1')">&#9654; Play All</button><button class="chat-btn" onclick="nextChat('chat1')">Next</button><button class="chat-btn" onclick="resetChat('chat1')">Replay</button></div>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <h2><span class="accent">MLlib</span> & GraphX</h2>
+  <p>Two powerful libraries that come bundled with Spark:</p>
+  <div class="card-grid">
+    <div class="card"><h4>🧠 MLlib — Machine Learning</h4><p>Scalable ML library. Supports classification, regression, clustering, collaborative filtering, dimensionality reduction, and more.</p></div>
+    <div class="card blue"><h4>🔗 GraphX — Graph Processing</h4><p>Process graph-structured data. PageRank, shortest paths, community detection. Uses vertex-cut partitioning for efficiency.</p></div>
+  </div>
+
+  <h3 style="font-family:var(--font-heading);font-weight:700;margin:1.5rem 0 0.5rem">MLlib Key Concepts</h3>
+  <div class="card-grid">
+    <div class="card green"><h4>Transformer</h4><p>Takes a DataFrame IN, outputs a new DataFrame with predictions/features added. Implements <code style="font-family:var(--font-code)">transform()</code>.</p></div>
+    <div class="card purple"><h4>Estimator</h4><p>A learning algorithm. Takes data IN, produces a trained Model (which IS a Transformer). Implements <code style="font-family:var(--font-code)">fit()</code>.</p></div>
+    <div class="card"><h4>Pipeline</h4><p>A sequence of stages (Transformers + Estimators). Data flows through each stage in order. E.g.: Tokenize → HashTF → LogisticRegression.</p></div>
+  </div>
+
+  <div class="aha"><div class="aha-title">🎯 Interview Gotcha: Spark + Reinforcement Learning</div><p>"Is Spark good for reinforcement learning?" Answer: <strong>No.</strong> Spark works well for batch ML algorithms (classification, clustering, regression) but NOT for reinforcement learning, which requires sequential interaction with an environment.</p></div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>Checkpointing & <span class="accent">WAL</span></h2>
+  <p>Two safety nets for Spark Streaming applications:</p>
+  <div class="card-grid">
+    <div class="card"><h4>💾 Checkpointing</h4><p>Periodically saves streaming state to reliable storage (HDFS). Two types: <strong>Metadata</strong> (config, DStream ops, incomplete batches) and <strong>Data</strong> (actual RDD data for stateful operations).</p></div>
+    <div class="card blue"><h4>📝 Write-Ahead Log (WAL)</h4><p>Before processing data, write it to a durable log. If the driver crashes, replay the log to recover. Enable with <code style="font-family:var(--font-code);font-size:0.8rem">spark.streaming.receiver.writeAheadLog.enable=true</code></p></div>
+  </div>
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086"># Enable checkpointing</span>
+ssc.<span style="color:#89B4FA">checkpoint</span>(<span style="color:#A6E3A1">"hdfs:///checkpoints"</span>)
+
+<span style="color:#6C7086"># Enable WAL</span>
+conf.set(
+  <span style="color:#A6E3A1">"spark.streaming.receiver"</span>
+  <span style="color:#A6E3A1">".writeAheadLog.enable"</span>,
+  <span style="color:#A6E3A1">"true"</span>
+)
+
+<span style="color:#6C7086"># Auto cleanup metadata</span>
+conf.set(<span style="color:#A6E3A1">"spark.cleaner.ttl"</span>,
+         <span style="color:#A6E3A1">"3600"</span>)</div>
+    <div class="translate-eng">
+      <div class="line">💾 Save streaming state to HDFS periodically</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📝 Turn on Write-Ahead Logging</div>
+      <div class="line">All received data is written to a log</div>
+      <div class="line">before being processed</div>
+      <div class="line">If driver crashes, replay the log</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🧹 Auto-clean metadata older than 3600s (1 hour)</div>
+      <div class="line">Prevents memory buildup in long-running jobs</div>
+    </div>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s6">
+  <h2>Quiz: <span class="accent">Streaming & Libraries</span></h2>
+  <div class="quiz-box" id="q1"><h4>Q1: What is a DStream?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">A) A direct stream that connects to databases</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',true)">B) A Discretized Stream — a continuous sequence of RDDs, each containing data from a time interval</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">C) A data structure for storing ML models</div>
+    <div class="quiz-feedback" id="q1-fb"></div></div>
+
+  <div class="quiz-box" id="q2"><h4>Q2: What's the difference between stateless and stateful DStream transformations?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',true)">A) Stateless: each batch is independent (map, filter). Stateful: processing depends on previous batches (window operations).</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">B) Stateless is faster, stateful is slower. That's the only difference.</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">C) Stateless = no output, stateful = has output</div>
+    <div class="quiz-feedback" id="q2-fb"></div></div>
+
+  <div class="quiz-box" id="q3"><h4>Q3: In MLlib, what's the difference between a Transformer and an Estimator?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">A) They're the same thing with different names</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',true)">B) Transformer: takes DataFrame, outputs new DataFrame (transform()). Estimator: takes data, trains a Model which IS a Transformer (fit()).</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">C) Transformer changes data types, Estimator estimates file sizes</div>
+    <div class="quiz-feedback" id="q3-fb"></div></div>
+
+  <div class="quiz-box" id="q4"><h4>Q4: Your Spark Streaming driver crashes. How does WAL help?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',true)">A) WAL writes received data to a durable log BEFORE processing. On restart, Spark replays the log to recover unprocessed data.</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">B) WAL automatically restarts the driver on another node</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">C) WAL sends alerts to the operations team</div>
+    <div class="quiz-feedback" id="q4-fb"></div></div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-05-performance/index.html">← Previous: Performance</a>
+  <a href="../module-07-interview-gauntlet/index.html">Next: Interview Gauntlet 🔥 →</a>
+</footer>
+<div class="tooltip-box" id="tooltipBox"></div>
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;pb.style.width=((h.scrollTop/(h.scrollHeight-h.clientHeight))*100)+'%';},{passive:true});
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));});
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},900);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+  window.checkQ=function(el,qid,correct){const box=document.getElementById(qid);if(box.dataset.answered)return;box.dataset.answered='true';const fb=document.getElementById(qid+'-fb');if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='\u2705 Nailed it!';}else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='\u274c Not quite. Review the section above.';}box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');};
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scala Interview Mastery — Interactive Course</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF7F2;--bg-warm:#F5F0E8;--bg-code:#1E1E2E;--text:#2C2A28;--accent:#D94F30;--success:#2D8B55;--error:#C93B3B;--info:#2A7B9B;--scala-red:#DC322F;--scala-dark:#2B2B2B;--font-head:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-mono:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;background:linear-gradient(135deg,#2B2B2B 0%,#1a1a2e 50%,#16213e 100%);color:#fff;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 40%,rgba(220,50,47,.15) 0%,transparent 50%),radial-gradient(circle at 70% 60%,rgba(217,79,48,.1) 0%,transparent 50%);animation:pulse 8s ease-in-out infinite alternate}
+@keyframes pulse{0%{transform:scale(1)}100%{transform:scale(1.05)}}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(220,50,47,.15);border:1px solid rgba(220,50,47,.4);padding:.4rem 1rem;border-radius:2rem;font-size:.85rem;color:#ff6b6b;margin-bottom:1.5rem;position:relative;z-index:1}
+.hero h1{font-family:var(--font-head);font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;line-height:1.1;margin-bottom:1rem;position:relative;z-index:1}
+.hero h1 .red{color:#DC322F}
+.hero p{font-size:clamp(1rem,2vw,1.25rem);max-width:600px;opacity:.85;margin-bottom:2rem;position:relative;z-index:1}
+.hero-stats{display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;margin-bottom:2.5rem;position:relative;z-index:1}
+.stat{text-align:center}
+.stat-num{font-family:var(--font-head);font-size:2rem;font-weight:800;color:#DC322F}
+.stat-label{font-size:.8rem;opacity:.7}
+.start-btn{display:inline-flex;align-items:center;gap:.5rem;padding:1rem 2.5rem;background:#DC322F;color:#fff;text-decoration:none;border-radius:12px;font-weight:600;font-size:1.1rem;transition:transform .2s,box-shadow .2s;position:relative;z-index:1}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(220,50,47,.4)}
+.modules-section{padding:4rem 2rem;max-width:1100px;margin:0 auto}
+.section-title{font-family:var(--font-head);font-size:2rem;font-weight:700;text-align:center;margin-bottom:.5rem}
+.section-sub{text-align:center;opacity:.7;margin-bottom:3rem;max-width:600px;margin-left:auto;margin-right:auto}
+.module-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
+.module-card{background:#fff;border-radius:16px;padding:1.8rem;border:1px solid rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s;text-decoration:none;color:var(--text);display:flex;flex-direction:column;position:relative;overflow:hidden}
+.module-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.08)}
+.module-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+.module-card:nth-child(1)::before{background:#DC322F}
+.module-card:nth-child(2)::before{background:#268BD2}
+.module-card:nth-child(3)::before{background:#859900}
+.module-card:nth-child(4)::before{background:#B58900}
+.module-card:nth-child(5)::before{background:#6C71C4}
+.module-card:nth-child(6)::before{background:#2AA198}
+.module-card:nth-child(7)::before{background:#D33682}
+.module-card:nth-child(8)::before{background:#CB4B16}
+.mod-num{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}
+.mod-title{font-family:var(--font-head);font-size:1.25rem;font-weight:700;margin-bottom:.5rem}
+.mod-desc{font-size:.9rem;opacity:.7;flex:1}
+.mod-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1rem}
+.tag{font-size:.7rem;padding:.2rem .6rem;border-radius:1rem;background:var(--bg-warm);font-weight:500}
+.footer{text-align:center;padding:3rem 2rem;opacity:.5;font-size:.85rem}
+</style>
+</head>
+<body>
+<section class="hero">
+  <div class="hero-badge">🎯 Interactive Interview Prep</div>
+  <h1>Ace Your <span class="red">Scala</span> Interview</h1>
+  <p>From basics to Spark — master every concept interviewers love to ask. Interactive quizzes, animated diagrams, and real code examples.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">8</div><div class="stat-label">Modules</div></div>
+    <div class="stat"><div class="stat-num">60+</div><div class="stat-label">Questions</div></div>
+    <div class="stat"><div class="stat-num">25+</div><div class="stat-label">Quizzes</div></div>
+    <div class="stat"><div class="stat-num">0</div><div class="stat-label">Prerequisites</div></div>
+  </div>
+  <a href="module-01-what-is-scala/index.html" class="start-btn">Start Learning →</a>
+</section>
+
+<section class="modules-section">
+  <h2 class="section-title">Course Modules</h2>
+  <p class="section-sub">Each module builds on the last. Start from the top or jump to what you need.</p>
+  <div class="module-grid">
+    <a href="module-01-what-is-scala/index.html" class="module-card">
+      <div class="mod-num">Module 01</div>
+      <div class="mod-title">What Is Scala & Why It Matters</div>
+      <div class="mod-desc">Scala vs Java, the JVM, and why companies use Scala. The 30-second pitch for every interview.</div>
+      <div class="mod-tags"><span class="tag">JVM</span><span class="tag">Scala vs Java</span><span class="tag">Key Features</span></div>
+    </a>
+    <a href="module-02-building-blocks/index.html" class="module-card">
+      <div class="mod-num">Module 02</div>
+      <div class="mod-title">Scala Building Blocks</div>
+      <div class="mod-desc">val vs var, case classes, companion objects, and the building blocks interviewers always ask about.</div>
+      <div class="mod-tags"><span class="tag">val/var</span><span class="tag">Case Classes</span><span class="tag">Objects</span></div>
+    </a>
+    <a href="module-03-functional-power/index.html" class="module-card">
+      <div class="mod-num">Module 03</div>
+      <div class="mod-title">Functional Programming Power</div>
+      <div class="mod-desc">Higher-order functions, pattern matching, Option/Some/None, and monads — demystified.</div>
+      <div class="mod-tags"><span class="tag">HOFs</span><span class="tag">Pattern Matching</span><span class="tag">Monads</span></div>
+    </a>
+    <a href="module-04-collections/index.html" class="module-card">
+      <div class="mod-num">Module 04</div>
+      <div class="mod-title">Collections & Transformations</div>
+      <div class="mod-desc">map, flatMap, filter, fold — the collection operations you'll be asked to use in every coding round.</div>
+      <div class="mod-tags"><span class="tag">map/flatMap</span><span class="tag">Immutable</span><span class="tag">Mutable</span></div>
+    </a>
+    <a href="module-05-type-system/index.html" class="module-card">
+      <div class="mod-num">Module 05</div>
+      <div class="mod-title">Traits, Implicits & Types</div>
+      <div class="mod-desc">Traits vs interfaces, implicit magic, type variance (+, -, =), and the type system that makes Scala unique.</div>
+      <div class="mod-tags"><span class="tag">Traits</span><span class="tag">Implicits</span><span class="tag">Variance</span></div>
+    </a>
+    <a href="module-06-concurrency/index.html" class="module-card">
+      <div class="mod-num">Module 06</div>
+      <div class="mod-title">Concurrency & Async</div>
+      <div class="mod-desc">Futures, Promises, Akka actors — how Scala handles doing many things at once.</div>
+      <div class="mod-tags"><span class="tag">Future</span><span class="tag">Akka</span><span class="tag">Actors</span></div>
+    </a>
+    <a href="module-07-spark/index.html" class="module-card">
+      <div class="mod-num">Module 07</div>
+      <div class="mod-title">Scala + Apache Spark</div>
+      <div class="mod-desc">RDDs, DataFrames, Datasets, lazy evaluation, and optimizing Spark jobs — critical for data engineering roles.</div>
+      <div class="mod-tags"><span class="tag">RDD</span><span class="tag">DataFrame</span><span class="tag">Optimization</span></div>
+    </a>
+    <a href="module-08-battle-plan/index.html" class="module-card">
+      <div class="mod-num">Module 08</div>
+      <div class="mod-title">Interview Battle Plan</div>
+      <div class="mod-desc">Top trick questions, common pitfalls, whiteboard strategies, and a final mega-quiz to test everything.</div>
+      <div class="mod-tags"><span class="tag">Trick Qs</span><span class="tag">Mega Quiz</span><span class="tag">Strategy</span></div>
+    </a>
+  </div>
+</section>
+
+<footer class="footer">Scala Interview Mastery · Interactive Course · No setup required</footer>
+</body>
+</html>

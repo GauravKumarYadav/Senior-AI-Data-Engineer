@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 7: Scala + Apache Spark</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF7F2;--bg-warm:#F5F0E8;--bg-code:#1E1E2E;--text:#2C2A28;--accent:#D33682;--success:#2D8B55;--error:#C93B3B;--info:#2A7B9B;--font-head:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-mono:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.06)}.nav-inner{max-width:1100px;margin:0 auto;padding:.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between}.nav-title{font-family:var(--font-head);font-weight:700;text-decoration:none;color:var(--text);font-size:.95rem}.nav-dots{display:flex;gap:.4rem}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background .2s}.nav-dot.active{background:var(--accent);transform:scale(1.2)}.nav-dot:hover{background:var(--accent);opacity:.7}.progress-bar{position:absolute;bottom:0;left:0;height:3px;background:var(--accent);transition:width .1s}
+section{min-height:100vh;min-height:100dvh;padding:5rem 2rem 3rem;display:flex;align-items:center;justify-content:center}
+.container{max-width:900px;width:100%;margin:0 auto}
+.screen-label{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.15}
+.subtitle{font-size:1.1rem;opacity:.7;margin-bottom:2rem;max-width:600px}
+.translation{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:12px;overflow:hidden;margin:1.5rem 0}
+.translation .code-side{padding:1.5rem;background:var(--bg-code);color:#cdd6f4;font-family:var(--font-mono);font-size:.82rem;white-space:pre-wrap;line-height:1.7}
+.translation .english-side{padding:1.5rem;background:var(--bg-warm);font-size:.9rem;line-height:1.8;border-left:3px solid var(--accent)}
+.english-side .line{margin-bottom:.5rem;display:flex;gap:.5rem}.line-arrow{color:var(--accent);font-weight:700}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.2rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:12px;padding:1.5rem;border:1px solid rgba(0,0,0,.06);position:relative;overflow:hidden}.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)}
+.card h3{font-family:var(--font-head);font-size:1.05rem;font-weight:700;margin-bottom:.4rem}.card p{font-size:.88rem;opacity:.75}
+.aha{background:linear-gradient(135deg,#FFF0F7,#FDE8F2);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.aha-title{font-family:var(--font-head);font-weight:700;color:var(--accent);margin-bottom:.3rem}
+.quiz-box{background:#fff;border-radius:12px;padding:1.8rem;border:1px solid rgba(0,0,0,.08);margin:1.5rem 0}
+.quiz-q{font-family:var(--font-head);font-weight:700;font-size:1.1rem;margin-bottom:1rem}
+.quiz-opt{display:block;padding:.8rem 1rem;margin:.4rem 0;border:2px solid rgba(0,0,0,.08);border-radius:10px;cursor:pointer;transition:border-color .2s;font-size:.92rem}
+.quiz-opt:hover{border-color:var(--accent)}
+.quiz-opt.selected{border-color:var(--accent);background:rgba(211,54,130,.08)}
+.quiz-opt.correct{border-color:var(--success);background:rgba(45,139,85,.08)}
+.quiz-opt.wrong{border-color:var(--error);background:rgba(201,59,59,.08)}
+.quiz-btn{padding:.7rem 1.5rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;margin-top:.8rem;font-size:.9rem}
+.quiz-feedback{margin-top:.8rem;padding:.8rem 1rem;border-radius:8px;font-size:.9rem;display:none}
+.compare-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:12px;overflow:hidden;margin:1.5rem 0;font-size:.88rem}
+.compare-table th{background:var(--bg-code);color:#cdd6f4;padding:.8rem 1rem;text-align:left;font-family:var(--font-head)}
+.compare-table td{padding:.7rem 1rem;border-bottom:1px solid rgba(0,0,0,.05)}
+.compare-table tr:nth-child(even) td{background:rgba(0,0,0,.02)}
+.flow-container{background:var(--bg-warm);border-radius:16px;padding:2rem;margin:1.5rem 0;text-align:center}
+.flow-steps{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;margin:1rem 0}
+.flow-step{background:#fff;border-radius:10px;padding:.8rem 1.2rem;font-size:.85rem;font-weight:600;border:2px solid transparent;transition:all .3s;opacity:.4}
+.flow-step.active{opacity:1;border-color:var(--accent);transform:scale(1.05)}
+.flow-arrow{font-size:1.2rem;color:var(--accent);opacity:.4}.flow-arrow.active{opacity:1}
+.flow-desc{margin-top:1rem;font-size:.9rem;min-height:3rem}
+.flow-controls{display:flex;gap:.5rem;justify-content:center;margin-top:1rem}
+.flow-btn{padding:.5rem 1rem;border:1px solid rgba(0,0,0,.1);background:#fff;border-radius:8px;cursor:pointer;font-size:.8rem;font-weight:500}.flow-btn:hover{background:var(--accent);color:#fff}
+section:nth-child(odd){background:var(--bg)}section:nth-child(even){background:var(--bg-warm)}
+.module-nav{display:flex;justify-content:space-between;padding:2rem;max-width:900px;margin:0 auto}.module-nav a{text-decoration:none;color:var(--accent);font-weight:600;font-size:.95rem;padding:.8rem 1.2rem;border-radius:10px;border:1px solid rgba(211,54,130,.2)}.module-nav a:hover{background:rgba(211,54,130,.06)}
+@media(max-width:700px){.translation{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}.flow-steps{flex-direction:column}.flow-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎯 Scala Interview Mastery</a><div class="nav-dots"><a href="../module-01-what-is-scala/" class="nav-dot"></a><a href="../module-02-building-blocks/" class="nav-dot"></a><a href="../module-03-functional-power/" class="nav-dot"></a><a href="../module-04-collections/" class="nav-dot"></a><a href="../module-05-type-system/" class="nav-dot"></a><a href="../module-06-concurrency/" class="nav-dot"></a><a href="./" class="nav-dot active"></a><a href="../module-08-battle-plan/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: RDD vs DataFrame vs Dataset -->
+<section id="s1">
+<div class="container">
+  <div class="screen-label">Screen 1 of 5</div>
+  <h2>RDD vs DataFrame vs Dataset</h2>
+  <p class="subtitle">Think of these as three generations of <strong>data shipping containers</strong>. Each newer version is smarter and more optimized than the last.</p>
+  <table class="compare-table">
+    <tr><th>Feature</th><th>RDD</th><th>DataFrame</th><th>Dataset</th></tr>
+    <tr><td>Generation</td><td>1st (original)</td><td>2nd</td><td>3rd (best of both)</td></tr>
+    <tr><td>Type safety</td><td>✅ At compile time</td><td>❌ Runtime only</td><td>✅ At compile time</td></tr>
+    <tr><td>Optimization</td><td>❌ Manual</td><td>✅ Catalyst optimizer</td><td>✅ Catalyst optimizer</td></tr>
+    <tr><td>Schema</td><td>No schema</td><td>Has schema</td><td>Has schema + types</td></tr>
+    <tr><td>API style</td><td>Functional (map, filter)</td><td>SQL-like</td><td>Both!</td></tr>
+    <tr><td>Best for</td><td>Low-level control</td><td>SQL queries, ETL</td><td>Type-safe pipelines</td></tr>
+  </table>
+  <div class="aha"><div class="aha-title">🎯 Interview Gold</div>"When should you use RDDs?" → Almost never in modern Spark. Use DataFrames for untyped operations (SQL-like) or Datasets for type-safe pipelines. RDDs lack Catalyst optimization and are significantly slower.</div>
+</div>
+</section>
+
+<!-- Screen 2: Basic Spark Job -->
+<section id="s2">
+<div class="container">
+  <div class="screen-label">Screen 2 of 5</div>
+  <h2>Writing a Spark Job in Scala</h2>
+  <p class="subtitle">Think of a Spark job like running a <strong>factory operation</strong>: start the factory (SparkSession), load raw materials (data), process them (transformations), and ship the product (actions).</p>
+  <div class="translation">
+    <div class="code-side"><span class="kw">import</span> org.apache.spark.sql.<span class="tp">SparkSession</span>
+
+<span class="kw">val</span> spark = <span class="tp">SparkSession</span>.builder
+  .appName(<span class="str">"WordCount"</span>)
+  .getOrCreate()
+
+<span class="kw">val</span> data = spark.read.text(<span class="str">"data.txt"</span>)
+
+<span class="kw">val</span> words = data
+  .flatMap(_.split(<span class="str">" "</span>))
+  .groupByKey(identity)
+  .count()
+
+words.show()
+spark.stop()</div>
+    <div class="english-side">
+      <div class="line"><span class="line-arrow">→</span> SparkSession is the entry point — like opening the factory doors.</div>
+      <div class="line"><span class="line-arrow">→</span> <code>.appName</code> names your job (visible in Spark UI).</div>
+      <div class="line"><span class="line-arrow">→</span> Read a text file as a DataFrame.</div>
+      <div class="line"><span class="line-arrow">→</span> Split each line into words, group identical words, count them.</div>
+      <div class="line"><span class="line-arrow">→</span> <code>.show()</code> is an ACTION — this triggers actual execution!</div>
+      <div class="line"><span class="line-arrow">→</span> Clean up resources when done.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- Screen 3: Lazy Evaluation Flow -->
+<section id="s3">
+<div class="container">
+  <div class="screen-label">Screen 3 of 5</div>
+  <h2>Lazy Evaluation & Transformations vs Actions</h2>
+  <p class="subtitle">Spark is like a <strong>brilliant but lazy architect</strong>. It draws up the entire blueprint (DAG) first, then finds the most efficient way to build — only when you say "GO!"</p>
+  <div class="flow-container" id="lazyFlow">
+    <div class="flow-steps">
+      <div class="flow-step" data-idx="0">.read.text()</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" data-idx="1">.filter(...)</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" data-idx="2">.map(...)</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" data-idx="3">.groupBy(...)</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" data-idx="4" style="background:var(--accent);color:#fff">.count() 🚀</div>
+    </div>
+    <div class="flow-desc" id="lazyDesc">Click "Next Step" to see how Spark builds its execution plan.</div>
+    <div class="flow-controls">
+      <button class="flow-btn" onclick="flowNext('lazyFlow')">Next Step →</button>
+      <button class="flow-btn" onclick="flowReset('lazyFlow')">&#8635; Restart</button>
+    </div>
+  </div>
+  <div class="card-grid">
+    <div class="card"><h3>📝 Transformations (lazy)</h3><p>map, filter, flatMap, groupBy, join, select — these build the plan but do NOTHING yet. Like writing a recipe.</p></div>
+    <div class="card"><h3>🚀 Actions (trigger execution)</h3><p>count, show, collect, save, first — these say "GO!" Spark optimizes the plan then executes. Like cooking the recipe.</p></div>
+  </div>
+  <div class="aha"><div class="aha-title">💡 Why Lazy?</div>Spark can optimize the ENTIRE pipeline before running. It pushes filters earlier, combines operations, minimizes data shuffling. A eager system can't do this because it runs each step immediately.</div>
+</div>
+</section>
+
+<!-- Screen 4: Optimization -->
+<section id="s4">
+<div class="container">
+  <div class="screen-label">Screen 4 of 5</div>
+  <h2>Optimizing Spark Jobs — Top Interview Questions</h2>
+  <p class="subtitle">Data engineering interviews LOVE asking about Spark optimization. Here are the top strategies:</p>
+  <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
+    <div class="card"><h3>📊 Use DataFrames</h3><p>Catalyst optimizer makes DataFrames 10-100x faster than RDDs for the same operation. Always prefer them.</p></div>
+    <div class="card"><h3>📡 Broadcast Joins</h3><p>When joining a small table with a large one, broadcast the small table to all nodes. Avoids expensive shuffles.</p></div>
+    <div class="card"><h3>📦 Caching</h3><p>Use <code>.cache()</code> or <code>.persist()</code> for DataFrames you read multiple times. Avoids re-computation.</p></div>
+    <div class="card"><h3">🔧 Partitioning</h3><p>Right number of partitions = right parallelism. Too few = underutilized cluster. Too many = overhead.</p></div>
+    <div class="card"><h3>🚫 Avoid Shuffles</h3><p>Operations like groupBy and join shuffle data across the network. Minimize them or use pre-partitioned data.</p></div>
+    <div class="card"><h3">⬇️ Filter Early</h3><p>Push filters as early as possible in the pipeline. Less data flowing through = faster everything.</p></div>
+  </div>
+  <div class="aha"><div class="aha-title">🎯 Common Interview Q</div>"How do you handle data skew?" → Salt the join key (add random prefix to distribute evenly), use adaptive query execution (AQE in Spark 3+), or isolate skewed keys and process them separately.</div>
+</div>
+</section>
+
+<!-- Screen 5: Quiz -->
+<section id="s5">
+<div class="container">
+  <div class="screen-label">Screen 5 of 5</div>
+  <h2>Test Yourself 🧠</h2>
+  <div class="quiz-box">
+    <div class="quiz-q">Q1: You write <code>df.filter(...).map(...).groupBy(...)</code> in Spark. How much computation has happened?</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">None — these are all transformations (lazy). No action has triggered execution.</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">All three operations have run</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Only filter has run</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">It depends on the data size</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box" style="margin-top:1.5rem">
+    <div class="quiz-q">Q2: You're joining a 1TB table with a 50MB lookup table. What optimization should you use?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Repartition both tables to the same number of partitions</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">Broadcast join — send the 50MB table to all nodes to avoid shuffling the 1TB table</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Convert both to RDDs first</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Use collect() to bring both tables to the driver</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box" style="margin-top:1.5rem">
+    <div class="quiz-q">Q3: Why are Datasets preferred over RDDs in modern Spark?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Datasets are easier to write</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Datasets use less memory</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">Datasets have compile-time type safety AND benefit from Spark's Catalyst query optimizer</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Datasets can only be used with Scala, not Python</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+</div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-06-concurrency/index.html">← Previous: Concurrency</a>
+  <a href="../module-08-battle-plan/index.html">Next: Battle Plan →</a>
+</footer>
+
+<script>
+(function(){
+  window.addEventListener('scroll',function(){var s=document.documentElement,p=(s.scrollTop/(s.scrollHeight-s.clientHeight))*100;document.getElementById('progressBar').style.width=p+'%'},{passive:true});
+  window.selectOpt=function(el){el.closest('.quiz-box').querySelectorAll('.quiz-opt').forEach(function(o){o.classList.remove('selected')});el.classList.add('selected')};
+  window.checkQuiz=function(btn){var box=btn.closest('.quiz-box'),sel=box.querySelector('.quiz-opt.selected'),fb=box.querySelector('.quiz-feedback');if(!sel){fb.textContent='Pick an answer!';fb.style.display='block';fb.style.background='var(--bg-warm)';return}var c=sel.getAttribute('data-correct')==='true';box.querySelectorAll('.quiz-opt').forEach(function(o){o.style.pointerEvents='none';if(o.getAttribute('data-correct')==='true')o.classList.add('correct');if(o===sel&&!c)o.classList.add('wrong')});fb.style.display='block';fb.textContent=c?'✅ Correct!':'❌ Not quite. See the green answer.';fb.style.background=c?'rgba(45,139,85,.1)':'rgba(201,59,59,.1)';fb.style.color=c?'var(--success)':'var(--error)';btn.disabled=true};
+  var flowState={};
+  var flowDescs={lazyFlow:['Read data from file — Spark notes this but does NOT read yet.','Filter transformation added to the plan. Still no data loaded!','Map transformation queued. Spark is just building a recipe.','GroupBy added. Spark now knows the full pipeline.','ACTION! .count() triggers execution. Spark optimizes the entire DAG, then runs it all at once in the most efficient order!']};
+  window.flowNext=function(id){var el=document.getElementById(id);if(!flowState[id])flowState[id]=0;var steps=el.querySelectorAll('.flow-step');var arrows=el.querySelectorAll('.flow-arrow');var desc=el.querySelector('.flow-desc');if(flowState[id]<steps.length){steps[flowState[id]].classList.add('active');if(flowState[id]>0)arrows[flowState[id]-1].classList.add('active');desc.textContent=flowDescs[id][flowState[id]];flowState[id]++}};
+  window.flowReset=function(id){var el=document.getElementById(id);flowState[id]=0;el.querySelectorAll('.flow-step,.flow-arrow').forEach(function(s){s.classList.remove('active')});el.querySelector('.flow-desc').textContent='Click "Next Step" to see how Spark builds its plan.'};
+})();
+</script>
+</body>
+</html>

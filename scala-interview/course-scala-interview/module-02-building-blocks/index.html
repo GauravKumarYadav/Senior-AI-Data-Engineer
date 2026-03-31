@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2: Scala Building Blocks</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF7F2;--bg-warm:#F5F0E8;--bg-code:#1E1E2E;--text:#2C2A28;--accent:#268BD2;--success:#2D8B55;--error:#C93B3B;--info:#2A7B9B;--font-head:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-mono:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.06)}.nav-inner{max-width:1100px;margin:0 auto;padding:.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between}.nav-title{font-family:var(--font-head);font-weight:700;text-decoration:none;color:var(--text);font-size:.95rem}.nav-dots{display:flex;gap:.4rem}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background .2s}.nav-dot.active{background:var(--accent);transform:scale(1.2)}.nav-dot:hover{background:var(--accent);opacity:.7}.progress-bar{position:absolute;bottom:0;left:0;height:3px;background:var(--accent);transition:width .1s}
+section{min-height:100vh;min-height:100dvh;padding:5rem 2rem 3rem;display:flex;align-items:center;justify-content:center}
+.container{max-width:900px;width:100%;margin:0 auto}
+.screen-label{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.15}
+.subtitle{font-size:1.1rem;opacity:.7;margin-bottom:2rem;max-width:600px}
+.translation{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:12px;overflow:hidden;margin:1.5rem 0}
+.translation .code-side{padding:1.5rem;background:var(--bg-code);color:#cdd6f4;font-family:var(--font-mono);font-size:.82rem;white-space:pre-wrap;line-height:1.7}
+.translation .english-side{padding:1.5rem;background:var(--bg-warm);font-size:.9rem;line-height:1.8;border-left:3px solid var(--accent)}
+.english-side .line{margin-bottom:.5rem;display:flex;gap:.5rem}.line-arrow{color:var(--accent);font-weight:700}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.2rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:12px;padding:1.5rem;border:1px solid rgba(0,0,0,.06);position:relative;overflow:hidden}.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)}
+.card h3{font-family:var(--font-head);font-size:1.05rem;font-weight:700;margin-bottom:.4rem}.card p{font-size:.88rem;opacity:.75}
+.aha{background:linear-gradient(135deg,#F0F7FF,#E8F4FD);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.aha-title{font-family:var(--font-head);font-weight:700;color:var(--accent);margin-bottom:.3rem}
+.quiz-box{background:#fff;border-radius:12px;padding:1.8rem;border:1px solid rgba(0,0,0,.08);margin:1.5rem 0}
+.quiz-q{font-family:var(--font-head);font-weight:700;font-size:1.1rem;margin-bottom:1rem}
+.quiz-opt{display:block;padding:.8rem 1rem;margin:.4rem 0;border:2px solid rgba(0,0,0,.08);border-radius:10px;cursor:pointer;transition:border-color .2s,background .2s;font-size:.92rem}
+.quiz-opt:hover{border-color:var(--accent);background:rgba(38,139,210,.03)}
+.quiz-opt.selected{border-color:var(--accent);background:rgba(38,139,210,.06)}
+.quiz-opt.correct{border-color:var(--success);background:rgba(45,139,85,.08)}
+.quiz-opt.wrong{border-color:var(--error);background:rgba(201,59,59,.08)}
+.quiz-btn{padding:.7rem 1.5rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;margin-top:.8rem;font-size:.9rem}.quiz-btn:hover{transform:scale(1.03)}
+.quiz-feedback{margin-top:.8rem;padding:.8rem 1rem;border-radius:8px;font-size:.9rem;display:none}
+.compare-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:12px;overflow:hidden;margin:1.5rem 0;font-size:.88rem}
+.compare-table th{background:var(--bg-code);color:#cdd6f4;padding:.8rem 1rem;text-align:left;font-family:var(--font-head)}
+.compare-table td{padding:.7rem 1rem;border-bottom:1px solid rgba(0,0,0,.05)}
+.compare-table tr:nth-child(even) td{background:rgba(0,0,0,.02)}
+.code-block{background:var(--bg-code);border-radius:12px;padding:1.5rem;color:#cdd6f4;font-family:var(--font-mono);font-size:.85rem;overflow-x:auto;white-space:pre-wrap;margin:1rem 0;line-height:1.7}
+.kw{color:#cba6f7}.str{color:#a6e3a1}.cm{color:#6c7086;font-style:italic}.fn{color:#89b4fa}.tp{color:#f9e2af}.num{color:#fab387}.err{color:#f38ba8}
+section:nth-child(odd){background:var(--bg)}section:nth-child(even){background:var(--bg-warm)}
+.module-nav{display:flex;justify-content:space-between;padding:2rem;max-width:900px;margin:0 auto}.module-nav a{text-decoration:none;color:var(--accent);font-weight:600;font-size:.95rem;padding:.8rem 1.2rem;border-radius:10px;border:1px solid rgba(38,139,210,.2)}.module-nav a:hover{background:rgba(38,139,210,.06)}
+@media(max-width:700px){.translation{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎯 Scala Interview Mastery</a><div class="nav-dots"><a href="../module-01-what-is-scala/" class="nav-dot" aria-label="Module 1"></a><a href="./" class="nav-dot active" aria-label="Module 2"></a><a href="../module-03-functional-power/" class="nav-dot" aria-label="Module 3"></a><a href="../module-04-collections/" class="nav-dot" aria-label="Module 4"></a><a href="../module-05-type-system/" class="nav-dot" aria-label="Module 5"></a><a href="../module-06-concurrency/" class="nav-dot" aria-label="Module 6"></a><a href="../module-07-spark/" class="nav-dot" aria-label="Module 7"></a><a href="../module-08-battle-plan/" class="nav-dot" aria-label="Module 8"></a></div></div></nav>
+
+<!-- Screen 1: val vs var vs lazy val -->
+<section id="s1">
+<div class="container">
+  <div class="screen-label">Screen 1 of 5</div>
+  <h2><code style="color:var(--accent)">val</code> vs <code style="color:var(--accent)">var</code> vs <code style="color:var(--accent)">lazy val</code></h2>
+  <p class="subtitle">Imagine three types of shipping labels. This is Scala's variable system — one of the <strong>most common interview questions</strong>.</p>
+  <table class="compare-table">
+    <tr><th>Keyword</th><th>Mutable?</th><th>When Evaluated?</th><th>Metaphor</th></tr>
+    <tr><td><code>val</code></td><td>❌ Immutable</td><td>Immediately</td><td>📦 Sealed package — once packed, can't reopen</td></tr>
+    <tr><td><code>var</code></td><td>✅ Mutable</td><td>Immediately</td><td>📥 Open box — swap contents anytime</td></tr>
+    <tr><td><code>lazy val</code></td><td>❌ Immutable</td><td>On first access</td><td>📨 Sealed package that's only built when someone asks for it</td></tr>
+  </table>
+  <div class="translation">
+    <div class="code-side"><span class="kw">val</span> name = <span class="str">"Alice"</span>
+<span class="cm">// name = "Bob"  // ❌ ERROR!</span>
+
+<span class="kw">var</span> score = <span class="num">10</span>
+score = <span class="num">20</span>  <span class="cm">// ✅ OK</span>
+
+<span class="kw">lazy val</span> data = {
+  println(<span class="str">"Loading..."</span>)
+  <span class="num">42</span>
+}
+<span class="cm">// "Loading..." only prints</span>
+<span class="cm">// when you first use 'data'</span></div>
+    <div class="english-side">
+      <div class="line"><span class="line-arrow">→</span> Create a permanent label "name" = Alice. Can never change.</div>
+      <div class="line"><span class="line-arrow">→</span> If you try to change it, Scala refuses to compile.</div>
+      <div class="line"><span class="line-arrow">→</span> Create a changeable score starting at 10.</div>
+      <div class="line"><span class="line-arrow">→</span> Update score to 20 — totally fine with var.</div>
+      <div class="line"><span class="line-arrow">→</span> Create a lazy value. The code block doesn't run yet!</div>
+      <div class="line"><span class="line-arrow">→</span> Only when someone reads "data" does it execute and cache the result (42).</div>
+    </div>
+  </div>
+  <div class="aha"><div class="aha-title">💡 When to use lazy val?</div>Use it for expensive computations (database connections, file loading) that you might not always need. It saves resources by computing only on demand.</div>
+</div>
+</section>
+
+<!-- Screen 2: Case Classes -->
+<section id="s2">
+<div class="container">
+  <div class="screen-label">Screen 2 of 5</div>
+  <h2>Case Classes — Data in a Gift Box</h2>
+  <p class="subtitle">Think of a case class like a <strong>pre-printed form</strong>. You define the fields once, and Scala fills in all the boring methods for you.</p>
+  <div class="translation">
+    <div class="code-side"><span class="kw">case class</span> <span class="tp">Person</span>(name: <span class="tp">String</span>, age: <span class="tp">Int</span>)
+
+<span class="kw">val</span> p1 = <span class="tp">Person</span>(<span class="str">"John"</span>, <span class="num">30</span>)
+<span class="kw">val</span> p2 = <span class="tp">Person</span>(<span class="str">"John"</span>, <span class="num">30</span>)
+
+println(p1)        <span class="cm">// Person(John,30)</span>
+println(p1 == p2)  <span class="cm">// true</span>
+
+<span class="kw">val</span> p3 = p1.copy(age = <span class="num">31</span>)
+<span class="cm">// Person(John,31)</span></div>
+    <div class="english-side">
+      <div class="line"><span class="line-arrow">→</span> Define a Person form with two fields: name and age.</div>
+      <div class="line"><span class="line-arrow">→</span> Create John, age 30. No "new" keyword needed!</div>
+      <div class="line"><span class="line-arrow">→</span> Create another identical John.</div>
+      <div class="line"><span class="line-arrow">→</span> Printing shows nice output (auto toString).</div>
+      <div class="line"><span class="line-arrow">→</span> Comparing works by values, not memory (auto equals).</div>
+      <div class="line"><span class="line-arrow">→</span> Copy John but change age to 31. Original is unchanged (immutable!).</div>
+    </div>
+  </div>
+  <div class="card-grid">
+    <div class="card"><h3>🎁 What you get free</h3><p>toString, equals, hashCode, copy method, apply (no "new" needed), unapply (pattern matching support)</p></div>
+    <div class="card"><h3>🎯 Interview tip</h3><p>"When would you use a case class?" → For immutable data containers. DTOs, API responses, config objects, events.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- Screen 3: Companion Objects -->
+<section id="s3">
+<div class="container">
+  <div class="screen-label">Screen 3 of 5</div>
+  <h2>Companion Objects — The Class's Best Friend</h2>
+  <p class="subtitle">Imagine a <strong>phone and its charging dock</strong>. They share the same name, live together, and the dock provides utilities the phone can't do alone.</p>
+  <div class="translation">
+    <div class="code-side"><span class="kw">class</span> <span class="tp">Person</span>(<span class="kw">val</span> name: <span class="tp">String</span>, <span class="kw">val</span> age: <span class="tp">Int</span>)
+
+<span class="kw">object</span> <span class="tp">Person</span> {
+  <span class="kw">def</span> <span class="fn">apply</span>(name: <span class="tp">String</span>, age: <span class="tp">Int</span>): <span class="tp">Person</span> =
+    <span class="kw">new</span> <span class="tp">Person</span>(name, age)
+
+  <span class="kw">def</span> <span class="fn">fromCSV</span>(csv: <span class="tp">String</span>): <span class="tp">Person</span> = {
+    <span class="kw">val</span> parts = csv.split(<span class="str">","</span>)
+    <span class="kw">new</span> <span class="tp">Person</span>(parts(<span class="num">0</span>), parts(<span class="num">1</span>).toInt)
+  }
+}
+
+<span class="kw">val</span> p = <span class="tp">Person</span>(<span class="str">"John"</span>, <span class="num">25</span>)
+<span class="kw">val</span> p2 = <span class="tp">Person</span>.fromCSV(<span class="str">"Jane,28"</span>)</div>
+    <div class="english-side">
+      <div class="line"><span class="line-arrow">→</span> The class: a blueprint for creating Person instances.</div>
+      <div class="line"><span class="line-arrow">→</span> The companion object: shares the same name, lives in the same file.</div>
+      <div class="line"><span class="line-arrow">→</span> The <code>apply</code> method is magic — lets you write Person("John", 25) without "new".</div>
+      <div class="line"><span class="line-arrow">→</span> Factory method: create a Person from a CSV string like "Jane,28".</div>
+      <div class="line"><span class="line-arrow">→</span> Both ways of creating a Person work seamlessly.</div>
+    </div>
+  </div>
+  <div class="aha"><div class="aha-title">💡 Why companions exist</div>Scala has no <code>static</code> keyword (unlike Java). Companion objects are where you put "static-like" methods — factory methods, constants, utility functions that belong to the concept but not to any single instance.</div>
+</div>
+</section>
+
+<!-- Screen 4: String vs StringBuilder + @tailrec -->
+<section id="s4">
+<div class="container">
+  <div class="screen-label">Screen 4 of 5</div>
+  <h2>Quick Hits: Strings & Tail Recursion</h2>
+  <p class="subtitle">Two more topics interviewers sneak in. Let's nail them.</p>
+  <div class="card-grid">
+    <div class="card"><h3>📝 String (Immutable)</h3><p>Every modification creates a <em>new</em> string. Like writing on a whiteboard, erasing, and writing on a fresh one each time. Fine for small changes.</p></div>
+    <div class="card"><h3>⚡ StringBuilder (Mutable)</h3><p>Modifies in-place. Like having a notebook where you keep adding pages. Much faster for lots of text manipulation.</p></div>
+  </div>
+  <div class="translation">
+    <div class="code-side"><span class="kw">import</span> scala.annotation.tailrec
+
+<span class="fn">@tailrec</span>
+<span class="kw">def</span> <span class="fn">factorial</span>(n: <span class="tp">Int</span>, acc: <span class="tp">Int</span> = <span class="num">1</span>): <span class="tp">Int</span> = {
+  <span class="kw">if</span> (n <= <span class="num">0</span>) acc
+  <span class="kw">else</span> factorial(n - <span class="num">1</span>, n * acc)
+}</div>
+    <div class="english-side">
+      <div class="line"><span class="line-arrow">→</span> @tailrec = "Dear compiler, please verify this is tail-recursive."</div>
+      <div class="line"><span class="line-arrow">→</span> Tail-recursive means: the recursive call is the LAST thing in the function.</div>
+      <div class="line"><span class="line-arrow">→</span> The compiler converts it into a loop under the hood — no stack overflow!</div>
+      <div class="line"><span class="line-arrow">→</span> The "acc" (accumulator) carries the running result forward.</div>
+    </div>
+  </div>
+  <div class="aha"><div class="aha-title">🎯 Interview Favorite</div>"What does @tailrec do?" → It tells the compiler to check that a function is tail-recursive, so it can be optimized into a loop, preventing stack overflow errors on large inputs.</div>
+</div>
+</section>
+
+<!-- Screen 5: Quiz -->
+<section id="s5">
+<div class="container">
+  <div class="screen-label">Screen 5 of 5</div>
+  <h2>Test Yourself 🧠</h2>
+  <div class="quiz-box">
+    <div class="quiz-q">Q1: You need to store a database connection that's expensive to create and might not be needed. Which do you use?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">val connection = createDBConnection()</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">var connection = createDBConnection()</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">lazy val connection = createDBConnection()</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">def connection = createDBConnection()</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box" style="margin-top:1.5rem">
+    <div class="quiz-q">Q2: What does a case class give you for FREE that a regular class doesn't?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Mutable fields by default</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">Auto-generated toString, equals, hashCode, copy, and apply methods</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Faster runtime performance</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Automatic database persistence</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box" style="margin-top:1.5rem">
+    <div class="quiz-q">Q3: Why does Scala use companion objects instead of the "static" keyword?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Because static is reserved for other use</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Because static is slower</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">Because Scala is purely object-oriented — even "static" things are objects with full OOP capabilities</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Because companion objects use less memory</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+</div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-01-what-is-scala/index.html">← Previous: What Is Scala</a>
+  <a href="../module-03-functional-power/index.html">Next: Functional Power →</a>
+</footer>
+
+<script>
+(function(){
+  window.addEventListener('scroll',function(){var s=document.documentElement,p=(s.scrollTop/(s.scrollHeight-s.clientHeight))*100;document.getElementById('progressBar').style.width=p+'%'},{passive:true});
+  window.selectOpt=function(el){var box=el.closest('.quiz-box');box.querySelectorAll('.quiz-opt').forEach(function(o){o.classList.remove('selected')});el.classList.add('selected')};
+  window.checkQuiz=function(btn){var box=btn.closest('.quiz-box'),sel=box.querySelector('.quiz-opt.selected'),fb=box.querySelector('.quiz-feedback');if(!sel){fb.textContent='Pick an answer first!';fb.style.display='block';fb.style.background='var(--bg-warm)';return}var correct=sel.getAttribute('data-correct')==='true';box.querySelectorAll('.quiz-opt').forEach(function(o){o.style.pointerEvents='none';if(o.getAttribute('data-correct')==='true')o.classList.add('correct');if(o===sel&&!correct)o.classList.add('wrong')});fb.style.display='block';if(correct){fb.textContent='✅ Correct!';fb.style.background='rgba(45,139,85,.1)';fb.style.color='var(--success)'}else{fb.textContent='❌ Not quite. See the green answer above.';fb.style.background='rgba(201,59,59,.1)';fb.style.color='var(--error)'}btn.disabled=true};
+})();
+</script>
+</body>
+</html>

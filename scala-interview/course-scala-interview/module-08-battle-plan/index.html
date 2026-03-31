@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 8: Interview Battle Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF7F2;--bg-warm:#F5F0E8;--bg-code:#1E1E2E;--text:#2C2A28;--accent:#CB4B16;--success:#2D8B55;--error:#C93B3B;--info:#2A7B9B;--font-head:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-mono:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.06)}.nav-inner{max-width:1100px;margin:0 auto;padding:.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between}.nav-title{font-family:var(--font-head);font-weight:700;text-decoration:none;color:var(--text);font-size:.95rem}.nav-dots{display:flex;gap:.4rem}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background .2s}.nav-dot.active{background:var(--accent);transform:scale(1.2)}.nav-dot:hover{background:var(--accent);opacity:.7}.progress-bar{position:absolute;bottom:0;left:0;height:3px;background:var(--accent);transition:width .1s}
+section{min-height:100vh;min-height:100dvh;padding:5rem 2rem 3rem;display:flex;align-items:center;justify-content:center}
+.container{max-width:900px;width:100%;margin:0 auto}
+.screen-label{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.15}
+.subtitle{font-size:1.1rem;opacity:.7;margin-bottom:2rem;max-width:600px}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.2rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:12px;padding:1.5rem;border:1px solid rgba(0,0,0,.06);position:relative;overflow:hidden}.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)}
+.card h3{font-family:var(--font-head);font-size:1.05rem;font-weight:700;margin-bottom:.4rem}.card p{font-size:.88rem;opacity:.75}
+.aha{background:linear-gradient(135deg,#FFF5F0,#FFEDE5);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.aha-title{font-family:var(--font-head);font-weight:700;color:var(--accent);margin-bottom:.3rem}
+.quiz-box{background:#fff;border-radius:12px;padding:1.8rem;border:1px solid rgba(0,0,0,.08);margin:1rem 0}
+.quiz-q{font-family:var(--font-head);font-weight:700;font-size:1.05rem;margin-bottom:1rem}
+.quiz-opt{display:block;padding:.8rem 1rem;margin:.4rem 0;border:2px solid rgba(0,0,0,.08);border-radius:10px;cursor:pointer;transition:border-color .2s;font-size:.9rem}
+.quiz-opt:hover{border-color:var(--accent)}
+.quiz-opt.selected{border-color:var(--accent);background:rgba(203,75,22,.08)}
+.quiz-opt.correct{border-color:var(--success);background:rgba(45,139,85,.08)}
+.quiz-opt.wrong{border-color:var(--error);background:rgba(201,59,59,.08)}
+.quiz-btn{padding:.7rem 1.5rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;margin-top:.8rem;font-size:.9rem}
+.quiz-feedback{margin-top:.8rem;padding:.8rem 1rem;border-radius:8px;font-size:.9rem;display:none}
+.trick-qa{background:#fff;border-radius:12px;padding:1.5rem;border:1px solid rgba(0,0,0,.06);margin:1rem 0}
+.trick-q{font-family:var(--font-head);font-weight:700;font-size:1rem;margin-bottom:.5rem;color:var(--accent)}
+.trick-a{font-size:.9rem;opacity:0;max-height:0;overflow:hidden;transition:opacity .3s,max-height .3s}
+.trick-a.show{opacity:1;max-height:500px;margin-top:.5rem}
+.reveal-btn{padding:.4rem .8rem;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:500;margin-top:.5rem}.reveal-btn:hover{background:var(--accent);color:#fff}
+.score-box{background:linear-gradient(135deg,#2B2B2B,#1a1a2e);color:#fff;border-radius:16px;padding:2rem;text-align:center;margin:2rem 0}
+.score-num{font-family:var(--font-head);font-size:3rem;font-weight:800;color:var(--accent)}
+.score-label{font-size:1rem;opacity:.7}
+section:nth-child(odd){background:var(--bg)}section:nth-child(even){background:var(--bg-warm)}
+.module-nav{display:flex;justify-content:space-between;padding:2rem;max-width:900px;margin:0 auto}.module-nav a{text-decoration:none;color:var(--accent);font-weight:600;font-size:.95rem;padding:.8rem 1.2rem;border-radius:10px;border:1px solid rgba(203,75,22,.2)}.module-nav a:hover{background:rgba(203,75,22,.06)}
+.step-card{display:flex;gap:1rem;align-items:flex-start;padding:1.2rem;margin:.6rem 0}
+.step-num{width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:800;font-size:.9rem;flex-shrink:0}
+.step-content h4{font-family:var(--font-head);font-weight:700;margin-bottom:.2rem}.step-content p{font-size:.88rem;opacity:.75}
+@media(max-width:700px){.card-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎯 Scala Interview Mastery</a><div class="nav-dots"><a href="../module-01-what-is-scala/" class="nav-dot"></a><a href="../module-02-building-blocks/" class="nav-dot"></a><a href="../module-03-functional-power/" class="nav-dot"></a><a href="../module-04-collections/" class="nav-dot"></a><a href="../module-05-type-system/" class="nav-dot"></a><a href="../module-06-concurrency/" class="nav-dot"></a><a href="../module-07-spark/" class="nav-dot"></a><a href="./" class="nav-dot active"></a></div></div></nav>
+
+<!-- Screen 1: Top Trick Questions -->
+<section id="s1">
+<div class="container">
+  <div class="screen-label">Screen 1 of 5</div>
+  <h2>🎭 Top Trick Questions Interviewers Love</h2>
+  <p class="subtitle">These are designed to trip you up. Click "Reveal Answer" to study each one.</p>
+  <div class="trick-qa">
+    <div class="trick-q">1. "Is a val truly immutable in Scala?"</div>
+    <button class="reveal-btn" onclick="reveal(this)">Reveal Answer</button>
+    <div class="trick-a"><strong>Tricky!</strong> The <em>reference</em> is immutable — you can't reassign it. But the <em>object</em> it points to can be mutable. E.g., <code>val list = mutable.ArrayBuffer(1,2,3)</code> — you can't reassign <code>list</code>, but you CAN do <code>list += 4</code>.</div>
+  </div>
+  <div class="trick-qa">
+    <div class="trick-q">2. "What's the difference between == and eq in Scala?"</div>
+    <button class="reveal-btn" onclick="reveal(this)">Reveal Answer</button>
+    <div class="trick-a"><code>==</code> checks <strong>value equality</strong> (like Java's .equals). <code>eq</code> checks <strong>reference equality</strong> (same object in memory, like Java's ==). In Scala, you almost always want <code>==</code>.</div>
+  </div>
+  <div class="trick-qa">
+    <div class="trick-q">3. "What happens if you have two implicit values of the same type in scope?"</div>
+    <button class="reveal-btn" onclick="reveal(this)">Reveal Answer</button>
+    <div class="trick-a"><strong>Compile error!</strong> "Ambiguous implicit values." The compiler can't decide which one to use. You must either remove one or make one more specific (e.g., put it in a closer scope).</div>
+  </div>
+  <div class="trick-qa">
+    <div class="trick-q">4. "Can a case class extend another case class?"</div>
+    <button class="reveal-btn" onclick="reveal(this)">Reveal Answer</button>
+    <div class="trick-a"><strong>No!</strong> Case class inheritance is prohibited in Scala. It causes problems with auto-generated equals/hashCode. Use a sealed trait with multiple case classes instead: <code>sealed trait Shape; case class Circle(r: Double) extends Shape; case class Square(s: Double) extends Shape</code></div>
+  </div>
+  <div class="trick-qa">
+    <div class="trick-q">5. "What is Nothing in Scala?"</div>
+    <button class="reveal-btn" onclick="reveal(this)">Reveal Answer</button>
+    <div class="trick-a"><code>Nothing</code> is the bottom type — a subtype of EVERY other type. It has no instances. It's the return type of expressions that never return normally: <code>throw new Exception</code> has type Nothing. This is why <code>Nil</code> (empty list) is <code>List[Nothing]</code> — it can be assigned to any <code>List[T]</code>.</div>
+  </div>
+</div>
+</section>
+
+<!-- Screen 2: Interview Strategy -->
+<section id="s2">
+<div class="container">
+  <div class="screen-label">Screen 2 of 5</div>
+  <h2>🛡️ Your Interview Strategy</h2>
+  <p class="subtitle">It's not just about knowing answers — it's about how you deliver them.</p>
+  <div class="step-card"><div class="step-num">1</div><div class="step-content"><h4>Start with the Metaphor</h4><p>"A Future is like ordering takeout..." — shows you truly understand the concept, not just memorized the definition.</p></div></div>
+  <div class="step-card"><div class="step-num">2</div><div class="step-content"><h4>Give the Technical Answer</h4><p>Then follow with the precise definition. "A Future represents an async computation that will eventually complete with a value or failure."</p></div></div>
+  <div class="step-card"><div class="step-num">3</div><div class="step-content"><h4>Show Trade-offs</h4><p>"Immutability is great for safety, but creates more garbage collection pressure. For hot paths, mutable may be justified." This shows senior-level thinking.</p></div></div>
+  <div class="step-card"><div class="step-num">4</div><div class="step-content"><h4>Mention Real-World Usage</h4><p>"In our system, we used Akka actors for order processing because..." Even hypothetical scenarios show applied knowledge.</p></div></div>
+  <div class="step-card"><div class="step-num">5</div><div class="step-content"><h4>Know What You Don't Know</h4><p>"I haven't used ZIO in production, but I understand it provides..." Honesty with awareness beats faking it every time.</p></div></div>
+</div>
+</section>
+
+<!-- Screen 3: Common Pitfalls -->
+<section id="s3">
+<div class="container">
+  <div class="screen-label">Screen 3 of 5</div>
+  <h2>⚠️ Common Pitfalls to Avoid</h2>
+  <div class="card-grid">
+    <div class="card"><h3>🚨 Overusing var</h3><p>If your Scala code is full of <code>var</code>, you're writing Java in Scala. Use <code>val</code> by default, use functional transformations instead of mutation.</p></div>
+    <div class="card"><h3>🚨 Ignoring Option</h3><p>Using <code>.get</code> on an Option defeats the purpose. Always pattern match or use <code>.getOrElse</code>, <code>.map</code>, <code>.fold</code>.</p></div>
+    <div class="card"><h3>🚨 Blocking in Futures</h3><p>Using <code>Await.result</code> in production code blocks threads. Use <code>.map</code>/<code>.flatMap</code> or for-comprehensions instead.</p></div>
+    <div class="card"><h3>🚨 Implicit Abuse</h3><p>Too many implicits make code unreadable. Use them for well-known patterns (ExecutionContext, Codec) not for business logic.</p></div>
+    <div class="card"><h3>🚨 Mutable in Concurrent Code</h3><p>Using mutable collections in multi-threaded code without synchronization = race conditions. Use immutable collections or actors.</p></div>
+    <div class="card"><h3>🚨 Collecting Spark Data</h3><p>Calling <code>.collect()</code> on a 100GB DataFrame brings ALL data to the driver — instant OutOfMemoryError. Use aggregations first.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- Screen 4: Rapid-Fire Q&A -->
+<section id="s4">
+<div class="container">
+  <div class="screen-label">Screen 4 of 5</div>
+  <h2>⚡ Rapid-Fire: 10 Questions in 10 Minutes</h2>
+  <p class="subtitle">Real interview speed. How many can you get right?</p>
+  <div class="quiz-box" id="rf1">
+    <div class="quiz-q">1. What does the REPL stand for in Scala?</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">Read-Eval-Print Loop</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Run-Execute-Process Loop</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Recursive Expression Processing Language</div>
+    <button class="quiz-btn" onclick="checkQ(this)">Check</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box">
+    <div class="quiz-q">2. sealed trait Animal. What does "sealed" mean?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">The trait can't have methods</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">All subtypes must be defined in the same file — enables exhaustive pattern matching</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">The trait can't be extended at all</div>
+    <button class="quiz-btn" onclick="checkQ(this)">Check</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box">
+    <div class="quiz-q">3. What's the output? <code>List(1,2,3).map(_ * 2).filter(_ > 3)</code></div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">List(2, 4, 6)</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">List(4, 6)</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">List(6)</div>
+    <button class="quiz-btn" onclick="checkQ(this)">Check</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box">
+    <div class="quiz-q">4. In Spark, what triggers actual computation?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Transformations like map and filter</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">Actions like count, show, collect</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Creating a SparkSession</div>
+    <button class="quiz-btn" onclick="checkQ(this)">Check</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box">
+    <div class="quiz-q">5. What type does <code>None</code> have?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Null</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">Option[Nothing]</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Unit</div>
+    <button class="quiz-btn" onclick="checkQ(this)">Check</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box">
+    <div class="quiz-q">6. What does @tailrec ensure?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">The function runs in a separate thread</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">The function is tail-recursive and can be optimized to a loop by the compiler</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">The function caches its results</div>
+    <button class="quiz-btn" onclick="checkQ(this)">Check</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box">
+    <div class="quiz-q">7. You see <code>List[+A]</code>. What does the + mean?</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">Covariant: List[Dog] is a subtype of List[Animal] if Dog extends Animal</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">The list can grow in size</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">The list only contains positive values</div>
+    <button class="quiz-btn" onclick="checkQ(this)">Check</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box">
+    <div class="quiz-q">8. Why use foldLeft over reduce?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">foldLeft is faster</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">foldLeft works on empty collections (has a starting value); reduce crashes on empty</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">foldLeft preserves order, reduce doesn't</div>
+    <button class="quiz-btn" onclick="checkQ(this)">Check</button>
+    <div class="quiz-feedback"></div>
+  </div>
+</div>
+</section>
+
+<!-- Screen 5: Score + Next Steps -->
+<section id="s5">
+<div class="container">
+  <div class="screen-label">Screen 5 of 5</div>
+  <h2>🏆 Your Score</h2>
+  <div class="score-box">
+    <div class="score-num" id="scoreDisplay">-</div>
+    <div class="score-label">out of 8 rapid-fire questions</div>
+    <button class="quiz-btn" style="margin-top:1rem" onclick="calcScore()">Calculate My Score</button>
+  </div>
+  <div class="aha"><div class="aha-title">🌟 You've Completed the Course!</div>You've covered Scala fundamentals, functional programming, collections, type system, concurrency, Spark, and interview strategy. Go crush that interview!</div>
+  <div class="card-grid">
+    <div class="card"><h3>🔁 Review weak areas</h3><p>Go back to any module you scored low on. Each module is independent — jump directly to what you need.</p></div>
+    <div class="card"><h3>📝 Practice coding</h3><p>Use the Scala REPL to try the code examples. Muscle memory is real — type the code, don't just read it.</p></div>
+    <div class="card"><h3>🎯 Mock interviews</h3><p>Explain each concept out loud. If you can teach it, you know it. Practice the metaphor-first approach from Screen 2.</p></div>
+  </div>
+</div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-07-spark/index.html">← Previous: Scala + Spark</a>
+  <a href="../index.html">Back to Course Home →</a>
+</footer>
+
+<script>
+(function(){
+  window.addEventListener('scroll',function(){var s=document.documentElement,p=(s.scrollTop/(s.scrollHeight-s.clientHeight))*100;document.getElementById('progressBar').style.width=p+'%'},{passive:true});
+  window.reveal=function(btn){var a=btn.nextElementSibling;a.classList.toggle('show');btn.textContent=a.classList.contains('show')?'Hide Answer':'Reveal Answer'};
+  window.selectOpt=function(el){el.closest('.quiz-box').querySelectorAll('.quiz-opt').forEach(function(o){o.classList.remove('selected')});el.classList.add('selected')};
+  window.checkQ=function(btn){var box=btn.closest('.quiz-box'),sel=box.querySelector('.quiz-opt.selected'),fb=box.querySelector('.quiz-feedback');if(!sel){fb.textContent='Pick one!';fb.style.display='block';fb.style.background='var(--bg-warm)';return}var c=sel.getAttribute('data-correct')==='true';box.querySelectorAll('.quiz-opt').forEach(function(o){o.style.pointerEvents='none';if(o.getAttribute('data-correct')==='true')o.classList.add('correct');if(o===sel&&!c)o.classList.add('wrong')});fb.style.display='block';fb.textContent=c?'✅ Correct!':'❌ See the green answer.';fb.style.background=c?'rgba(45,139,85,.1)':'rgba(201,59,59,.1)';fb.style.color=c?'var(--success)':'var(--error)';btn.disabled=true};
+  window.calcScore=function(){var boxes=document.querySelectorAll('#s4 .quiz-box');var score=0;boxes.forEach(function(b){var sel=b.querySelector('.quiz-opt.selected');if(sel&&sel.getAttribute('data-correct')==='true')score++});document.getElementById('scoreDisplay').textContent=score};
+})();
+</script>
+</body>
+</html>

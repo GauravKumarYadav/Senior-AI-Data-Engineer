@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 4: Collections & Transformations</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF7F2;--bg-warm:#F5F0E8;--bg-code:#1E1E2E;--text:#2C2A28;--accent:#B58900;--success:#2D8B55;--error:#C93B3B;--info:#2A7B9B;--font-head:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-mono:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.06)}.nav-inner{max-width:1100px;margin:0 auto;padding:.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between}.nav-title{font-family:var(--font-head);font-weight:700;text-decoration:none;color:var(--text);font-size:.95rem}.nav-dots{display:flex;gap:.4rem}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background .2s}.nav-dot.active{background:var(--accent);transform:scale(1.2)}.nav-dot:hover{background:var(--accent);opacity:.7}.progress-bar{position:absolute;bottom:0;left:0;height:3px;background:var(--accent);transition:width .1s}
+section{min-height:100vh;min-height:100dvh;padding:5rem 2rem 3rem;display:flex;align-items:center;justify-content:center}
+.container{max-width:900px;width:100%;margin:0 auto}
+.screen-label{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.15}
+.subtitle{font-size:1.1rem;opacity:.7;margin-bottom:2rem;max-width:600px}
+.translation{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:12px;overflow:hidden;margin:1.5rem 0}
+.translation .code-side{padding:1.5rem;background:var(--bg-code);color:#cdd6f4;font-family:var(--font-mono);font-size:.82rem;white-space:pre-wrap;line-height:1.7}
+.translation .english-side{padding:1.5rem;background:var(--bg-warm);font-size:.9rem;line-height:1.8;border-left:3px solid var(--accent)}
+.english-side .line{margin-bottom:.5rem;display:flex;gap:.5rem}.line-arrow{color:var(--accent);font-weight:700}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.2rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:12px;padding:1.5rem;border:1px solid rgba(0,0,0,.06);position:relative;overflow:hidden}.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)}
+.card h3{font-family:var(--font-head);font-size:1.05rem;font-weight:700;margin-bottom:.4rem}.card p{font-size:.88rem;opacity:.75}
+.aha{background:linear-gradient(135deg,#FFFBF0,#FFF5E0);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.aha-title{font-family:var(--font-head);font-weight:700;color:var(--accent);margin-bottom:.3rem}
+.quiz-box{background:#fff;border-radius:12px;padding:1.8rem;border:1px solid rgba(0,0,0,.08);margin:1.5rem 0}
+.quiz-q{font-family:var(--font-head);font-weight:700;font-size:1.1rem;margin-bottom:1rem}
+.quiz-opt{display:block;padding:.8rem 1rem;margin:.4rem 0;border:2px solid rgba(0,0,0,.08);border-radius:10px;cursor:pointer;transition:border-color .2s,background .2s;font-size:.92rem}
+.quiz-opt:hover{border-color:var(--accent)}
+.quiz-opt.selected{border-color:var(--accent);background:rgba(181,137,0,.08)}
+.quiz-opt.correct{border-color:var(--success);background:rgba(45,139,85,.08)}
+.quiz-opt.wrong{border-color:var(--error);background:rgba(201,59,59,.08)}
+.quiz-btn{padding:.7rem 1.5rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;margin-top:.8rem;font-size:.9rem}
+.quiz-feedback{margin-top:.8rem;padding:.8rem 1rem;border-radius:8px;font-size:.9rem;display:none}
+.compare-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:12px;overflow:hidden;margin:1.5rem 0;font-size:.88rem}
+.compare-table th{background:var(--bg-code);color:#cdd6f4;padding:.8rem 1rem;text-align:left;font-family:var(--font-head)}
+.compare-table td{padding:.7rem 1rem;border-bottom:1px solid rgba(0,0,0,.05)}
+.compare-table tr:nth-child(even) td{background:rgba(0,0,0,.02)}
+.code-block{background:var(--bg-code);border-radius:12px;padding:1.5rem;color:#cdd6f4;font-family:var(--font-mono);font-size:.85rem;overflow-x:auto;white-space:pre-wrap;margin:1rem 0;line-height:1.7}
+.kw{color:#cba6f7}.str{color:#a6e3a1}.cm{color:#6c7086;font-style:italic}.fn{color:#89b4fa}.tp{color:#f9e2af}.num{color:#fab387}
+.pipeline{display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;justify-content:center;margin:1.5rem 0}
+.pipe-box{background:#fff;border:2px solid var(--accent);border-radius:10px;padding:.6rem 1rem;font-family:var(--font-mono);font-size:.8rem;font-weight:600;text-align:center;min-width:80px}
+.pipe-arrow{font-size:1.3rem;color:var(--accent)}
+.pipe-data{background:var(--bg-code);color:#cdd6f4;border-radius:8px;padding:.4rem .8rem;font-family:var(--font-mono);font-size:.75rem}
+section:nth-child(odd){background:var(--bg)}section:nth-child(even){background:var(--bg-warm)}
+.module-nav{display:flex;justify-content:space-between;padding:2rem;max-width:900px;margin:0 auto}.module-nav a{text-decoration:none;color:var(--accent);font-weight:600;font-size:.95rem;padding:.8rem 1.2rem;border-radius:10px;border:1px solid rgba(181,137,0,.2)}.module-nav a:hover{background:rgba(181,137,0,.06)}
+@media(max-width:700px){.translation{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}.pipeline{flex-direction:column}.pipe-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎯 Scala Interview Mastery</a><div class="nav-dots"><a href="../module-01-what-is-scala/" class="nav-dot"></a><a href="../module-02-building-blocks/" class="nav-dot"></a><a href="../module-03-functional-power/" class="nav-dot"></a><a href="./" class="nav-dot active"></a><a href="../module-05-type-system/" class="nav-dot"></a><a href="../module-06-concurrency/" class="nav-dot"></a><a href="../module-07-spark/" class="nav-dot"></a><a href="../module-08-battle-plan/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Collection Types -->
+<section id="s1">
+<div class="container">
+  <div class="screen-label">Screen 1 of 5</div>
+  <h2>Scala's Collection Universe</h2>
+  <p class="subtitle">Think of collections as different types of <strong>storage containers</strong>. A freezer (immutable — locked), a fridge (mutable — swap items in/out), each with its own purpose.</p>
+  <table class="compare-table">
+    <tr><th>Collection</th><th>Type</th><th>Ordered?</th><th>Duplicates?</th><th>Use Case</th></tr>
+    <tr><td><code>List</code></td><td>Immutable</td><td>✅</td><td>✅</td><td>Default go-to sequence</td></tr>
+    <tr><td><code>Vector</code></td><td>Immutable</td><td>✅</td><td>✅</td><td>Fast random access</td></tr>
+    <tr><td><code>Set</code></td><td>Immutable</td><td>❌</td><td>❌</td><td>Unique elements only</td></tr>
+    <tr><td><code>Map</code></td><td>Immutable</td><td>❌</td><td>Keys unique</td><td>Key-value lookups</td></tr>
+    <tr><td><code>ArrayBuffer</code></td><td>Mutable</td><td>✅</td><td>✅</td><td>When you need to grow/shrink</td></tr>
+    <tr><td><code>HashMap</code></td><td>Mutable</td><td>❌</td><td>Keys unique</td><td>Frequently changing map</td></tr>
+  </table>
+  <div class="aha"><div class="aha-title">💡 Default is Immutable</div>In Scala, when you write <code>List(...)</code> or <code>Map(...)</code>, you get the <strong>immutable version by default</strong>. This is a deliberate design choice for thread safety and functional purity. You have to explicitly import mutable collections.</div>
+</div>
+</section>
+
+<!-- Screen 2: map vs flatMap vs foreach -->
+<section id="s2">
+<div class="container">
+  <div class="screen-label">Screen 2 of 5</div>
+  <h2>The Big Three: map, flatMap, foreach</h2>
+  <p class="subtitle">These are the <strong>most tested operations</strong> in Scala interviews. Think of them as three different conveyor belt machines in a factory.</p>
+  <div class="pipeline">
+    <div class="pipe-data">[1, 2, 3]</div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-box">.map(_ * 2)</div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-data">[2, 4, 6]</div>
+  </div>
+  <div class="pipeline">
+    <div class="pipe-data">["hi world", "bye all"]</div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-box">.flatMap(_.split(" "))</div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-data">["hi","world","bye","all"]</div>
+  </div>
+  <div class="pipeline">
+    <div class="pipe-data">[1, 2, 3]</div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-box">.foreach(println)</div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-data">prints each (returns nothing)</div>
+  </div>
+  <div class="card-grid">
+    <div class="card"><h3>🗺️ map</h3><p>Transform each element 1-to-1. Input: N items → Output: N items. Like stamping every letter in a pile.</p></div>
+    <div class="card"><h3>🗂️ flatMap</h3><p>Transform + flatten. Each element can produce multiple results, then they're merged into one flat list.</p></div>
+    <div class="card"><h3>📢 foreach</h3><p>Side-effects only. Print, log, save — but returns Unit (nothing). Don't use for transformations!</p></div>
+  </div>
+</div>
+</section>
+
+<!-- Screen 3: filter, fold, reduce -->
+<section id="s3">
+<div class="container">
+  <div class="screen-label">Screen 3 of 5</div>
+  <h2>More Power Tools: filter, fold, reduce</h2>
+  <p class="subtitle">Think of these as a <strong>workshop toolkit</strong>. Each tool solves a specific type of data problem.</p>
+  <div class="translation">
+    <div class="code-side"><span class="kw">val</span> nums = <span class="tp">List</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>)
+
+<span class="cm">// filter: keep only what matches</span>
+nums.filter(_ > <span class="num">3</span>)   <span class="cm">// List(4, 5)</span>
+
+<span class="cm">// reduce: collapse into one value</span>
+nums.reduce(_ + _)    <span class="cm">// 15 (sum all)</span>
+
+<span class="cm">// foldLeft: like reduce but with a start</span>
+nums.foldLeft(<span class="num">0</span>)(_ + _)  <span class="cm">// 15</span>
+nums.foldLeft(<span class="num">100</span>)(_ + _) <span class="cm">// 115</span>
+
+<span class="cm">// Chaining: the real power</span>
+nums
+  .filter(_ % <span class="num">2</span> == <span class="num">0</span>)  <span class="cm">// List(2, 4)</span>
+  .map(_ * <span class="num">10</span>)         <span class="cm">// List(20, 40)</span>
+  .reduce(_ + _)       <span class="cm">// 60</span></div>
+    <div class="english-side">
+      <div class="line"><span class="line-arrow">→</span> Start with [1,2,3,4,5].</div>
+      <div class="line"><span class="line-arrow">→</span> <strong>filter</strong>: Keep only items greater than 3. Like a sieve.</div>
+      <div class="line"><span class="line-arrow">→</span> <strong>reduce</strong>: Combine all items into one. Here: 1+2+3+4+5 = 15.</div>
+      <div class="line"><span class="line-arrow">→</span> <strong>foldLeft</strong>: Same as reduce but you pick a starting value. Start at 0 → same result. Start at 100 → adds 15 to 100.</div>
+      <div class="line"><span class="line-arrow">→</span> <strong>Chaining</strong>: Pipe data through multiple operations! Filter evens → multiply by 10 → sum them up.</div>
+    </div>
+  </div>
+  <div class="aha"><div class="aha-title">🎯 Interview Trap</div>"What's the difference between fold and reduce?" → <code>reduce</code> crashes on empty collections (no starting value). <code>foldLeft</code> takes an initial value, so it's safe on empty collections. <strong>Always prefer foldLeft in production.</strong></div>
+</div>
+</section>
+
+<!-- Screen 4: Immutable vs Mutable -->
+<section id="s4">
+<div class="container">
+  <div class="screen-label">Screen 4 of 5</div>
+  <h2>Immutable vs Mutable — When to Use Which</h2>
+  <p class="subtitle">Think of immutable as <strong>stone tablets</strong> (carved once, read forever) and mutable as a <strong>whiteboard</strong> (erase and rewrite anytime).</p>
+  <table class="compare-table">
+    <tr><th>Aspect</th><th>Immutable (default)</th><th>Mutable</th></tr>
+    <tr><td>Thread safety</td><td>✅ Safe to share</td><td>⚠️ Need synchronization</td></tr>
+    <tr><td>Performance</td><td>Slight overhead on updates</td><td>Faster updates in-place</td></tr>
+    <tr><td>Debugging</td><td>Easier (data never changes)</td><td>Harder (who changed it?)</td></tr>
+    <tr><td>FP style</td><td>✅ Preferred</td><td>❌ Avoid if possible</td></tr>
+    <tr><td>Import needed?</td><td>No (default)</td><td>Yes: <code>import scala.collection.mutable</code></td></tr>
+  </table>
+  <div class="translation">
+    <div class="code-side"><span class="cm">// Immutable: creates NEW collection each time</span>
+<span class="kw">val</span> list1 = <span class="tp">List</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)
+<span class="kw">val</span> list2 = list1 :+ <span class="num">4</span>  <span class="cm">// List(1,2,3,4)</span>
+<span class="cm">// list1 is still List(1,2,3)!</span>
+
+<span class="cm">// Mutable: modifies in place</span>
+<span class="kw">import</span> scala.collection.mutable
+<span class="kw">val</span> buf = mutable.<span class="tp">ArrayBuffer</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)
+buf += <span class="num">4</span>  <span class="cm">// buf is now ArrayBuffer(1,2,3,4)</span></div>
+    <div class="english-side">
+      <div class="line"><span class="line-arrow">→</span> Adding to an immutable list creates a brand new list. The original is untouched.</div>
+      <div class="line"><span class="line-arrow">→</span> This is great for safety but creates more objects.</div>
+      <div class="line"><span class="line-arrow">→</span> Mutable buffer changes itself. Fast but dangerous in multi-threaded code.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- Screen 5: Quiz -->
+<section id="s5">
+<div class="container">
+  <div class="screen-label">Screen 5 of 5</div>
+  <h2>Test Yourself 🧠</h2>
+  <div class="quiz-box">
+    <div class="quiz-q">Q1: What does <code>List("a b", "c d").flatMap(_.split(" "))</code> return?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">List(List("a","b"), List("c","d"))</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">List("a", "b", "c", "d")</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">List("a b", "c d")</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">A compile error</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box" style="margin-top:1.5rem">
+    <div class="quiz-q">Q2: You call <code>List().reduce(_ + _)</code> on an empty list. What happens?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Returns 0</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Returns None</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">Throws an UnsupportedOperationException (runtime crash)</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Returns an empty list</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box" style="margin-top:1.5rem">
+    <div class="quiz-q">Q3: When building a concurrent web server, which collection type should you prefer?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">mutable.ArrayBuffer — fastest updates</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">Immutable collections — thread-safe without locks</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Java ArrayList — more compatible</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Array — lowest level is best</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+</div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-03-functional-power/index.html">← Previous: Functional Power</a>
+  <a href="../module-05-type-system/index.html">Next: Traits & Types →</a>
+</footer>
+
+<script>
+(function(){
+  window.addEventListener('scroll',function(){var s=document.documentElement,p=(s.scrollTop/(s.scrollHeight-s.clientHeight))*100;document.getElementById('progressBar').style.width=p+'%'},{passive:true});
+  window.selectOpt=function(el){el.closest('.quiz-box').querySelectorAll('.quiz-opt').forEach(function(o){o.classList.remove('selected')});el.classList.add('selected')};
+  window.checkQuiz=function(btn){var box=btn.closest('.quiz-box'),sel=box.querySelector('.quiz-opt.selected'),fb=box.querySelector('.quiz-feedback');if(!sel){fb.textContent='Pick an answer first!';fb.style.display='block';fb.style.background='var(--bg-warm)';return}var c=sel.getAttribute('data-correct')==='true';box.querySelectorAll('.quiz-opt').forEach(function(o){o.style.pointerEvents='none';if(o.getAttribute('data-correct')==='true')o.classList.add('correct');if(o===sel&&!c)o.classList.add('wrong')});fb.style.display='block';fb.textContent=c?'✅ Correct!':'❌ Not quite. See the green answer.';fb.style.background=c?'rgba(45,139,85,.1)':'rgba(201,59,59,.1)';fb.style.color=c?'var(--success)':'var(--error)';btn.disabled=true};
+})();
+</script>
+</body>
+</html>

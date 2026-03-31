@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 6: Concurrency & Async</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF7F2;--bg-warm:#F5F0E8;--bg-code:#1E1E2E;--text:#2C2A28;--accent:#2AA198;--success:#2D8B55;--error:#C93B3B;--info:#2A7B9B;--font-head:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-mono:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.06)}.nav-inner{max-width:1100px;margin:0 auto;padding:.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between}.nav-title{font-family:var(--font-head);font-weight:700;text-decoration:none;color:var(--text);font-size:.95rem}.nav-dots{display:flex;gap:.4rem}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background .2s}.nav-dot.active{background:var(--accent);transform:scale(1.2)}.nav-dot:hover{background:var(--accent);opacity:.7}.progress-bar{position:absolute;bottom:0;left:0;height:3px;background:var(--accent);transition:width .1s}
+section{min-height:100vh;min-height:100dvh;padding:5rem 2rem 3rem;display:flex;align-items:center;justify-content:center}
+.container{max-width:900px;width:100%;margin:0 auto}
+.screen-label{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.15}
+.subtitle{font-size:1.1rem;opacity:.7;margin-bottom:2rem;max-width:600px}
+.translation{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:12px;overflow:hidden;margin:1.5rem 0}
+.translation .code-side{padding:1.5rem;background:var(--bg-code);color:#cdd6f4;font-family:var(--font-mono);font-size:.82rem;white-space:pre-wrap;line-height:1.7}
+.translation .english-side{padding:1.5rem;background:var(--bg-warm);font-size:.9rem;line-height:1.8;border-left:3px solid var(--accent)}
+.english-side .line{margin-bottom:.5rem;display:flex;gap:.5rem}.line-arrow{color:var(--accent);font-weight:700}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.2rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:12px;padding:1.5rem;border:1px solid rgba(0,0,0,.06);position:relative;overflow:hidden}.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)}
+.card h3{font-family:var(--font-head);font-size:1.05rem;font-weight:700;margin-bottom:.4rem}.card p{font-size:.88rem;opacity:.75}
+.aha{background:linear-gradient(135deg,#F0FFFE,#E5FAF8);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.aha-title{font-family:var(--font-head);font-weight:700;color:var(--accent);margin-bottom:.3rem}
+.quiz-box{background:#fff;border-radius:12px;padding:1.8rem;border:1px solid rgba(0,0,0,.08);margin:1.5rem 0}
+.quiz-q{font-family:var(--font-head);font-weight:700;font-size:1.1rem;margin-bottom:1rem}
+.quiz-opt{display:block;padding:.8rem 1rem;margin:.4rem 0;border:2px solid rgba(0,0,0,.08);border-radius:10px;cursor:pointer;transition:border-color .2s;font-size:.92rem}
+.quiz-opt:hover{border-color:var(--accent)}
+.quiz-opt.selected{border-color:var(--accent);background:rgba(42,161,152,.08)}
+.quiz-opt.correct{border-color:var(--success);background:rgba(45,139,85,.08)}
+.quiz-opt.wrong{border-color:var(--error);background:rgba(201,59,59,.08)}
+.quiz-btn{padding:.7rem 1.5rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;margin-top:.8rem;font-size:.9rem}
+.quiz-feedback{margin-top:.8rem;padding:.8rem 1rem;border-radius:8px;font-size:.9rem;display:none}
+.chat-container{background:var(--bg-warm);border-radius:16px;padding:1.5rem;max-width:520px;margin:1.5rem auto;min-height:300px;display:flex;flex-direction:column}
+.chat-messages{flex:1;display:flex;flex-direction:column;gap:.6rem;margin-bottom:1rem;min-height:220px}
+.chat-msg{max-width:80%;padding:.7rem 1rem;border-radius:16px;font-size:.88rem;opacity:0;transform:translateY(10px);transition:opacity .3s,transform .3s}.chat-msg.show{opacity:1;transform:translateY(0)}
+.chat-msg.left{align-self:flex-start;background:#fff;border-bottom-left-radius:4px}.chat-msg.right{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px}
+.chat-sender{font-size:.7rem;font-weight:600;margin-bottom:.2rem;opacity:.6}
+.chat-controls{display:flex;gap:.5rem;justify-content:center}
+.chat-btn{padding:.5rem 1rem;border:1px solid rgba(0,0,0,.1);background:#fff;border-radius:8px;cursor:pointer;font-size:.8rem;font-weight:500}.chat-btn:hover{background:var(--accent);color:#fff}
+section:nth-child(odd){background:var(--bg)}section:nth-child(even){background:var(--bg-warm)}
+.module-nav{display:flex;justify-content:space-between;padding:2rem;max-width:900px;margin:0 auto}.module-nav a{text-decoration:none;color:var(--accent);font-weight:600;font-size:.95rem;padding:.8rem 1.2rem;border-radius:10px;border:1px solid rgba(42,161,152,.2)}.module-nav a:hover{background:rgba(42,161,152,.06)}
+@media(max-width:700px){.translation{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎯 Scala Interview Mastery</a><div class="nav-dots"><a href="../module-01-what-is-scala/" class="nav-dot"></a><a href="../module-02-building-blocks/" class="nav-dot"></a><a href="../module-03-functional-power/" class="nav-dot"></a><a href="../module-04-collections/" class="nav-dot"></a><a href="../module-05-type-system/" class="nav-dot"></a><a href="./" class="nav-dot active"></a><a href="../module-07-spark/" class="nav-dot"></a><a href="../module-08-battle-plan/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Futures -->
+<section id="s1">
+<div class="container">
+  <div class="screen-label">Screen 1 of 5</div>
+  <h2>Futures — "I'll Get Back to You"</h2>
+  <p class="subtitle">A Future is like <strong>ordering takeout</strong>. You place the order (start the computation), get a receipt (the Future object), and continue your day. When the food arrives, you eat (use the result).</p>
+  <div class="translation">
+    <div class="code-side"><span class="kw">import</span> scala.concurrent.<span class="tp">Future</span>
+<span class="kw">import</span> scala.concurrent.<span class="tp">ExecutionContext</span>
+  .Implicits.global
+
+<span class="cm">// Start an async computation</span>
+<span class="kw">val</span> futurePrice = <span class="tp">Future</span> {
+  <span class="cm">// This runs on a background thread</span>
+  Thread.sleep(<span class="num">1000</span>)
+  <span class="num">42.99</span>
+}
+
+<span class="cm">// Don't wait — react when it's done</span>
+futurePrice.map(price =>
+  println(s<span class="str">"Price is $$price"</span>)
+)
+
+<span class="cm">// Chain multiple async steps</span>
+<span class="kw">val</span> result = futurePrice
+  .map(_ * <span class="num">2</span>)          <span class="cm">// double it</span>
+  .map(_ + <span class="num">5</span>)          <span class="cm">// add shipping</span></div>
+    <div class="english-side">
+      <div class="line"><span class="line-arrow">→</span> Import Future and an ExecutionContext (the thread pool that runs async tasks).</div>
+      <div class="line"><span class="line-arrow">→</span> <code>Future { ... }</code> = "Run this code in the background." Returns immediately.</div>
+      <div class="line"><span class="line-arrow">→</span> <code>.map</code> on a Future = "When the result arrives, transform it." Non-blocking!</div>
+      <div class="line"><span class="line-arrow">→</span> Chain transformations: each .map runs only after the previous Future completes.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- Screen 2: Future vs Await -->
+<section id="s2">
+<div class="container">
+  <div class="screen-label">Screen 2 of 5</div>
+  <h2>Future vs Await — Non-Blocking vs Blocking</h2>
+  <p class="subtitle">This is a <strong>classic interview question</strong>. Know the difference cold.</p>
+  <div class="translation">
+    <div class="code-side"><span class="kw">import</span> scala.concurrent.<span class="tp">Await</span>
+<span class="kw">import</span> scala.concurrent.duration._
+
+<span class="kw">val</span> f = <span class="tp">Future</span> { <span class="num">42</span> }
+
+<span class="cm">// NON-BLOCKING: keep going, react later</span>
+f.map(v => println(s<span class="str">"Got $v"</span>))
+
+<span class="cm">// BLOCKING: freeze this thread until done</span>
+<span class="kw">val</span> result = <span class="tp">Await</span>.result(f, <span class="num">2</span>.seconds)
+<span class="cm">// result = 42 (but thread was frozen!)</span></div>
+    <div class="english-side">
+      <div class="line"><span class="line-arrow">→</span> <strong>Future.map</strong>: "When you're done, call me." Your thread is free to do other work.</div>
+      <div class="line"><span class="line-arrow">→</span> <strong>Await.result</strong>: "I'm going to SIT HERE and WAIT until you're done." Blocks the thread.</div>
+      <div class="line"><span class="line-arrow">→</span> Await takes a timeout (2 seconds). If the Future isn't done by then, it throws an exception.</div>
+    </div>
+  </div>
+  <div class="aha"><div class="aha-title">🎯 Interview Answer</div><strong>Avoid Await in production code.</strong> It blocks threads, which defeats the purpose of async programming. Use it only in tests or main methods. In production, use .map, .flatMap, .recover, and for-comprehensions to work with Futures.</div>
+</div>
+</section>
+
+<!-- Screen 3: Akka Actor Chat -->
+<section id="s3">
+<div class="container">
+  <div class="screen-label">Screen 3 of 5</div>
+  <h2>Akka Actors — Message Passing in Action</h2>
+  <p class="subtitle">Watch actors communicate like coworkers sending <strong>Slack messages</strong>:</p>
+  <div class="chat-container" id="chat1">
+    <div class="chat-messages" id="actorChat">
+      <div class="chat-msg left"><div class="chat-sender">👤 Main App</div>Hey OrderActor, process order #42!</div>
+      <div class="chat-msg right"><div class="chat-sender">📦 OrderActor</div>Got it! Let me validate... ✅ Valid. Forwarding to PaymentActor.</div>
+      <div class="chat-msg left"><div class="chat-sender">📦 OrderActor → 💳 PaymentActor</div>Charge $99.99 for order #42.</div>
+      <div class="chat-msg right"><div class="chat-sender">💳 PaymentActor</div>Payment processed! Telling NotificationActor.</div>
+      <div class="chat-msg left"><div class="chat-sender">💳 PaymentActor → 📧 NotificationActor</div>Send confirmation email for order #42.</div>
+      <div class="chat-msg right"><div class="chat-sender">📧 NotificationActor</div>Email sent! ✉️ Each of us worked independently, no shared state, no locks!</div>
+    </div>
+    <div class="chat-controls">
+      <button class="chat-btn" onclick="playChat('actorChat')">&#9654; Play All</button>
+      <button class="chat-btn" onclick="nextMsg('actorChat')">Next →</button>
+      <button class="chat-btn" onclick="replayChat('actorChat')">&#8635; Replay</button>
+    </div>
+  </div>
+  <div class="card-grid">
+    <div class="card"><h3>🎭 What's an Actor?</h3><p>A lightweight object that processes messages one at a time from its mailbox. No shared memory between actors — all communication via messages.</p></div>
+    <div class="card"><h3>🛡️ Why Actors?</h3><p>No locks, no race conditions, no deadlocks. Each actor is an island. If one crashes, its supervisor restarts it. Fault-tolerant by design.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- Screen 4: Concurrency Libraries -->
+<section id="s4">
+<div class="container">
+  <div class="screen-label">Screen 4 of 5</div>
+  <h2>The Concurrency Toolkit</h2>
+  <p class="subtitle">Scala has multiple tools for different concurrency needs. Know which to pick.</p>
+  <div class="card-grid">
+    <div class="card"><h3>⏳ scala.concurrent.Future</h3><p>Built-in. Good for simple async tasks. "Fire and forget" or chain with map/flatMap. Part of the standard library.</p></div>
+    <div class="card"><h3>🎭 Akka (Classic & Typed)</h3><p>Actor-based. For complex distributed systems, clustering, event sourcing. Industry standard for high-concurrency Scala.</p></div>
+    <div class="card"><h3>🐱 Cats Effect</h3><p>Functional approach. Pure FP, referential transparency, IO monad. Popular with FP-heavy teams.</p></div>
+    <div class="card"><h3>⚡ ZIO</h3><p>Modern FP runtime. Built-in error handling, fiber-based concurrency, resource management. Growing fast.</p></div>
+  </div>
+  <div class="aha"><div class="aha-title">🎯 Interview Tip</div>If asked "How does Scala handle concurrency?", mention the progression: <strong>Futures</strong> for simple async → <strong>Akka</strong> for distributed systems → <strong>Cats Effect / ZIO</strong> for pure functional approaches. Show you know the landscape.</div>
+</div>
+</section>
+
+<!-- Screen 5: Quiz -->
+<section id="s5">
+<div class="container">
+  <div class="screen-label">Screen 5 of 5</div>
+  <h2>Test Yourself 🧠</h2>
+  <div class="quiz-box">
+    <div class="quiz-q">Q1: You need to fetch data from 3 APIs simultaneously without blocking. What do you use?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Thread.sleep after each call</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">Create 3 Futures and combine them with Future.sequence or for-comprehension</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Await.result on each one sequentially</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Use var to track completion</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box" style="margin-top:1.5rem">
+    <div class="quiz-q">Q2: Why are Akka actors safer than traditional threads for concurrency?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Actors are faster than threads</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Actors use less memory</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">Actors don't share mutable state — they communicate via immutable messages, eliminating race conditions</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Actors automatically scale to multiple machines</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box" style="margin-top:1.5rem">
+    <div class="quiz-q">Q3: When is Await.result acceptable to use?</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Always — it's the standard way to get Future results</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">In web request handlers for API responses</div>
+    <div class="quiz-opt" data-correct="true" onclick="selectOpt(this)">Only in tests or main methods — never in production request paths</div>
+    <div class="quiz-opt" data-correct="false" onclick="selectOpt(this)">Only with Akka actors</div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">Check Answer</button>
+    <div class="quiz-feedback"></div>
+  </div>
+</div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-05-type-system/index.html">← Previous: Traits & Types</a>
+  <a href="../module-07-spark/index.html">Next: Scala + Spark →</a>
+</footer>
+
+<script>
+(function(){
+  window.addEventListener('scroll',function(){var s=document.documentElement,p=(s.scrollTop/(s.scrollHeight-s.clientHeight))*100;document.getElementById('progressBar').style.width=p+'%'},{passive:true});
+  var chatIdx={};
+  window.nextMsg=function(id){var msgs=document.getElementById(id).querySelectorAll('.chat-msg');if(!chatIdx[id])chatIdx[id]=0;if(chatIdx[id]<msgs.length){msgs[chatIdx[id]].classList.add('show');chatIdx[id]++}};
+  window.playChat=function(id){var msgs=document.getElementById(id).querySelectorAll('.chat-msg');chatIdx[id]=0;msgs.forEach(function(m,i){setTimeout(function(){m.classList.add('show')},i*800)});chatIdx[id]=msgs.length};
+  window.replayChat=function(id){var msgs=document.getElementById(id).querySelectorAll('.chat-msg');msgs.forEach(function(m){m.classList.remove('show')});chatIdx[id]=0};
+  window.selectOpt=function(el){el.closest('.quiz-box').querySelectorAll('.quiz-opt').forEach(function(o){o.classList.remove('selected')});el.classList.add('selected')};
+  window.checkQuiz=function(btn){var box=btn.closest('.quiz-box'),sel=box.querySelector('.quiz-opt.selected'),fb=box.querySelector('.quiz-feedback');if(!sel){fb.textContent='Pick an answer first!';fb.style.display='block';fb.style.background='var(--bg-warm)';return}var c=sel.getAttribute('data-correct')==='true';box.querySelectorAll('.quiz-opt').forEach(function(o){o.style.pointerEvents='none';if(o.getAttribute('data-correct')==='true')o.classList.add('correct');if(o===sel&&!c)o.classList.add('wrong')});fb.style.display='block';fb.textContent=c?'✅ Correct!':'❌ Not quite. See the green answer.';fb.style.background=c?'rgba(45,139,85,.1)':'rgba(201,59,59,.1)';fb.style.color=c?'var(--success)':'var(--error)';btn.disabled=true};
+})();
+</script>
+</body>
+</html>
