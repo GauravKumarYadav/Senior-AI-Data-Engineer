@@ -1,0 +1,50 @@
+[
+  {
+    "title": "Apache Spark Interview Mastery",
+    "icon": "⚡",
+    "color": "#D94F30",
+    "href": "./spark/course-spark-interview/",
+    "desc": "7 interactive modules covering RDDs, DataFrames, architecture, performance tuning, streaming, and 150+ real interview questions.",
+    "tags": ["7 Modules", "150+ Questions", "30+ Quizzes"]
+  },
+  {
+    "title": "Scala Interview Mastery",
+    "icon": "🔴",
+    "color": "#DC322F",
+    "href": "./scala-interview/course-scala-interview/",
+    "desc": "8 modules from basics to Spark integration — case classes, pattern matching, collections, concurrency, implicits, and a final battle plan.",
+    "tags": ["8 Modules", "60+ Questions", "25+ Quizzes"]
+  },
+  {
+    "title": "Data Modeling Interview Mastery",
+    "icon": "🏗️",
+    "color": "#2A7B9B",
+    "href": "./data-modeling/course-data-modeling/",
+    "desc": "Star schemas, SCDs, fact vs dimension tables, bridge tables, grain, surrogate keys — everything interviewers ask about dimensional modeling.",
+    "tags": ["6 Modules", "Interactive", "Scenario Quizzes"]
+  },
+  {
+    "title": "Data Quality Interview Mastery",
+    "icon": "✅",
+    "color": "#2D8B55",
+    "href": "./data-quality/course-data-quality/",
+    "desc": "Quality dimensions, data contracts, anomaly detection, schema drift, quarantine patterns, testing strategies, and real-world failure modes.",
+    "tags": ["6 Modules", "Interactive", "Scenario Quizzes"]
+  },
+  {
+    "title": "Data Governance Interview Mastery",
+    "icon": "🛡️",
+    "color": "#7B6DAA",
+    "href": "./data-governance/course-data-governance/",
+    "desc": "RBAC vs ABAC, PII handling, GDPR compliance, data catalogs, retention policies, masking, tokenization, and audit strategies.",
+    "tags": ["6 Modules", "Interactive", "Scenario Quizzes"]
+  },
+  {
+    "title": "Cost Optimization Interview Mastery",
+    "icon": "💰",
+    "color": "#D4A843",
+    "href": "./cost-optmization/course-cost-optimization/",
+    "desc": "Partitioning, shuffle reduction, small files problem, backfill estimation, FinOps metrics, join optimization, and cluster management.",
+    "tags": ["6 Modules", "Interactive", "Scenario Quizzes"]
+  }
+]
