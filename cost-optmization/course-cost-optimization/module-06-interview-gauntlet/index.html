@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 6: The Interview Gauntlet | Cost Optimization Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#D4A843;--color-accent-hover:#B8903A;--color-accent-light:#FDF5E4;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--color-info:#2A7B9B;--color-info-light:#E4F2F7;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg-warm);color:var(--color-text);line-height:1.7}
+nav.topnav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(245,240,232,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.15s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.screen-alt{background:var(--color-bg)}
+.callout{background:linear-gradient(135deg,var(--color-accent-light),#FFF8EE);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent-hover)}
+.callout p{font-size:0.95rem;margin:0}
+.callout-info{background:linear-gradient(135deg,var(--color-info-light),#F0F7FA);border-left-color:var(--color-info)}
+.callout-info .callout-title{color:var(--color-info)}
+.scenario-box{background:var(--color-surface);border-radius:16px;padding:1.6rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.2rem 0;border-left:4px solid var(--color-accent)}
+.scenario-box h4{font-family:var(--font-head);font-weight:700;font-size:1rem;margin-bottom:0.6rem;color:var(--color-accent-hover)}
+.scenario-box p{font-size:0.92rem;margin-bottom:0.5rem}
+.reveal-btn{display:inline-block;background:var(--color-accent);color:#fff;border:none;padding:0.5rem 1.2rem;border-radius:100px;font-family:var(--font-head);font-weight:600;font-size:0.82rem;cursor:pointer;margin-top:0.5rem;transition:transform 0.2s}
+.reveal-btn:hover{transform:translateY(-1px)}
+.answer-box{display:none;margin-top:0.8rem;padding:1rem;background:var(--color-success-light);border-radius:10px;font-size:0.9rem;color:var(--color-success);line-height:1.6}
+.answer-box.show{display:block}
+.quiz-question-block{background:var(--color-surface);border-radius:16px;padding:1.8rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.2rem 0}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1rem}
+.quiz-option{display:block;width:100%;text-align:left;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.92rem;font-family:var(--font-body);background:none}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-option:disabled{cursor:default;opacity:0.7}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#A68307}
+.quiz-btn{display:inline-block;background:var(--color-accent);color:#fff;border:none;padding:0.7rem 1.8rem;border-radius:100px;font-family:var(--font-head);font-weight:700;font-size:0.95rem;cursor:pointer;margin-top:1rem;transition:transform 0.2s}
+.quiz-btn:hover{transform:translateY(-2px)}
+.gotcha-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin:1.5rem 0}
+.gotcha{background:var(--color-surface);border-radius:14px;padding:1.3rem;border-top:4px solid var(--color-error);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.gotcha h4{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.4rem;color:var(--color-error)}
+.gotcha p{font-size:0.85rem;color:var(--color-text-secondary);margin-bottom:0}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.score-box{background:var(--color-surface);border-radius:16px;padding:2rem;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.score-num{font-family:var(--font-head);font-size:3rem;font-weight:800;color:var(--color-accent)}
+.score-label{font-size:1rem;color:var(--color-text-muted);margin-top:0.3rem}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+@media(max-width:600px){.gotcha-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="topnav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">💰 Cost Optimization Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-why-cost-matters/" class="nav-dot" aria-label="Module 1"></a>
+      <a href="../module-02-storage-partitioning/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-shuffle-skew-joins/" class="nav-dot" aria-label="Module 3"></a>
+      <a href="../module-04-materialization/" class="nav-dot" aria-label="Module 4"></a>
+      <a href="../module-05-cluster-finops/" class="nav-dot" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot active" aria-label="Module 6"></a>
+    </div>
+  </div>
+</nav>
+
+<section class="screen" id="s1">
+  <h2>🔥 The Interview <span class="accent">Gauntlet</span></h2>
+  <p>This is the final test. <strong>15 tricky scenario questions</strong>, debugging exercises, and gotchas that trip up experienced engineers. Read the scenario, think, then reveal the answer.</p>
+  <div class="callout">
+    <div class="callout-title">🎯 How to Use This Module</div>
+    <p>For each scenario, pause and formulate your answer <strong>before</strong> clicking "Reveal." In a real interview, you need to think out loud — practice that here.</p>
+  </div>
+
+  <div class="scenario-box">
+    <h4>Scenario 1: The $10K/day Spark Job</h4>
+    <p>"Your team's daily Spark ETL job costs $10,000/day. The CEO wants it halved. Where do you start?"</p>
+    <button class="reveal-btn" onclick="reveal(this)">Reveal Answer</button>
+    <div class="answer-box"><strong>Step 1:</strong> Profile the job — check Spark UI for shuffle, skew, and scan sizes. <strong>Step 2:</strong> Check partition pruning — is the query scanning the full table? <strong>Step 3:</strong> Look at join strategies — can any be broadcast? <strong>Step 4:</strong> Check cluster utilization — is it over-provisioned? <strong>Step 5:</strong> Move to spot instances for workers. <strong>Step 6:</strong> Consider incremental processing instead of full refresh. Typically, the biggest wins come from reducing bytes scanned and fixing data skew.</div>
+  </div>
+
+  <div class="scenario-box">
+    <h4>Scenario 2: Storage Bill Tripled</h4>
+    <p>"Your S3 storage bill tripled in 3 months but data volume only grew 20%. What happened?"</p>
+    <button class="reveal-btn" onclick="reveal(this)">Reveal Answer</button>
+    <div class="answer-box">Likely causes: <strong>1)</strong> No compaction — streaming writes created millions of small files (each with overhead). <strong>2)</strong> No lifecycle policies — old versions and deleted files aren't being cleaned up (Delta Lake/Iceberg vacuum). <strong>3)</strong> Duplicate materialized tables that nobody uses. <strong>4)</strong> Uncleaned staging/temp data. Fix: run VACUUM, set lifecycle policies, audit unused tables, enable auto-compaction.</div>
+  </div>
+
+  <div class="scenario-box">
+    <h4>Scenario 3: Cluster at 15% Utilization</h4>
+    <p>"Your always-on Spark cluster averages 15% CPU utilization but the team insists they need it 24/7. What do you do?"</p>
+    <button class="reveal-btn" onclick="reveal(this)">Reveal Answer</button>
+    <div class="answer-box"><strong>1)</strong> Analyze usage patterns — when are the actual peak hours? <strong>2)</strong> Enable auto-terminate after 15 min idle. <strong>3)</strong> Move to an auto-scaling cluster with min/max bounds. <strong>4)</strong> Schedule batch jobs in windows, not ad-hoc. <strong>5)</strong> Consider serverless (Databricks Serverless, EMR Serverless) — pay only when running. A 15% → 70% utilization improvement saves ~80% of compute cost.</div>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <h2>More <span class="accent">Scenarios</span></h2>
+
+  <div class="scenario-box">
+    <h4>Scenario 4: The Rogue Analyst</h4>
+    <p>"An analyst ran SELECT * FROM a 50 TB table in BigQuery (on-demand pricing). The query cost $250. How do you prevent this?"</p>
+    <button class="reveal-btn" onclick="reveal(this)">Reveal Answer</button>
+    <div class="answer-box"><strong>1)</strong> Set <code>maximumBytesBilled</code> per query (e.g., 1 TB limit). <strong>2)</strong> Require partition filters on large tables. <strong>3)</strong> Create authorized views that pre-filter data. <strong>4)</strong> Set up project-level cost alerts. <strong>5)</strong> Consider switching heavy users to flat-rate BigQuery slots. <strong>6)</strong> Educate users: always use WHERE clauses and SELECT only needed columns.</div>
+  </div>
+
+  <div class="scenario-box">
+    <h4>Scenario 5: Backfill Gone Wrong</h4>
+    <p>"A backfill of 2 years of data was estimated at $3K but actually cost $18K. What went wrong?"</p>
+    <button class="reveal-btn" onclick="reveal(this)">Reveal Answer</button>
+    <div class="answer-box">Common causes: <strong>1)</strong> Estimated from a recent (small) day — older data may have different volumes. <strong>2)</strong> Data skew in historical data caused stragglers. <strong>3)</strong> No checkpointing — job failed at month 8 and restarted from scratch. <strong>4)</strong> Cluster auto-scaled to max during peak contention. <strong>5)</strong> Didn't use spot instances. Fix: sample from multiple time periods, stage in batches with checkpoints, use spot, set budget alerts.</div>
+  </div>
+
+  <div class="scenario-box">
+    <h4>Scenario 6: Join Taking 4 Hours</h4>
+    <p>"A join between a 200 GB table and a 500 GB table takes 4 hours. Both are well-partitioned. What do you check?"</p>
+    <button class="reveal-btn" onclick="reveal(this)">Reveal Answer</button>
+    <div class="answer-box"><strong>1)</strong> Check for data skew on the join key — is one key responsible for 80% of data? <strong>2)</strong> Check shuffle partition count (default 200 may be too few for 700 GB). <strong>3)</strong> Are both tables sorted/bucketed on the join key? Bucketing eliminates shuffle. <strong>4)</strong> Can you filter either table before the join? <strong>5)</strong> Enable AQE for automatic skew handling. <strong>6)</strong> Check if columns are being pruned — SELECT only what's needed.</div>
+  </div>
+
+  <div class="scenario-box">
+    <h4>Scenario 7: Streaming Micro-Batch Costs</h4>
+    <p>"Your Kafka-to-Delta streaming job produces 50K files/day. Storage costs are growing 5x faster than expected."</p>
+    <button class="reveal-btn" onclick="reveal(this)">Reveal Answer</button>
+    <div class="answer-box"><strong>1)</strong> Increase trigger interval — from 30s to 5-10 min if latency allows. <strong>2)</strong> Enable Delta auto-compaction (<code>autoOptimize.autoCompact</code>). <strong>3)</strong> Schedule OPTIMIZE to run hourly/daily. <strong>4)</strong> Use <code>optimizeWrite</code> to coalesce partitions during write. <strong>5)</strong> Run VACUUM regularly to clean old files. Going from 50K files/day to ~200 files/day can cut storage overhead by 90%.</div>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2>Common <span class="accent">Gotchas</span></h2>
+  <p>These traps catch even experienced engineers. Know them before your interview.</p>
+  <div class="gotcha-grid">
+    <div class="gotcha">
+      <h4>🚫 SELECT * in Production</h4>
+      <p>Scans every column in columnar formats. A 50-column Parquet table scanned fully costs 10x vs selecting 5 columns.</p>
+    </div>
+    <div class="gotcha">
+      <h4>🚫 Partition by High-Cardinality</h4>
+      <p>Partitioning by user_id (10M users) creates 10M micro-partitions. Use Z-ordering or bucketing instead.</p>
+    </div>
+    <div class="gotcha">
+      <h4>🚫 Forgetting to VACUUM</h4>
+      <p>Delta Lake keeps old file versions. Without VACUUM, storage doubles every few weeks from retained history.</p>
+    </div>
+    <div class="gotcha">
+      <h4>🚫 Wrong Shuffle Partition Count</h4>
+      <p>200 partitions for 1 TB = 5 GB per partition (OOM risk). 200 partitions for 1 GB = 5 MB each (overhead waste). Tune it.</p>
+    </div>
+    <div class="gotcha">
+      <h4>🚫 Always-On Clusters</h4>
+      <p>A cluster running 24/7 at 15% utilization wastes 85% of spend. Auto-terminate + auto-scale saves 60-80%.</p>
+    </div>
+    <div class="gotcha">
+      <h4>🚫 Full Refresh on Large Tables</h4>
+      <p>Reprocessing 2 TB daily when only 5 GB is new. Incremental processing would be 400x cheaper.</p>
+    </div>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <h2>Rapid-Fire <span class="accent">Quiz: Part 1</span></h2>
+  <div id="quiz6a">
+    <div class="quiz-question-block" data-correct="b" data-success-msg="Correct! Column pruning in Parquet means only reading the columns you need, skipping the rest entirely." data-error-msg="Think about what columnar formats like Parquet do differently from row-based formats.">
+      <h4>Q1: A table has 50 columns but your query uses 3. How much data should be scanned?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) All 50 columns — Parquet reads full rows</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Only 3 columns — Parquet supports column pruning</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) It depends on the query optimizer</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Half the columns as a compromise</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="c" data-success-msg="Correct! Broadcast joins eliminate shuffle on the large side. The small table is replicated to all executors." data-error-msg="Think about which join approach avoids moving the large table's data.">
+      <h4>Q2: Why does a broadcast join save money?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) It compresses data automatically</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) It uses less storage</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) It eliminates shuffle on the large table, saving network I/O and disk spills</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) It runs on fewer executors</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="a" data-success-msg="Correct! Z-ordering clusters related values together, enabling min/max-based data skipping during scans." data-error-msg="Z-ordering affects how data is physically organized within files.">
+      <h4>Q3: How does Z-ordering reduce cost?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Co-locates related data so queries skip irrelevant file segments</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Compresses data 50% more efficiently</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Converts row format to columnar</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Reduces the number of executors needed</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="d" data-success-msg="Correct! Incremental processing handles only new/changed data, keeping cost ~constant as the table grows." data-error-msg="Think about which approach processes the minimum amount of data each run.">
+      <h4>Q4: Your daily pipeline reprocesses a 5 TB table that grows 10 GB/day. Best cost optimization?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Add more nodes</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Switch to a faster file format</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Run less frequently</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Switch to incremental processing — only handle the new 10 GB</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="b" data-success-msg="Correct! A $250 accidental query calls for bytes-scanned limits, required partition filters, and education." data-error-msg="Look for the comprehensive answer that prevents this class of problem from recurring.">
+      <h4>Q5: An analyst costs $250 with one BigQuery SELECT *. Best prevention?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Revoke their BigQuery access</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Set maximumBytesBilled limits + require partition filters + authorized views</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Switch to a different cloud provider</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Partition every table by date</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz6a')">Check Answers</button>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>Rapid-Fire <span class="accent">Quiz: Part 2</span></h2>
+  <div id="quiz6b">
+    <div class="quiz-question-block" data-correct="c" data-success-msg="Correct! Showback creates visibility first. Once teams understand their costs, chargeback becomes easier to implement." data-error-msg="Start with the approach that builds awareness before enforcement.">
+      <h4>Q6: What's the recommended first step for introducing FinOps culture?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Implement full chargeback immediately</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Hire a FinOps team</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Start with showback — make costs visible per team, then iterate</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Cut all cloud budgets by 30%</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="a" data-success-msg="Correct! One task taking 100x longer while others idle is the classic signature of data skew on a hot key." data-error-msg="Look for the Spark UI pattern that indicates an imbalanced partition.">
+      <h4>Q7: In Spark UI, one task takes 45 min while 199 others take 30 sec each. What's the problem?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Data skew — one partition has vastly more data than others</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Network congestion</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Insufficient memory</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Wrong file format</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="d" data-success-msg="Correct! Spot instances give 60-90% savings and batch jobs can tolerate the occasional preemption with checkpointing." data-error-msg="Think about which billing model gives the deepest discount for fault-tolerant workloads.">
+      <h4>Q8: A nightly batch job runs 4 hours and can tolerate restarts. How to cut compute cost 70%?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Run it during business hours</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Use reserved instances</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Reduce output columns</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Use spot/preemptible instances with checkpointing</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="b" data-success-msg="Correct! VACUUM removes old file versions. Without it, Delta Lake retains all history, doubling storage over time." data-error-msg="Think about what Delta Lake retains by default and what command cleans it up.">
+      <h4>Q9: Delta table storage doubled despite no new data. What's the fix?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Repartition the table</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Run VACUUM to remove old file versions retained by Delta's time travel</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Convert to CSV format</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Increase cluster size</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="a" data-success-msg="Correct! Cost-per-pipeline and bytes-scanned are the most actionable FinOps metrics — they tie directly to optimization opportunities." data-error-msg="Choose the metrics most directly tied to optimization actions.">
+      <h4>Q10: Which FinOps metrics would you track first?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Cost per pipeline, bytes scanned per query, cluster utilization</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Number of tables in the data lake</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Lines of code per pipeline</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Number of cloud services used</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz6b')">Check Answers</button>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s6">
+  <h2>Your <span class="accent">Score</span></h2>
+  <div class="score-box">
+    <div class="score-num" id="finalScore">—</div>
+    <div class="score-label">out of 10 questions answered correctly</div>
+    <button class="quiz-btn" onclick="calcScore()" style="margin-top:1.5rem">Calculate My Score</button>
+  </div>
+  <div class="callout callout-info">
+    <div class="callout-title">🎯 What's Next?</div>
+    <p>If you scored 8+, you're interview-ready on cost optimization. 5-7: review Modules 2-5. Under 5: restart from Module 1 and take notes on each callout box. Remember: interviewers want to hear structured thinking, not just the right answer.</p>
+  </div>
+  <div class="callout">
+    <div class="callout-title">💡 Final Interview Tip</div>
+    <p>When answering cost questions, always use this structure: <strong>1)</strong> Identify the cost driver. <strong>2)</strong> Explain why it's expensive. <strong>3)</strong> Propose 2-3 concrete optimizations with trade-offs. <strong>4)</strong> Quantify the expected savings if possible.</p>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-05-cluster-finops/index.html">← Prev: Cluster & FinOps</a>
+  <a href="../index.html">Course Home →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  var pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){var h=document.documentElement,pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+  var tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(function(el){
+    el.addEventListener('mouseenter',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',function(){tb.classList.remove('visible');});
+    el.addEventListener('click',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+  var observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(function(s){observer.observe(s);});
+  document.addEventListener('keydown',function(e){if(e.key==='ArrowRight')window.scrollBy({top:window.innerHeight,behavior:'smooth'});if(e.key==='ArrowLeft')window.scrollBy({top:-window.innerHeight,behavior:'smooth'});});
+})();
+
+window.reveal=function(btn){
+  var box=btn.nextElementSibling;
+  box.classList.toggle('show');
+  btn.textContent=box.classList.contains('show')?'Hide Answer':'Reveal Answer';
+};
+
+window.selectOption=function(btn){var block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('selected');});btn.classList.add('selected');};
+
+window.checkQuiz=function(sectionId){var container=document.getElementById(sectionId);container.querySelectorAll('.quiz-question-block').forEach(function(q){var selected=q.querySelector('.quiz-option.selected'),feedback=q.querySelector('.quiz-feedback'),correctValue=q.dataset.correct;if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}q.querySelectorAll('.quiz-option').forEach(function(o){o.disabled=true;});});};
+
+window.calcScore=function(){
+  var correct=0,total=0;
+  document.querySelectorAll('.quiz-question-block').forEach(function(q){
+    total++;
+    var sel=q.querySelector('.quiz-option.selected');
+    if(sel&&sel.dataset.value===q.dataset.correct)correct++;
+  });
+  document.getElementById('finalScore').textContent=correct+' / '+total;
+};
+</script>
+</body>
+</html>

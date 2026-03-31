@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 6: The Interview Gauntlet | Data Modeling Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#2A7B9B;--color-accent-light:#E4F2F7;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg-warm);color:var(--color-text);line-height:1.7}
+nav.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(245,240,232,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-error);width:0%;transition:width 0.15s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:var(--color-border);text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-error)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-error)}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.callout{background:linear-gradient(135deg,var(--color-error-light),#FFF0F0);border-left:4px solid var(--color-error);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-error)}
+.callout p{font-size:0.95rem;margin:0}
+.callout.teal{background:linear-gradient(135deg,var(--color-accent-light),#F0F8FB);border-left-color:var(--color-accent)}
+.callout.teal .callout-title{color:var(--color-accent)}
+.callout.green{background:linear-gradient(135deg,var(--color-success-light),#F0FAF4);border-left-color:var(--color-success)}
+.callout.green .callout-title{color:var(--color-success)}
+.quiz-question-block{background:var(--color-surface);border-radius:16px;padding:1.8rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1rem 0}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1.05rem}
+.quiz-option{display:block;width:100%;text-align:left;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid var(--color-border);border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem;font-family:var(--font-body);background:none}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-option:disabled{cursor:default;opacity:0.7}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#8D6E00}
+.check-btn{display:inline-block;background:var(--color-error);color:#fff;border:none;padding:0.7rem 2rem;border-radius:100px;font-family:var(--font-head);font-weight:700;font-size:0.95rem;cursor:pointer;margin-top:1rem;transition:transform 0.2s}
+.check-btn:hover{transform:translateY(-2px)}
+.screen-alt{background:var(--color-bg);margin-left:calc(-50vw + 50%);margin-right:calc(-50vw + 50%);padding-left:calc(50vw - 50% + 1.5rem);padding-right:calc(50vw - 50% + 1.5rem);max-width:none}
+.screen-alt>*{max-width:900px}
+.design-box{background:var(--color-surface);border-radius:16px;padding:1.8rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.design-box h4{font-family:var(--font-head);font-weight:700;margin-bottom:0.5rem;font-size:1.1rem}
+.design-box p{font-size:0.95rem;margin-bottom:0.5rem}
+.reveal-btn{background:var(--color-accent);color:#fff;border:none;padding:0.5rem 1.5rem;border-radius:100px;font-family:var(--font-head);font-weight:600;font-size:0.85rem;cursor:pointer;margin-top:0.5rem;transition:transform 0.2s}
+.reveal-btn:hover{transform:translateY(-1px)}
+.reveal-answer{display:none;margin-top:1rem;padding:1rem;background:var(--color-accent-light);border-radius:10px;font-size:0.92rem;line-height:1.6}
+.reveal-answer.show{display:block}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:var(--color-surface);border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-error);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card h4{font-family:var(--font-head);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-text-muted);margin-bottom:0}
+.score-box{background:var(--color-surface);border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;text-align:center}
+.score-box h3{font-family:var(--font-head);font-size:1.5rem;font-weight:800;margin-bottom:0.5rem}
+.score-num{font-family:var(--font-head);font-size:3rem;font-weight:800;color:var(--color-error)}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+@media(max-width:600px){.card-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="top-nav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">🏗️ Data Modeling Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-what-is-data-modeling/" class="nav-dot" aria-label="Module 1"></a>
+      <a href="../module-02-facts-dimensions-grain/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-star-snowflake/" class="nav-dot" aria-label="Module 3"></a>
+      <a href="../module-04-slowly-changing-dimensions/" class="nav-dot" aria-label="Module 4"></a>
+      <a href="../module-05-advanced-patterns/" class="nav-dot" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot active" aria-label="Module 6 (current)"></a>
+    </div>
+  </div>
+</nav>
+
+<section class="screen" id="s1">
+  <h2>🔥 The Interview <span class="accent">Gauntlet</span></h2>
+  <p>15 tricky scenario questions that separate senior data engineers from the rest. No warm-up — every question is interview-grade.</p>
+  <div class="callout">
+    <div class="callout-title">⚠️ Rules of Engagement</div>
+    <p>Read each scenario carefully. Pick your answer before revealing the solution. In a real interview, you'd need to explain your reasoning — practice saying it out loud.</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <h2>Round 1: <span class="accent">Rapid Fire</span></h2>
+  <div id="quiz1">
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ The bridge table join without weight factors duplicated revenue across multiple categories per product." data-error-msg="❌ Each product maps to 3 categories in the bridge. Without weights, revenue is counted 3x per product.">
+      <h4>Q1: Revenue jumped 3x after joining to a bridge table. What went wrong?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) The fact table has wrong grain</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) The bridge table has duplicate keys</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Weight factors weren't applied — each product maps to ~3 categories, tripling rows</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) A LEFT JOIN included nulls</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ SCD Type 1 overwrites history. All old orders now show the new city — historical context is lost." data-error-msg="❌ Type 1 overwrites: every old order now appears under 'LA' instead of the city at the time of purchase.">
+      <h4>Q2: A customer moved from NYC→LA. After applying SCD Type 1, all their past orders show revenue in LA. Is this correct?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Yes — Type 1 is designed to show current state everywhere</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) It's technically correct for Type 1, but this is why you should use Type 2 when historical accuracy matters</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) No — this is a bug in the ETL pipeline</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Use Type 3 to store both cities</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="d" data-success-msg="✅ Semi-additive measures can't be summed across time. Use AVG or LAST_VALUE, not SUM." data-error-msg="❌ Account balance is semi-additive: summing $50K+$60K+$70K across months gives a meaningless $180K.">
+      <h4>Q3: A dashboard sums monthly account balances across 12 months and shows $600K. The actual balance is $50K. What's wrong?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) The fact table has duplicate records</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) The join fanout inflated rows</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) The partition pruning failed</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Account balance is semi-additive — you can't SUM across time periods</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="a" data-success-msg="✅ Insert an inferred row with a new surrogate key and null attributes. Backfill when the real dimension arrives." data-error-msg="❌ Late-arriving dimensions: create a placeholder row, then update it. Don't block the fact load.">
+      <h4>Q4: Facts for product P-999 arrived but dim_product has no P-999 row yet. Your pipeline must not fail. What do you do?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Insert an inferred dimension row (SK, natural key, nulls) and backfill later</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Map all unknown products to FK = -1 permanently</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Drop the fact records — they're invalid</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Add the product attributes directly to the fact table</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Non-additive measures (ratios) must be recalculated from components at query time, not pre-stored." data-error-msg="❌ Never store pre-computed ratios. Store numerator and denominator separately. SUM(revenue)/SUM(quantity) at query time.">
+      <h4>Q5: An analyst asks you to add an avg_unit_price column to the fact table. What's your response?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Add it — it saves computation at query time</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Store it as a semi-additive measure</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Decline — store revenue and quantity separately; compute ratio at query time</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Add it to the dimension table instead</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="window.checkQuiz('quiz1')">Check Round 1</button>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2>Round 2: <span class="accent">Design Challenges</span></h2>
+
+  <div class="design-box">
+    <h4>🏢 Challenge 1: E-Commerce Order Model</h4>
+    <p>"Design a dimensional model for an e-commerce company. They need to track orders, returns, and customer lifetime value. Orders can have multiple items, promotions, and shipping methods."</p>
+    <button class="reveal-btn" onclick="toggleReveal('dc1')">Reveal Model Answer</button>
+    <div class="reveal-answer" id="dc1">
+      <strong>Grain:</strong> One row per order line item.<br><br>
+      <strong>Fact table:</strong> fact_order_lines (order_line_id, order_date_key, customer_key, product_key, promotion_key, shipping_key, flag_key, order_number [degenerate dim], quantity, unit_price, discount_amount, line_total)<br><br>
+      <strong>Dimensions:</strong> dim_date, dim_customer (SCD2 for address changes), dim_product, dim_promotion, dim_shipping_method, dim_order_flags (junk dim: is_gift, is_rush, payment_type)<br><br>
+      <strong>Returns:</strong> Separate fact_returns with return_date_key, original_order_line FK, reason_key, refund_amount. Don't put returns in fact_order_lines — different grain (one return per line, but returns can be partial).<br><br>
+      <strong>CLV:</strong> Build as a derived periodic snapshot: fact_customer_monthly (customer_key, month_key, cumulative_revenue, order_count, months_since_first_order).
+    </div>
+  </div>
+
+  <div class="design-box">
+    <h4>🏥 Challenge 2: Hospital Patient Tracking</h4>
+    <p>"Design a model to track patient encounters. A patient can have multiple diagnoses per visit, a doctor can see multiple patients, and you need to report on average length of stay by diagnosis."</p>
+    <button class="reveal-btn" onclick="toggleReveal('dc2')">Reveal Model Answer</button>
+    <div class="reveal-answer" id="dc2">
+      <strong>Grain:</strong> One row per patient encounter.<br><br>
+      <strong>Fact table:</strong> fact_encounter (encounter_key, admit_date_key, discharge_date_key [role-playing dim_date], patient_key, attending_doctor_key, department_key, length_of_stay_days, total_charges)<br><br>
+      <strong>Many-to-many diagnoses:</strong> bridge_encounter_diagnosis (encounter_key, diagnosis_key, weight_factor, is_primary_flag). SUM(charges * weight_factor) gives correct per-diagnosis revenue.<br><br>
+      <strong>Dimensions:</strong> dim_patient (SCD2 for address/insurance changes), dim_doctor, dim_diagnosis (ICD codes, category, body system), dim_department, dim_date<br><br>
+      <strong>Avg length of stay:</strong> SUM(length_of_stay_days * weight_factor) / COUNT(DISTINCT encounter_key) — weighted by diagnosis bridge.
+    </div>
+  </div>
+
+  <div class="design-box">
+    <h4>📊 Challenge 3: SaaS Subscription Metrics</h4>
+    <p>"Design a model for a SaaS company that needs to track MRR, churn, expansions, and contractions. Subscriptions have plan changes, upgrades, and cancellations over time."</p>
+    <button class="reveal-btn" onclick="toggleReveal('dc3')">Reveal Model Answer</button>
+    <div class="reveal-answer" id="dc3">
+      <strong>Fact table 1 (accumulating snapshot):</strong> fact_subscription (subscription_key, customer_key, plan_key, created_date_key, activated_date_key, cancelled_date_key, current_mrr, status). Updated as milestones occur.<br><br>
+      <strong>Fact table 2 (periodic snapshot):</strong> fact_mrr_monthly (customer_key, month_key, beginning_mrr, new_mrr, expansion_mrr, contraction_mrr, churn_mrr, ending_mrr). One row per customer per month. Semi-additive: can SUM across customers, not across months.<br><br>
+      <strong>Fact table 3 (transactional):</strong> fact_subscription_events (event_key, subscription_key, event_date_key, event_type [new/upgrade/downgrade/cancel], old_plan_key, new_plan_key, mrr_delta).<br><br>
+      <strong>Dimensions:</strong> dim_customer (SCD2), dim_plan (features, tier, price), dim_date.
+    </div>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <h2>Round 3: <span class="accent">Gotcha Questions</span></h2>
+  <div id="quiz2">
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Without a conformed dim_customer, the two facts can't be compared. Different definitions = wrong cross-analysis." data-error-msg="❌ The problem is non-conformed dimensions: each fact has its own customer definition.">
+      <h4>Q6: Two teams built separate star schemas for sales and support. They want to join on customer. What's the likely problem?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) They need a bridge table</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Non-conformed dim_customer — different definitions, keys, or granularity</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) The fact tables have different grain</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Star schemas can't be joined</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="a" data-success-msg="✅ Create a factless fact table. The event is 'student eligible for program' — no measures, just the relationship." data-error-msg="❌ Factless fact: student_key + program_key + date_key. COUNT(*) answers 'how many students are eligible?'">
+      <h4>Q7: You need to track which students are eligible for which scholarship programs. There's no dollar amount. What do you build?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Factless fact table with student_key, program_key, date_key</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) A bridge table between students and programs</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Add an eligibility flag to dim_student</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) A transactional fact with amount = 0</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="d" data-success-msg="✅ Outrigger dimension: dim_geography hangs off dim_customer, not the fact. Use sparingly — it adds a join." data-error-msg="❌ An outrigger is a dimension joined to another dimension. dim_customer → dim_geography is the classic example.">
+      <h4>Q8: dim_customer has 50 geography-related columns (city, state, country, region, timezone, etc.) that are shared with dim_store. How do you refactor?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Keep all 50 columns in both dimensions</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Create a junk dimension for geography</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Move geography to the fact table</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Create dim_geography as an outrigger — both dim_customer and dim_store reference it</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Type 6 (hybrid 1+2+3): versioned rows for history + current_city column overwritten on ALL rows for easy filtering." data-error-msg="❌ Type 6 adds a 'current_city' column that overwrites on every row, PLUS Type 2 history rows for as-of queries.">
+      <h4>Q9: You need SCD2 history for as-of reporting, BUT also want to easily filter all of a customer's orders by their CURRENT city. Which SCD type?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Type 2 — just filter WHERE is_current = 'Y'</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Type 3 — add current and previous columns</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Type 6 — hybrid: versioned rows + current_city overwritten on every row</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Type 4 — separate history table</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Mini-dimensions band volatile high-cardinality attributes. The fact table points to the banded profile at transaction time." data-error-msg="❌ Mini-dimension: band the score into ranges (700-749, 750-799). Pre-build all combinations. Fact FK points to the profile active at transaction time.">
+      <h4>Q10: Credit scores change weekly. Full SCD2 would create millions of rows. How do you track score at time of loan application?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Store the raw score in the fact table</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Mini-dimension with banded score ranges; fact FK captured at application time</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) SCD Type 1 — only the latest score matters</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Accumulating snapshot with score milestones</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="window.checkQuiz('quiz2')">Check Round 3</button>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>Round 4: <span class="accent">Final Five</span></h2>
+  <div id="quiz3">
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Correct grain + proper join keys. Grain mismatch is the root cause of most double-counting bugs." data-error-msg="❌ Double-counting starts with grain mismatch. Fix grain first, then ensure all joins are many-to-one.">
+      <h4>Q11: "How do you prevent double-counting in a data model?" — Give the interviewer a structured 3-point answer.</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Use DISTINCT everywhere and deduplicate in the BI tool</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Normalize all tables to 3NF</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) (1) Define clear grain, (2) enforce many-to-one joins with bridge tables for M:N, (3) test with reconciliation queries</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Add unique constraints on all columns</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="a" data-success-msg="✅ Periodic snapshot: grain = warehouse + product + day. Measures are semi-additive (can't sum quantity across days)." data-error-msg="❌ Inventory level = state at a point in time → periodic snapshot. Not transactional (no individual events).">
+      <h4>Q12: "Design a fact table for daily warehouse inventory levels." What's your first sentence?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) "The grain is one row per warehouse per product per day — this is a periodic snapshot fact."</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) "I'd create a transactional fact tracking each inventory movement."</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) "I'd denormalize warehouse and product into a single wide table."</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) "First, let me set up the star schema with dim_warehouse."</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="d" data-success-msg="✅ Views aliased per role are the cleanest approach. The physical table is one dim_date; views like v_order_date add clarity." data-error-msg="❌ Create aliased views for each role. One physical dim_date, many logical views (v_order_date, v_ship_date).">
+      <h4>Q13: An analyst is confused by 3 date FKs in the fact table. How do you make the model more self-service?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Create 3 separate physical date dimension tables</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Remove 2 of the 3 date FKs</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Rename the FK columns to include the role</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Create aliased views (v_order_date, v_ship_date, v_delivery_date) on top of one dim_date</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Key uniqueness, referential integrity, row-count reconciliation, and metric regression — the four pillars." data-error-msg="❌ The structured answer: (1) key uniqueness, (2) FK integrity, (3) row count checks, (4) metric regression tests.">
+      <h4>Q14: "You just deployed a model change. How do you validate it?" Give a structured answer.</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Spot-check a few rows manually</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) (1) Verify key uniqueness, (2) check referential integrity, (3) reconcile row counts with source, (4) compare key metrics before/after</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Run the BI dashboard and see if numbers look right</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Ask the analyst team to verify</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Kimball = bottom-up, business-process oriented, delivers fast. Inmon = top-down, enterprise-first, slower but comprehensive." data-error-msg="❌ Kimball: dimensional models per business process, bottom-up. Inmon: enterprise 3NF model first, then derive data marts.">
+      <h4>Q15: "Explain Kimball vs Inmon." What's the one-sentence distinction?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Kimball uses star schemas; Inmon uses snowflake schemas</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Kimball is for small companies; Inmon is for enterprises</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Kimball is bottom-up (dimensional models per business process); Inmon is top-down (enterprise 3NF first, then data marts)</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) They are the same methodology with different naming</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="window.checkQuiz('quiz3')">Check Final Round</button>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s6">
+  <h2>🏆 Common <span class="accent">Pitfalls</span> Cheat Sheet</h2>
+  <div class="card-grid">
+    <div class="card">
+      <h4>❌ Undefined Grain</h4>
+      <p>If you can't state what one row represents in one sentence, stop and fix it before writing any DDL.</p>
+    </div>
+    <div class="card" style="border-top-color:#C4813D">
+      <h4>❌ Pre-Computed Ratios</h4>
+      <p>Never store avg_price or margin% in fact tables. Store components (revenue, cost, quantity) and compute at query time.</p>
+    </div>
+    <div class="card" style="border-top-color:#7B5EA7">
+      <h4>❌ Summing Semi-Additives</h4>
+      <p>Balances, inventory counts, and headcounts can't be summed across time. Use AVG, LAST_VALUE, or filter to single period.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--color-success)">
+      <h4>❌ Missing Bridge Tables</h4>
+      <p>Many-to-many without a bridge = row explosion = wrong totals. Always check cardinality before joining.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--color-accent)">
+      <h4>❌ Natural Keys as PKs</h4>
+      <p>Natural keys change (email, product SKU). Use surrogate keys in dimensions. Keep the natural key as a business key column.</p>
+    </div>
+    <div class="card">
+      <h4>❌ Non-Conformed Dimensions</h4>
+      <p>"Marketing's customer count doesn't match Sales." Same entity, different definitions. One conformed dimension fixes this.</p>
+    </div>
+  </div>
+  <div class="callout green">
+    <div class="callout-title">🎓 You've Completed the Course!</div>
+    <p>You've covered data modeling fundamentals, fact/dimension tables, star and snowflake schemas, SCDs, advanced patterns, and survived the gauntlet. You're ready to ace your data modeling interview.</p>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-05-advanced-patterns/index.html">← Prev: Advanced Patterns</a>
+  <a href="../index.html">Course Home 🏗️</a>
+</footer>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=Math.min(pct,100)+'%';},{passive:true});
+
+  const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(s=>observer.observe(s));
+
+  window.toggleReveal=function(id){document.getElementById(id).classList.toggle('show');};
+
+  window.selectOption=function(btn){const block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(o=>o.classList.remove('selected'));btn.classList.add('selected');};
+  window.checkQuiz=function(sectionId){const container=document.getElementById(sectionId);const questions=container.querySelectorAll('.quiz-question-block');questions.forEach(q=>{const selected=q.querySelector('.quiz-option.selected');const feedback=q.querySelector('.quiz-feedback');const correctValue=q.dataset.correct;if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}q.querySelectorAll('.quiz-option').forEach(o=>o.disabled=true);});};
+
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')window.location.href='../module-05-advanced-patterns/index.html';});
+})();
+</script>
+</body>
+</html>

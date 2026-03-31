@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 1: What Is Data Modeling? | Data Modeling Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#2A7B9B;--color-accent-hover:#1F6380;--color-accent-light:#E4F2F7;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.15s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:var(--color-border);text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:var(--color-surface);border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.orange{border-top-color:#C4813D}.card.red{border-top-color:var(--color-error)}
+.card h4{font-family:var(--font-head);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-text-muted);margin-bottom:0}
+.callout{background:linear-gradient(135deg,var(--color-accent-light),#F0F8FB);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.callout p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:var(--color-surface);border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-head);font-weight:700;font-size:1rem;margin-bottom:0.8rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.flow-diagram{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:1.5rem 0;justify-content:center}
+.flow-step{background:var(--color-surface);border:2px solid var(--color-accent);border-radius:12px;padding:0.8rem 1.2rem;font-family:var(--font-head);font-weight:600;font-size:0.9rem;text-align:center;min-width:120px}
+.flow-arrow{color:var(--color-accent);font-size:1.4rem;font-weight:bold}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.quiz-question-block{background:var(--color-surface);border-radius:16px;padding:1.8rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1rem 0}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1.05rem}
+.quiz-option{display:block;width:100%;text-align:left;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid var(--color-border);border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem;font-family:var(--font-body);background:none}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-option:disabled{cursor:default;opacity:0.7}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#8D6E00}
+.check-btn{display:inline-block;background:var(--color-accent);color:#fff;border:none;padding:0.7rem 2rem;border-radius:100px;font-family:var(--font-head);font-weight:700;font-size:0.95rem;cursor:pointer;margin-top:1rem;transition:transform 0.2s}
+.check-btn:hover{transform:translateY(-2px)}
+.screen-alt{background:var(--color-bg-warm);margin-left:calc(-50vw + 50%);margin-right:calc(-50vw + 50%);padding-left:calc(50vw - 50% + 1.5rem);padding-right:calc(50vw - 50% + 1.5rem);max-width:none}
+.screen-alt>*{max-width:900px}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}.flow-diagram{flex-direction:column}.flow-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<nav class="top-nav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">🏗️ Data Modeling Mastery</a>
+    <div class="nav-dots" aria-label="Module navigation">
+      <a href="../module-01-what-is-data-modeling/" class="nav-dot active" aria-label="Module 1 (current)"></a>
+      <a href="../module-02-facts-dimensions-grain/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-star-snowflake/" class="nav-dot" aria-label="Module 3"></a>
+      <a href="../module-04-slowly-changing-dimensions/" class="nav-dot" aria-label="Module 4"></a>
+      <a href="../module-05-advanced-patterns/" class="nav-dot" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a>
+    </div>
+  </div>
+</nav>
+
+<section class="screen" id="s1">
+  <h2>🏗️ What Is <span class="accent">Data Modeling</span>?</h2>
+  <p>Data modeling is the process of <strong>structuring data</strong> so it can be queried reliably and efficiently. A good model makes metrics consistent, reduces complexity for analysts, and aligns storage with query patterns.</p>
+  <p>A bad model leads to <strong>inconsistent KPIs</strong>, confusing joins, expensive queries, and engineers spending weeks debugging why revenue is "off by $2M."</p>
+  <div class="callout">
+    <div class="callout-title">💡 Interview Gold</div>
+    <p>"Data modeling is designing how data is stored, related, and accessed — optimized for the questions the business needs to answer. It's the blueprint of your warehouse."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <h2>Three Levels of <span class="accent">Data Models</span></h2>
+  <p>Interviewers love asking about model layers. Know these cold:</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>📐 Conceptual Model</h4>
+      <p>High-level business entities and relationships. No technical details. "Customers place Orders that contain Products." Stakeholders and architects use this.</p>
+    </div>
+    <div class="card green">
+      <h4>📋 Logical Model</h4>
+      <p>Attributes, data types, primary/foreign keys — but <strong>platform-independent</strong>. Defines "what" without "how." Think ER diagrams with full column lists.</p>
+    </div>
+    <div class="card purple">
+      <h4>⚙️ Physical Model</h4>
+      <p>The actual implementation: table DDL, indexes, partitioning, compression. <strong>Platform-specific</strong> — Snowflake vs BigQuery vs Redshift choices live here.</p>
+    </div>
+  </div>
+  <div class="flow-diagram">
+    <div class="flow-step">Conceptual<br><small>Business entities</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Logical<br><small>Attributes & keys</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Physical<br><small>DDL & indexes</small></div>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2><span class="accent">OLTP</span> vs <span class="accent">OLAP</span></h2>
+  <p>This distinction drives <em>every</em> modeling decision. Get it wrong and your warehouse will feel like a production database — slow and unusable for analytics.</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🔄 OLTP (Transactional)</h4>
+      <ul>
+        <li>✅ Optimized for writes (INSERT/UPDATE)</li>
+        <li>✅ Highly <span class="tooltip-term" data-tip="Organizing data to reduce redundancy by splitting into multiple related tables. Typically 3NF (Third Normal Form).">normalized</span> (3NF)</li>
+        <li>✅ Row-oriented storage</li>
+        <li>✅ Small, frequent transactions</li>
+        <li>⚠️ Terrible for analytical queries</li>
+        <li>📌 Example: Order entry system</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>📊 OLAP (Analytical)</h4>
+      <ul>
+        <li>✅ Optimized for reads (SELECT/AGG)</li>
+        <li>✅ <span class="tooltip-term" data-tip="Combining data into fewer, wider tables to minimize joins and speed up reads. Star schemas are a common denormalized pattern.">Denormalized</span> (star/snowflake)</li>
+        <li>✅ Columnar storage</li>
+        <li>✅ Complex aggregations over millions of rows</li>
+        <li>⚠️ Not designed for transactional writes</li>
+        <li>📌 Example: Revenue dashboards</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="callout-title">🎯 Interview Tip</div>
+    <p>"OLTP protects data integrity during writes. OLAP accelerates reads for decision-making. A data warehouse typically ingests from OLTP sources and restructures data into OLAP-friendly models."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <h2><span class="accent">Normalization</span> vs Denormalization</h2>
+  <p>This trade-off is at the <strong>heart</strong> of every data modeling interview. Normalization reduces redundancy; denormalization speeds up queries.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>1NF — First Normal Form</h4>
+      <p>No repeating groups. Each cell holds a single atomic value. No arrays in columns.</p>
+    </div>
+    <div class="card green">
+      <h4>2NF — Second Normal Form</h4>
+      <p>1NF + every non-key column depends on the <strong>entire</strong> primary key (no partial dependencies).</p>
+    </div>
+    <div class="card purple">
+      <h4>3NF — Third Normal Form</h4>
+      <p>2NF + no <span class="tooltip-term" data-tip="When column A determines column B, and column B determines column C, then C transitively depends on A. 3NF removes this.">transitive dependencies</span>. Every non-key column depends only on the key.</p>
+    </div>
+    <div class="card orange">
+      <h4>Denormalized (Star Schema)</h4>
+      <p>Intentionally redundant. Customer city stored in the dimension, not in a separate city table. Fewer joins = faster queries.</p>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="callout-title">💡 Interview Gold</div>
+    <p>"In OLTP, we normalize to protect write integrity. In OLAP, we denormalize because <strong>join cost &gt; storage cost</strong>. Modern columnar warehouses compress denormalized data extremely well, making redundancy nearly free."</p>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>Data Modeling in the <span class="accent">Modern Stack</span></h2>
+  <p>Interviewers increasingly ask: "Where does modeling fit in a lakehouse?" Know the landscape:</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🏢 Traditional Warehouse</h4>
+      <p>ETL → star schema in Redshift/Snowflake/BigQuery. Models are pre-computed and tightly governed. Kimball or Inmon methodology.</p>
+    </div>
+    <div class="card green">
+      <h4>🏕️ Data Lake</h4>
+      <p>Raw files on S3/ADLS in Parquet/Delta. Schema-on-read. Risk of becoming a "data swamp" without modeling discipline.</p>
+    </div>
+    <div class="card purple">
+      <h4>🏠 Lakehouse</h4>
+      <p>Delta Lake / Iceberg on the lake with ACID transactions. Brings warehouse-like modeling to lake storage. Best of both worlds.</p>
+    </div>
+  </div>
+  <div class="flow-diagram">
+    <div class="flow-step" style="border-color:var(--color-error)">Raw / Bronze<br><small>As-is from source</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color:#C4813D">Cleaned / Silver<br><small>Deduplicated, typed</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color:var(--color-success)">Modeled / Gold<br><small>Star schemas, metrics</small></div>
+  </div>
+  <div class="callout">
+    <div class="callout-title">🎯 Interview Tip</div>
+    <p>"Even in a lakehouse, dimensional modeling matters. The medallion architecture (Bronze → Silver → Gold) is just the <em>pipeline</em>. The Gold layer still needs proper star schemas, conformed dimensions, and defined grain."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s6">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+  <div id="quiz1">
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Data modeling structures data for reliable, efficient querying — not just storage." data-error-msg="❌ Not quite. Data modeling is about structuring data for reliable querying, not just organizing files.">
+      <h4>Q1: An interviewer asks "What is data modeling?" Which answer is strongest?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Creating ER diagrams in a visual tool</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Structuring data so it can be queried reliably and efficiently, with consistent metrics and optimized performance</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Normalizing all tables to Third Normal Form</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Writing CREATE TABLE statements in SQL</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Correct! OLAP is optimized for complex analytical reads over large datasets." data-error-msg="❌ OLAP (Online Analytical Processing) is optimized for reads and aggregations, not transactional writes.">
+      <h4>Q2: Your team's dashboard scans 500M rows to compute monthly revenue. Which model type should back it?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) OLTP in 3NF — normalized means correct</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) A flat CSV file — simplest approach</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) OLAP denormalized model (star schema) — optimized for aggregation queries</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) A graph database — revenue is a relationship</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Logical model defines attributes and keys without choosing a database platform." data-error-msg="❌ The logical model has attributes and keys but is platform-independent. Physical model adds DDL, indexes, partitioning.">
+      <h4>Q3: Which model layer includes column names, data types, and keys but NOT indexes or partitioning?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Conceptual model</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Logical model</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Physical model</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Operational model</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="d" data-success-msg="✅ Correct! Columnar storage compresses duplicate values so well that denormalization's redundancy is nearly free." data-error-msg="❌ Modern columnar warehouses compress repeated values efficiently, making the storage cost of denormalization negligible.">
+      <h4>Q4: Why is denormalization more acceptable in modern columnar warehouses than in traditional row-store OLTP systems?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Columnar warehouses don't support normalization</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Denormalized data is always more correct</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Row stores compress better than columnar stores</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Columnar compression makes redundancy nearly free, and fewer joins mean faster reads</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Correct! The Gold layer applies dimensional modeling on top of cleaned data — star schemas, conformed dims, defined grain." data-error-msg="❌ Modeling lives in the Gold layer. Bronze is raw ingestion, Silver is cleaning. Gold is where business-ready star schemas are built.">
+      <h4>Q5: In a medallion (Bronze/Silver/Gold) lakehouse, where does dimensional modeling primarily happen?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Bronze — model at ingestion</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Silver — model after cleaning</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Gold — star schemas on cleaned data</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Modeling is irrelevant in a lakehouse</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="window.checkQuiz('quiz1')">Check Answers</button>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../index.html">← Course Home</a>
+  <a href="../module-02-facts-dimensions-grain/index.html">Next: Facts, Dimensions & Grain →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=Math.min(pct,100)+'%';},{passive:true});
+
+  const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(s=>observer.observe(s));
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',()=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  window.selectOption=function(btn){const block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(o=>o.classList.remove('selected'));btn.classList.add('selected');};
+  window.checkQuiz=function(sectionId){const container=document.getElementById(sectionId);const questions=container.querySelectorAll('.quiz-question-block');questions.forEach(q=>{const selected=q.querySelector('.quiz-option.selected');const feedback=q.querySelector('.quiz-feedback');const correctValue=q.dataset.correct;if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}q.querySelectorAll('.quiz-option').forEach(o=>o.disabled=true);});};
+
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')window.location.href='../module-02-facts-dimensions-grain/index.html';if(e.key==='ArrowLeft')window.location.href='../index.html';});
+})();
+</script>
+</body>
+</html>

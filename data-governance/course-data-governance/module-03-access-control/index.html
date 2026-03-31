@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 3: Access Control — RBAC & ABAC | Data Governance Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#7B6DAA;--color-accent-hover:#665A90;--color-accent-light:#F0ECF7;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--color-info:#2A7B9B;--color-info-light:#E4F2F7;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-head);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:var(--color-surface);border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.orange{border-top-color:#D4853E}
+.card h4{font-family:var(--font-head);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-text-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,var(--color-accent-light),#EDE8F5);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:var(--color-surface);border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-head);font-weight:700;font-size:1rem;margin-bottom:0.8rem}
+.comp-col ul{list-style:none;font-size:0.88rem}
+.comp-col ul li{padding:0.35rem 0;border-bottom:1px solid rgba(0,0,0,0.04)}
+.comp-col ul li:last-child{border:none}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-mono);font-size:0.82rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.flow-diagram{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0.5rem;margin:1.5rem 0;padding:1.5rem;background:var(--color-surface);border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.flow-box{background:var(--color-accent-light);border:2px solid var(--color-accent);border-radius:10px;padding:0.7rem 1.2rem;font-family:var(--font-head);font-weight:600;font-size:0.85rem;text-align:center;min-width:110px}
+.flow-box.alt{background:var(--color-info-light);border-color:var(--color-info)}
+.flow-box.green{background:var(--color-success-light);border-color:var(--color-success)}
+.flow-box.red{background:var(--color-error-light);border-color:var(--color-error)}
+.flow-arrow{font-size:1.2rem;color:var(--color-text-muted)}
+.access-grid{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:0;margin:1.5rem 0;background:var(--color-surface);border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04);font-size:0.85rem}
+.access-grid .hdr{background:var(--color-accent);color:#fff;padding:0.7rem;font-family:var(--font-head);font-weight:600}
+.access-grid .cell{padding:0.6rem 0.7rem;border-bottom:1px solid var(--color-border)}
+.access-grid .cell.yes{color:var(--color-success);font-weight:600}
+.access-grid .cell.no{color:var(--color-error);font-weight:600}
+.quiz-box{background:var(--color-surface);border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-question-block{margin-bottom:1.5rem}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1rem}
+.quiz-option{display:block;width:100%;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem;background:none;text-align:left;font-family:var(--font-body);color:var(--color-text)}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#B8860B}
+.quiz-btn{display:inline-block;padding:0.6rem 1.5rem;background:var(--color-accent);color:#fff;border:none;border-radius:100px;font-family:var(--font-head);font-weight:600;cursor:pointer;font-size:0.9rem;margin-top:0.5rem;transition:transform 0.2s}
+.quiz-btn:hover{transform:translateY(-1px)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.screen-alt{background:var(--color-bg-warm);margin-left:calc(-50vw + 50%);margin-right:calc(-50vw + 50%);padding-left:calc(50vw - 50% + 1.5rem);padding-right:calc(50vw - 50% + 1.5rem);max-width:none}
+.screen-alt>*{max-width:900px}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+@media(max-width:700px){.comparison{grid-template-columns:1fr}.flow-diagram{flex-direction:column}.flow-arrow{transform:rotate(90deg)}.access-grid{font-size:0.75rem}}
+</style>
+</head>
+<body>
+<nav class="nav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">🛡️ Data Governance Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-what-is-governance/" class="nav-dot" aria-label="Module 1"></a>
+      <a href="../module-02-roles-ownership/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-access-control/" class="nav-dot active" aria-label="Module 3"></a>
+      <a href="../module-04-pii-masking/" class="nav-dot" aria-label="Module 4"></a>
+      <a href="../module-05-compliance-retention/" class="nav-dot" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a>
+    </div>
+  </div>
+</nav>
+
+<section class="screen" id="s1">
+  <h2>🔐 RBAC: <span class="accent">Role-Based</span> Access Control</h2>
+  <p><span class="tooltip-term" data-tip="Role-Based Access Control: permissions are assigned to roles (e.g., analyst, engineer), and users are assigned to roles.">RBAC</span> is the most common access control model. You assign permissions to <strong>roles</strong>, then assign users to roles.</p>
+  <div class="flow-diagram">
+    <div class="flow-box">User: Alice</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box alt">Role: Analyst</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box green">Permission: SELECT on analytics.*</div>
+  </div>
+  <h3>RBAC in practice (Snowflake):</h3>
+  <div class="code-block"><span class="cm">-- Create role hierarchy</span>
+<span class="kw">CREATE ROLE</span> analyst;
+<span class="kw">CREATE ROLE</span> data_engineer;
+
+<span class="cm">-- Grant permissions to roles</span>
+<span class="kw">GRANT SELECT ON</span> analytics.* <span class="kw">TO ROLE</span> analyst;
+<span class="kw">GRANT ALL ON</span> raw.* <span class="kw">TO ROLE</span> data_engineer;
+
+<span class="cm">-- Assign users to roles</span>
+<span class="kw">GRANT ROLE</span> analyst <span class="kw">TO USER</span> alice;
+<span class="kw">GRANT ROLE</span> data_engineer <span class="kw">TO USER</span> bob;</div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"RBAC works well when access aligns with job functions. It's simple to audit — just list role memberships. But it struggles with <strong>cross-cutting concerns</strong> like 'analysts who are also in the EU region.'"</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <h2>🏷️ ABAC: <span class="accent">Attribute-Based</span> Access Control</h2>
+  <p><span class="tooltip-term" data-tip="Attribute-Based Access Control: policies use attributes of the user, resource, and environment to make access decisions dynamically.">ABAC</span> evaluates policies using <strong>attributes</strong> — user department, data sensitivity, time of day, location, etc.</p>
+  <div class="flow-diagram">
+    <div class="flow-box">User Attrs<br><small>dept=finance, region=EU</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box alt">Policy Engine<br><small>IF dept=finance AND sensitivity≤3</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box green">ALLOW</div>
+  </div>
+  <h3>RBAC vs ABAC — the comparison:</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🔑 RBAC</h4>
+      <ul>
+        <li>✅ Simple to implement</li>
+        <li>✅ Easy to audit</li>
+        <li>✅ Works for static org structures</li>
+        <li>⚠️ Role explosion in complex orgs</li>
+        <li>❌ Can't handle dynamic conditions</li>
+        <li>❌ Cross-cutting access is awkward</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🏷️ ABAC</h4>
+      <ul>
+        <li>✅ Highly flexible and granular</li>
+        <li>✅ Handles dynamic conditions</li>
+        <li>✅ No role explosion</li>
+        <li>⚠️ More complex to implement</li>
+        <li>⚠️ Harder to audit and debug</li>
+        <li>⚠️ Needs good attribute management</li>
+      </ul>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p>"Most orgs use <strong>RBAC as the base</strong> with ABAC-style policies for edge cases. Example: RBAC grants the 'analyst' role SELECT access, but an ABAC policy further restricts PII columns to users with sensitivity_clearance >= 3."</p>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2>📊 Row-Level & <span class="accent">Column-Level</span> Security</h2>
+  <p>These are the granular controls that make multi-tenant analytics possible.</p>
+  <h3>Row-Level Security (RLS)</h3>
+  <p>Restricts <strong>which rows</strong> a user can see. Common in multi-tenant or regional setups.</p>
+  <div class="code-block"><span class="cm">-- Snowflake: Row access policy</span>
+<span class="kw">CREATE ROW ACCESS POLICY</span> region_filter <span class="kw">AS</span> (region <span class="fn">VARCHAR</span>)
+  <span class="kw">RETURNS BOOLEAN</span> ->
+    region = <span class="fn">CURRENT_USER_REGION</span>()
+    <span class="kw">OR IS_ROLE_IN_SESSION</span>(<span class="str">'ADMIN'</span>);
+
+<span class="cm">-- Apply to table</span>
+<span class="kw">ALTER TABLE</span> orders <span class="kw">ADD ROW ACCESS POLICY</span> region_filter <span class="kw">ON</span> (region);</div>
+  <h3>Column-Level Security (CLS)</h3>
+  <p>Restricts <strong>which columns</strong> are visible. Used to hide PII from non-privileged users.</p>
+  <div class="access-grid">
+    <div class="hdr">Column</div><div class="hdr">Analyst</div><div class="hdr">Engineer</div><div class="hdr">Admin</div>
+    <div class="cell">order_id</div><div class="cell yes">✅ Visible</div><div class="cell yes">✅ Visible</div><div class="cell yes">✅ Visible</div>
+    <div class="cell">amount</div><div class="cell yes">✅ Visible</div><div class="cell yes">✅ Visible</div><div class="cell yes">✅ Visible</div>
+    <div class="cell">customer_email</div><div class="cell no">❌ Hidden</div><div class="cell no">❌ Hidden</div><div class="cell yes">✅ Visible</div>
+    <div class="cell">ssn</div><div class="cell no">❌ Hidden</div><div class="cell no">❌ Hidden</div><div class="cell yes">✅ Visible</div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"Row-level security answers 'which records can you see?' Column-level answers 'which fields can you see?' Together they form a <strong>fine-grained access matrix</strong> essential for multi-tenant analytics and PII protection."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <h2>🎭 Dynamic Data <span class="accent">Masking</span> & Least Privilege</h2>
+  <p><span class="tooltip-term" data-tip="Dynamic masking transforms sensitive data at query time, so the underlying data is unchanged but users see masked values.">Dynamic masking</span> shows different views to different users <em>at query time</em>. The stored data doesn't change.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🎭 Dynamic Masking</h4>
+      <p>Admin sees: john@acme.com<br>Analyst sees: j***@***.com<br>Applied at query time, not stored.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔒 Least Privilege</h4>
+      <p>Every user gets the <strong>minimum access</strong> needed. Start with zero access, grant incrementally. Revoke when no longer needed.</p>
+    </div>
+    <div class="card green">
+      <h4>⏰ Just-In-Time Access</h4>
+      <p>Temporary elevated access with auto-expiration. Engineer requests prod access for 2 hours → auto-revoked after.</p>
+    </div>
+  </div>
+  <h3>Multi-Tenant Access Patterns</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🏢 Shared Tables + RLS</h4>
+      <p>One table, tenant_id column, row access policy filters by tenant. Most common in SaaS platforms. Efficient but requires careful policy management.</p>
+    </div>
+    <div class="card blue">
+      <h4>📁 Separate Schemas</h4>
+      <p>Each tenant gets own schema/database. Stronger isolation, simpler access. More overhead for cross-tenant analytics.</p>
+    </div>
+    <div class="card green">
+      <h4>🔑 Secure Views</h4>
+      <p>Create views that filter by tenant context. Users query views, never base tables. Good balance of simplicity and security.</p>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p>"When asked about multi-tenant access, discuss the tradeoff: <strong>shared tables + RLS</strong> is cost-efficient but complex; <strong>separate schemas</strong> is simpler but harder to manage at scale. Most mature platforms use shared tables with robust RLS."</p>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+  <div class="quiz-box" id="quiz1">
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Correct! ABAC handles dynamic, cross-cutting conditions that would cause role explosion in RBAC." data-error-msg="❌ Think about what model handles attributes like region + department dynamically.">
+      <h4>Q1: A company has 200 roles because every team × region combination needs its own role. What's the fix?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Create more granular RBAC roles</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Use column-level security instead</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Layer ABAC policies on top of RBAC to handle region-based filtering dynamically</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Remove access controls entirely</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Row-level security restricts which rows each regional team can see." data-error-msg="❌ Think about which control filters rows by a condition.">
+      <h4>Q2: US analysts should only see US orders. EU analysts should only see EU orders. Which control?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Column-level security</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Row-level security with a region filter</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Dynamic masking</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Separate databases per region</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="a" data-success-msg="✅ Correct! Dynamic masking transforms values at query time without changing stored data." data-error-msg="❌ Dynamic masking is query-time transformation, not storage-level.">
+      <h4>Q3: An analyst queries a customer table and sees "j***@***.com" for email. The admin sees "john@acme.com". What's happening?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Dynamic data masking — different roles see different views at query time</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) The data was encrypted differently for each user</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Two different copies of the table exist</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Static masking was applied</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="d" data-success-msg="✅ Correct! Just-in-time access with auto-expiration is the gold standard for prod access." data-error-msg="❌ Permanent prod access violates least privilege.">
+      <h4>Q4: An engineer needs production database access for a one-time investigation. Best practice?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Add them to the admin role permanently</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Share the admin password via Slack</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Create a new permanent role for investigations</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Grant just-in-time access with a 2-hour auto-expiration and audit logging</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Shared tables with RLS balance efficiency and security." data-error-msg="❌ Consider the tradeoff between isolation and operational overhead.">
+      <h4>Q5: A SaaS platform with 500 tenants needs data isolation. Most scalable approach?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) 500 separate databases</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Shared tables with tenant_id and row-level security policies</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Application-level filtering only (no database enforcement)</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Encrypt each tenant's data with a different key</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz1')">Check Answers</button>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-02-roles-ownership/index.html">← Prev: Roles & Ownership</a>
+  <a href="../module-04-pii-masking/index.html">Next: PII & Masking →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  var pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){var h=document.documentElement;var pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+  var tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(function(el){
+    el.addEventListener('mouseenter',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',function(){tb.classList.remove('visible');});
+    el.addEventListener('click',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+  var observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(function(s){observer.observe(s);});
+  window.selectOption=function(btn){var block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('selected');});btn.classList.add('selected');};
+  window.checkQuiz=function(sectionId){
+    var container=document.getElementById(sectionId);
+    container.querySelectorAll('.quiz-question-block').forEach(function(q){
+      var selected=q.querySelector('.quiz-option.selected');
+      var feedback=q.querySelector('.quiz-feedback');
+      var correctValue=q.dataset.correct;
+      if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}
+      if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}
+      else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}
+      q.querySelectorAll('.quiz-option').forEach(function(o){o.disabled=true;});
+    });
+  };
+  document.addEventListener('keydown',function(e){if(e.key==='ArrowRight'){var n=document.querySelector('footer.module-nav a:last-child');if(n)n.click();}if(e.key==='ArrowLeft'){var p=document.querySelector('footer.module-nav a:first-child');if(p)p.click();}});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 6: The Interview Gauntlet | Data Quality Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#2D8B55;--color-accent-hover:#247044;--color-accent-light:#E8F5EE;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--color-info:#2A7B9B;--color-info-light:#E4F2F7;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--color-bg-warm);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(245,240,232,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.aha{background:var(--color-accent-light);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.scenario{background:var(--color-surface);border-radius:14px;padding:1.5rem;margin:1rem 0;box-shadow:0 2px 8px rgba(0,0,0,0.04);border-left:4px solid var(--color-accent)}
+.scenario.debug{border-left-color:var(--color-error)}
+.scenario h4{font-family:var(--font-head);font-weight:700;font-size:1.05rem;margin-bottom:0.5rem}
+.scenario p{font-size:0.92rem;margin-bottom:0.5rem}
+.reveal-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-head);font-weight:600;font-size:0.85rem;transition:all 0.2s;margin-top:0.5rem}
+.reveal-btn:hover{background:var(--color-accent);color:#fff}
+.answer{display:none;margin-top:0.8rem;padding:1rem;background:var(--color-accent-light);border-radius:10px;font-size:0.92rem;line-height:1.6}
+.answer.visible{display:block}
+.quiz-box{background:var(--color-surface);border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-question-block{margin-bottom:1.5rem}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1.05rem}
+.quiz-option{display:block;width:100%;text-align:left;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem;font-family:var(--font-body);background:none}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#B8860B}
+.quiz-btn{padding:0.6rem 1.5rem;border-radius:100px;border:none;background:var(--color-accent);color:#fff;cursor:pointer;font-family:var(--font-head);font-weight:600;font-size:0.9rem;transition:background 0.2s}
+.quiz-btn:hover{background:var(--color-accent-hover)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.screen-alt{background:var(--color-bg);padding-left:0;padding-right:0}
+.screen-alt-inner{max-width:900px;margin:0 auto;padding:0 1.5rem}
+.rapid-fire{background:var(--color-surface);border-radius:14px;padding:1.2rem 1.5rem;margin:0.8rem 0;box-shadow:0 2px 6px rgba(0,0,0,0.04);cursor:pointer;transition:background 0.2s}
+.rapid-fire:hover{background:var(--color-accent-light)}
+.rapid-fire h4{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem}
+.rapid-fire .rf-answer{display:none;font-size:0.9rem;color:var(--color-text-secondary);padding-top:0.4rem;border-top:1px solid var(--color-border);margin-top:0.4rem}
+.rapid-fire.open .rf-answer{display:block}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+</style>
+</head>
+<body>
+<nav class="nav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">🛡️ Data Quality Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-what-is-data-quality/" class="nav-dot" aria-label="Module 1"></a>
+      <a href="../module-02-quality-dimensions/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-schema-contracts/" class="nav-dot" aria-label="Module 3"></a>
+      <a href="../module-04-monitoring-alerts/" class="nav-dot" aria-label="Module 4"></a>
+      <a href="../module-05-testing-quarantine/" class="nav-dot" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot active" aria-label="Module 6"></a>
+    </div>
+  </div>
+</nav>
+
+<section class="screen" id="s1">
+  <h2>The Interview <span class="accent">Gauntlet</span> 🔥</h2>
+  <p>Tricky scenarios, debugging exercises, and rapid-fire questions. Click "Reveal Answer" to check your thinking.</p>
+
+  <div class="scenario">
+    <h4>Scenario 1: The Silent Dashboard</h4>
+    <p>A stakeholder says "the revenue dashboard hasn't updated since yesterday, but nobody got an alert." What happened and how do you prevent it?</p>
+    <button class="reveal-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer">Likely: the freshness check has a threshold that's too loose (e.g., 48h for a daily table), OR the alert is routing to a channel nobody monitors. <strong>Fix:</strong> Set freshness SLA to 26h for daily tables (buffer for late runs), route to PagerDuty for critical dashboards, and add a meta-alert that fires if no checks run at all ("dead man's switch").</div>
+  </div>
+
+  <div class="scenario">
+    <h4>Scenario 2: Row Count Doubled Overnight</h4>
+    <p>Your orders table suddenly has 2x the expected rows. All row-level checks pass. What's your investigation plan?</p>
+    <button class="reveal-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer">Step 1: Check for duplicate primary keys (SELECT pk, COUNT(*) HAVING COUNT(*) > 1). Step 2: Check if a retry/reprocessing happened (look at _loaded_at timestamps). Step 3: Check if a JOIN upstream changed from 1:1 to 1:N due to a non-unique key. <strong>Root cause is almost always duplicates from retries or bad joins.</strong></div>
+  </div>
+
+  <div class="scenario">
+    <h4>Scenario 3: "My Numbers Don't Match"</h4>
+    <p>A data analyst says the warehouse total revenue differs from the billing system by $50K. How do you debug this?</p>
+    <button class="reveal-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer">This is a reconciliation problem. Step 1: Compare row counts (source vs warehouse). Step 2: Compare SUM(amount) by date to find which day diverges. Step 3: Check for duplicates, missing rows, or currency/timezone differences. Step 4: Check if refunds or adjustments are included in one but not the other. <strong>Build an automated reconciliation check to prevent recurrence.</strong></div>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <div class="screen-alt-inner">
+  <h2>Debugging <span class="accent">Exercises</span></h2>
+
+  <div class="scenario debug">
+    <h4>Debug 1: The Monday Spike</h4>
+    <p>Every Monday, your daily active users metric jumps 30% then drops Tuesday. The pipeline hasn't changed. What's causing this?</p>
+    <button class="reveal-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer"><strong>Timezone bug.</strong> If your events are in UTC but your daily partitioning uses local time, Sunday evening UTC events (which are Monday local time in some zones) pile into Monday's partition. Fix: ensure consistent timezone handling — either all UTC or explicit timezone conversion before partitioning.</div>
+  </div>
+
+  <div class="scenario debug">
+    <h4>Debug 2: The Disappearing Rows</h4>
+    <p>Your staging table has 1M rows, but after your dbt model runs, the mart has only 800K. No errors in logs. What happened?</p>
+    <button class="reveal-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer">Most likely: an INNER JOIN dropped 200K rows that don't have matching keys in the joined table. Alternatives: a WHERE clause is too aggressive, or a DISTINCT is collapsing rows with duplicate keys. <strong>Debug:</strong> Run the query without each JOIN/filter incrementally to find where rows drop. Add a reconciliation check: source count vs output count.</div>
+  </div>
+
+  <div class="scenario debug">
+    <h4>Debug 3: NULLs Appearing After Deploy</h4>
+    <p>After deploying a new version of your API, a column that was never NULL suddenly has 15% NULLs. No schema change detected. Why?</p>
+    <button class="reveal-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer">The API changed its behavior — a field that used to be required is now optional in the new version. Schema didn't change (column still exists, same type) but the data contract was implicitly broken. <strong>Fix:</strong> Add NOT NULL checks in your data contract, and require API teams to update the data contract when changing field requirements.</div>
+  </div>
+
+  <div class="scenario debug">
+    <h4>Debug 4: The Phantom Revenue</h4>
+    <p>Revenue increased 200% in the warehouse but the source system shows no change. All pipeline checks pass. What's wrong?</p>
+    <button class="reveal-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer">Classic JOIN explosion. Somewhere in the pipeline, a JOIN key is non-unique, causing rows to multiply. Each duplicate order × 3 matching records = 3x revenue. <strong>Debug:</strong> Check DISTINCT counts of join keys on both sides. Add a uniqueness test on join keys before every JOIN. This is why aggregate reconciliation (SUM(amount) source vs target) is critical.</div>
+  </div>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2>Scenario <span class="accent">Questions</span></h2>
+
+  <div class="scenario">
+    <h4>Scenario 5: Schema Drift in Production</h4>
+    <p>An upstream team renames a column in their API response without telling you. Your pipeline doesn't fail — it just fills the old column with NULLs. How do you prevent this?</p>
+    <button class="reveal-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer">Implement a data contract with schema validation at ingestion. Check that all expected columns exist AND have non-trivial NULL rates. A sudden spike in NULL rate for a previously non-null column should trigger an alert. Also: enforce contracts in the producer's CI — they can't deploy without passing schema compatibility checks.</div>
+  </div>
+
+  <div class="scenario">
+    <h4>Scenario 6: Alert Fatigue</h4>
+    <p>Your team has 200 data quality alerts. 80% are false positives. Engineers ignore them all. How do you fix this?</p>
+    <button class="reveal-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer">Step 1: Audit all alerts — delete or mute ones with >50% false positive rate. Step 2: Switch from static to dynamic thresholds. Step 3: Tier alerts by severity (P0/P1/P2). Step 4: Only page for P0 (critical business impact). Step 5: Add runbooks to every alert. Step 6: Track alert-to-action ratio as a metric. <strong>Goal: fewer alerts, each one actionable.</strong></div>
+  </div>
+
+  <div class="scenario">
+    <h4>Scenario 7: Late-Arriving Data Mess</h4>
+    <p>Your mobile app batches events and sends them when the user regains internet. Some events are 3 days late. How do you handle this without re-running 3 days of pipeline history?</p>
+    <button class="reveal-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer">Use a "late-arriving data" handler: ingest by ingestion_time (append-only), but partition downstream models by event_time. Set a completeness window (e.g., 7 days) — partitions older than 7 days are "closed" and not re-computed. For closed partitions, route late events to a correction table for manual or periodic reconciliation.</div>
+  </div>
+
+  <div class="scenario">
+    <h4>Scenario 8: Quarantine Overflow</h4>
+    <p>Your quarantine table grows to 10% of total data. Stakeholders ask "is this normal?" What do you do?</p>
+    <button class="reveal-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer">10% quarantine rate is a red flag. Step 1: Analyze quarantine reasons — are they concentrated in one rule or spread evenly? Step 2: If one rule dominates, it might be too strict (e.g., rejecting valid edge cases). Step 3: Work with the producer to fix the root cause. Step 4: Set a quarantine rate alert (>5% = warning, >10% = critical). <strong>Quarantine is for exceptions, not for hiding systemic problems.</strong></div>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <div class="screen-alt-inner">
+  <h2>Rapid-Fire <span class="accent">Q&A</span></h2>
+  <p>Click each question to reveal the answer. Aim for 30 seconds per answer.</p>
+
+  <div class="rapid-fire" onclick="this.classList.toggle('open')">
+    <h4>What's the difference between data observability and data testing?</h4>
+    <div class="rf-answer">Testing is explicit (you write rules). Observability is automatic (monitors metrics like freshness, volume, distribution without writing specific tests). You need both — tests for known invariants, observability for unknown unknowns.</div>
+  </div>
+
+  <div class="rapid-fire" onclick="this.classList.toggle('open')">
+    <h4>How would you implement data quality for a Kafka streaming pipeline?</h4>
+    <div class="rf-answer">Schema validation at the producer (Avro/Protobuf with Schema Registry), consumer-side checks on each message batch, dead-letter queue for invalid messages, real-time anomaly detection on throughput and error rates. Don't block the stream — quarantine bad messages.</div>
+  </div>
+
+  <div class="rapid-fire" onclick="this.classList.toggle('open')">
+    <h4>What's a "dead man's switch" for data quality?</h4>
+    <div class="rf-answer">An alert that fires when your monitoring system itself fails to run. If your daily quality checks didn't execute at all (not "passed" or "failed" — just didn't run), the dead man's switch catches it. Without this, a broken scheduler silently disables all your quality checks.</div>
+  </div>
+
+  <div class="rapid-fire" onclick="this.classList.toggle('open')">
+    <h4>How do you handle data quality for ML feature stores?</h4>
+    <div class="rf-answer">Feature-level validation (ranges, distributions, NULL rates), training-serving skew detection (compare feature distributions in training vs serving), freshness guarantees per feature, and point-in-time correctness checks to prevent data leakage.</div>
+  </div>
+
+  <div class="rapid-fire" onclick="this.classList.toggle('open')">
+    <h4>What's the cost of over-engineering data quality?</h4>
+    <div class="rf-answer">Too many checks slow pipeline runs, create maintenance burden, and produce alert fatigue. Start with the "starter five" (freshness, volume, PK uniqueness, NOT NULL, referential integrity), then add domain-specific checks only when a real issue occurs. Quality is a spectrum, not a binary.</div>
+  </div>
+
+  <div class="rapid-fire" onclick="this.classList.toggle('open')">
+    <h4>How do you prioritize which tables to add quality checks to first?</h4>
+    <div class="rf-answer">By business impact. Start with tables that feed executive dashboards, compliance reports, or customer-facing features. A bug in an internal experiment table is annoying; a bug in the billing table is catastrophic. Use a criticality tier system.</div>
+  </div>
+
+  <div class="rapid-fire" onclick="this.classList.toggle('open')">
+    <h4>What happens when you can't fix bad data at the source?</h4>
+    <div class="rf-answer">Document it. Apply defensive transformations (COALESCE, CASE WHEN for known bad values), quarantine what you can't fix, and add prominent warnings in the data catalog. Don't silently propagate known-bad data — make it visible.</div>
+  </div>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>Final <span class="accent">Quiz</span>: Prove Your Mastery</h2>
+  <div class="quiz-box" id="quiz-section-1">
+    <div class="quiz-question-block" data-correct="c" data-success-msg="Correct! A dead man's switch catches the meta-failure: your monitoring itself didn't run. Without it, a broken scheduler means zero quality checks with zero alerts." data-error-msg="Think about what happens when the monitoring system itself fails. No checks run = no alerts fire = false sense of security.">
+      <h4>Q1: Your entire data quality monitoring system goes down for 3 days. What alert should have caught this?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Freshness alert on the data tables</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Volume anomaly detection</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Dead man's switch — an alert that fires when checks don't execute at all</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Schema drift detector</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="b" data-success-msg="Correct! The JOIN on a non-unique key multiplied rows. Always validate join key uniqueness before joining, and run reconciliation checks on aggregates." data-error-msg="When revenue explodes but the source is unchanged, it's almost always a join explosion — rows multiplied by non-unique keys.">
+      <h4>Q2: After adding a new JOIN to your pipeline, total revenue triples. Source data hasn't changed. Root cause?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Currency conversion bug</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) JOIN key is non-unique on one side, creating row duplication (fan-out)</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Timezone shift inflated the date window</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Schema drift added extra rows</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="a" data-success-msg="Correct! Start with the highest-impact tables. A bug in billing costs money. A bug in an experiment table costs a few hours of analyst time." data-error-msg="Prioritize by business impact. The tables that feed revenue, compliance, and customer-facing features come first.">
+      <h4>Q3: You have 200 tables and no quality checks. Where do you start?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Critical business tables first — billing, revenue, compliance reports</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) All tables at once with basic checks</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) The most recently created tables</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) The largest tables by row count</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="d" data-success-msg="Correct! MERGE is idempotent — re-running with the same data produces the same result. INSERT creates duplicates. This is fundamental for retry-safe pipelines." data-error-msg="Idempotency means running the same operation twice produces the same result. MERGE does this; INSERT doesn't.">
+      <h4>Q4: Your pipeline must be retry-safe. Which write pattern ensures idempotency?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) INSERT INTO with a unique index (let it fail on duplicates)</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) INSERT INTO with INSERT IGNORE</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Append-only with deduplication downstream</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) MERGE/UPSERT on a natural key within a transaction</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="c" data-success-msg="Correct! A contract includes schema + SLAs + semantics + ownership + change policies. Missing any of these and you just have a schema, not a contract." data-error-msg="Review Module 3. A complete data contract includes schema, SLAs, ownership, semantics, and change policies.">
+      <h4>Q5: A team says "we have data contracts" but only has a JSON schema file. What are they missing?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Nothing — a schema file is a complete contract</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) They need to convert it to YAML</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) SLAs (freshness, completeness), ownership, semantic definitions, and change policies</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) They just need to add it to a schema registry</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-section-1')">Check All Answers</button>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s6">
+  <div class="screen-alt-inner">
+  <h2>Common <span class="accent">Pitfalls</span> & Gotchas</h2>
+  <div class="aha">
+    <div class="aha-title">Pitfall 1: Testing only happy paths</div>
+    <p>Your golden datasets must include NULLs, empty strings, duplicates, max-length values, and timezone edges. Production data is messy — test for mess.</p>
+  </div>
+  <div class="aha">
+    <div class="aha-title">Pitfall 2: Checking row-level but not aggregate</div>
+    <p>A table with zero rows passes all NOT NULL checks. Always pair row-level rules with volume and freshness checks.</p>
+  </div>
+  <div class="aha">
+    <div class="aha-title">Pitfall 3: Alerts without runbooks</div>
+    <p>An alert that fires at 3 AM with no instructions on what to do is worse than no alert. Every alert needs an owner and a step-by-step runbook.</p>
+  </div>
+  <div class="aha">
+    <div class="aha-title">Pitfall 4: SELECT * in production</div>
+    <p>SELECT * breaks when columns are added or reordered. Always enumerate columns explicitly in production queries and use contract-enforced schemas.</p>
+  </div>
+  <div class="aha">
+    <div class="aha-title">Pitfall 5: Trusting the source blindly</div>
+    <p>Even trusted APIs change behavior. A field that was "always populated" can become optional in a new API version. Validate at ingestion, not just at transformation.</p>
+  </div>
+  <div class="aha">
+    <div class="aha-title">Pitfall 6: Ignoring quarantine</div>
+    <p>If nobody reviews quarantined data, you're just hiding problems. Set a weekly quarantine review cadence and track quarantine rate as a metric.</p>
+  </div>
+  <p style="margin-top:2rem;text-align:center;font-family:var(--font-head);font-weight:700;font-size:1.3rem;color:var(--color-accent)">You've completed the course! Go ace that interview. 🎉</p>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-05-testing-quarantine/index.html">← Prev: Testing & Quarantine</a>
+  <a href="../index.html">Course Home →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  var pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){var h=document.documentElement,pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+  var tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(function(el){
+    el.addEventListener('mouseenter',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',function(){tb.classList.remove('visible');});
+    el.addEventListener('click',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+  var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(function(s){io.observe(s);});
+  window.toggleAnswer=function(btn){var ans=btn.nextElementSibling;ans.classList.toggle('visible');btn.textContent=ans.classList.contains('visible')?'Hide Answer':'Reveal Answer';};
+  window.selectOption=function(btn){var block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('selected');});btn.classList.add('selected');};
+  window.checkQuiz=function(sectionId){var container=document.getElementById(sectionId);var questions=container.querySelectorAll('.quiz-question-block');questions.forEach(function(q){var selected=q.querySelector('.quiz-option.selected');var feedback=q.querySelector('.quiz-feedback');var correctValue=q.dataset.correct;if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}q.querySelectorAll('.quiz-option').forEach(function(o){o.disabled=true;});});};
+  document.addEventListener('keydown',function(e){if(e.key==='ArrowRight')window.scrollBy({top:window.innerHeight*0.8,behavior:'smooth'});if(e.key==='ArrowLeft')window.scrollBy({top:-window.innerHeight*0.8,behavior:'smooth'});});
+})();
+</script>
+</body>
+</html>

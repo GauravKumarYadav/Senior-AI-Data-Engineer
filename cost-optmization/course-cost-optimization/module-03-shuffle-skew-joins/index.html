@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 3: Shuffle, Skew & Joins | Cost Optimization Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#D4A843;--color-accent-hover:#B8903A;--color-accent-light:#FDF5E4;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--color-info:#2A7B9B;--color-info-light:#E4F2F7;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.topnav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.15s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.screen-alt{background:var(--color-bg-warm)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:var(--color-surface);border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.red{border-top-color:var(--color-error)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-head);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-text-secondary);margin-bottom:0}
+.callout{background:linear-gradient(135deg,var(--color-accent-light),#FFF8EE);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent-hover)}
+.callout p{font-size:0.95rem;margin:0}
+.callout-info{background:linear-gradient(135deg,var(--color-info-light),#F0F7FA);border-left-color:var(--color-info)}
+.callout-info .callout-title{color:var(--color-info)}
+.callout-warn{background:linear-gradient(135deg,var(--color-error-light),#FFF5F5);border-left-color:var(--color-error)}
+.callout-warn .callout-title{color:var(--color-error)}
+.flow-diagram{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:1.5rem 0;justify-content:center}
+.flow-box{background:var(--color-surface);border:2px solid var(--color-border);border-radius:12px;padding:0.7rem 1rem;text-align:center;font-size:0.82rem;font-weight:600;font-family:var(--font-head);min-width:100px;transition:transform 0.2s}
+.flow-box:hover{transform:scale(1.05)}
+.flow-box.highlight{background:var(--color-accent-light);border-color:var(--color-accent)}
+.flow-box.bad{background:var(--color-error-light);border-color:var(--color-error)}
+.flow-box.good{background:var(--color-success-light);border-color:var(--color-success)}
+.flow-arrow{font-size:1.2rem;color:var(--color-text-muted)}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:var(--color-surface);border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-head);font-weight:700;font-size:1rem;margin-bottom:0.8rem}
+.comp-col ul{list-style:none;font-size:0.88rem}
+.comp-col ul li{padding:0.35rem 0;border-bottom:1px solid rgba(0,0,0,0.04)}
+.comp-col ul li:last-child{border:none}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-mono);font-size:0.82rem;overflow-x:auto;margin:1rem 0;white-space:pre;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}.code-block .num{color:#FAB387}
+.skew-visual{display:flex;gap:4px;align-items:flex-end;margin:1.5rem 0;height:120px;padding:0 1rem}
+.skew-bar{flex:1;border-radius:6px 6px 0 0;transition:height 0.5s;position:relative;min-width:20px}
+.skew-bar span{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:0.65rem;font-family:var(--font-mono);color:var(--color-text-muted)}
+.quiz-question-block{background:var(--color-surface);border-radius:16px;padding:1.8rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.2rem 0}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1rem}
+.quiz-option{display:block;width:100%;text-align:left;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.92rem;font-family:var(--font-body);background:none}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-option:disabled{cursor:default;opacity:0.7}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#A68307}
+.quiz-btn{display:inline-block;background:var(--color-accent);color:#fff;border:none;padding:0.7rem 1.8rem;border-radius:100px;font-family:var(--font-head);font-weight:700;font-size:0.95rem;cursor:pointer;margin-top:1rem;transition:transform 0.2s}
+.quiz-btn:hover{transform:translateY(-2px)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}.flow-diagram{flex-direction:column}.flow-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<nav class="topnav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">💰 Cost Optimization Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-why-cost-matters/" class="nav-dot" aria-label="Module 1"></a>
+      <a href="../module-02-storage-partitioning/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-shuffle-skew-joins/" class="nav-dot active" aria-label="Module 3"></a>
+      <a href="../module-04-materialization/" class="nav-dot" aria-label="Module 4"></a>
+      <a href="../module-05-cluster-finops/" class="nav-dot" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a>
+    </div>
+  </div>
+</nav>
+
+<section class="screen" id="s1">
+  <h2>🔀 What Is <span class="accent">Shuffle</span>?</h2>
+  <p><span class="tooltip-term" data-tip="The redistribution of data across executors during operations like joins, groupBy, and distinct. Data moves over the network from map tasks to reduce tasks.">Shuffle</span> is data redistribution across executors — triggered by joins, <code>groupBy</code>, <code>distinct</code>, and <code>repartition</code>. It's the most expensive operation in distributed computing.</p>
+  <div class="flow-diagram">
+    <div class="flow-box">Executor 1</div>
+    <div class="flow-arrow">⇄</div>
+    <div class="flow-box bad">Network Transfer</div>
+    <div class="flow-arrow">⇄</div>
+    <div class="flow-box">Executor 2</div>
+  </div>
+  <p>During shuffle, every executor may need to send data to <strong>every other executor</strong>. A 200-partition job creates 200 × 200 = <strong>40,000 potential data transfers</strong>.</p>
+  <div class="callout callout-warn">
+    <div class="callout-title">⚠️ Why Shuffle Is Expensive</div>
+    <p><strong>Disk I/O</strong> — spills to local disk when memory is full. <strong>Network I/O</strong> — cross-node data transfer. <strong>Serialization</strong> — encode/decode overhead. <strong>GC pressure</strong> — large intermediate buffers.</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <h2>Reducing <span class="accent">Shuffle</span> in Spark</h2>
+  <p>Every avoided shuffle saves compute, network, and time. Here are the strategies:</p>
+  <div class="card-grid">
+    <div class="card green">
+      <h4>📡 Broadcast Small Tables</h4>
+      <p>If one join side is &lt; 10 MB (default), Spark broadcasts it to all executors — <strong>zero shuffle</strong> on the large side.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔽 Filter Before Join</h4>
+      <p>Apply WHERE clauses before joins. Less input = less data to shuffle. <span class="tooltip-term" data-tip="The optimizer pushes filter conditions down to the scan level, so irrelevant rows never leave storage.">Predicate pushdown</span> helps here.</p>
+    </div>
+    <div class="card">
+      <h4>📊 Pre-Partition Data</h4>
+      <p>If both tables are bucketed on the join key with the same bucket count, Spark skips the shuffle entirely.</p>
+    </div>
+    <div class="card purple">
+      <h4>🎯 Tune Partitions</h4>
+      <p>Set <code>spark.sql.shuffle.partitions</code> based on data size. Default 200 is often too many or too few. Use AQE for auto-tuning.</p>
+    </div>
+  </div>
+  <div class="code-block"><span class="cm"># Broadcast join — eliminates shuffle on the large table</span>
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> broadcast
+
+result = large_df.join(
+    <span class="fn">broadcast</span>(small_df),   <span class="cm"># small_df sent to all executors</span>
+    on=<span class="str">"customer_id"</span>
+)
+
+<span class="cm"># AQE auto-coalesces shuffle partitions</span>
+spark.conf.set(<span class="str">"spark.sql.adaptive.enabled"</span>, <span class="str">"true"</span>)
+spark.conf.set(<span class="str">"spark.sql.adaptive.coalescePartitions.enabled"</span>, <span class="str">"true"</span>)</div>
+</section>
+
+<section class="screen" id="s3">
+  <h2>Detecting <span class="accent">Data Skew</span></h2>
+  <p><span class="tooltip-term" data-tip="When some partitions have vastly more data than others, causing a few tasks to take much longer than the rest (straggler tasks).">Data skew</span> happens when one partition has 100x more data than others. The job waits for the one straggler task while 199 executors sit idle.</p>
+  <div class="skew-visual" id="skewChart">
+    <div class="skew-bar" style="height:15%;background:var(--color-success)"><span>P1</span></div>
+    <div class="skew-bar" style="height:12%;background:var(--color-success)"><span>P2</span></div>
+    <div class="skew-bar" style="height:18%;background:var(--color-success)"><span>P3</span></div>
+    <div class="skew-bar" style="height:10%;background:var(--color-success)"><span>P4</span></div>
+    <div class="skew-bar" style="height:95%;background:var(--color-error)"><span>P5</span></div>
+    <div class="skew-bar" style="height:14%;background:var(--color-success)"><span>P6</span></div>
+    <div class="skew-bar" style="height:11%;background:var(--color-success)"><span>P7</span></div>
+    <div class="skew-bar" style="height:16%;background:var(--color-success)"><span>P8</span></div>
+  </div>
+  <p style="text-align:center;font-size:0.85rem;color:var(--color-text-muted);margin-top:1.5rem">Partition 5 has 95% of data — the entire job waits for it to finish.</p>
+  <div class="callout">
+    <div class="callout-title">💡 How to Detect Skew</div>
+    <p>Check the Spark UI: <strong>Task Duration</strong> tab shows one task taking 10-100x longer. <strong>Shuffle Read Size</strong> shows one partition much larger. Also check <code>df.groupBy("key").count().orderBy(desc("count"))</code>.</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <h2>Fixing Skew: <span class="accent">Salting</span></h2>
+  <p><span class="tooltip-term" data-tip="Adding a random suffix to the skewed key to spread its data across multiple partitions, then aggregating results to remove the salt.">Salting</span> breaks one hot key into N sub-keys, spreading data across partitions. After the join, you aggregate to remove the salt.</p>
+  <div class="flow-diagram">
+    <div class="flow-box bad">key = "null"<br>10M rows</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">Add salt 0-9</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box good">null_0 ... null_9<br>1M rows each</div>
+  </div>
+  <div class="code-block"><span class="cm"># Salting a skewed join key</span>
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> col, lit, rand, floor, concat, explode, array
+
+salt_buckets = <span class="num">10</span>
+
+<span class="cm"># Add random salt to the skewed (large) side</span>
+large_salted = large_df.withColumn(
+    <span class="str">"salt"</span>, floor(rand() * salt_buckets).cast(<span class="str">"int"</span>)
+).withColumn(
+    <span class="str">"salted_key"</span>, concat(col(<span class="str">"join_key"</span>), lit(<span class="str">"_"</span>), col(<span class="str">"salt"</span>))
+)
+
+<span class="cm"># Explode small side to match all salt values</span>
+small_exploded = small_df.withColumn(
+    <span class="str">"salt"</span>, explode(array([lit(i) <span class="kw">for</span> i <span class="kw">in</span> range(salt_buckets)]))
+).withColumn(
+    <span class="str">"salted_key"</span>, concat(col(<span class="str">"join_key"</span>), lit(<span class="str">"_"</span>), col(<span class="str">"salt"</span>))
+)</div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>Join <span class="accent">Strategies</span> Compared</h2>
+  <p>Choosing the right join strategy can mean the difference between a $50 job and a $5,000 job.</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>📡 Broadcast Hash Join</h4>
+      <ul>
+        <li>✅ No shuffle on large side</li>
+        <li>✅ Fastest for small + large joins</li>
+        <li>⚠️ Small side must fit in memory</li>
+        <li>Default threshold: 10 MB</li>
+        <li>Best: dimension lookups</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🔀 Sort-Merge Join</h4>
+      <ul>
+        <li>✅ Handles any data size</li>
+        <li>✅ Memory-efficient (streaming)</li>
+        <li>⚠️ Requires shuffle + sort on both sides</li>
+        <li>Spark's default for large-large</li>
+        <li>Best: large + large equi-joins</li>
+      </ul>
+    </div>
+  </div>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid #7B5EA7">
+      <h4>🔄 Shuffle Hash Join</h4>
+      <ul>
+        <li>✅ Faster than SMJ for skewed data</li>
+        <li>✅ No sort required</li>
+        <li>⚠️ Builds hash table in memory</li>
+        <li>Enable via spark.sql.join.preferSortMergeJoin=false</li>
+        <li>Best: medium tables with high cardinality</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🎯 Filter & Column Pruning</h4>
+      <ul>
+        <li>✅ Reduces data before any join</li>
+        <li>✅ <span class="tooltip-term" data-tip="Only reading the columns needed for the query, skipping unused columns entirely in columnar formats like Parquet.">Column pruning</span>: read only needed cols</li>
+        <li>✅ <span class="tooltip-term" data-tip="Pushing filter conditions down to the storage layer so filtered rows are never read into memory.">Filter pushdown</span>: fewer rows enter shuffle</li>
+        <li>Applies to ALL join types</li>
+        <li>Best: always — do this first</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s6">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+  <div id="quiz3">
+    <div class="quiz-question-block" data-correct="c" data-success-msg="Correct! Shuffle involves disk spills, network I/O, serialization, and GC pressure — the most expensive distributed operation." data-error-msg="Shuffle is expensive for multiple reasons beyond just network — it also involves disk and serialization.">
+      <h4>Q1: Why is shuffle the most expensive operation in Spark?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) It only uses network I/O</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) It always causes out-of-memory errors</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) It combines disk spills, network transfer, serialization, and GC pressure</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) It requires restarting executors</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="a" data-success-msg="Correct! Broadcast join sends the small table to all executors, eliminating shuffle on the large side entirely." data-error-msg="Think about which join type sends data to executors instead of shuffling it.">
+      <h4>Q2: You join a 500 GB fact table with a 5 MB dimension table. Best join strategy?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Broadcast hash join — send the 5 MB table to all executors</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Sort-merge join — both sides are shuffled and sorted</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Nested loop join — compare every row pair</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Cross join — produce all combinations</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="b" data-success-msg="Correct! Salting adds a random suffix to distribute the hot key across multiple partitions." data-error-msg="Salting is specifically designed to break up hot keys — look for that option.">
+      <h4>Q3: 80% of your join key values are NULL, causing extreme skew. Best fix?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Increase shuffle partitions to 2000</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Salt the NULL key with a random suffix to spread across partitions</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Use a broadcast join (the table is 500 GB)</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Remove all NULL rows before joining</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="d" data-success-msg="Correct! Filter pushdown eliminates rows at the scan level. Column pruning skips unused columns in Parquet. Together they drastically reduce shuffle input." data-error-msg="Think about what reduces data BEFORE it even enters the shuffle stage.">
+      <h4>Q4: What should you always do BEFORE optimizing join strategy?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Increase executor memory</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Add more nodes to the cluster</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Switch to a different file format</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Apply filter pushdown and column pruning to reduce data volume first</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="c" data-success-msg="Correct! AQE monitors runtime statistics and automatically coalesces small shuffle partitions, splits skewed ones, and switches join strategies." data-error-msg="AQE is Spark's built-in runtime optimizer that adapts during execution.">
+      <h4>Q5: What does Adaptive Query Execution (AQE) do for shuffle optimization?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) It eliminates all shuffles automatically</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) It pre-computes join results</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) It auto-coalesces small partitions, splits skewed ones, and dynamically switches join strategies at runtime</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) It replaces shuffle with broadcast for all joins</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz3')">Check Answers</button>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-02-storage-partitioning/index.html">← Prev: Storage & Partitioning</a>
+  <a href="../module-04-materialization/index.html">Next: Materialization →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  var pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){var h=document.documentElement,pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+  var tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(function(el){
+    el.addEventListener('mouseenter',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',function(){tb.classList.remove('visible');});
+    el.addEventListener('click',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+  var observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(function(s){observer.observe(s);});
+  document.addEventListener('keydown',function(e){if(e.key==='ArrowRight')window.scrollBy({top:window.innerHeight,behavior:'smooth'});if(e.key==='ArrowLeft')window.scrollBy({top:-window.innerHeight,behavior:'smooth'});});
+})();
+window.selectOption=function(btn){var block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('selected');});btn.classList.add('selected');};
+window.checkQuiz=function(sectionId){var container=document.getElementById(sectionId);container.querySelectorAll('.quiz-question-block').forEach(function(q){var selected=q.querySelector('.quiz-option.selected'),feedback=q.querySelector('.quiz-feedback'),correctValue=q.dataset.correct;if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}q.querySelectorAll('.quiz-option').forEach(function(o){o.disabled=true;});});};
+</script>
+</body>
+</html>

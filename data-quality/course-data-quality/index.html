@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Data Quality Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-surface-warm:#FDF9F3;--color-accent:#2D8B55;--color-accent-hover:#247044;--color-accent-light:#E8F5EE;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--color-info:#2A7B9B;--color-info-light:#E4F2F7;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.6}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-20%;right:-10%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(45,139,85,0.08) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-15%;left:-5%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(42,123,155,0.06) 0%,transparent 70%);pointer-events:none}
+.badge{display:inline-block;background:var(--color-accent);color:#fff;padding:0.4rem 1.2rem;border-radius:100px;font-size:0.85rem;font-weight:600;letter-spacing:0.5px;margin-bottom:1.5rem;text-transform:uppercase}
+.hero h1{font-family:var(--font-head);font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;line-height:1.1;margin-bottom:1rem;max-width:800px}
+.hero h1 .accent{color:var(--color-accent)}
+.hero p{font-size:1.2rem;color:var(--color-text-muted);max-width:600px;margin-bottom:2rem}
+.course-icon{font-size:4rem;margin-bottom:1rem}
+.stats{display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;margin-bottom:3rem}
+.stat{text-align:center}
+.stat-num{font-family:var(--font-head);font-size:2rem;font-weight:800;color:var(--color-accent)}
+.stat-label{font-size:0.85rem;color:var(--color-text-muted)}
+.modules-section{padding:4rem 2rem;max-width:1000px;margin:0 auto}
+.modules-section h2{font-family:var(--font-head);font-size:2rem;font-weight:700;text-align:center;margin-bottom:0.5rem}
+.modules-section .sub{text-align:center;color:var(--color-text-muted);margin-bottom:3rem;font-size:1.05rem}
+.module-card{display:flex;align-items:flex-start;gap:1.5rem;background:var(--color-surface);border-radius:16px;padding:1.8rem;margin-bottom:1.2rem;box-shadow:0 2px 12px rgba(0,0,0,0.04);transition:transform 0.2s,box-shadow 0.2s;text-decoration:none;color:var(--color-text);border:1px solid rgba(0,0,0,0.04)}
+.module-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.08)}
+.mod-num{flex-shrink:0;width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:800;font-size:1.2rem;color:#fff}
+.mod-num.c1{background:var(--color-accent)}.mod-num.c2{background:#E07B39}.mod-num.c3{background:var(--color-info)}.mod-num.c4{background:#7B5EA7}.mod-num.c5{background:var(--color-success)}.mod-num.c6{background:var(--color-error)}
+.mod-info h3{font-family:var(--font-head);font-size:1.15rem;font-weight:700;margin-bottom:0.3rem}
+.mod-info p{font-size:0.92rem;color:var(--color-text-muted);line-height:1.5}
+.mod-tags{display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:0.6rem}
+.mod-tag{font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:100px;background:var(--color-bg-warm);color:var(--color-text-muted);font-weight:500}
+.footer{text-align:center;padding:3rem 2rem;color:var(--color-text-muted);font-size:0.9rem}
+.cta-btn{display:inline-block;background:var(--color-accent);color:#fff;padding:1rem 2.5rem;border-radius:100px;font-family:var(--font-head);font-weight:700;font-size:1.1rem;text-decoration:none;transition:transform 0.2s,box-shadow 0.2s}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(45,139,85,0.3)}
+.arrow{margin-left:0.5rem;transition:transform 0.2s}.module-card:hover .arrow{transform:translateX(4px)}
+@media(max-width:600px){.module-card{flex-direction:column;gap:1rem}.stats{gap:1.2rem}}
+</style>
+</head>
+<body>
+<section class="hero">
+  <div class="course-icon">🛡️</div>
+  <span class="badge">Interview Prep Course</span>
+  <h1>Master <span class="accent">Data Quality</span> for Your Next Interview</h1>
+  <p>6 interactive modules covering 80+ real interview questions — with visual explanations, quizzes, and scenario-based practice.</p>
+  <div class="stats">
+    <div class="stat"><div class="stat-num">6</div><div class="stat-label">Modules</div></div>
+    <div class="stat"><div class="stat-num">80+</div><div class="stat-label">Questions</div></div>
+    <div class="stat"><div class="stat-num">30+</div><div class="stat-label">Quizzes</div></div>
+    <div class="stat"><div class="stat-num">0</div><div class="stat-label">Prerequisites</div></div>
+  </div>
+  <a href="module-01-what-is-data-quality/index.html" class="cta-btn">Start Learning 🛡️</a>
+</section>
+
+<section class="modules-section">
+  <h2>Course Modules</h2>
+  <p class="sub">From fundamentals to brain-teasers — structured for interview success</p>
+
+  <a href="module-01-what-is-data-quality/index.html" class="module-card">
+    <div class="mod-num c1">01</div>
+    <div class="mod-info">
+      <h3>What Is Data Quality? <span class="arrow">→</span></h3>
+      <p>Why data quality matters for trust, decisions, and compliance. The cost of bad data, and how modern data stacks tackle it.</p>
+      <div class="mod-tags"><span class="mod-tag">Trust</span><span class="mod-tag">Cost of Bad Data</span><span class="mod-tag">Modern Stack</span><span class="mod-tag">dbt</span></div>
+    </div>
+  </a>
+
+  <a href="module-02-quality-dimensions/index.html" class="module-card">
+    <div class="mod-num c2">02</div>
+    <div class="mod-info">
+      <h3>Quality Dimensions & Checks <span class="arrow">→</span></h3>
+      <p>The 6 dimensions every interviewer asks about: completeness, validity, accuracy, consistency, timeliness, uniqueness. Plus row-level vs aggregate checks.</p>
+      <div class="mod-tags"><span class="mod-tag">6 Dimensions</span><span class="mod-tag">Row-Level</span><span class="mod-tag">Aggregate</span><span class="mod-tag">Incremental</span></div>
+    </div>
+  </a>
+
+  <a href="module-03-schema-contracts/index.html" class="module-card">
+    <div class="mod-num c3">03</div>
+    <div class="mod-info">
+      <h3>Schema Drift & Data Contracts <span class="arrow">→</span></h3>
+      <p>Detecting schema drift, breaking vs non-breaking changes, data contracts in YAML/JSON, schema registries, and CI/CD enforcement.</p>
+      <div class="mod-tags"><span class="mod-tag">Schema Drift</span><span class="mod-tag">Contracts</span><span class="mod-tag">CI/CD</span><span class="mod-tag">Registries</span></div>
+    </div>
+  </a>
+
+  <a href="module-04-monitoring-alerts/index.html" class="module-card">
+    <div class="mod-num c4">04</div>
+    <div class="mod-info">
+      <h3>Monitoring, Alerts & Anomaly Detection <span class="arrow">→</span></h3>
+      <p>Freshness SLAs, dynamic thresholds, anomaly detection, alert routing by severity, runbooks, and common failure modes.</p>
+      <div class="mod-tags"><span class="mod-tag">Freshness</span><span class="mod-tag">Anomaly</span><span class="mod-tag">Alert Routing</span><span class="mod-tag">Runbooks</span></div>
+    </div>
+  </a>
+
+  <a href="module-05-testing-quarantine/index.html" class="module-card">
+    <div class="mod-num c5">05</div>
+    <div class="mod-info">
+      <h3>Testing & Quarantine Patterns <span class="arrow">→</span></h3>
+      <p>Unit tests for transforms, golden datasets, quarantine pattern for bad data, validation vs reconciliation, and idempotency checks.</p>
+      <div class="mod-tags"><span class="mod-tag">Unit Tests</span><span class="mod-tag">Quarantine</span><span class="mod-tag">Reconciliation</span><span class="mod-tag">Idempotency</span></div>
+    </div>
+  </a>
+
+  <a href="module-06-interview-gauntlet/index.html" class="module-card">
+    <div class="mod-num c6">06</div>
+    <div class="mod-info">
+      <h3>The Interview Gauntlet 🔥 <span class="arrow">→</span></h3>
+      <p>15 tricky scenario questions, "your pipeline is broken" debugging exercises, common pitfalls, and rapid-fire Q&A rounds.</p>
+      <div class="mod-tags"><span class="mod-tag">Tricky Q&A</span><span class="mod-tag">Scenarios</span><span class="mod-tag">Rapid Fire</span><span class="mod-tag">Debugging</span></div>
+    </div>
+  </a>
+</section>
+
+<footer class="footer">
+  <p>🛡️ Data Quality Interview Mastery — Built for senior data engineers who want to ace their next interview.</p>
+</footer>
+</body>
+</html>

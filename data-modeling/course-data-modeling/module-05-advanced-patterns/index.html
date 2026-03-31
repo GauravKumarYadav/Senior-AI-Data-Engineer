@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 5: Advanced Modeling Patterns | Data Modeling Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#2A7B9B;--color-accent-light:#E4F2F7;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.15s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:var(--color-border);text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:var(--color-surface);border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.orange{border-top-color:#C4813D}.card.red{border-top-color:var(--color-error)}
+.card h4{font-family:var(--font-head);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-text-muted);margin-bottom:0}
+.callout{background:linear-gradient(135deg,var(--color-accent-light),#F0F8FB);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.callout p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:var(--color-surface);border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-head);font-weight:700;font-size:1rem;margin-bottom:0.8rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.schema-diagram{background:var(--color-surface);border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;display:flex;flex-direction:column;align-items:center;gap:0.8rem}
+.schema-center{background:var(--color-accent);color:#fff;padding:0.8rem 1.2rem;border-radius:12px;font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-align:center}
+.schema-dims{display:flex;gap:0.8rem;flex-wrap:wrap;justify-content:center}
+.schema-dim{background:var(--color-accent-light);color:var(--color-accent);padding:0.5rem 0.8rem;border-radius:10px;font-family:var(--font-mono);font-size:0.78rem;font-weight:600;border:2px solid var(--color-accent)}
+.schema-dim.bridge{background:#F5F0FF;color:#7B5EA7;border-color:#7B5EA7}
+.schema-arrow{color:var(--color-text-muted);font-size:0.9rem}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-mono);font-size:0.8rem;overflow-x:auto;margin:1rem 0;line-height:1.7;white-space:pre}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}.code-block .num{color:#FAB387}
+.table-example{background:var(--color-surface);border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin:1.5rem 0;font-size:0.82rem}
+.table-example table{width:100%;border-collapse:collapse}
+.table-example th{background:var(--color-accent);color:#fff;padding:0.6rem 0.8rem;text-align:left;font-family:var(--font-mono);font-size:0.75rem;font-weight:600}
+.table-example td{padding:0.5rem 0.8rem;border-bottom:1px solid var(--color-border);font-family:var(--font-mono);font-size:0.78rem}
+.table-example tr:last-child td{border:none}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.quiz-question-block{background:var(--color-surface);border-radius:16px;padding:1.8rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1rem 0}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1.05rem}
+.quiz-option{display:block;width:100%;text-align:left;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid var(--color-border);border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem;font-family:var(--font-body);background:none}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-option:disabled{cursor:default;opacity:0.7}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#8D6E00}
+.check-btn{display:inline-block;background:var(--color-accent);color:#fff;border:none;padding:0.7rem 2rem;border-radius:100px;font-family:var(--font-head);font-weight:700;font-size:0.95rem;cursor:pointer;margin-top:1rem;transition:transform 0.2s}
+.check-btn:hover{transform:translateY(-2px)}
+.screen-alt{background:var(--color-bg-warm);margin-left:calc(-50vw + 50%);margin-right:calc(-50vw + 50%);padding-left:calc(50vw - 50% + 1.5rem);padding-right:calc(50vw - 50% + 1.5rem);max-width:none}
+.screen-alt>*{max-width:900px}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}.schema-dims{flex-direction:column;align-items:center}}
+</style>
+</head>
+<body>
+<nav class="top-nav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">🏗️ Data Modeling Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-what-is-data-modeling/" class="nav-dot" aria-label="Module 1"></a>
+      <a href="../module-02-facts-dimensions-grain/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-star-snowflake/" class="nav-dot" aria-label="Module 3"></a>
+      <a href="../module-04-slowly-changing-dimensions/" class="nav-dot" aria-label="Module 4"></a>
+      <a href="../module-05-advanced-patterns/" class="nav-dot active" aria-label="Module 5 (current)"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a>
+    </div>
+  </div>
+</nav>
+
+<section class="screen" id="s1">
+  <h2>🌉 <span class="accent">Bridge Tables</span></h2>
+  <p>A <span class="tooltip-term" data-tip="A table that resolves many-to-many relationships between a fact and a dimension. Contains FKs to both sides plus an optional weighting factor for allocation.">bridge table</span> resolves <strong>many-to-many</strong> relationships that star schemas can't handle natively.</p>
+  <p>Without one, joining a fact to a multi-valued dimension <strong>explodes row counts</strong> and breaks aggregations.</p>
+  <div class="schema-diagram">
+    <div class="schema-dims">
+      <div class="schema-dim">dim_patient</div>
+      <div class="schema-dim bridge">bridge_patient_diagnosis</div>
+      <div class="schema-dim">dim_diagnosis</div>
+    </div>
+    <div class="schema-arrow">↕ FK ↕</div>
+    <div class="schema-center">fact_encounter</div>
+  </div>
+  <div class="table-example">
+    <table>
+      <tr><th colspan="3" style="text-align:center">bridge_patient_diagnosis</th></tr>
+      <tr><th>patient_key</th><th>diagnosis_key</th><th>weight_factor</th></tr>
+      <tr><td>101</td><td>D-10</td><td>0.50</td></tr>
+      <tr><td>101</td><td>D-22</td><td>0.50</td></tr>
+      <tr><td>202</td><td>D-10</td><td>1.00</td></tr>
+    </table>
+  </div>
+  <div class="callout">
+    <div class="callout-title">💡 Interview Gold</div>
+    <p>"Bridge tables include a <strong>weight factor</strong> that sums to 1.0 per group. Multiply measures by the weight before aggregating to prevent double-counting. Revenue for patient 101 is split 50/50 across two diagnoses."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <h2>🎭 <span class="accent">Role-Playing</span> Dimensions</h2>
+  <p>A <span class="tooltip-term" data-tip="A single physical dimension table referenced multiple times by the same fact table through different foreign keys, each representing a different role (e.g., order date, ship date, delivery date).">role-playing dimension</span> is one dimension table used <strong>multiple times</strong> in the same fact, each time playing a different role.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>📅 dim_date as 3 roles</h4>
+      <p>fact_orders has order_date_key, ship_date_key, and delivery_date_key — all pointing to the SAME dim_date table with different aliases.</p>
+    </div>
+    <div class="card green">
+      <h4>👤 dim_employee as 2 roles</h4>
+      <p>fact_support_tickets has assigned_agent_key and resolved_by_key — both point to dim_employee but represent different people.</p>
+    </div>
+  </div>
+  <div class="code-block"><span class="cm">-- Role-playing dim_date in a query</span>
+<span class="kw">SELECT</span>
+  od.calendar_month <span class="kw">AS</span> order_month,
+  sd.calendar_month <span class="kw">AS</span> ship_month,
+  <span class="fn">SUM</span>(f.revenue) <span class="kw">AS</span> total_revenue
+<span class="kw">FROM</span> fact_orders f
+<span class="kw">JOIN</span> dim_date od <span class="kw">ON</span> f.order_date_key = od.date_key
+<span class="kw">JOIN</span> dim_date sd <span class="kw">ON</span> f.ship_date_key = sd.date_key
+<span class="kw">GROUP BY</span> od.calendar_month, sd.calendar_month;</div>
+  <div class="callout">
+    <div class="callout-title">🎯 Interview Tip</div>
+    <p>"BI tools often create <em>views</em> for each role (v_order_date, v_ship_date) that alias the same underlying dim_date. This makes self-service easier — analysts pick the right date without knowing it's the same table."</p>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2>🗑️ <span class="accent">Junk</span> & <span class="accent">Outrigger</span> Dimensions</h2>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🗑️ Junk Dimensions</h4>
+      <ul>
+        <li>📌 Combines miscellaneous low-cardinality flags into one table</li>
+        <li>📌 Avoids cluttering the fact table with dozens of flag columns</li>
+        <li>📌 Example: is_gift, is_rush, payment_method, shipping_tier</li>
+        <li>📌 Pre-populated with all valid combinations</li>
+        <li>📌 Keeps the fact table lean and joinable</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid #7B5EA7">
+      <h4>🔗 Outrigger Dimensions</h4>
+      <ul>
+        <li>📌 A dimension joined to <strong>another dimension</strong>, not the fact</li>
+        <li>📌 Example: dim_customer → dim_geography (customer's region details)</li>
+        <li>📌 Use sparingly — it normalizes the star, adding joins</li>
+        <li>📌 Only justified when the sub-dimension is very large or shared</li>
+        <li>📌 Also called a "snowflake arm"</li>
+      </ul>
+    </div>
+  </div>
+  <div class="table-example">
+    <table>
+      <tr><th colspan="4" style="text-align:center">dim_order_flags (junk dimension)</th></tr>
+      <tr><th>flag_key</th><th>is_gift</th><th>is_rush</th><th>payment_method</th></tr>
+      <tr><td>1</td><td>N</td><td>N</td><td>Credit Card</td></tr>
+      <tr><td>2</td><td>N</td><td>Y</td><td>Credit Card</td></tr>
+      <tr><td>3</td><td>Y</td><td>N</td><td>PayPal</td></tr>
+      <tr><td>4</td><td>Y</td><td>Y</td><td>PayPal</td></tr>
+    </table>
+  </div>
+  <div class="callout">
+    <div class="callout-title">💡 Interview Gold</div>
+    <p>"Junk dimensions reduce fact table width by consolidating flags. If you have 5 binary flags, that's 32 possible combinations — a tiny dimension that replaces 5 columns in the fact table with one FK."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <h2>🚫 Preventing <span class="accent">Double-Counting</span></h2>
+  <p>Double-counting is the #1 data quality issue in poorly designed models. Here's your defense toolkit:</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>📐 Enforce Correct Grain</h4>
+      <p>If you join two tables and get more rows than expected, your grain is wrong. Always test: does COUNT(*) match expectations after each join?</p>
+    </div>
+    <div class="card green">
+      <h4>🔑 Use Many-to-One Joins</h4>
+      <p>Fact → dimension should always be many-to-one. If it's many-to-many, you need a bridge table with weight factors.</p>
+    </div>
+    <div class="card purple">
+      <h4>📊 Define Metric Rules</h4>
+      <p>SUM revenue, COUNT DISTINCT users, LAST_VALUE for balances. Document which aggregation function is valid for each metric.</p>
+    </div>
+    <div class="card orange">
+      <h4>🧪 Reconciliation Tests</h4>
+      <p>Compare aggregated totals against source systems. Check row counts at each layer. Use dbt tests or Great Expectations for automation.</p>
+    </div>
+  </div>
+  <div class="code-block"><span class="cm">-- Detect fan-out: if this returns rows, you have a problem</span>
+<span class="kw">SELECT</span> f.order_line_id, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> cnt
+<span class="kw">FROM</span> fact_order_lines f
+<span class="kw">JOIN</span> dim_product p <span class="kw">ON</span> f.product_key = p.product_key
+<span class="kw">GROUP BY</span> f.order_line_id
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) > <span class="num">1</span>;
+
+<span class="cm">-- Reconciliation: compare warehouse total to source</span>
+<span class="kw">SELECT</span>
+  (<span class="kw">SELECT</span> <span class="fn">SUM</span>(revenue) <span class="kw">FROM</span> fact_sales) <span class="kw">AS</span> warehouse_total,
+  (<span class="kw">SELECT</span> <span class="fn">SUM</span>(amount) <span class="kw">FROM</span> source_orders) <span class="kw">AS</span> source_total;</div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>✅ <span class="accent">Validating</span> a Data Model</h2>
+  <p>After any model change, run these checks. Interviewers often ask: "How do you know your model is correct?"</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>1. Key Uniqueness</h4>
+      <p>Every surrogate key must be unique. Every natural key + effective_date combo must be unique in SCD2 tables. Test with COUNT vs COUNT DISTINCT.</p>
+    </div>
+    <div class="card green">
+      <h4>2. Referential Integrity</h4>
+      <p>Every FK in the fact table should match a PK in its dimension. Orphaned FKs indicate load failures or late-arriving dimensions.</p>
+    </div>
+    <div class="card purple">
+      <h4>3. Row Count Reconciliation</h4>
+      <p>Source → staging → warehouse row counts should be explainable. Document expected ratios (e.g., orders : order_lines is 1:N).</p>
+    </div>
+    <div class="card orange">
+      <h4>4. Metric Regression</h4>
+      <p>Compare key business metrics before/after model changes. Total revenue, customer count, and order count should not shift unexpectedly.</p>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="callout-title">🎯 Interview Tip</div>
+    <p>"I validate models with four layers: key uniqueness, referential integrity, row-count reconciliation, and metric regression. I automate these as dbt tests or CI checks so they run on every model change."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s6">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+  <div id="quiz1">
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Bridge tables resolve many-to-many by storing FKs to both sides plus weight factors." data-error-msg="❌ Many-to-many → bridge table with weight factors to prevent double-counting during aggregation.">
+      <h4>Q1: Products belong to multiple categories. Joining fact_sales to dim_category directly causes row explosion. What's the fix?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Add a category column directly in fact_sales</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Create a bridge_product_category table with weight factors</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Normalize dim_product into snowflake schema</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Use DISTINCT in all queries</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Correct! One dim_date table used through different FKs = role-playing dimension." data-error-msg="❌ A role-playing dimension is one table referenced multiple times with different aliases for different roles.">
+      <h4>Q2: fact_orders has order_date_key, ship_date_key, delivery_date_key — all pointing to dim_date. What is this pattern called?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Conformed dimension</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Junk dimension</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Role-playing dimension</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Degenerate dimension</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="a" data-success-msg="✅ Correct! Junk dimensions consolidate low-cardinality flags into one small table, replacing many fact columns with one FK." data-error-msg="❌ Junk dimensions combine miscellaneous flags. This reduces fact table width while keeping attributes filterable.">
+      <h4>Q3: Your fact table has 8 boolean flag columns (is_gift, is_rush, etc.). What pattern reduces fact table width?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Junk dimension — combine all flags into one small dimension</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Mini-dimension — extract volatile attributes</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Bridge table — flags are many-to-many</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Degenerate dimension — store flags in fact table as-is</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="d" data-success-msg="✅ Correct! Fan-out from many-to-many joins inflates row counts. Check COUNT(*) after every join to catch it." data-error-msg="❌ When a join produces more rows than the fact table, it's a fan-out — usually from a many-to-many without a bridge.">
+      <h4>Q4: After joining fact_sales to dim_product, total revenue increased by 30%. What happened?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) The dimension has null keys</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) The fact table has duplicate rows</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Semi-additive measures were summed across time</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) A many-to-many relationship caused fan-out, duplicating fact rows</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Orphaned FKs (fact rows pointing to nonexistent dimension keys) indicate load failures or late-arriving dimensions." data-error-msg="❌ Orphaned FKs mean referential integrity is broken — the dimension record is missing.">
+      <h4>Q5: How do you detect that a dimension load failed after a fact load completed?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Check if the fact table is empty</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Check for orphaned FKs — fact rows with no matching dimension record</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Count the number of dimension tables</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Compare execution timestamps of ETL jobs</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="window.checkQuiz('quiz1')">Check Answers</button>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-04-slowly-changing-dimensions/index.html">← Prev: SCDs</a>
+  <a href="../module-06-interview-gauntlet/index.html">Next: Interview Gauntlet 🔥 →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=Math.min(pct,100)+'%';},{passive:true});
+
+  const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(s=>observer.observe(s));
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',()=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  window.selectOption=function(btn){const block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(o=>o.classList.remove('selected'));btn.classList.add('selected');};
+  window.checkQuiz=function(sectionId){const container=document.getElementById(sectionId);const questions=container.querySelectorAll('.quiz-question-block');questions.forEach(q=>{const selected=q.querySelector('.quiz-option.selected');const feedback=q.querySelector('.quiz-feedback');const correctValue=q.dataset.correct;if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}q.querySelectorAll('.quiz-option').forEach(o=>o.disabled=true);});};
+
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')window.location.href='../module-06-interview-gauntlet/index.html';if(e.key==='ArrowLeft')window.location.href='../module-04-slowly-changing-dimensions/index.html';});
+})();
+</script>
+</body>
+</html>

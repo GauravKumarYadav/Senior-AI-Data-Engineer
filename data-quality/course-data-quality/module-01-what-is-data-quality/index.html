@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 1: What Is Data Quality? | Data Quality Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#2D8B55;--color-accent-hover:#247044;--color-accent-light:#E8F5EE;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--color-info:#2A7B9B;--color-info-light:#E4F2F7;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-head);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:var(--color-surface);border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.orange{border-top-color:#E07B39}.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.red{border-top-color:var(--color-error)}
+.card h4{font-family:var(--font-head);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-text-muted);margin-bottom:0}
+.aha{background:var(--color-accent-light);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.callout-info{background:var(--color-info-light);border-left:4px solid var(--color-info);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-info .aha-title{color:var(--color-info)}
+.callout-warn{background:var(--color-error-light);border-left:4px solid var(--color-error);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-warn .aha-title{color:var(--color-error)}
+.flow-diagram{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:1.5rem 0;padding:1.5rem;background:var(--color-surface);border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.flow-step{background:var(--color-accent-light);border:2px solid var(--color-accent);border-radius:10px;padding:0.7rem 1rem;font-family:var(--font-head);font-weight:600;font-size:0.85rem;text-align:center;min-width:100px}
+.flow-step.bad{background:var(--color-error-light);border-color:var(--color-error);color:var(--color-error)}
+.flow-arrow{font-size:1.2rem;color:var(--color-text-muted)}
+.quiz-box{background:var(--color-surface);border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-question-block{margin-bottom:1.5rem}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1.05rem}
+.quiz-option{display:block;width:100%;text-align:left;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem;font-family:var(--font-body);background:none}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#B8860B}
+.quiz-btn{padding:0.6rem 1.5rem;border-radius:100px;border:none;background:var(--color-accent);color:#fff;cursor:pointer;font-family:var(--font-head);font-weight:600;font-size:0.9rem;transition:background 0.2s}
+.quiz-btn:hover{background:var(--color-accent-hover)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-mono);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}.code-block .num{color:#FAB387}
+.screen-alt{background:var(--color-bg-warm);padding-left:0;padding-right:0}
+.screen-alt-inner{max-width:900px;margin:0 auto;padding:0 1.5rem}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.cost-table{width:100%;border-collapse:collapse;margin:1.5rem 0;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.cost-table th{background:var(--color-accent);color:#fff;padding:0.8rem 1rem;font-family:var(--font-head);font-weight:700;font-size:0.9rem;text-align:left}
+.cost-table td{padding:0.7rem 1rem;font-size:0.9rem;border-bottom:1px solid var(--color-border);background:var(--color-surface)}
+.cost-table tr:last-child td{border-bottom:none}
+.stack-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.8rem;margin:1.5rem 0}
+.stack-item{background:var(--color-surface);border-radius:10px;padding:1rem;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.04);border:1px solid var(--color-border)}
+.stack-item .icon{font-size:1.5rem;margin-bottom:0.4rem}
+.stack-item .name{font-family:var(--font-head);font-weight:700;font-size:0.85rem}
+.stack-item .desc{font-size:0.75rem;color:var(--color-text-muted);margin-top:0.2rem}
+@media(max-width:600px){.flow-diagram{flex-direction:column}.flow-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<nav class="nav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">🛡️ Data Quality Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-what-is-data-quality/" class="nav-dot active" aria-label="Module 1"></a>
+      <a href="../module-02-quality-dimensions/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-schema-contracts/" class="nav-dot" aria-label="Module 3"></a>
+      <a href="../module-04-monitoring-alerts/" class="nav-dot" aria-label="Module 4"></a>
+      <a href="../module-05-testing-quarantine/" class="nav-dot" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a>
+    </div>
+  </div>
+</nav>
+
+<section class="screen" id="s1">
+  <h2>🛡️ What Is <span class="accent">Data Quality</span>?</h2>
+  <p>Data quality means data is <strong>fit for its intended use</strong>. Analysts can trust metrics. ML models get clean features. Dashboards tell the truth.</p>
+  <p>It's both a <strong>technical problem</strong> (pipelines, checks, monitoring) and a <strong>product problem</strong> (definitions, contracts, ownership).</p>
+  <div class="aha">
+    <div class="aha-title">Interview Gold</div>
+    <p>"Data quality is fitness for purpose — data that is correct, complete, consistent, timely, and well-governed so every downstream consumer can make decisions with confidence."</p>
+  </div>
+  <p>In interviews, emphasize that quality isn't a single tool. It's a <span class="tooltip-term" data-tip="A layered approach combining prevention (contracts), detection (checks/monitoring), and remediation (quarantine/alerting).">defense-in-depth strategy</span> spanning the entire data lifecycle.</p>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <div class="screen-alt-inner">
+  <h2>The <span class="accent">Cost</span> of Bad Data</h2>
+  <p>Interviewers love asking "why does data quality matter?" Answer with concrete business impact.</p>
+  <table class="cost-table">
+    <tr><th>Failure</th><th>Business Impact</th></tr>
+    <tr><td>Duplicate customer records</td><td>Over-reporting revenue, sending duplicate emails, compliance violations (GDPR)</td></tr>
+    <tr><td>Stale dashboard data</td><td>Executives make decisions on yesterday's numbers — launch a promo that already expired</td></tr>
+    <tr><td>Wrong join keys</td><td>Row explosion: 1M rows become 50M, breaking downstream models and reports</td></tr>
+    <tr><td>Timezone bugs</td><td>Daily aggregates shift by hours — "Monday" revenue includes Sunday night</td></tr>
+    <tr><td>Silent schema change</td><td>Column renamed upstream → NULLs propagate silently for days before anyone notices</td></tr>
+  </table>
+  <div class="callout-warn">
+    <div class="aha-title">Real-World Horror Story</div>
+    <p>A fintech company shipped a pricing model trained on data with duplicate rows. The model over-weighted certain segments. Result: $2M in mispriced loans before the error was caught.</p>
+  </div>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2>Data Quality as a <span class="accent">Product Problem</span></h2>
+  <p>Data quality isn't just "add more tests." It requires treating data as a product with clear ownership.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>Ownership</h4>
+      <p>Every dataset has an owner. That team defines SLAs, responds to alerts, and manages contracts.</p>
+    </div>
+    <div class="card blue">
+      <h4>Discoverability</h4>
+      <p>Data catalogs (Datahub, Amundsen) let consumers find data and understand its quality status.</p>
+    </div>
+    <div class="card green">
+      <h4>Trust Signals</h4>
+      <p>Quality scores, freshness badges, and lineage graphs let consumers judge reliability at a glance.</p>
+    </div>
+    <div class="card purple">
+      <h4>Feedback Loops</h4>
+      <p>Consumers report issues. Producers fix root causes. Without this loop, quality degrades silently.</p>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">Interview Tip</div>
+    <p>"I treat data quality as a product discipline: every table has an owner, an SLA, and a contract. Quality isn't a gate at the end — it's baked into the development workflow."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <div class="screen-alt-inner">
+  <h2>The <span class="accent">Defense-in-Depth</span> Model</h2>
+  <p>Good data quality has three layers. Interviewers want to see you think systemically.</p>
+  <div class="flow-diagram">
+    <div class="flow-step">Prevention<br><small>Contracts, schemas, CI checks</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Detection<br><small>Tests, monitors, anomaly detection</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Remediation<br><small>Quarantine, alerts, runbooks</small></div>
+  </div>
+  <div class="callout-info">
+    <div class="aha-title">Key Insight</div>
+    <p>Prevention catches issues <strong>before</strong> they reach production. Detection catches what slips through. Remediation minimizes blast radius. You need all three.</p>
+  </div>
+  <p>Most teams over-invest in detection and under-invest in prevention. Data contracts (Module 3) shift quality left.</p>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>Data Quality in the <span class="accent">Modern Stack</span></h2>
+  <p>Know these tools — interviewers expect you to name specific solutions, not just concepts.</p>
+  <div class="stack-grid">
+    <div class="stack-item"><div class="icon">🔧</div><div class="name">dbt Tests</div><div class="desc">SQL assertions: not_null, unique, accepted_values, relationships</div></div>
+    <div class="stack-item"><div class="icon">🎯</div><div class="name">Great Expectations</div><div class="desc">Python-based expectations with profiling and data docs</div></div>
+    <div class="stack-item"><div class="icon">📡</div><div class="name">Monte Carlo</div><div class="desc">Data observability: freshness, volume, schema, distribution</div></div>
+    <div class="stack-item"><div class="icon">🔍</div><div class="name">Soda Core</div><div class="desc">YAML-defined checks that run on any SQL warehouse</div></div>
+    <div class="stack-item"><div class="icon">📊</div><div class="name">Elementary</div><div class="desc">dbt-native data observability and anomaly detection</div></div>
+    <div class="stack-item"><div class="icon">📋</div><div class="name">Datafold</div><div class="desc">Data diff and regression testing for pipeline changes</div></div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">Interview Tip</div>
+    <p>"For dbt projects I'd use built-in tests for basics and Elementary for anomaly detection. For cross-platform observability, Monte Carlo or Soda give you freshness, volume, and schema monitoring out of the box."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s6">
+  <div class="screen-alt-inner">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+  <div class="quiz-box" id="quiz-section-1">
+    <div class="quiz-question-block" data-correct="b" data-success-msg="Correct! Fitness for purpose captures that quality depends on context — a 5-minute delay is fine for a daily report but fatal for a fraud model." data-error-msg="Not quite. The best interview answer is 'fitness for purpose' — it shows you understand quality is contextual.">
+      <h4>Q1: Your interviewer asks "What does data quality mean?" — what's the strongest answer?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Data has no NULL values and all types are correct</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Data is fit for its intended purpose — correct, complete, timely, and trustworthy for downstream consumers</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) All dbt tests pass in production</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) The data warehouse has no duplicate rows</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="c" data-success-msg="Correct! Over-reported revenue from duplicates is a direct, quantifiable business impact — exactly what interviewers want to hear." data-error-msg="Think bigger. The best answer ties quality to business dollars and decisions, not just engineering metrics.">
+      <h4>Q2: What's the MOST compelling way to explain the cost of bad data to a non-technical stakeholder?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) "Our pipeline tests are failing 20% of the time"</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) "Data freshness SLA was breached 3 times last month"</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) "Duplicate records caused us to over-report Q3 revenue by $500K to the board"</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) "The schema registry rejected 12 changes this sprint"</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="b" data-success-msg="Correct! Prevention → Detection → Remediation is the defense-in-depth model. Data contracts are prevention, not detection." data-error-msg="Not quite. Data contracts are about preventing bad data from being produced — they belong in the prevention layer.">
+      <h4>Q3: In the defense-in-depth model, where do data contracts fit?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Detection — they detect schema changes</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Prevention — they define expectations before data is produced</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Remediation — they fix broken data</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) They don't fit the model — they're a separate concern</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="d" data-success-msg="Correct! Monte Carlo is a data observability platform — it monitors but doesn't enforce or test. dbt, Great Expectations, and Soda all let you define and run checks." data-error-msg="Review the tools section. Monte Carlo observes; dbt tests, GX expectations, and Soda checks all define explicit assertions.">
+      <h4>Q4: Which tool is primarily a data observability platform rather than a testing framework?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) dbt Tests</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Great Expectations</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Soda Core</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Monte Carlo</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="a" data-success-msg="Correct! Most teams invest heavily in detection (adding more tests) but neglect prevention (contracts, schema enforcement, CI checks). Shifting left is the key insight." data-error-msg="Think about where most teams focus their energy vs where they should. The gap is usually in prevention, not detection.">
+      <h4>Q5: Where do most data teams under-invest in quality?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Prevention — contracts, schema CI checks, shifting quality left</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Detection — adding more tests and monitors</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Remediation — building runbooks and quarantine</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Tooling — not enough observability platforms</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-section-1')">Check Answers</button>
+  </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../index.html">← Course Home</a>
+  <a href="../module-02-quality-dimensions/index.html">Next: Quality Dimensions →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  var pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){var h=document.documentElement,pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';pb.setAttribute('aria-valuenow',Math.round(pct));},{passive:true});
+  var tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(function(el){
+    el.addEventListener('mouseenter',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',function(){tb.classList.remove('visible');});
+    el.addEventListener('click',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+  var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(function(s){io.observe(s);});
+  window.selectOption=function(btn){var block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('selected');});btn.classList.add('selected');};
+  window.checkQuiz=function(sectionId){var container=document.getElementById(sectionId);var questions=container.querySelectorAll('.quiz-question-block');questions.forEach(function(q){var selected=q.querySelector('.quiz-option.selected');var feedback=q.querySelector('.quiz-feedback');var correctValue=q.dataset.correct;if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}q.querySelectorAll('.quiz-option').forEach(function(o){o.disabled=true;});});};
+  document.addEventListener('keydown',function(e){if(e.key==='ArrowRight')window.scrollBy({top:window.innerHeight*0.8,behavior:'smooth'});if(e.key==='ArrowLeft')window.scrollBy({top:-window.innerHeight*0.8,behavior:'smooth'});});
+})();
+</script>
+</body>
+</html>

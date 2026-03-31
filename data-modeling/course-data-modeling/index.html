@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Data Modeling Interview Mastery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-surface-warm:#FDF9F3;--color-accent:#2A7B9B;--color-accent-hover:#1F6380;--color-accent-light:#E4F2F7;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.6;background-image:radial-gradient(ellipse at 20% 50%,rgba(42,123,155,0.03) 0%,transparent 50%)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--color-border);border-radius:9999px}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem 1.5rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-20%;right:-10%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(42,123,155,0.08) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-15%;left:-5%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(45,139,85,0.05) 0%,transparent 70%);pointer-events:none}
+.course-icon{font-size:4rem;margin-bottom:1rem}
+.badge{display:inline-block;background:var(--color-accent);color:#fff;padding:0.4rem 1.2rem;border-radius:100px;font-size:0.85rem;font-weight:600;letter-spacing:0.5px;margin-bottom:1.5rem;text-transform:uppercase}
+.hero h1{font-family:var(--font-head);font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;line-height:1.1;margin-bottom:1rem;max-width:800px}
+.hero h1 .accent{color:var(--color-accent)}
+.hero p.lead{font-size:1.2rem;color:var(--color-text-secondary);max-width:620px;margin-bottom:2rem}
+.stats{display:flex;gap:2.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:3rem}
+.stat{text-align:center}.stat-num{font-family:var(--font-head);font-size:2.2rem;font-weight:800;color:var(--color-accent)}.stat-label{font-size:0.85rem;color:var(--color-text-muted)}
+.cta-btn{display:inline-block;background:var(--color-accent);color:#fff;padding:1rem 2.5rem;border-radius:100px;font-family:var(--font-head);font-weight:700;font-size:1.1rem;text-decoration:none;transition:transform 0.2s,box-shadow 0.2s}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(42,123,155,0.3)}
+.modules-section{padding:4rem 2rem;max-width:1000px;margin:0 auto}
+.modules-section h2{font-family:var(--font-head);font-size:2rem;font-weight:700;text-align:center;margin-bottom:0.5rem}
+.modules-section .sub{text-align:center;color:var(--color-text-muted);margin-bottom:3rem;font-size:1.05rem}
+.module-card{display:flex;align-items:flex-start;gap:1.5rem;background:var(--color-surface);border-radius:16px;padding:1.8rem;margin-bottom:1.2rem;box-shadow:0 2px 12px rgba(0,0,0,0.04);transition:transform 0.2s,box-shadow 0.2s;text-decoration:none;color:var(--color-text);border:1px solid rgba(0,0,0,0.04)}
+.module-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.08)}
+.mod-num{flex-shrink:0;width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:800;font-size:1.2rem;color:#fff}
+.mod-num.c1{background:#2A7B9B}.mod-num.c2{background:#2D8B55}.mod-num.c3{background:#7B5EA7}.mod-num.c4{background:#C4813D}.mod-num.c5{background:#D94F30}.mod-num.c6{background:#C93B3B}
+.mod-info h3{font-family:var(--font-head);font-size:1.15rem;font-weight:700;margin-bottom:0.3rem}
+.mod-info p{font-size:0.92rem;color:var(--color-text-muted);line-height:1.5}
+.mod-tags{display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:0.6rem}
+.mod-tag{font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:100px;background:var(--color-bg-warm);color:var(--color-text-muted);font-weight:500;font-family:var(--font-mono)}
+.arrow{margin-left:0.5rem;transition:transform 0.2s}.module-card:hover .arrow{transform:translateX(4px)}
+.footer{text-align:center;padding:3rem 2rem;color:var(--color-text-muted);font-size:0.9rem;border-top:1px solid var(--color-border);max-width:800px;margin:0 auto}
+.footer a{color:var(--color-accent);text-decoration:none}
+@media(max-width:600px){.module-card{flex-direction:column;gap:1rem}.stats{gap:1.5rem}}
+</style>
+</head>
+<body>
+<section class="hero">
+  <div class="course-icon">🏗️</div>
+  <span class="badge">Interview Prep Course</span>
+  <h1>Master <span class="accent">Data Modeling</span> for Your Next Interview</h1>
+  <p class="lead">6 interactive modules covering star schemas, SCDs, fact tables, grain, bridge tables, surrogate keys — with quizzes, visual diagrams, and scenario-based practice.</p>
+  <div class="stats">
+    <div class="stat"><div class="stat-num">6</div><div class="stat-label">Modules</div></div>
+    <div class="stat"><div class="stat-num">80+</div><div class="stat-label">Questions</div></div>
+    <div class="stat"><div class="stat-num">30+</div><div class="stat-label">Quizzes</div></div>
+    <div class="stat"><div class="stat-num">0</div><div class="stat-label">Prerequisites</div></div>
+  </div>
+  <a href="module-01-what-is-data-modeling/index.html" class="cta-btn">Start Learning 🏗️</a>
+</section>
+
+<section class="modules-section">
+  <h2>Course Modules</h2>
+  <p class="sub">From fundamentals to brain-teasers — structured for interview success</p>
+
+  <a href="module-01-what-is-data-modeling/index.html" class="module-card">
+    <div class="mod-num c1">01</div>
+    <div class="mod-info">
+      <h3>What Is Data Modeling? <span class="arrow">→</span></h3>
+      <p>Why data modeling matters, conceptual vs logical vs physical models, OLTP vs OLAP, normalization trade-offs, and where modeling fits in the modern data stack.</p>
+      <div class="mod-tags"><span class="mod-tag">Fundamentals</span><span class="mod-tag">OLTP vs OLAP</span><span class="mod-tag">Normalization</span></div>
+    </div>
+  </a>
+
+  <a href="module-02-facts-dimensions-grain/index.html" class="module-card">
+    <div class="mod-num c2">02</div>
+    <div class="mod-info">
+      <h3>Facts, Dimensions & Grain <span class="arrow">→</span></h3>
+      <p>Grain as the foundation, transactional vs snapshot fact tables, factless facts, degenerate dimensions, and additive vs semi-additive measures.</p>
+      <div class="mod-tags"><span class="mod-tag">Grain</span><span class="mod-tag">Fact Types</span><span class="mod-tag">Measures</span><span class="mod-tag">Dimensions</span></div>
+    </div>
+  </a>
+
+  <a href="module-03-star-snowflake/index.html" class="module-card">
+    <div class="mod-num c3">03</div>
+    <div class="mod-info">
+      <h3>Star Schema & Snowflake Schema <span class="arrow">→</span></h3>
+      <p>Star schema benefits, snowflake trade-offs, conformed dimensions, Data Vault basics, and when to pick each approach for different workloads.</p>
+      <div class="mod-tags"><span class="mod-tag">Star Schema</span><span class="mod-tag">Snowflake</span><span class="mod-tag">Conformed Dims</span><span class="mod-tag">Data Vault</span></div>
+    </div>
+  </a>
+
+  <a href="module-04-slowly-changing-dimensions/index.html" class="module-card">
+    <div class="mod-num c4">04</div>
+    <div class="mod-info">
+      <h3>Slowly Changing Dimensions <span class="arrow">→</span></h3>
+      <p>SCD Types 0 through 6 with examples, implementing SCD2 step-by-step, surrogate vs natural keys, late-arriving dimensions, and mini-dimensions.</p>
+      <div class="mod-tags"><span class="mod-tag">SCD Types</span><span class="mod-tag">Surrogate Keys</span><span class="mod-tag">Late Arriving</span><span class="mod-tag">Mini-Dims</span></div>
+    </div>
+  </a>
+
+  <a href="module-05-advanced-patterns/index.html" class="module-card">
+    <div class="mod-num c5">05</div>
+    <div class="mod-info">
+      <h3>Advanced Modeling Patterns <span class="arrow">→</span></h3>
+      <p>Bridge tables, role-playing dimensions, junk dimensions, outrigger dimensions, preventing double-counting, and model validation strategies.</p>
+      <div class="mod-tags"><span class="mod-tag">Bridge Tables</span><span class="mod-tag">Role-Playing</span><span class="mod-tag">Junk Dims</span><span class="mod-tag">Validation</span></div>
+    </div>
+  </a>
+
+  <a href="module-06-interview-gauntlet/index.html" class="module-card">
+    <div class="mod-num c6">06</div>
+    <div class="mod-info">
+      <h3>The Interview Gauntlet 🔥 <span class="arrow">→</span></h3>
+      <p>15 tricky scenario questions, "design this model" exercises, common pitfalls, rapid-fire Q&A, and the gotchas that trip up 90% of candidates.</p>
+      <div class="mod-tags"><span class="mod-tag">Tricky Q&A</span><span class="mod-tag">Design Exercises</span><span class="mod-tag">Rapid Fire</span><span class="mod-tag">Gotchas</span></div>
+    </div>
+  </a>
+</section>
+
+<footer class="footer">
+  <p>🏗️ Data Modeling Interview Mastery — Built for data engineers who want to ace their next interview.</p>
+  <p style="margin-top:0.3rem"><a href="../../index.html">← Back to All Courses</a></p>
+</footer>
+</body>
+</html>

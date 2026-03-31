@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 2: Facts, Dimensions & Grain | Data Modeling Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#2A7B9B;--color-accent-hover:#1F6380;--color-accent-light:#E4F2F7;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg-warm);color:var(--color-text);line-height:1.7}
+nav.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(245,240,232,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.15s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:var(--color-border);text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:var(--color-surface);border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.orange{border-top-color:#C4813D}.card.red{border-top-color:var(--color-error)}
+.card h4{font-family:var(--font-head);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-text-muted);margin-bottom:0}
+.callout{background:linear-gradient(135deg,var(--color-accent-light),#F0F8FB);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.callout p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:var(--color-surface);border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-head);font-weight:700;font-size:1rem;margin-bottom:0.8rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-mono);font-size:0.82rem;overflow-x:auto;margin:1rem 0;line-height:1.7;white-space:pre}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}.code-block .num{color:#FAB387}
+.diagram-box{background:var(--color-surface);border-radius:14px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin:1.5rem 0;text-align:center}
+.diagram-box h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1rem}
+.grain-example{display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;justify-content:center;margin:0.5rem 0}
+.grain-tag{background:var(--color-accent-light);color:var(--color-accent);padding:0.5rem 1rem;border-radius:10px;font-family:var(--font-mono);font-size:0.82rem;font-weight:600}
+.grain-arrow{color:var(--color-accent);font-weight:bold;font-size:1.2rem}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.quiz-question-block{background:var(--color-surface);border-radius:16px;padding:1.8rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1rem 0}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1.05rem}
+.quiz-option{display:block;width:100%;text-align:left;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid var(--color-border);border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem;font-family:var(--font-body);background:none}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-option:disabled{cursor:default;opacity:0.7}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#8D6E00}
+.check-btn{display:inline-block;background:var(--color-accent);color:#fff;border:none;padding:0.7rem 2rem;border-radius:100px;font-family:var(--font-head);font-weight:700;font-size:0.95rem;cursor:pointer;margin-top:1rem;transition:transform 0.2s}
+.check-btn:hover{transform:translateY(-2px)}
+.screen-alt{background:var(--color-bg);margin-left:calc(-50vw + 50%);margin-right:calc(-50vw + 50%);padding-left:calc(50vw - 50% + 1.5rem);padding-right:calc(50vw - 50% + 1.5rem);max-width:none}
+.screen-alt>*{max-width:900px}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}.grain-example{flex-direction:column}.grain-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<nav class="top-nav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">🏗️ Data Modeling Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-what-is-data-modeling/" class="nav-dot" aria-label="Module 1"></a>
+      <a href="../module-02-facts-dimensions-grain/" class="nav-dot active" aria-label="Module 2 (current)"></a>
+      <a href="../module-03-star-snowflake/" class="nav-dot" aria-label="Module 3"></a>
+      <a href="../module-04-slowly-changing-dimensions/" class="nav-dot" aria-label="Module 4"></a>
+      <a href="../module-05-advanced-patterns/" class="nav-dot" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a>
+    </div>
+  </div>
+</nav>
+
+<section class="screen" id="s1">
+  <h2>📐 What Is <span class="accent">Grain</span>?</h2>
+  <p><span class="tooltip-term" data-tip="The level of detail stored in a table. Defines what one row represents — the most fundamental design decision in dimensional modeling.">Grain</span> is the <strong>first question</strong> to answer when designing any table. It defines what <em>one row</em> represents.</p>
+  <p>If grain is unclear, you will get duplicates, incorrect aggregations, and ambiguous join keys. Every interview answer about fact tables should start with grain.</p>
+  <div class="diagram-box">
+    <h4>Common Grain Examples</h4>
+    <div class="grain-example"><div class="grain-tag">One row per order line item</div></div>
+    <div class="grain-example"><div class="grain-tag">One row per user per day</div></div>
+    <div class="grain-example"><div class="grain-tag">One row per click event</div></div>
+    <div class="grain-example"><div class="grain-tag">One row per account per month</div></div>
+  </div>
+  <div class="callout">
+    <div class="callout-title">💡 Interview Gold</div>
+    <p>"The grain determines which metrics are additive, how joins behave, and what can be uniquely identified. Always state the grain before discussing any model design."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <h2><span class="accent">Fact Tables</span> vs <span class="accent">Dimension Tables</span></h2>
+  <p>These two pillars form the backbone of dimensional modeling. Know the distinction cold.</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📊 Fact Tables</h4>
+      <ul>
+        <li>📌 Store measurable events (orders, clicks, payments)</li>
+        <li>📌 Contain foreign keys to dimensions</li>
+        <li>📌 Hold numeric measures (amount, quantity, duration)</li>
+        <li>📌 Typically the largest tables in the warehouse</li>
+        <li>📌 Answer: "what happened?"</li>
+        <li>📌 Grain defines what one row means</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>🏷️ Dimension Tables</h4>
+      <ul>
+        <li>📌 Store descriptive attributes (user, product, date)</li>
+        <li>📌 Provide context for slicing and filtering</li>
+        <li>📌 Hold text attributes (name, category, region)</li>
+        <li>📌 Typically wide with many columns, fewer rows</li>
+        <li>📌 Answer: "who / what / where / when?"</li>
+        <li>📌 Usually have a surrogate primary key</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="callout-title">🎯 Interview Tip</div>
+    <p>"Facts are verbs — they record <em>events</em>. Dimensions are nouns — they describe the <em>context</em> of those events. A well-designed model joins many-to-one from fact to dimension."</p>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2>Types of <span class="accent">Fact Tables</span></h2>
+  <p>Interviewers often ask you to pick the right fact type for a scenario. Know all three:</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>📝 Transactional Fact</h4>
+      <p>One row per <strong>business event</strong>. Most common type. Grain = individual transaction (one order line, one click, one payment). Fully additive measures.</p>
+    </div>
+    <div class="card green">
+      <h4>📸 Periodic Snapshot</h4>
+      <p>One row per <strong>entity per time period</strong>. Captures state at regular intervals. Grain = account per month, inventory per day. Semi-additive measures (can't sum balances across time).</p>
+    </div>
+    <div class="card purple">
+      <h4>🔄 Accumulating Snapshot</h4>
+      <p>One row per <strong>process lifecycle</strong>. Updated as milestones complete. Grain = one order from creation to delivery. Multiple date columns (ordered_at, shipped_at, delivered_at).</p>
+    </div>
+  </div>
+  <div class="code-block"><span class="cm">-- Transactional fact: one row per order line</span>
+<span class="kw">SELECT</span> order_line_id, order_id, product_key, customer_key,
+       date_key, quantity, unit_price, discount_amount
+<span class="kw">FROM</span> fact_order_lines;
+
+<span class="cm">-- Periodic snapshot: one row per account per month</span>
+<span class="kw">SELECT</span> account_key, month_key, ending_balance,
+       total_deposits, total_withdrawals
+<span class="kw">FROM</span> fact_account_monthly_snapshot;
+
+<span class="cm">-- Accumulating snapshot: one row per order lifecycle</span>
+<span class="kw">SELECT</span> order_key, ordered_date_key, shipped_date_key,
+       delivered_date_key, returned_date_key, current_status
+<span class="kw">FROM</span> fact_order_pipeline;</div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <h2><span class="accent">Factless</span> Fact Tables & <span class="accent">Degenerate</span> Dimensions</h2>
+  <p>Two patterns that trip up candidates — know them before the interview.</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid #C4813D">
+      <h4>📋 Factless Fact Tables</h4>
+      <ul>
+        <li>📌 Record events with <strong>no numeric measures</strong></li>
+        <li>📌 The fact itself is the event occurrence</li>
+        <li>📌 Example: "student attended class" — no amount, just the relationship</li>
+        <li>📌 Used for coverage analysis, eligibility, event tracking</li>
+        <li>📌 You can COUNT rows as the measure</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid #7B5EA7">
+      <h4>🔑 Degenerate Dimensions</h4>
+      <ul>
+        <li>📌 Dimension attributes stored <strong>in the fact table</strong></li>
+        <li>📌 No separate dimension table needed</li>
+        <li>📌 Example: order_number, invoice_id, confirmation_code</li>
+        <li>📌 Useful for drill-through and filtering</li>
+        <li>📌 Avoids creating a dimension with a single column</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="callout-title">💡 Interview Gold</div>
+    <p>"A factless fact table captures relationships or events without measures — like campaign eligibility or class attendance. A degenerate dimension is an identifier that lives directly in the fact table because it has no descriptive attributes to justify a separate dimension."</p>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>Additive vs <span class="accent">Semi-Additive</span> vs Non-Additive</h2>
+  <p>Measure additivity determines <strong>how you can aggregate</strong> a fact. Mess this up and your reports show nonsensical numbers.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>✅ Fully Additive</h4>
+      <p>Can be summed across <strong>all</strong> dimensions. Revenue, quantity, discount_amount. Most measures in transactional facts are additive.</p>
+    </div>
+    <div class="card orange">
+      <h4>⚠️ Semi-Additive</h4>
+      <p>Can be summed across <strong>some</strong> dimensions but NOT time. Account balance, inventory count. Sum across accounts is fine; sum across months is meaningless.</p>
+    </div>
+    <div class="card red">
+      <h4>❌ Non-Additive</h4>
+      <p>Cannot be summed at all. Ratios, percentages, unit prices. Must recalculate from components. Average price = SUM(revenue) / SUM(quantity).</p>
+    </div>
+  </div>
+  <div class="code-block"><span class="cm">-- Additive: SUM works across all dimensions</span>
+<span class="kw">SELECT</span> region, <span class="fn">SUM</span>(revenue) <span class="kw">FROM</span> fact_sales <span class="kw">GROUP BY</span> region; <span class="cm">-- ✅</span>
+
+<span class="cm">-- Semi-additive: SUM across accounts OK, across time NOT OK</span>
+<span class="kw">SELECT</span> branch, <span class="fn">SUM</span>(ending_balance) <span class="kw">FROM</span> fact_account_snapshot
+<span class="kw">WHERE</span> month_key = <span class="str">'2024-12'</span> <span class="kw">GROUP BY</span> branch; <span class="cm">-- ✅ (single month)</span>
+
+<span class="cm">-- Non-additive: never SUM a ratio directly</span>
+<span class="kw">SELECT</span> region, <span class="fn">SUM</span>(revenue) / <span class="fn">SUM</span>(quantity) <span class="kw">AS</span> avg_price
+<span class="kw">FROM</span> fact_sales <span class="kw">GROUP BY</span> region; <span class="cm">-- ✅ (recalculated from components)</span></div>
+  <div class="callout">
+    <div class="callout-title">🎯 Interview Tip</div>
+    <p>"Never store pre-calculated ratios in fact tables. Store the numerator and denominator separately so they remain additive. The BI layer or query computes the ratio at report time."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s6">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+  <div id="quiz1">
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Grain defines what one row represents — the most fundamental design decision." data-error-msg="❌ Grain = what one row represents. It determines additivity, join behavior, and key uniqueness.">
+      <h4>Q1: A colleague designed a fact table but can't explain what one row represents. What's missing?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) An index</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) A clearly defined grain</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) A surrogate key</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) A partition column</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Correct! A periodic snapshot captures state at regular intervals — perfect for daily inventory levels." data-error-msg="❌ Daily inventory levels represent state at a point in time → periodic snapshot fact table.">
+      <h4>Q2: You need to track daily inventory levels for each warehouse. Which fact type fits best?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Transactional fact — one row per inventory event</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Accumulating snapshot — track inventory lifecycle</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Periodic snapshot — one row per product per warehouse per day</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Factless fact — inventory has no measures</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="a" data-success-msg="✅ Correct! Account balances are semi-additive — you can sum across accounts but not across time periods." data-error-msg="❌ Account balance can't be summed across months (that's meaningless). It's semi-additive.">
+      <h4>Q3: A monthly account balance (e.g., $50K in Jan, $60K in Feb) is which type of measure?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Semi-additive — can sum across accounts, not across time</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Fully additive — sum across all dimensions</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Non-additive — can never be summed</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) It depends on the warehouse platform</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="d" data-success-msg="✅ Correct! 'Student attended class' has no numeric measure — just the event. That's a factless fact table." data-error-msg="❌ No numeric measure → factless fact. You can COUNT rows, but no amount/quantity/dollar column exists.">
+      <h4>Q4: You need to track which students attended which classes. There's no dollar amount or quantity. What do you build?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) A dimension table for attendance</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) A transactional fact with amount = 0</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) A bridge table between students and classes</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) A factless fact table with student_key, class_key, date_key</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! An order_number is a degenerate dimension — it lives in the fact table without a separate dimension." data-error-msg="❌ order_number has no descriptive attributes beyond itself. It lives in the fact table as a degenerate dimension.">
+      <h4>Q5: Where should order_number live if it has no attributes beyond itself?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) In a separate dim_order table with one column</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Directly in the fact table as a degenerate dimension</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) As a foreign key to the customer dimension</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) It should be removed — it's not needed</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="window.checkQuiz('quiz1')">Check Answers</button>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-01-what-is-data-modeling/index.html">← Prev: What Is Data Modeling?</a>
+  <a href="../module-03-star-snowflake/index.html">Next: Star & Snowflake →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=Math.min(pct,100)+'%';},{passive:true});
+
+  const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(s=>observer.observe(s));
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',()=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  window.selectOption=function(btn){const block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(o=>o.classList.remove('selected'));btn.classList.add('selected');};
+  window.checkQuiz=function(sectionId){const container=document.getElementById(sectionId);const questions=container.querySelectorAll('.quiz-question-block');questions.forEach(q=>{const selected=q.querySelector('.quiz-option.selected');const feedback=q.querySelector('.quiz-feedback');const correctValue=q.dataset.correct;if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}q.querySelectorAll('.quiz-option').forEach(o=>o.disabled=true);});};
+
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')window.location.href='../module-03-star-snowflake/index.html';if(e.key==='ArrowLeft')window.location.href='../module-01-what-is-data-modeling/index.html';});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 4: Materialization & Pre-Aggregation | Cost Optimization Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#D4A843;--color-accent-hover:#B8903A;--color-accent-light:#FDF5E4;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--color-info:#2A7B9B;--color-info-light:#E4F2F7;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg-warm);color:var(--color-text);line-height:1.7}
+nav.topnav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(245,240,232,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.15s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.screen-alt{background:var(--color-bg)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:var(--color-surface);border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.red{border-top-color:var(--color-error)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-head);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-text-secondary);margin-bottom:0}
+.callout{background:linear-gradient(135deg,var(--color-accent-light),#FFF8EE);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent-hover)}
+.callout p{font-size:0.95rem;margin:0}
+.callout-info{background:linear-gradient(135deg,var(--color-info-light),#F0F7FA);border-left-color:var(--color-info)}
+.callout-info .callout-title{color:var(--color-info)}
+.callout-warn{background:linear-gradient(135deg,var(--color-error-light),#FFF5F5);border-left-color:var(--color-error)}
+.callout-warn .callout-title{color:var(--color-error)}
+.flow-diagram{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:1.5rem 0;justify-content:center}
+.flow-box{background:var(--color-surface);border:2px solid var(--color-border);border-radius:12px;padding:0.7rem 1rem;text-align:center;font-size:0.82rem;font-weight:600;font-family:var(--font-head);min-width:100px;transition:transform 0.2s}
+.flow-box:hover{transform:scale(1.05)}
+.flow-box.highlight{background:var(--color-accent-light);border-color:var(--color-accent)}
+.flow-box.bad{background:var(--color-error-light);border-color:var(--color-error)}
+.flow-box.good{background:var(--color-success-light);border-color:var(--color-success)}
+.flow-arrow{font-size:1.2rem;color:var(--color-text-muted)}
+.comparison{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:var(--color-surface);border-radius:14px;padding:1.3rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.8rem}
+.comp-col ul{list-style:none;font-size:0.82rem}
+.comp-col ul li{padding:0.3rem 0;border-bottom:1px solid rgba(0,0,0,0.04)}
+.comp-col ul li:last-child{border:none}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-mono);font-size:0.82rem;overflow-x:auto;margin:1rem 0;white-space:pre;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}.code-block .num{color:#FAB387}
+.cost-bar{display:flex;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden;height:50px}
+.cost-segment{display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:600;font-family:var(--font-head);color:#fff}
+.quiz-question-block{background:var(--color-surface);border-radius:16px;padding:1.8rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.2rem 0}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1rem}
+.quiz-option{display:block;width:100%;text-align:left;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.92rem;font-family:var(--font-body);background:none}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-option:disabled{cursor:default;opacity:0.7}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#A68307}
+.quiz-btn{display:inline-block;background:var(--color-accent);color:#fff;border:none;padding:0.7rem 1.8rem;border-radius:100px;font-family:var(--font-head);font-weight:700;font-size:0.95rem;cursor:pointer;margin-top:1rem;transition:transform 0.2s}
+.quiz-btn:hover{transform:translateY(-2px)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}.flow-diagram{flex-direction:column}.flow-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<nav class="topnav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">💰 Cost Optimization Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-why-cost-matters/" class="nav-dot" aria-label="Module 1"></a>
+      <a href="../module-02-storage-partitioning/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-shuffle-skew-joins/" class="nav-dot" aria-label="Module 3"></a>
+      <a href="../module-04-materialization/" class="nav-dot active" aria-label="Module 4"></a>
+      <a href="../module-05-cluster-finops/" class="nav-dot" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a>
+    </div>
+  </div>
+</nav>
+
+<section class="screen" id="s1">
+  <h2>📊 When to <span class="accent">Materialize</span></h2>
+  <p>Materialize when many downstream queries reuse <strong>expensive computations</strong> or when interactive BI requires low latency. The rule: materialize stable, high-value marts; keep exploratory logic as views.</p>
+  <div class="flow-diagram">
+    <div class="flow-box">Raw Data</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">Complex Join + Agg</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box highlight">Materialized Table</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box good">10 BI dashboards</div>
+  </div>
+  <p>Without materialization, those 10 dashboards each re-run the expensive join + aggregation — <strong>10x the compute cost</strong>.</p>
+  <div class="callout">
+    <div class="callout-title">💡 Interview Gold</div>
+    <p>"I materialize when the ratio of reads to writes is high, the computation is expensive, and the data is stable enough to tolerate refresh lag. Otherwise I use views."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <h2>Views vs <span class="accent">Materialized Views</span> vs Tables</h2>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📝 View</h4>
+      <ul>
+        <li>Just a saved SQL query</li>
+        <li>Zero storage cost</li>
+        <li>Recomputes every access</li>
+        <li>Always fresh</li>
+        <li>Slow if logic is complex</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🏗️ Materialized View</h4>
+      <ul>
+        <li>Pre-computed + stored</li>
+        <li>Storage cost exists</li>
+        <li>Fast reads, periodic refresh</li>
+        <li>May be stale between refreshes</li>
+        <li>Refresh has compute cost</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>📦 Table (Mart)</h4>
+      <ul>
+        <li>Full control over schema/partitioning</li>
+        <li>Storage + refresh compute cost</li>
+        <li>Best for high-traffic marts</li>
+        <li>Requires pipeline management</li>
+        <li>Most flexible optimization</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2>The Cost of <span class="accent">Over-Materialization</span></h2>
+  <p>More tables isn't always better. Every materialized table adds <strong>storage cost + refresh compute + pipeline maintenance</strong>.</p>
+  <div class="cost-bar">
+    <div class="cost-segment" style="flex:3;background:var(--color-info)">Storage: 3 copies</div>
+    <div class="cost-segment" style="flex:4;background:var(--color-accent)">Refresh Compute</div>
+    <div class="cost-segment" style="flex:2;background:#7B5EA7">Pipeline Ops</div>
+    <div class="cost-segment" style="flex:1;background:var(--color-error)">Failures</div>
+  </div>
+  <div class="card-grid">
+    <div class="card red">
+      <h4>🚫 Symptoms of Over-Materialization</h4>
+      <p>Tables no one queries. Multiple tables with 90% column overlap. Refresh jobs that cost more than the queries they serve.</p>
+    </div>
+    <div class="card green">
+      <h4>✅ Healthy Materialization</h4>
+      <p>Each table has ≥ 3 regular consumers. Refresh cost &lt; 20% of ad-hoc re-computation cost. Clear ownership and SLAs.</p>
+    </div>
+  </div>
+  <div class="callout callout-warn">
+    <div class="callout-title">⚠️ Audit Regularly</div>
+    <p>Run a quarterly audit: for each materialized table, count downstream consumers and measure refresh cost vs query cost. Deprecate unused tables aggressively.</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <h2>Caching <span class="accent">Strategies</span></h2>
+  <p>Caching sits between "compute every time" (view) and "persist forever" (table). Use it for intermediate results within a pipeline session.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>💾 Spark .persist()</h4>
+      <p>Caches a DataFrame in memory (or disk) for reuse within the same Spark job. Freed when the session ends.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔄 Warehouse Result Cache</h4>
+      <p>BigQuery, Snowflake, Redshift cache query results. Repeated identical queries return instantly at <strong>zero compute cost</strong>.</p>
+    </div>
+    <div class="card green">
+      <h4>📊 Delta Cache</h4>
+      <p>Databricks caches Parquet data on local SSDs. Subsequent reads of the same files are <strong>10x faster</strong>. Automatic and transparent.</p>
+    </div>
+  </div>
+  <div class="code-block"><span class="cm"># Spark: cache a DataFrame used multiple times</span>
+filtered = large_df.filter(col(<span class="str">"status"</span>) == <span class="str">"active"</span>)
+filtered.<span class="fn">persist</span>(StorageLevel.MEMORY_AND_DISK)
+
+<span class="cm"># Use it in multiple downstream operations</span>
+count_by_region = filtered.groupBy(<span class="str">"region"</span>).count()
+count_by_product = filtered.groupBy(<span class="str">"product"</span>).count()
+
+<span class="cm"># IMPORTANT: unpersist when done to free memory</span>
+filtered.<span class="fn">unpersist</span>()</div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>Incremental vs <span class="accent">Full Refresh</span></h2>
+  <p>Full refresh reprocesses everything. Incremental only processes <strong>new or changed data</strong>. The cost difference can be 10-100x.</p>
+  <div class="comparison" style="grid-template-columns:1fr 1fr">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>🔄 Full Refresh</h4>
+      <ul>
+        <li>Reprocesses all historical data</li>
+        <li>Simple to implement</li>
+        <li>Correct by construction</li>
+        <li>Cost grows with table size</li>
+        <li>OK for small tables (&lt; 10 GB)</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>📈 Incremental</h4>
+      <ul>
+        <li>Only processes new/changed data</li>
+        <li>Complex: needs watermarks, CDC</li>
+        <li>Must handle late-arriving data</li>
+        <li>Cost is ~constant regardless of table size</li>
+        <li>Essential for large tables (100+ GB)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout callout-info">
+    <div class="callout-title">🎯 The Hybrid Approach</div>
+    <p>Use incremental for daily runs, but schedule a periodic full refresh (weekly/monthly) as a "correction pass" to fix any drift. This gives you low daily cost with guaranteed correctness over time.</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s6">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+  <div id="quiz4">
+    <div class="quiz-question-block" data-correct="b" data-success-msg="Correct! 12 dashboards hitting the same expensive join daily makes it a prime candidate for materialization." data-error-msg="Think about the read-to-write ratio — how many consumers reuse this computation?">
+      <h4>Q1: A complex 5-table join feeds 12 dashboards refreshed daily. Should you materialize it?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) No — views are always cheaper</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Yes — high read:write ratio and expensive computation justify materialization</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Only if the data is less than 1 GB</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Only if you use Snowflake</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="c" data-success-msg="Correct! Over-materialization wastes storage, compute on refreshes, and adds pipeline maintenance burden." data-error-msg="Think about what happens when you create too many materialized tables that overlap.">
+      <h4>Q2: What's the main risk of over-materialization?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Queries become slower</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Data becomes less accurate</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Storage cost + refresh compute + pipeline complexity increase without proportional value</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) It causes data skew</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="a" data-success-msg="Correct! Warehouse result caching returns identical query results at zero compute cost." data-error-msg="Which caching layer returns previously computed results without any re-computation?">
+      <h4>Q3: An analyst runs the same dashboard query 50 times a day. Best caching strategy?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Warehouse result cache — identical queries return instantly at zero cost</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Spark .persist() the DataFrame</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Create a new table for each query</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Increase cluster size</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="d" data-success-msg="Correct! Incremental processing keeps cost ~constant regardless of total table size — essential for large datasets." data-error-msg="Think about which approach processes the least data as the table grows.">
+      <h4>Q4: Your table grows 5 GB/day and is now 2 TB. Full refresh takes 4 hours. What should you do?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Add more nodes to make full refresh faster</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Run full refresh less frequently</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Switch to a faster storage format</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Switch to incremental processing with periodic full-refresh corrections</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="b" data-success-msg="Correct! Don't forget to unpersist — leaked caches consume memory and can cause executor OOMs." data-error-msg="Think about what happens to memory when you cache but never release it.">
+      <h4>Q5: What's the most common mistake with Spark .persist()?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Using it on small DataFrames</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Forgetting to .unpersist(), causing memory leaks and OOMs</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Using MEMORY_AND_DISK storage level</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Persisting DataFrames that are read from Parquet</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz4')">Check Answers</button>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-03-shuffle-skew-joins/index.html">← Prev: Shuffle, Skew & Joins</a>
+  <a href="../module-05-cluster-finops/index.html">Next: Cluster Management & FinOps →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  var pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){var h=document.documentElement,pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+  var tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(function(el){
+    el.addEventListener('mouseenter',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',function(){tb.classList.remove('visible');});
+    el.addEventListener('click',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+  var observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(function(s){observer.observe(s);});
+  document.addEventListener('keydown',function(e){if(e.key==='ArrowRight')window.scrollBy({top:window.innerHeight,behavior:'smooth'});if(e.key==='ArrowLeft')window.scrollBy({top:-window.innerHeight,behavior:'smooth'});});
+})();
+window.selectOption=function(btn){var block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('selected');});btn.classList.add('selected');};
+window.checkQuiz=function(sectionId){var container=document.getElementById(sectionId);container.querySelectorAll('.quiz-question-block').forEach(function(q){var selected=q.querySelector('.quiz-option.selected'),feedback=q.querySelector('.quiz-feedback'),correctValue=q.dataset.correct;if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}q.querySelectorAll('.quiz-option').forEach(function(o){o.disabled=true;});});};
+</script>
+</body>
+</html>

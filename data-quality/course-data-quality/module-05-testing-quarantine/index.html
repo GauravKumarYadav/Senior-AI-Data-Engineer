@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 5: Testing & Quarantine Patterns | Data Quality Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#2D8B55;--color-accent-hover:#247044;--color-accent-light:#E8F5EE;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--color-info:#2A7B9B;--color-info-light:#E4F2F7;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:var(--color-surface);border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.orange{border-top-color:#E07B39}.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.red{border-top-color:var(--color-error)}
+.card h4{font-family:var(--font-head);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-text-muted);margin-bottom:0}
+.aha{background:var(--color-accent-light);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.callout-info{background:var(--color-info-light);border-left:4px solid var(--color-info);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-info .aha-title{color:var(--color-info)}
+.callout-warn{background:var(--color-error-light);border-left:4px solid var(--color-error);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-warn .aha-title{color:var(--color-error)}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:var(--color-surface);border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-head);font-weight:700;font-size:1rem;margin-bottom:0.8rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-mono);font-size:0.82rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}.code-block .num{color:#FAB387}
+.flow-diagram{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:1.5rem 0;padding:1.5rem;background:var(--color-surface);border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.flow-step{background:var(--color-accent-light);border:2px solid var(--color-accent);border-radius:10px;padding:0.7rem 1rem;font-family:var(--font-head);font-weight:600;font-size:0.82rem;text-align:center;min-width:90px}
+.flow-step.info{background:var(--color-info-light);border-color:var(--color-info)}
+.flow-step.warn{background:var(--color-error-light);border-color:var(--color-error)}
+.flow-arrow{font-size:1.2rem;color:var(--color-text-muted)}
+.quiz-box{background:var(--color-surface);border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-question-block{margin-bottom:1.5rem}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1.05rem}
+.quiz-option{display:block;width:100%;text-align:left;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem;font-family:var(--font-body);background:none}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#B8860B}
+.quiz-btn{padding:0.6rem 1.5rem;border-radius:100px;border:none;background:var(--color-accent);color:#fff;cursor:pointer;font-family:var(--font-head);font-weight:600;font-size:0.9rem;transition:background 0.2s}
+.quiz-btn:hover{background:var(--color-accent-hover)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.screen-alt{background:var(--color-bg-warm);padding-left:0;padding-right:0}
+.screen-alt-inner{max-width:900px;margin:0 auto;padding:0 1.5rem}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.flow-diagram{flex-direction:column}.flow-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<nav class="nav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">🛡️ Data Quality Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-what-is-data-quality/" class="nav-dot" aria-label="Module 1"></a>
+      <a href="../module-02-quality-dimensions/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-schema-contracts/" class="nav-dot" aria-label="Module 3"></a>
+      <a href="../module-04-monitoring-alerts/" class="nav-dot" aria-label="Module 4"></a>
+      <a href="../module-05-testing-quarantine/" class="nav-dot active" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a>
+    </div>
+  </div>
+</nav>
+
+<section class="screen" id="s1">
+  <h2>Testing Data <span class="accent">Transformations</span></h2>
+  <p>Data testing is different from software testing. You're testing data correctness, not code behavior. Here are the four approaches.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>Unit-Like Tests</h4>
+      <p>Small fixture inputs → run transform → compare to expected output. Use <span class="tooltip-term" data-tip="A hand-verified dataset used as ground truth for testing transforms. Contains known inputs and expected outputs.">golden datasets</span> as ground truth.</p>
+    </div>
+    <div class="card blue">
+      <h4>Property Tests</h4>
+      <p>Assert invariants: revenue ≥ 0, row count monotonically increases, SUM(parts) = total. These catch edge cases you didn't think of.</p>
+    </div>
+    <div class="card green">
+      <h4>Reconciliation Tests</h4>
+      <p>Compare source vs target: row counts match, SUM(amount) matches, distinct key counts match. Catches data loss in transit.</p>
+    </div>
+    <div class="card purple">
+      <h4>Regression Tests</h4>
+      <p>After a code change, key metrics shouldn't shift unexpectedly. Use <span class="tooltip-term" data-tip="Comparing the output of a pipeline before and after a code change to detect unintended differences.">data diff</span> tools like Datafold.</p>
+    </div>
+  </div>
+  <div class="code-block"><span class="cm">-- dbt test: property test for non-negative revenue</span>
+<span class="kw">SELECT</span> order_id, revenue
+<span class="kw">FROM</span> {{ <span class="fn">ref</span>(<span class="str">'fct_orders'</span>) }}
+<span class="kw">WHERE</span> revenue < <span class="num">0</span>
+<span class="cm">-- Test passes if this returns 0 rows</span></div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <div class="screen-alt-inner">
+  <h2>Golden Datasets & <span class="accent">Fixtures</span></h2>
+  <p>Golden datasets are the backbone of data unit testing. They let you test transforms in isolation.</p>
+  <div class="flow-diagram">
+    <div class="flow-step">Fixture Input<br><small>10-50 hand-crafted rows</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step info">Run Transform<br><small>dbt model / SQL / Python</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Compare Output<br><small>vs expected golden file</small></div>
+  </div>
+  <div class="card-grid">
+    <div class="card">
+      <h4>Include Edge Cases</h4>
+      <p>NULLs, empty strings, max-length values, negative numbers, timezone boundaries, Unicode characters.</p>
+    </div>
+    <div class="card orange">
+      <h4>Version Control Them</h4>
+      <p>Store golden files in Git alongside your models. They're documentation AND tests. Review changes in PRs.</p>
+    </div>
+    <div class="card blue">
+      <h4>Keep Them Small</h4>
+      <p>10-50 rows max. Enough to cover business logic paths without becoming a maintenance burden.</p>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">Interview Tip</div>
+    <p>"I test critical transforms with golden datasets stored in Git. Each fixture covers happy path, edge cases, and error scenarios. When a bug is found in prod, I add a fixture for that case — similar to adding a unit test for a code bug."</p>
+  </div>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2>The <span class="accent">Quarantine</span> Pattern</h2>
+  <p>Don't block the entire pipeline for a few bad rows. Split data into "good" and "quarantine" streams.</p>
+  <div class="flow-diagram">
+    <div class="flow-step">Raw Data<br><small>All incoming rows</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step info">Validate<br><small>Apply quality rules</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Good Data<br><small>→ production tables</small></div>
+    <div class="flow-arrow" style="visibility:hidden">→</div>
+    <div class="flow-step warn">Bad Data<br><small>→ quarantine + error reason</small></div>
+  </div>
+  <div class="code-block"><span class="cm">-- Quarantine pattern in SQL</span>
+<span class="kw">INSERT INTO</span> orders_clean
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> orders_raw
+<span class="kw">WHERE</span> amount >= <span class="num">0</span>
+  <span class="kw">AND</span> user_id <span class="kw">IS NOT NULL</span>
+  <span class="kw">AND</span> status <span class="kw">IN</span> (<span class="str">'pending'</span>,<span class="str">'paid'</span>,<span class="str">'refunded'</span>);
+
+<span class="kw">INSERT INTO</span> orders_quarantine
+<span class="kw">SELECT</span> *, <span class="str">'validation_failed'</span> <span class="kw">AS</span> error_reason
+<span class="kw">FROM</span> orders_raw
+<span class="kw">WHERE</span> amount < <span class="num">0</span>
+  <span class="kw">OR</span> user_id <span class="kw">IS NULL</span>
+  <span class="kw">OR</span> status <span class="kw">NOT IN</span> (<span class="str">'pending'</span>,<span class="str">'paid'</span>,<span class="str">'refunded'</span>);</div>
+  <div class="callout-warn">
+    <div class="aha-title">Critical Decision</div>
+    <p>For high-criticality tables (revenue, compliance), you may want to BLOCK publishing entirely when quarantine rates exceed a threshold (e.g., >5% bad rows). Keep raw ingestion running but hold the mart.</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <div class="screen-alt-inner">
+  <h2>Validation vs <span class="accent">Reconciliation</span></h2>
+  <p>Interviewers test whether you know the difference. They solve different problems.</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>Validation</h4>
+      <ul>
+        <li>🔍 Checks if data satisfies rules</li>
+        <li>🔍 Single dataset focus</li>
+        <li>🔍 Types, constraints, ranges</li>
+        <li>🔍 "Is this data valid?"</li>
+        <li>🔍 Runs on the target data</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>Reconciliation</h4>
+      <ul>
+        <li>🔗 Compares two datasets</li>
+        <li>🔗 Source vs target focus</li>
+        <li>🔗 Row counts, sums, key sets</li>
+        <li>🔗 "Did we lose or gain data?"</li>
+        <li>🔗 Runs across systems</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout-info">
+    <div class="aha-title">Key Insight</div>
+    <p>Validation tells you the data is well-formed. Reconciliation tells you it's complete and consistent with the source. A table can pass validation (all rows are valid) but fail reconciliation (50% of source rows are missing).</p>
+  </div>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <h2><span class="accent">Idempotency</span> for Retry-Safe Pipelines</h2>
+  <p>Pipelines fail and retry. If a retry produces different results, you have a quality problem.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>What Is Idempotency?</h4>
+      <p>Running the same pipeline twice on the same input produces the same output. No duplicates, no missing data, no side effects.</p>
+    </div>
+    <div class="card orange">
+      <h4>MERGE Over INSERT</h4>
+      <p>Use MERGE/UPSERT instead of INSERT for incremental loads. INSERT + retry = duplicates. MERGE + retry = same result.</p>
+    </div>
+    <div class="card blue">
+      <h4>Delete-Then-Insert</h4>
+      <p>Alternative pattern: delete the partition/batch, then insert. Ensures clean state on retry. Wrap in a transaction.</p>
+    </div>
+    <div class="card green">
+      <h4>Idempotency Keys</h4>
+      <p>Tag each batch with a unique run_id. On retry, detect and skip already-processed batches.</p>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">Interview Gold</div>
+    <p>"I design every pipeline to be idempotent. For incremental loads, I use MERGE with a natural key or delete-then-insert within a transaction. This means any retry produces the exact same result — no duplicates, no data loss."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s6">
+  <div class="screen-alt-inner">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+  <div class="quiz-box" id="quiz-section-1">
+    <div class="quiz-question-block" data-correct="b" data-success-msg="Correct! Reconciliation compares source vs target. If the source has 10K rows and your warehouse has 8K, reconciliation catches the 2K missing rows." data-error-msg="When data is lost in transit, you need to compare source to target — that's reconciliation, not validation.">
+      <h4>Q1: Your warehouse has fewer rows than the source system. Which testing approach detects this?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Row-level validation</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Reconciliation testing (source count vs target count)</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Schema drift detection</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Anomaly detection</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="c" data-success-msg="Correct! MERGE/UPSERT uses the natural key to update existing rows and insert new ones. Re-running with the same data produces the same result." data-error-msg="INSERT creates duplicates on retry. MERGE uses the key to update-or-insert, making it idempotent.">
+      <h4>Q2: Your pipeline uses INSERT INTO for incremental loads. It fails and retries. What happens?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Nothing — the database deduplicates automatically</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) The pipeline skips the retry automatically</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Duplicate rows are created because INSERT doesn't check for existing data</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) The database throws a primary key violation</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="a" data-success-msg="Correct! Quarantine stores bad rows separately with error reasons, allowing the pipeline to continue for valid data while preserving bad rows for debugging." data-error-msg="The quarantine pattern splits data into good (continues) and bad (stored separately with error reasons).">
+      <h4>Q3: What is the key benefit of the quarantine pattern over simply failing the pipeline?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Good data continues flowing while bad rows are stored separately for investigation</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) It automatically fixes the bad data</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) It prevents any bad data from entering the system</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) It eliminates the need for data validation</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="d" data-success-msg="Correct! Property tests assert invariants like non-negative revenue. They catch edge cases that golden datasets might miss because they test the rule, not specific values." data-error-msg="Property tests check invariants across all data. 'Revenue is never negative' is a property, not a specific test case.">
+      <h4>Q4: You want to ensure revenue is never negative across all historical data, not just test fixtures. Which approach?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Golden dataset comparison</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Reconciliation test</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Regression test after code changes</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Property test: assert revenue >= 0 on the full table</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="b" data-success-msg="Correct! Delete-then-insert within a transaction ensures that a retry starts from a clean state. Without the transaction, a failure between delete and insert loses data." data-error-msg="Delete-then-insert must be wrapped in a transaction. Otherwise, a failure after delete but before insert = data loss.">
+      <h4>Q5: Why must delete-then-insert be wrapped in a transaction?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) To prevent concurrent reads from seeing partial data</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) A failure between delete and insert would lose the partition data entirely</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) To improve query performance</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Transactions are required by all databases for DDL statements</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-section-1')">Check Answers</button>
+  </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-04-monitoring-alerts/index.html">← Prev: Monitoring & Alerts</a>
+  <a href="../module-06-interview-gauntlet/index.html">Next: Interview Gauntlet →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  var pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){var h=document.documentElement,pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+  var tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(function(el){
+    el.addEventListener('mouseenter',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',function(){tb.classList.remove('visible');});
+    el.addEventListener('click',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+  var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(function(s){io.observe(s);});
+  window.selectOption=function(btn){var block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('selected');});btn.classList.add('selected');};
+  window.checkQuiz=function(sectionId){var container=document.getElementById(sectionId);var questions=container.querySelectorAll('.quiz-question-block');questions.forEach(function(q){var selected=q.querySelector('.quiz-option.selected');var feedback=q.querySelector('.quiz-feedback');var correctValue=q.dataset.correct;if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}q.querySelectorAll('.quiz-option').forEach(function(o){o.disabled=true;});});};
+  document.addEventListener('keydown',function(e){if(e.key==='ArrowRight')window.scrollBy({top:window.innerHeight*0.8,behavior:'smooth'});if(e.key==='ArrowLeft')window.scrollBy({top:-window.innerHeight*0.8,behavior:'smooth'});});
+})();
+</script>
+</body>
+</html>

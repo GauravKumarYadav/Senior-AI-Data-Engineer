@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 4: Slowly Changing Dimensions | Data Modeling Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#2A7B9B;--color-accent-light:#E4F2F7;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg-warm);color:var(--color-text);line-height:1.7}
+nav.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(245,240,232,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.15s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:var(--color-border);text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:var(--color-surface);border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.orange{border-top-color:#C4813D}.card.red{border-top-color:var(--color-error)}
+.card h4{font-family:var(--font-head);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-text-muted);margin-bottom:0}
+.callout{background:linear-gradient(135deg,var(--color-accent-light),#F0F8FB);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.callout p{font-size:0.95rem;margin:0}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-mono);font-size:0.8rem;overflow-x:auto;margin:1rem 0;line-height:1.7;white-space:pre}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}.code-block .num{color:#FAB387}
+.table-example{background:var(--color-surface);border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin:1.5rem 0;font-size:0.82rem}
+.table-example table{width:100%;border-collapse:collapse}
+.table-example th{background:var(--color-accent);color:#fff;padding:0.6rem 0.8rem;text-align:left;font-family:var(--font-mono);font-size:0.75rem;font-weight:600}
+.table-example td{padding:0.5rem 0.8rem;border-bottom:1px solid var(--color-border);font-family:var(--font-mono);font-size:0.78rem}
+.table-example tr:last-child td{border:none}
+.table-example tr.highlight td{background:var(--color-accent-light)}
+.table-example tr.old td{background:#FFF5F5;color:var(--color-text-muted)}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:var(--color-surface);border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-head);font-weight:700;font-size:1rem;margin-bottom:0.8rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.flow-diagram{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:1.5rem 0;justify-content:center}
+.flow-step{background:var(--color-surface);border:2px solid var(--color-accent);border-radius:12px;padding:0.6rem 1rem;font-family:var(--font-head);font-weight:600;font-size:0.85rem;text-align:center}
+.flow-arrow{color:var(--color-accent);font-size:1.2rem;font-weight:bold}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.quiz-question-block{background:var(--color-surface);border-radius:16px;padding:1.8rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1rem 0}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1.05rem}
+.quiz-option{display:block;width:100%;text-align:left;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid var(--color-border);border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem;font-family:var(--font-body);background:none}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-option:disabled{cursor:default;opacity:0.7}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#8D6E00}
+.check-btn{display:inline-block;background:var(--color-accent);color:#fff;border:none;padding:0.7rem 2rem;border-radius:100px;font-family:var(--font-head);font-weight:700;font-size:0.95rem;cursor:pointer;margin-top:1rem;transition:transform 0.2s}
+.check-btn:hover{transform:translateY(-2px)}
+.screen-alt{background:var(--color-bg);margin-left:calc(-50vw + 50%);margin-right:calc(-50vw + 50%);padding-left:calc(50vw - 50% + 1.5rem);padding-right:calc(50vw - 50% + 1.5rem);max-width:none}
+.screen-alt>*{max-width:900px}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}.flow-diagram{flex-direction:column}.flow-arrow{transform:rotate(90deg)}.table-example{font-size:0.72rem}}
+</style>
+</head>
+<body>
+<nav class="top-nav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">🏗️ Data Modeling Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-what-is-data-modeling/" class="nav-dot" aria-label="Module 1"></a>
+      <a href="../module-02-facts-dimensions-grain/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-star-snowflake/" class="nav-dot" aria-label="Module 3"></a>
+      <a href="../module-04-slowly-changing-dimensions/" class="nav-dot active" aria-label="Module 4 (current)"></a>
+      <a href="../module-05-advanced-patterns/" class="nav-dot" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a>
+    </div>
+  </div>
+</nav>
+
+<section class="screen" id="s1">
+  <h2>🔄 <span class="accent">Slowly Changing Dimensions</span></h2>
+  <p><span class="tooltip-term" data-tip="A methodology for handling changes in dimension attributes over time. For example, a customer changing their address or a product changing category.">SCD</span> describes how you handle changes in dimension attributes over time. A customer moves from NYC to LA — do you overwrite, track history, or keep both?</p>
+  <p>This is one of the <strong>most-tested topics</strong> in data modeling interviews. Know all types.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>Type 0 — Retain Original</h4>
+      <p>Never update. The original value is preserved forever. Use for attributes that should never change (original signup date, birth date).</p>
+    </div>
+    <div class="card green">
+      <h4>Type 1 — Overwrite</h4>
+      <p>Replace old value with new. No history kept. Simple but you lose the ability to report "as-of" a past date. Use when history doesn't matter.</p>
+    </div>
+    <div class="card purple">
+      <h4>Type 2 — Add New Row</h4>
+      <p>Insert a new row with effective dates. Full history preserved. The <strong>gold standard</strong> for "as-of" reporting. Most interview questions focus here.</p>
+    </div>
+  </div>
+  <div class="card-grid">
+    <div class="card orange">
+      <h4>Type 3 — Add Column</h4>
+      <p>Add "previous_value" column. Limited history (only one prior version). Rarely used — too rigid for most scenarios.</p>
+    </div>
+    <div class="card red">
+      <h4>Type 4 — History Table</h4>
+      <p>Keep current values in the main dimension, full history in a separate table. Used when history queries are infrequent but must be available.</p>
+    </div>
+    <div class="card">
+      <h4>Type 6 — Hybrid (1+2+3)</h4>
+      <p>Combines Type 1 overwrite of "current" columns with Type 2 row versioning and Type 3 previous column. Maximum flexibility, maximum complexity.</p>
+    </div>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <h2>Implementing <span class="accent">SCD Type 2</span></h2>
+  <p>SCD2 is the most interview-critical pattern. Here's the anatomy of a Type 2 dimension:</p>
+  <div class="table-example">
+    <table>
+      <tr><th>sk</th><th>customer_id</th><th>name</th><th>city</th><th>eff_start</th><th>eff_end</th><th>is_current</th></tr>
+      <tr class="old"><td>101</td><td>C-42</td><td>Alice</td><td>NYC</td><td>2023-01-01</td><td>2024-06-14</td><td>N</td></tr>
+      <tr class="highlight"><td>102</td><td>C-42</td><td>Alice</td><td>LA</td><td>2024-06-15</td><td>9999-12-31</td><td>Y</td></tr>
+    </table>
+  </div>
+  <p>When Alice moves from NYC to LA, we <strong>close</strong> the old row (set eff_end, is_current=N) and <strong>insert</strong> a new row with the updated city.</p>
+  <div class="flow-diagram">
+    <div class="flow-step">Detect change</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Close old row<br><small>set eff_end, flag=N</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Insert new row<br><small>new SK, flag=Y</small></div>
+  </div>
+  <div class="code-block"><span class="cm">-- Close the existing record</span>
+<span class="kw">UPDATE</span> dim_customer
+<span class="kw">SET</span> eff_end = <span class="str">'2024-06-14'</span>, is_current = <span class="str">'N'</span>
+<span class="kw">WHERE</span> customer_id = <span class="str">'C-42'</span> <span class="kw">AND</span> is_current = <span class="str">'Y'</span>;
+
+<span class="cm">-- Insert the new version</span>
+<span class="kw">INSERT INTO</span> dim_customer (customer_id, name, city, eff_start, eff_end, is_current)
+<span class="kw">VALUES</span> (<span class="str">'C-42'</span>, <span class="str">'Alice'</span>, <span class="str">'LA'</span>, <span class="str">'2024-06-15'</span>, <span class="str">'9999-12-31'</span>, <span class="str">'Y'</span>);</div>
+</section>
+
+<section class="screen" id="s3">
+  <h2><span class="accent">Surrogate</span> vs Natural Keys</h2>
+  <p>SCD Type 2 <strong>requires</strong> surrogate keys. Here's why:</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🔑 Surrogate Key</h4>
+      <ul>
+        <li>📌 Synthetic, auto-generated (integer sequence or hash)</li>
+        <li>📌 Unique per <strong>version</strong> of an entity</li>
+        <li>📌 Stable — never changes even if source key changes</li>
+        <li>📌 Required for SCD2 (multiple rows per entity)</li>
+        <li>📌 Enables consistent joins across time</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid #C4813D">
+      <h4>🏷️ Natural Key</h4>
+      <ul>
+        <li>📌 The business identifier (customer_id, email)</li>
+        <li>📌 Comes from the source system</li>
+        <li>📌 Can change (email updates, mergers)</li>
+        <li>📌 Not unique in SCD2 (same customer_id, multiple rows)</li>
+        <li>📌 Kept as a non-unique business key column</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="callout-title">💡 Interview Gold</div>
+    <p>"Always use surrogate keys in dimensions. Natural keys are <em>preserved</em> as a business key column, but the surrogate key is what fact tables reference. This decouples the warehouse from source system key changes."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <h2><span class="accent">Late-Arriving</span> Dimensions & <span class="accent">Mini-Dimensions</span></h2>
+  <p>Two advanced SCD scenarios that separate senior engineers from juniors.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>⏰ Late-Arriving Dimensions</h4>
+      <p>A fact record arrives <strong>before</strong> its dimension record. Example: a sales event for a new customer whose profile hasn't loaded yet.</p>
+      <p style="color:var(--color-text);margin-top:0.5rem"><strong>Solution:</strong> Insert a placeholder (inferred) dimension row with the natural key and null attributes. When the real data arrives, update the placeholder.</p>
+    </div>
+    <div class="card green">
+      <h4>🔬 Mini-Dimensions</h4>
+      <p>When a dimension has <strong>rapidly-changing attributes</strong> (e.g., customer credit score, loyalty tier), putting them in the main dimension causes SCD2 row explosion.</p>
+      <p style="color:var(--color-text);margin-top:0.5rem"><strong>Solution:</strong> Extract volatile attributes into a separate mini-dimension. The fact table gets a second FK pointing to the mini-dimension for the current state at transaction time.</p>
+    </div>
+  </div>
+  <div class="table-example">
+    <table>
+      <tr><th colspan="4" style="text-align:center">dim_customer_profile (mini-dimension)</th></tr>
+      <tr><th>profile_key</th><th>credit_band</th><th>loyalty_tier</th><th>income_band</th></tr>
+      <tr><td>1</td><td>700-749</td><td>Gold</td><td>80K-100K</td></tr>
+      <tr><td>2</td><td>750-799</td><td>Platinum</td><td>100K-120K</td></tr>
+      <tr><td>3</td><td>650-699</td><td>Silver</td><td>60K-80K</td></tr>
+    </table>
+  </div>
+  <div class="callout">
+    <div class="callout-title">🎯 Interview Tip</div>
+    <p>"Mini-dimensions prevent SCD2 row explosion for high-cardinality, frequently-changing attributes. Banding continuous values (income, age, score) into ranges keeps the mini-dimension small and reusable."</p>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+  <div id="quiz1">
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Correct! SCD Type 2 preserves full history with multiple rows per entity." data-error-msg="❌ SCD2 adds a new row for each change, preserving full history with effective dates.">
+      <h4>Q1: A customer changes address. You need to report revenue by the address at the time of each order. Which SCD type?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Type 0 — retain original address</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Type 1 — overwrite with new address</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Type 2 — new row with effective dates</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Type 3 — add previous_address column</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! SCD2 needs surrogate keys because the same natural key has multiple rows." data-error-msg="❌ Multiple rows per natural key → natural key is not unique → you need a surrogate key as the PK.">
+      <h4>Q2: Why does SCD Type 2 REQUIRE surrogate keys?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Surrogate keys are faster for joins</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) The same natural key appears in multiple rows (one per version), so it can't be the PK</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Natural keys contain PII that must be hidden</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Surrogate keys compress better in columnar storage</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="a" data-success-msg="✅ Correct! Insert a placeholder row with the natural key and null attributes, then update when the real data arrives." data-error-msg="❌ The correct approach is to create an inferred/placeholder dimension row, then update it later.">
+      <h4>Q3: A fact record arrives for customer_id='C-99' but that customer doesn't exist in dim_customer yet. What do you do?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Insert an inferred placeholder row with null attributes; update when real data arrives</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Reject the fact record</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Set all dimension FKs to -1 permanently</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Wait for the dimension to load before loading any facts</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="d" data-success-msg="✅ Correct! Mini-dimensions prevent SCD2 row explosion for volatile attributes." data-error-msg="❌ When high-cardinality attributes change frequently, mini-dimensions prevent the main dimension from bloating.">
+      <h4>Q4: Customer credit scores change monthly. Using SCD2 for all attributes causes the dimension to grow 12x per year. What's the fix?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Switch to SCD Type 1 for all attributes</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Store credit scores only in the fact table</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Use SCD Type 3 with a previous_score column</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Extract credit score into a mini-dimension with banded ranges</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Correct! SCD Type 6 combines Type 1 (current overwrite), Type 2 (versioned rows), and Type 3 (previous column) for maximum flexibility." data-error-msg="❌ Type 6 = 1+2+3 combined: versioned rows with effective dates, current flag, AND a 'current_value' column overwritten on every row.">
+      <h4>Q5: What is SCD Type 6 and why is it named "6"?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) It's the 6th SCD method discovered chronologically</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) It stores 6 versions of each attribute</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) It combines Types 1+2+3 (1+2+3=6) — versioned rows with current-value overwrite</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) It uses 6 columns for tracking history</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="window.checkQuiz('quiz1')">Check Answers</button>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-03-star-snowflake/index.html">← Prev: Star & Snowflake</a>
+  <a href="../module-05-advanced-patterns/index.html">Next: Advanced Patterns →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=Math.min(pct,100)+'%';},{passive:true});
+
+  const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(s=>observer.observe(s));
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',()=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  window.selectOption=function(btn){const block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(o=>o.classList.remove('selected'));btn.classList.add('selected');};
+  window.checkQuiz=function(sectionId){const container=document.getElementById(sectionId);const questions=container.querySelectorAll('.quiz-question-block');questions.forEach(q=>{const selected=q.querySelector('.quiz-option.selected');const feedback=q.querySelector('.quiz-feedback');const correctValue=q.dataset.correct;if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}q.querySelectorAll('.quiz-option').forEach(o=>o.disabled=true);});};
+
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')window.location.href='../module-05-advanced-patterns/index.html';if(e.key==='ArrowLeft')window.location.href='../module-03-star-snowflake/index.html';});
+})();
+</script>
+</body>
+</html>

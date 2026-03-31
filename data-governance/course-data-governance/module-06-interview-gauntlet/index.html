@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 6: The Interview Gauntlet | Data Governance Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#7B6DAA;--color-accent-hover:#665A90;--color-accent-light:#F0ECF7;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--color-info:#2A7B9B;--color-info-light:#E4F2F7;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg-warm);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(245,240,232,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-head);font-size:1.2rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.aha{background:linear-gradient(135deg,var(--color-accent-light),#EDE8F5);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.aha.warning{background:linear-gradient(135deg,#FFF0E0,#FFE8D0);border-left-color:#D4853E}
+.aha.warning .aha-title{color:#D4853E}
+.aha.danger{background:linear-gradient(135deg,var(--color-error-light),#FDDADA);border-left-color:var(--color-error)}
+.aha.danger .aha-title{color:var(--color-error)}
+.quiz-box{background:var(--color-surface);border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-question-block{margin-bottom:1.8rem}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1rem}
+.quiz-option{display:block;width:100%;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.92rem;background:none;text-align:left;font-family:var(--font-body);color:var(--color-text)}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#B8860B}
+.quiz-btn{display:inline-block;padding:0.6rem 1.5rem;background:var(--color-accent);color:#fff;border:none;border-radius:100px;font-family:var(--font-head);font-weight:600;cursor:pointer;font-size:0.9rem;margin-top:0.5rem;transition:transform 0.2s}
+.quiz-btn:hover{transform:translateY(-1px)}
+.scenario-box{background:var(--color-surface);border-radius:14px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin:1rem 0;border-left:5px solid var(--color-accent)}
+.scenario-box.info{border-left-color:var(--color-info)}
+.scenario-box.warn{border-left-color:#D4853E}
+.scenario-box h4{font-family:var(--font-head);font-weight:700;font-size:1rem;margin-bottom:0.5rem}
+.scenario-box p{font-size:0.92rem;margin-bottom:0.5rem}
+.reveal-btn{display:inline-block;padding:0.4rem 1rem;border:2px solid var(--color-accent);background:none;color:var(--color-accent);border-radius:100px;cursor:pointer;font-family:var(--font-head);font-weight:600;font-size:0.8rem;transition:all 0.2s;margin-top:0.3rem}
+.reveal-btn:hover{background:var(--color-accent);color:#fff}
+.reveal-answer{display:none;margin-top:0.8rem;padding:1rem;background:var(--color-accent-light);border-radius:10px;font-size:0.92rem}
+.reveal-answer.show{display:block}
+.rapid-fire{background:var(--color-surface);border-radius:14px;padding:1.5rem;margin:1rem 0;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.rapid-fire h4{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.rapid-fire p{font-size:0.9rem;margin:0}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.screen-alt{background:var(--color-bg);margin-left:calc(-50vw + 50%);margin-right:calc(-50vw + 50%);padding-left:calc(50vw - 50% + 1.5rem);padding-right:calc(50vw - 50% + 1.5rem);max-width:none}
+.screen-alt>*{max-width:900px}
+.score-box{background:var(--color-surface);border-radius:16px;padding:2rem;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.08);margin:2rem 0}
+.score-box .score-num{font-family:var(--font-head);font-size:3rem;font-weight:800;color:var(--color-accent)}
+.score-box .score-label{font-size:1rem;color:var(--color-text-muted)}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+</style>
+</head>
+<body>
+<nav class="nav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">🛡️ Data Governance Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-what-is-governance/" class="nav-dot" aria-label="Module 1"></a>
+      <a href="../module-02-roles-ownership/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-access-control/" class="nav-dot" aria-label="Module 3"></a>
+      <a href="../module-04-pii-masking/" class="nav-dot" aria-label="Module 4"></a>
+      <a href="../module-05-compliance-retention/" class="nav-dot" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot active" aria-label="Module 6"></a>
+    </div>
+  </div>
+</nav>
+
+<section class="screen" id="s1">
+  <h2>🔥 The Interview <span class="accent">Gauntlet</span></h2>
+  <p>You've learned the theory. Now face the <strong>hardest scenario questions</strong> interviewers actually ask. Each one is designed to trip you up.</p>
+  <div class="aha danger">
+    <div class="aha-title">⚠️ Warning</div>
+    <p>These questions don't have simple answers. Interviewers want to see your <strong>thought process</strong>, not a memorized response. Talk through tradeoffs.</p>
+  </div>
+
+  <div class="scenario-box">
+    <h4>Scenario 1: The GDPR Fire Drill</h4>
+    <p>"It's Friday 4pm. Legal just received a GDPR deletion request for 50,000 EU users. The 30-day deadline starts now. Your lakehouse has raw, staging, serving, and ML training layers. Walk me through your response."</p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">Show Answer Framework</button>
+    <div class="reveal-answer"><strong>1.</strong> Acknowledge scope: all layers where PII exists. Use column-level lineage to map. <strong>2.</strong> Prioritize: delete from serving/ML layers first (actively consumed). <strong>3.</strong> For raw/immutable layers: use the separation pattern or crypto shredding. <strong>4.</strong> Document what was deleted, what was anonymized, and retain proof. <strong>5.</strong> Verify with a post-deletion PII scan. <strong>6.</strong> Update the consent management system.</div>
+  </div>
+
+  <div class="scenario-box info">
+    <h4>Scenario 2: The Data Catalog Nobody Uses</h4>
+    <p>"We spent $500K on a data catalog. Six months later, 20% of entries are accurate. Engineers bypass it entirely. How do you fix this?"</p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">Show Answer Framework</button>
+    <div class="reveal-answer"><strong>1.</strong> Root cause: no ownership model. Nobody is accountable. <strong>2.</strong> Assign data owners and stewards per domain. Make it a job responsibility, not a favor. <strong>3.</strong> Automate what you can: schema crawling, lineage extraction, freshness monitoring. <strong>4.</strong> Integrate catalog into workflows (dbt docs → catalog, IDE search → catalog). <strong>5.</strong> Gamify: show usage stats, reward certified datasets. <strong>6.</strong> Start small: certify the top 20 most-queried datasets first.</div>
+  </div>
+
+  <div class="scenario-box warn">
+    <h4>Scenario 3: The Shadow Data Pipeline</h4>
+    <p>"A marketing analyst built their own pipeline copying customer data to a personal S3 bucket for analysis. You just found out. What do you do?"</p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">Show Answer Framework</button>
+    <div class="reveal-answer"><strong>1.</strong> Don't panic or blame — this is a governance gap, not malice. <strong>2.</strong> Immediately assess: what data was copied? Does it contain PII? Who has access to that S3 bucket? <strong>3.</strong> Secure the bucket: encrypt, restrict access, audit. <strong>4.</strong> Delete or migrate the data to a governed location. <strong>5.</strong> Fix the root cause: why did the analyst go rogue? Probably because the governed path was too slow. <strong>6.</strong> Create a self-service sandbox with proper guardrails.</div>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <h2>🎯 More <span class="accent">Scenario</span> Questions</h2>
+
+  <div class="scenario-box">
+    <h4>Scenario 4: The Metric Disagreement</h4>
+    <p>"The CFO's revenue number doesn't match the VP of Sales' number. Both claim their dashboard is correct. You're brought in to investigate. What's your approach?"</p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">Show Answer Framework</button>
+    <div class="reveal-answer"><strong>1.</strong> Trace lineage for both dashboards back to source tables. <strong>2.</strong> Compare definitions: "revenue" likely means different things (gross vs net, booked vs recognized, including returns or not). <strong>3.</strong> Check the business glossary — if no entry exists, that's your root cause. <strong>4.</strong> Align on a single certified definition with both stakeholders. <strong>5.</strong> Create a governed semantic layer (metric store) as the single source of truth. <strong>6.</strong> Deprecate the conflicting dashboards.</div>
+  </div>
+
+  <div class="scenario-box info">
+    <h4>Scenario 5: The Multi-Region Problem</h4>
+    <p>"Your company just expanded to the EU. All data currently lives in us-east-1. EU customers are signing up. What changes?"</p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">Show Answer Framework</button>
+    <div class="reveal-answer"><strong>1.</strong> GDPR applies to EU resident data regardless of where you process it. <strong>2.</strong> Ideal: create an EU data region (eu-west-1). Route EU user data to EU storage. <strong>3.</strong> For cross-region analytics: use pseudonymized/aggregated data transfers, backed by SCCs. <strong>4.</strong> Update consent forms for EU users. <strong>5.</strong> Implement GDPR deletion capabilities (Article 17). <strong>6.</strong> Set up separate retention policies for EU vs US data.</div>
+  </div>
+
+  <div class="scenario-box warn">
+    <h4>Scenario 6: The Overprivileged Service Account</h4>
+    <p>"You discover that a service account used by the ETL pipeline has ADMIN access to the entire data warehouse. It's been this way for 2 years. Now what?"</p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">Show Answer Framework</button>
+    <div class="reveal-answer"><strong>1.</strong> Don't revoke immediately — you'll break production. <strong>2.</strong> Audit: what does this account actually access? Check query logs for the past 90 days. <strong>3.</strong> Create a least-privilege role that covers exactly what the ETL pipeline needs. <strong>4.</strong> Test the new role in staging. <strong>5.</strong> Switch production to the new role with a rollback plan. <strong>6.</strong> Set up alerts for any service account with ADMIN privileges. <strong>7.</strong> Add access reviews to prevent this from happening again.</div>
+  </div>
+
+  <div class="scenario-box">
+    <h4>Scenario 7: The ML Model and PII</h4>
+    <p>"Your ML team trained a recommendation model on customer purchase data that includes names and emails. The model is in production. A GDPR request arrives. Do you need to retrain the model?"</p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">Show Answer Framework</button>
+    <div class="reveal-answer"><strong>1.</strong> It depends on whether the model memorized PII. Most ML models don't store raw PII in weights, but training data lineage matters. <strong>2.</strong> Delete the user from training data. <strong>3.</strong> If the model is a simple statistical model, retraining may not be required (the individual's contribution is negligible). <strong>4.</strong> If the model memorizes data (LLMs, nearest-neighbor), retrain without the user's data. <strong>5.</strong> Going forward: train models on tokenized/pseudonymized data to avoid this entirely.</div>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2>⚡ Rapid-Fire <span class="accent">Q&A</span></h2>
+  <p>Quick questions, quick answers. Know these cold.</p>
+
+  <div class="rapid-fire">
+    <h4>Q: What's the difference between data quality and data governance?</h4>
+    <p>Governance is the <strong>framework</strong> (who, what, why). Quality is one <strong>pillar within</strong> governance (is the data accurate, complete, timely?).</p>
+  </div>
+  <div class="rapid-fire">
+    <h4>Q: Name three tools for data cataloging.</h4>
+    <p><strong>DataHub</strong> (open-source, LinkedIn), <strong>Atlan</strong> (cloud-native), <strong>Alation</strong> (enterprise). Bonus: OpenMetadata, Apache Atlas, Collibra.</p>
+  </div>
+  <div class="rapid-fire">
+    <h4>Q: What's the maximum GDPR fine?</h4>
+    <p><strong>4% of global annual revenue</strong> or €20M, whichever is greater. Meta was fined €1.2B in 2023.</p>
+  </div>
+  <div class="rapid-fire">
+    <h4>Q: What's a data contract?</h4>
+    <p>An agreement between a data producer and consumer defining <strong>schema, quality expectations, SLAs, and ownership</strong>. Like an API contract but for data.</p>
+  </div>
+  <div class="rapid-fire">
+    <h4>Q: How do you handle PII in a data lake?</h4>
+    <p><strong>Classify on ingestion → tag → mask/tokenize → enforce column-level security → audit access.</strong> Never let raw PII reach the analytics layer.</p>
+  </div>
+  <div class="rapid-fire">
+    <h4>Q: What's the difference between anonymization and pseudonymization?</h4>
+    <p><strong>Anonymization</strong> is irreversible — data cannot be re-identified. <strong>Pseudonymization</strong> is reversible with additional info. GDPR considers pseudonymized data still personal data.</p>
+  </div>
+  <div class="rapid-fire">
+    <h4>Q: What is "data mesh" and how does it affect governance?</h4>
+    <p>Data mesh decentralizes data ownership to domain teams. Governance becomes <strong>federated</strong>: global policies + domain-level autonomy. The governance team sets standards; domains implement them.</p>
+  </div>
+  <div class="rapid-fire">
+    <h4>Q: What's a data classification scheme?</h4>
+    <p>A taxonomy for labeling data sensitivity: <strong>Public → Internal → Confidential → Restricted</strong>. Each level has different access controls, retention, and handling rules.</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <h2>🏆 Final <span class="accent">Gauntlet Quiz</span></h2>
+  <div class="quiz-box" id="quiz1">
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Correct! Classify first, then protect. You can't govern what you haven't inventoried." data-error-msg="❌ The first step is always knowing what you have.">
+      <h4>Q1: You're hired as the first data governance lead. 200 tables, no catalog, no documentation. First 30 days?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Write a 50-page governance policy document</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Buy the most expensive governance tool</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Inventory and classify the top 20 most-used datasets, assign owners, set up a minimal catalog</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Lock down all access until governance is in place</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Federated governance: central standards, domain-level implementation." data-error-msg="❌ Data mesh doesn't eliminate governance — it decentralizes implementation.">
+      <h4>Q2: Your company adopts data mesh. What happens to central governance?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Central governance disappears — each domain governs itself</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Central team sets policies and standards; domain teams implement them (federated governance)</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Data mesh makes governance unnecessary</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Only the platform team handles governance</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="d" data-success-msg="✅ Correct! GDPR considers pseudonymized data as personal data — it can be re-identified." data-error-msg="❌ GDPR has a specific stance on pseudonymization vs anonymization.">
+      <h4>Q3: Is pseudonymized data considered "personal data" under GDPR?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) No, pseudonymization fully removes it from GDPR scope</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Only if the data is stored in the EU</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Only for healthcare data</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Yes — pseudonymized data can be re-identified, so GDPR still applies (but with more processing flexibility)</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="a" data-success-msg="✅ Correct! Immutable, append-only, separate storage — the three rules of audit logging." data-error-msg="❌ Think about the integrity of audit evidence.">
+      <h4>Q4: An auditor asks: "How do you ensure nobody can tamper with access logs?" Best answer?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Logs are written to immutable, append-only storage (e.g., S3 with Object Lock) in a separate account from operational systems</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) We password-protect the log files</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Logs are encrypted with AES-256</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Only the admin can read the logs</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Correct! Governance should accelerate — governed self-service is faster than chaotic free-for-all." data-error-msg="❌ This is the most common misconception about governance.">
+      <h4>Q5: A VP says "Governance will slow us down." How do you respond?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) "You're right, it will, but compliance requires it"</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) "We'll minimize the impact on your team"</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) "Good governance accelerates. Right now analysts spend 30% of time finding data. Governance gives them trusted, discoverable data — they move faster, not slower"</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) "We only need it for regulated data, your team is exempt"</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz1')">Check All Answers</button>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>🎓 Common <span class="accent">Pitfalls</span> & Gotchas</h2>
+  <div class="aha danger">
+    <div class="aha-title">❌ Pitfall: "Governance = buying a tool"</div>
+    <p>Tools are enablers, not solutions. A $500K catalog is useless without ownership, processes, and cultural buy-in.</p>
+  </div>
+  <div class="aha danger">
+    <div class="aha-title">❌ Pitfall: "Boil the ocean" approach</div>
+    <p>Don't try to govern 500 tables on day one. Start with the <strong>top 20 most-queried</strong> datasets. Expand incrementally.</p>
+  </div>
+  <div class="aha danger">
+    <div class="aha-title">❌ Pitfall: "Security = governance"</div>
+    <p>Locking everything down isn't governance. Governance <strong>enables</strong> access — it's about the right people getting the right data safely.</p>
+  </div>
+  <div class="aha warning">
+    <div class="aha-title">⚠️ Gotcha: Anonymization vs pseudonymization</div>
+    <p>Anonymized data = out of GDPR scope. Pseudonymized data = still personal data under GDPR. Many candidates get this wrong.</p>
+  </div>
+  <div class="aha warning">
+    <div class="aha-title">⚠️ Gotcha: "We encrypt everything, so we're compliant"</div>
+    <p>Encryption at rest doesn't protect against authorized insiders querying data. You still need access controls, masking, and audit trails.</p>
+  </div>
+  <div class="aha warning">
+    <div class="aha-title">⚠️ Gotcha: Retention ≠ deletion</div>
+    <p>Setting a retention policy doesn't mean data actually gets deleted. You need <strong>automated enforcement</strong> — partition expiry, lifecycle rules, scheduled jobs — and verification.</p>
+  </div>
+
+  <div class="score-box">
+    <div class="score-num">🏆</div>
+    <div class="score-label">You've completed the Data Governance Interview Gauntlet!<br>Review any modules you found challenging. Good luck!</div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-05-compliance-retention/index.html">← Prev: Compliance & GDPR</a>
+  <a href="../index.html">Back to Course Home →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  var pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){var h=document.documentElement;var pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+  var tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(function(el){
+    el.addEventListener('mouseenter',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',function(){tb.classList.remove('visible');});
+    el.addEventListener('click',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+  var observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(function(s){observer.observe(s);});
+
+  window.toggleReveal=function(btn){
+    var answer=btn.nextElementSibling;
+    answer.classList.toggle('show');
+    btn.textContent=answer.classList.contains('show')?'Hide Answer':'Show Answer Framework';
+  };
+
+  window.selectOption=function(btn){var block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('selected');});btn.classList.add('selected');};
+  window.checkQuiz=function(sectionId){
+    var container=document.getElementById(sectionId);
+    container.querySelectorAll('.quiz-question-block').forEach(function(q){
+      var selected=q.querySelector('.quiz-option.selected');
+      var feedback=q.querySelector('.quiz-feedback');
+      var correctValue=q.dataset.correct;
+      if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}
+      if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}
+      else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}
+      q.querySelectorAll('.quiz-option').forEach(function(o){o.disabled=true;});
+    });
+  };
+  document.addEventListener('keydown',function(e){if(e.key==='ArrowRight'){var n=document.querySelector('footer.module-nav a:last-child');if(n)n.click();}if(e.key==='ArrowLeft'){var p=document.querySelector('footer.module-nav a:first-child');if(p)p.click();}});
+})();
+</script>
+</body>
+</html>

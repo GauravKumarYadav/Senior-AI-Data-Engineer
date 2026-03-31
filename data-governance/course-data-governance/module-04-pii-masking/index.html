@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 4: PII, Masking & Tokenization | Data Governance Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#7B6DAA;--color-accent-hover:#665A90;--color-accent-light:#F0ECF7;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--color-info:#2A7B9B;--color-info-light:#E4F2F7;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg-warm);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(245,240,232,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-head);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:var(--color-surface);border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.orange{border-top-color:#D4853E}.card.red{border-top-color:var(--color-error)}
+.card h4{font-family:var(--font-head);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-text-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,var(--color-accent-light),#EDE8F5);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:var(--color-surface);border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.8rem}
+.comp-col ul{list-style:none;font-size:0.85rem}
+.comp-col ul li{padding:0.3rem 0;border-bottom:1px solid rgba(0,0,0,0.04)}
+.comp-col ul li:last-child{border:none}
+.data-table{width:100%;border-collapse:collapse;margin:1.5rem 0;background:var(--color-surface);border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04);font-size:0.85rem}
+.data-table th{background:var(--color-accent);color:#fff;padding:0.7rem 1rem;text-align:left;font-family:var(--font-head);font-weight:600}
+.data-table td{padding:0.6rem 1rem;border-bottom:1px solid var(--color-border)}
+.data-table tr:last-child td{border:none}
+.data-table .masked{color:var(--color-error);font-family:var(--font-mono);font-size:0.8rem}
+.data-table .original{color:var(--color-success);font-family:var(--font-mono);font-size:0.8rem}
+.flow-diagram{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0.5rem;margin:1.5rem 0;padding:1.5rem;background:var(--color-surface);border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.flow-box{background:var(--color-accent-light);border:2px solid var(--color-accent);border-radius:10px;padding:0.7rem 1.2rem;font-family:var(--font-head);font-weight:600;font-size:0.85rem;text-align:center;min-width:110px}
+.flow-box.alt{background:var(--color-info-light);border-color:var(--color-info)}
+.flow-box.green{background:var(--color-success-light);border-color:var(--color-success)}
+.flow-box.red{background:var(--color-error-light);border-color:var(--color-error)}
+.flow-arrow{font-size:1.2rem;color:var(--color-text-muted)}
+.quiz-box{background:var(--color-surface);border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-question-block{margin-bottom:1.5rem}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1rem}
+.quiz-option{display:block;width:100%;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem;background:none;text-align:left;font-family:var(--font-body);color:var(--color-text)}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#B8860B}
+.quiz-btn{display:inline-block;padding:0.6rem 1.5rem;background:var(--color-accent);color:#fff;border:none;border-radius:100px;font-family:var(--font-head);font-weight:600;cursor:pointer;font-size:0.9rem;margin-top:0.5rem;transition:transform 0.2s}
+.quiz-btn:hover{transform:translateY(-1px)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.screen-alt{background:var(--color-bg);margin-left:calc(-50vw + 50%);margin-right:calc(-50vw + 50%);padding-left:calc(50vw - 50% + 1.5rem);padding-right:calc(50vw - 50% + 1.5rem);max-width:none}
+.screen-alt>*{max-width:900px}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+@media(max-width:700px){.comparison{grid-template-columns:1fr}.flow-diagram{flex-direction:column}.flow-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<nav class="nav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">🛡️ Data Governance Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-what-is-governance/" class="nav-dot" aria-label="Module 1"></a>
+      <a href="../module-02-roles-ownership/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-access-control/" class="nav-dot" aria-label="Module 3"></a>
+      <a href="../module-04-pii-masking/" class="nav-dot active" aria-label="Module 4"></a>
+      <a href="../module-05-compliance-retention/" class="nav-dot" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a>
+    </div>
+  </div>
+</nav>
+
+<section class="screen" id="s1">
+  <h2>🔍 Identifying & Classifying <span class="accent">PII / PHI</span></h2>
+  <p><span class="tooltip-term" data-tip="Personally Identifiable Information: any data that can identify an individual — name, email, SSN, IP address, etc.">PII</span> is any data that can identify a person. <span class="tooltip-term" data-tip="Protected Health Information: health-related data tied to an individual, governed by HIPAA in the US.">PHI</span> adds health data protected under HIPAA.</p>
+  <p>The first step in any governance program is knowing <strong>where sensitive data lives</strong>.</p>
+  <h3>PII Classification Levels</h3>
+  <div class="card-grid">
+    <div class="card red">
+      <h4>🔴 Restricted</h4>
+      <p>SSN, credit card numbers, passwords, biometric data. Breach = regulatory fines + lawsuits.</p>
+    </div>
+    <div class="card orange">
+      <h4>🟠 Confidential</h4>
+      <p>Email, phone, address, date of birth, IP address. Requires access control and masking.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔵 Internal</h4>
+      <p>Employee ID, department, job title. Low risk but not public. Standard access controls.</p>
+    </div>
+    <div class="card green">
+      <h4>🟢 Public</h4>
+      <p>Company name, product catalog, published reports. No restrictions needed.</p>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"Classification is the <strong>prerequisite</strong> for every other control. You can't mask what you haven't found, you can't retain what you haven't classified, and you can't comply with GDPR if you don't know where PII lives."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <h2>🎭 Data Masking: <span class="accent">Static vs Dynamic</span></h2>
+  <p>Masking hides sensitive values while keeping data usable for analytics, testing, or development.</p>
+  <h3>See it in action:</h3>
+  <table class="data-table">
+    <tr><th>Field</th><th>Original</th><th>Masked</th></tr>
+    <tr><td>Email</td><td class="original">john.doe@acme.com</td><td class="masked">j***@***.com</td></tr>
+    <tr><td>SSN</td><td class="original">123-45-6789</td><td class="masked">***-**-6789</td></tr>
+    <tr><td>Credit Card</td><td class="original">4111-1111-1111-1234</td><td class="masked">****-****-****-1234</td></tr>
+    <tr><td>Phone</td><td class="original">+1-555-867-5309</td><td class="masked">+1-555-***-****</td></tr>
+    <tr><td>Name</td><td class="original">John Doe</td><td class="masked">J*** D**</td></tr>
+  </table>
+  <div class="card-grid">
+    <div class="card">
+      <h4>📋 Static Masking</h4>
+      <p>Creates a <strong>permanent copy</strong> with masked values. Used for dev/test environments. Original data is replaced — cannot be reversed.</p>
+    </div>
+    <div class="card blue">
+      <h4>⚡ Dynamic Masking</h4>
+      <p>Masks at <strong>query time</strong> based on the user's role. No data copy needed. Production data stays intact. Different users see different views.</p>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p>"Static masking is for <strong>non-production copies</strong> (dev, QA, analytics sandboxes). Dynamic masking is for <strong>production</strong> where the same table serves users with different access levels."</p>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2>🔑 Tokenization vs <span class="accent">Encryption</span> vs Masking</h2>
+  <p>Three techniques, three different purposes. Interviewers love asking "when would you use each?"</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🎭 Masking</h4>
+      <ul>
+        <li><strong>How:</strong> Replace chars with *</li>
+        <li><strong>Reversible:</strong> No</li>
+        <li><strong>Format:</strong> Preserved</li>
+        <li><strong>Use case:</strong> Display, testing</li>
+        <li><strong>Analytics:</strong> Limited (no joins)</li>
+        <li><strong>Performance:</strong> Fast</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🔑 Tokenization</h4>
+      <ul>
+        <li><strong>How:</strong> Replace with random token</li>
+        <li><strong>Reversible:</strong> Yes (with vault)</li>
+        <li><strong>Format:</strong> Preserved or not</li>
+        <li><strong>Use case:</strong> Analytics, payments</li>
+        <li><strong>Analytics:</strong> Full (join on tokens)</li>
+        <li><strong>Performance:</strong> Moderate</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>🔐 Encryption</h4>
+      <ul>
+        <li><strong>How:</strong> Mathematical transform</li>
+        <li><strong>Reversible:</strong> Yes (with key)</li>
+        <li><strong>Format:</strong> Destroyed</li>
+        <li><strong>Use case:</strong> Storage, transit</li>
+        <li><strong>Analytics:</strong> None (ciphertext)</li>
+        <li><strong>Performance:</strong> Slower</li>
+      </ul>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"Use <strong>tokenization</strong> when analytics needs stable identifiers without raw PII (e.g., join user journeys across tables using tokens). Use <strong>encryption</strong> for data at rest and in transit. Use <strong>masking</strong> for display and non-production environments."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <h2>🧪 Pseudonymization & <span class="accent">Secure Sharing</span></h2>
+  <p><span class="tooltip-term" data-tip="Pseudonymization replaces identifiers with artificial ones, so data can't be attributed to a person without additional information stored separately.">Pseudonymization</span> is a GDPR-recognized technique. It replaces identifiers but keeps the data analytically useful.</p>
+  <div class="flow-diagram">
+    <div class="flow-box red">Raw PII<br><small>john@acme.com</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">Pseudonymize<br><small>Hash + salt</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box green">Token: a7f3b2c<br><small>Analytics-safe</small></div>
+  </div>
+  <h3>Secure Data Sharing Patterns</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔗 Clean Rooms</h4>
+      <p>Two companies match data without revealing raw records. Example: advertiser matches customer lists with publisher without sharing emails directly.</p>
+    </div>
+    <div class="card blue">
+      <h4>📊 Aggregation</h4>
+      <p>Share aggregated metrics (counts, averages) instead of row-level data. K-anonymity ensures no individual can be re-identified from small groups.</p>
+    </div>
+    <div class="card green">
+      <h4>🗃️ Tokenized Exports</h4>
+      <p>Replace PII with tokens before exporting. The recipient can analyze patterns (user journeys, cohorts) without knowing identities.</p>
+    </div>
+    <div class="card orange">
+      <h4>🔒 Differential Privacy</h4>
+      <p>Add mathematical noise to query results so individual records can't be inferred. Used by Apple, Google, and the US Census.</p>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p>"When asked about sharing data externally, start with: <strong>'What's the minimum data needed?'</strong> Then choose: aggregation > tokenization > clean rooms > raw access. Each step up in granularity requires stronger controls."</p>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+  <div class="quiz-box" id="quiz1">
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Tokenization preserves analytics capability while removing raw PII." data-error-msg="❌ Think about which technique allows joins without exposing real identifiers.">
+      <h4>Q1: Your analytics team needs to join user behavior across 5 tables without seeing real emails. Best approach?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Encrypt all email columns with AES-256</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Tokenize emails — use consistent tokens across all tables so joins work</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Mask emails with asterisks</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Remove email columns entirely</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="a" data-success-msg="✅ Correct! Static masking creates a permanent masked copy for non-production." data-error-msg="❌ Dev/test needs a permanent copy with realistic but fake data.">
+      <h4>Q2: Developers need a copy of production data for testing, but it contains SSNs. Best approach?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Static masking — create a permanent masked copy for the dev environment</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Dynamic masking on production</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Give developers access to production with a warning</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Encrypt the SSN column in the dev copy</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Correct! A data clean room allows matching without revealing raw records." data-error-msg="❌ Think about privacy-preserving matching across organizations.">
+      <h4>Q3: Two companies want to find overlapping customers without sharing raw PII. Solution?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Share CSV files over encrypted email</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Use dynamic masking</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Data clean room — match on hashed identifiers in a neutral environment</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) One company grants the other read access to their database</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="d" data-success-msg="✅ Correct! Classification must come first — you can't protect what you haven't found." data-error-msg="❌ You need to find sensitive data before you can protect it.">
+      <h4>Q4: You join a new company. Their data lake has 500 tables. First governance step for PII?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Encrypt everything immediately</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Delete all PII columns</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Implement dynamic masking on all tables</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Run an automated PII scanner to classify and tag sensitive columns across all 500 tables</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Encryption destroys the format — you can't query, index, or join on ciphertext." data-error-msg="❌ Think about what encryption does to the data format.">
+      <h4>Q5: Why can't you simply encrypt PII columns and call it done for analytics?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Encryption is too expensive</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Encrypted data can't be queried, joined, or aggregated — it destroys analytical utility</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Encryption only works on files, not columns</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Encryption keys expire too quickly</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz1')">Check Answers</button>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-03-access-control/index.html">← Prev: Access Control</a>
+  <a href="../module-05-compliance-retention/index.html">Next: Compliance & GDPR →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  var pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){var h=document.documentElement;var pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+  var tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(function(el){
+    el.addEventListener('mouseenter',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',function(){tb.classList.remove('visible');});
+    el.addEventListener('click',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+  var observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(function(s){observer.observe(s);});
+  window.selectOption=function(btn){var block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('selected');});btn.classList.add('selected');};
+  window.checkQuiz=function(sectionId){
+    var container=document.getElementById(sectionId);
+    container.querySelectorAll('.quiz-question-block').forEach(function(q){
+      var selected=q.querySelector('.quiz-option.selected');
+      var feedback=q.querySelector('.quiz-feedback');
+      var correctValue=q.dataset.correct;
+      if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}
+      if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}
+      else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}
+      q.querySelectorAll('.quiz-option').forEach(function(o){o.disabled=true;});
+    });
+  };
+  document.addEventListener('keydown',function(e){if(e.key==='ArrowRight'){var n=document.querySelector('footer.module-nav a:last-child');if(n)n.click();}if(e.key==='ArrowLeft'){var p=document.querySelector('footer.module-nav a:first-child');if(p)p.click();}});
+})();
+</script>
+</body>
+</html>

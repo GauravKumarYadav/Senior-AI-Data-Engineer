@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 4: Monitoring, Alerts & Anomaly Detection | Data Quality Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#2D8B55;--color-accent-hover:#247044;--color-accent-light:#E8F5EE;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--color-info:#2A7B9B;--color-info-light:#E4F2F7;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--color-bg-warm);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(245,240,232,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:var(--color-surface);border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.orange{border-top-color:#E07B39}.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.red{border-top-color:var(--color-error)}
+.card h4{font-family:var(--font-head);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-text-muted);margin-bottom:0}
+.aha{background:var(--color-accent-light);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.callout-info{background:var(--color-info-light);border-left:4px solid var(--color-info);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-info .aha-title{color:var(--color-info)}
+.callout-warn{background:var(--color-error-light);border-left:4px solid var(--color-error);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-warn .aha-title{color:var(--color-error)}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:var(--color-surface);border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-head);font-weight:700;font-size:1rem;margin-bottom:0.8rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.severity-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.8rem;margin:1.5rem 0}
+.sev-card{border-radius:12px;padding:1.2rem;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.04)}
+.sev-card.critical{background:#FDE8E8;border:2px solid var(--color-error)}
+.sev-card.warning{background:#FFF8E1;border:2px solid #D4A017}
+.sev-card.info{background:var(--color-info-light);border:2px solid var(--color-info)}
+.sev-card h4{font-family:var(--font-head);font-weight:700;font-size:0.9rem;margin-bottom:0.3rem}
+.sev-card p{font-size:0.8rem;color:var(--color-text-secondary);margin:0}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-mono);font-size:0.82rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}.code-block .num{color:#FAB387}
+.flow-diagram{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:1.5rem 0;padding:1.5rem;background:var(--color-surface);border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.flow-step{background:var(--color-accent-light);border:2px solid var(--color-accent);border-radius:10px;padding:0.7rem 1rem;font-family:var(--font-head);font-weight:600;font-size:0.82rem;text-align:center;min-width:90px}
+.flow-step.info{background:var(--color-info-light);border-color:var(--color-info)}
+.flow-step.warn{background:var(--color-error-light);border-color:var(--color-error)}
+.flow-arrow{font-size:1.2rem;color:var(--color-text-muted)}
+.quiz-box{background:var(--color-surface);border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-question-block{margin-bottom:1.5rem}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1.05rem}
+.quiz-option{display:block;width:100%;text-align:left;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem;font-family:var(--font-body);background:none}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#B8860B}
+.quiz-btn{padding:0.6rem 1.5rem;border-radius:100px;border:none;background:var(--color-accent);color:#fff;cursor:pointer;font-family:var(--font-head);font-weight:600;font-size:0.9rem;transition:background 0.2s}
+.quiz-btn:hover{background:var(--color-accent-hover)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.screen-alt{background:var(--color-bg);padding-left:0;padding-right:0}
+.screen-alt-inner{max-width:900px;margin:0 auto;padding:0 1.5rem}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.severity-grid{grid-template-columns:1fr}.flow-diagram{flex-direction:column}.flow-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<nav class="nav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">🛡️ Data Quality Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-what-is-data-quality/" class="nav-dot" aria-label="Module 1"></a>
+      <a href="../module-02-quality-dimensions/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-schema-contracts/" class="nav-dot" aria-label="Module 3"></a>
+      <a href="../module-04-monitoring-alerts/" class="nav-dot active" aria-label="Module 4"></a>
+      <a href="../module-05-testing-quarantine/" class="nav-dot" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a>
+    </div>
+  </div>
+</nav>
+
+<section class="screen" id="s1">
+  <h2>Freshness <span class="accent">Monitoring</span> & SLAs</h2>
+  <p>Freshness = how recently data was updated relative to its expected cadence. It's the #1 metric for data reliability.</p>
+  <div class="code-block"><span class="cm">-- Freshness check: alert if table is >2 hours stale</span>
+<span class="kw">SELECT</span>
+  <span class="fn">DATEDIFF</span>(<span class="str">'minute'</span>, <span class="fn">MAX</span>(updated_at), <span class="fn">CURRENT_TIMESTAMP</span>()) <span class="kw">AS</span> staleness_min
+<span class="kw">FROM</span> analytics.orders
+<span class="kw">HAVING</span> staleness_min > <span class="num">120</span></div>
+  <div class="card-grid">
+    <div class="card">
+      <h4>Per-Dataset SLAs</h4>
+      <p>"Real-time" = 5-minute SLA. "Daily batch" = 26-hour SLA (buffer for late runs). Define SLAs per table, not globally.</p>
+    </div>
+    <div class="card blue">
+      <h4>Measure Right Timestamp</h4>
+      <p>Use the <strong>event timestamp</strong> (when it happened), not <strong>load timestamp</strong> (when ETL ran). Load time hides late-arriving data.</p>
+    </div>
+    <div class="card green">
+      <h4>Freshness Dashboard</h4>
+      <p>A single pane showing freshness status for all critical tables. Green/yellow/red. Stakeholders check before trusting reports.</p>
+    </div>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <div class="screen-alt-inner">
+  <h2>Avoiding <span class="accent">Noisy Alerts</span></h2>
+  <p>Alert fatigue kills data quality programs. If your team ignores alerts, you have no monitoring. Here's how to fix it.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>Dynamic Thresholds</h4>
+      <p>Don't hardcode "row count > 1000." Use trailing 7-day average ± 2 standard deviations. Adapts to growth and seasonality.</p>
+    </div>
+    <div class="card orange">
+      <h4>Seasonality-Aware</h4>
+      <p>Monday volume differs from Saturday. Holiday weeks differ from normal. Your baselines should account for day-of-week and known events.</p>
+    </div>
+    <div class="card blue">
+      <h4>Multi-Signal Correlation</h4>
+      <p>Alert only when freshness AND volume AND error rate all degrade. Single-signal alerts have high false positive rates.</p>
+    </div>
+    <div class="card purple">
+      <h4>Maintenance Windows</h4>
+      <p>Suppress alerts during planned maintenance, deployments, and known data source outages. Auto-resume after the window.</p>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">Interview Gold</div>
+    <p>"I use dynamic thresholds with seasonality baselines and multi-signal correlation. If volume drops AND freshness degrades, that's a real incident. Volume alone dropping on Sunday is probably normal."</p>
+  </div>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2><span class="accent">Anomaly Detection</span> for Metrics</h2>
+  <p>Anomaly detection catches <span class="tooltip-term" data-tip="Data arrives and passes all checks but contains wrong values. Example: revenue drops 80% due to a currency conversion bug, but no row-level check flags it.">silent failures</span> — data that looks valid but is wrong.</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>Good For</h4>
+      <ul>
+        <li>✅ Revenue/metric spikes or drops</li>
+        <li>✅ Distribution shifts in categorical data</li>
+        <li>✅ Unusual NULL rate increases</li>
+        <li>✅ Detecting silent pipeline failures</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>Watch Out For</h4>
+      <ul>
+        <li>⚠️ Needs context: is it a bug or a real event?</li>
+        <li>⚠️ Requires enough history for baselines</li>
+        <li>⚠️ Can produce false positives during sales/launches</li>
+        <li>⚠️ Doesn't replace explicit validation rules</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout-info">
+    <div class="aha-title">Key Insight</div>
+    <p>Anomaly detection is a complement, not a replacement. Use explicit rules for known invariants (amount >= 0) and anomaly detection for unknown unknowns (unexpected metric shifts).</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <div class="screen-alt-inner">
+  <h2>Alert <span class="accent">Routing</span> & Severity</h2>
+  <p>Not all alerts deserve the same response. Tier your alerts and route them appropriately.</p>
+  <div class="severity-grid">
+    <div class="sev-card critical">
+      <h4>P0 — Critical</h4>
+      <p>Revenue table stale, PK duplicates. Page on-call, block downstream publishes.</p>
+    </div>
+    <div class="sev-card warning">
+      <h4>P1 — Warning</h4>
+      <p>Volume anomaly, freshness approaching SLA. Slack channel, investigate within 4 hours.</p>
+    </div>
+    <div class="sev-card info">
+      <h4>P2 — Info</h4>
+      <p>New column detected, minor NULL rate increase. Log to dashboard, review weekly.</p>
+    </div>
+  </div>
+  <div class="flow-diagram">
+    <div class="flow-step warn">Alert Fires</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Severity Tier</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step info">Route: Page / Slack / Log</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Runbook: Step-by-step fix</div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">Interview Tip</div>
+    <p>"Every alert should have an owner and a runbook. If an alert fires and nobody knows what to do, it's a bad alert. I classify by dataset criticality: revenue tables are P0, experimental features are P2."</p>
+  </div>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>Common <span class="accent">Failure Modes</span></h2>
+  <p>Know these by heart. Interviewers love asking "what could go wrong?" for any pipeline.</p>
+  <div class="card-grid">
+    <div class="card red">
+      <h4>Missing Partitions</h4>
+      <p>ETL skipped a day. Table looks fine but has a gap. Aggregate row count drops but row-level checks still pass.</p>
+    </div>
+    <div class="card orange">
+      <h4>Duplicate Rows</h4>
+      <p>Retries, at-least-once delivery, bad MERGE logic. Revenue inflated, user counts wrong.</p>
+    </div>
+    <div class="card blue">
+      <h4>Timezone Bugs</h4>
+      <p>Server in UTC, users in PST. Daily aggregates shift by 8 hours. "Monday" includes Sunday night.</p>
+    </div>
+    <div class="card green">
+      <h4>Silent Truncation</h4>
+      <p>VARCHAR(50) silently truncates a 60-char value. No error, just data loss. Test with max-length inputs.</p>
+    </div>
+    <div class="card purple">
+      <h4>Wrong Joins</h4>
+      <p>JOIN on non-unique key → row explosion. 1M rows × 3 duplicates = 3M rows. Aggregates suddenly triple.</p>
+    </div>
+    <div class="card red">
+      <h4>Type Coercion</h4>
+      <p>"123" auto-cast to INT is fine. "123.45" → INT silently truncates to 123. "N/A" → NULL or error, depending on engine.</p>
+    </div>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s6">
+  <div class="screen-alt-inner">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+  <div class="quiz-box" id="quiz-section-1">
+    <div class="quiz-question-block" data-correct="c" data-success-msg="Correct! Dynamic thresholds using trailing averages ± standard deviations adapt to growth and seasonality automatically." data-error-msg="Static thresholds don't account for growth or seasonality. Dynamic thresholds adapt based on recent history.">
+      <h4>Q1: Your pipeline's row count grows 5% weekly. How should you set volume alert thresholds?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Hardcode the current expected count and update monthly</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Alert only when count is zero</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Use trailing 7-day average ± 2 standard deviations as dynamic thresholds</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Don't monitor volume — only monitor freshness</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="b" data-success-msg="Correct! Anomaly detection catches silent failures where data arrives but values are wrong. Explicit checks only catch known patterns." data-error-msg="Anomaly detection's strength is catching unknown unknowns — data that passes all explicit checks but has unusual values.">
+      <h4>Q2: Revenue suddenly drops 60% but all NOT NULL and range checks pass. What catches this?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Row-level validation rules</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Anomaly detection on the revenue metric</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Schema drift detection</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Primary key uniqueness check</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="d" data-success-msg="Correct! Joining on a non-unique key causes row explosion — each matching pair creates a new row. This silently inflates downstream aggregates." data-error-msg="When you JOIN on a non-unique key, rows multiply. 1M × 3 duplicates = 3M rows. This is the classic 'wrong join' failure.">
+      <h4>Q3: Your daily report suddenly shows 3x normal revenue. Pipeline didn't change. What's the likely cause?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Timezone bug shifted data boundaries</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Schema drift added a new column</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Freshness SLA breach</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Duplicate rows from a retry or a JOIN on non-unique keys</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="a" data-success-msg="Correct! Suppressing alerts during planned maintenance prevents false alarms. Auto-resume ensures you don't forget to re-enable." data-error-msg="Known maintenance windows should suppress alerts to prevent false positives. But always auto-resume after.">
+      <h4>Q4: Your data source has planned maintenance every Sunday 2-4 AM. How do you handle alerts?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Suppress alerts during the window, auto-resume after</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Permanently lower thresholds for Sundays</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Disable all alerts on weekends</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Add a comment in the runbook saying "ignore Sunday alerts"</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-section-1')">Check Answers</button>
+  </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-03-schema-contracts/index.html">← Prev: Schema & Contracts</a>
+  <a href="../module-05-testing-quarantine/index.html">Next: Testing & Quarantine →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  var pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){var h=document.documentElement,pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+  var tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(function(el){
+    el.addEventListener('mouseenter',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',function(){tb.classList.remove('visible');});
+    el.addEventListener('click',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+  var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(function(s){io.observe(s);});
+  window.selectOption=function(btn){var block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('selected');});btn.classList.add('selected');};
+  window.checkQuiz=function(sectionId){var container=document.getElementById(sectionId);var questions=container.querySelectorAll('.quiz-question-block');questions.forEach(function(q){var selected=q.querySelector('.quiz-option.selected');var feedback=q.querySelector('.quiz-feedback');var correctValue=q.dataset.correct;if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}q.querySelectorAll('.quiz-option').forEach(function(o){o.disabled=true;});});};
+  document.addEventListener('keydown',function(e){if(e.key==='ArrowRight')window.scrollBy({top:window.innerHeight*0.8,behavior:'smooth'});if(e.key==='ArrowLeft')window.scrollBy({top:-window.innerHeight*0.8,behavior:'smooth'});});
+})();
+</script>
+</body>
+</html>

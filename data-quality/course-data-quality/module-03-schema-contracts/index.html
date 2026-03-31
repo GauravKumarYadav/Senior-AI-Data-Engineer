@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 3: Schema Drift & Data Contracts | Data Quality Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#2D8B55;--color-accent-hover:#247044;--color-accent-light:#E8F5EE;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--color-info:#2A7B9B;--color-info-light:#E4F2F7;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:var(--color-surface);border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.orange{border-top-color:#E07B39}.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.red{border-top-color:var(--color-error)}
+.card h4{font-family:var(--font-head);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-text-muted);margin-bottom:0}
+.aha{background:var(--color-accent-light);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.callout-info{background:var(--color-info-light);border-left:4px solid var(--color-info);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-info .aha-title{color:var(--color-info)}
+.callout-warn{background:var(--color-error-light);border-left:4px solid var(--color-error);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-warn .aha-title{color:var(--color-error)}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:var(--color-surface);border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-head);font-weight:700;font-size:1rem;margin-bottom:0.8rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-mono);font-size:0.82rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}.code-block .num{color:#FAB387}
+.flow-diagram{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:1.5rem 0;padding:1.5rem;background:var(--color-surface);border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.flow-step{background:var(--color-accent-light);border:2px solid var(--color-accent);border-radius:10px;padding:0.7rem 1rem;font-family:var(--font-head);font-weight:600;font-size:0.85rem;text-align:center;min-width:100px}
+.flow-step.info{background:var(--color-info-light);border-color:var(--color-info)}
+.flow-step.warn{background:var(--color-error-light);border-color:var(--color-error)}
+.flow-arrow{font-size:1.2rem;color:var(--color-text-muted)}
+.quiz-box{background:var(--color-surface);border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-question-block{margin-bottom:1.5rem}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1.05rem}
+.quiz-option{display:block;width:100%;text-align:left;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem;font-family:var(--font-body);background:none}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#B8860B}
+.quiz-btn{padding:0.6rem 1.5rem;border-radius:100px;border:none;background:var(--color-accent);color:#fff;cursor:pointer;font-family:var(--font-head);font-weight:600;font-size:0.9rem;transition:background 0.2s}
+.quiz-btn:hover{background:var(--color-accent-hover)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.screen-alt{background:var(--color-bg-warm);padding-left:0;padding-right:0}
+.screen-alt-inner{max-width:900px;margin:0 auto;padding:0 1.5rem}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.flow-diagram{flex-direction:column}.flow-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<nav class="nav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">🛡️ Data Quality Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-what-is-data-quality/" class="nav-dot" aria-label="Module 1"></a>
+      <a href="../module-02-quality-dimensions/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-schema-contracts/" class="nav-dot active" aria-label="Module 3"></a>
+      <a href="../module-04-monitoring-alerts/" class="nav-dot" aria-label="Module 4"></a>
+      <a href="../module-05-testing-quarantine/" class="nav-dot" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a>
+    </div>
+  </div>
+</nav>
+
+<section class="screen" id="s1">
+  <h2>What Is <span class="accent">Schema Drift</span>?</h2>
+  <p>Schema drift is when upstream data changes its structure without warning. A column gets renamed, a type changes, a new field appears — and your pipeline breaks or, worse, silently produces wrong results.</p>
+  <div class="card-grid">
+    <div class="card red">
+      <h4>Column Renamed</h4>
+      <p><code>user_name</code> becomes <code>username</code>. Your transforms SELECT the old name → NULLs everywhere, silently.</p>
+    </div>
+    <div class="card orange">
+      <h4>Type Changed</h4>
+      <p><code>price</code> goes from DECIMAL to STRING. Aggregations break or produce garbage.</p>
+    </div>
+    <div class="card blue">
+      <h4>Column Dropped</h4>
+      <p>A "deprecated" field removed without notice. Any downstream model depending on it fails.</p>
+    </div>
+    <div class="card green">
+      <h4>New Column Added</h4>
+      <p>Usually safe but can break <code>SELECT *</code> patterns, change column ordering, or exceed schema limits.</p>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">Interview Gold</div>
+    <p>"I detect schema drift by comparing incoming schemas against an expected contract — column names, types, and nullability. Additive changes can be auto-allowed; breaking changes fail fast."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <div class="screen-alt-inner">
+  <h2><span class="accent">Breaking</span> vs Non-Breaking Changes</h2>
+  <p>Not all schema changes are equal. Your policy should distinguish between safe and dangerous changes.</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>Breaking Changes</h4>
+      <ul>
+        <li>🚨 Column renamed or removed</li>
+        <li>🚨 Type changed (DECIMAL → STRING)</li>
+        <li>🚨 Nullability changed (NOT NULL → nullable)</li>
+        <li>🚨 Primary key columns changed</li>
+        <li>🚨 Enum values removed</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>Non-Breaking Changes</h4>
+      <ul>
+        <li>✅ New column added (with default)</li>
+        <li>✅ Column description updated</li>
+        <li>✅ New enum values added</li>
+        <li>✅ Type widened (INT → BIGINT)</li>
+        <li>✅ New optional metadata fields</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout-warn">
+    <div class="aha-title">Gotcha</div>
+    <p>Type widening (INT → BIGINT) looks safe but can break Avro/Protobuf consumers that hardcode types. Always check compatibility at the serialization level, not just SQL.</p>
+  </div>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2>What Are <span class="accent">Data Contracts</span>?</h2>
+  <p>Data contracts are <strong>explicit agreements</strong> between producers and consumers about schema, semantics, SLAs, and ownership. They shift quality left — problems are caught before production.</p>
+  <div class="code-block"><span class="cm"># Example data contract (YAML)</span>
+<span class="kw">contract</span>:
+  <span class="fn">name</span>: <span class="str">orders</span>
+  <span class="fn">owner</span>: <span class="str">payments-team</span>
+  <span class="fn">sla</span>:
+    <span class="fn">freshness</span>: <span class="str">1h</span>
+    <span class="fn">completeness</span>: <span class="num">99.5</span><span class="str">%</span>
+  <span class="fn">schema</span>:
+    - <span class="fn">name</span>: <span class="str">order_id</span>
+      <span class="fn">type</span>: <span class="str">STRING</span>
+      <span class="fn">required</span>: <span class="num">true</span>
+      <span class="fn">unique</span>: <span class="num">true</span>
+    - <span class="fn">name</span>: <span class="str">amount</span>
+      <span class="fn">type</span>: <span class="str">DECIMAL(10,2)</span>
+      <span class="fn">required</span>: <span class="num">true</span>
+      <span class="fn">checks</span>: [<span class="str">"value >= 0"</span>]
+    - <span class="fn">name</span>: <span class="str">status</span>
+      <span class="fn">type</span>: <span class="str">STRING</span>
+      <span class="fn">allowed</span>: [<span class="str">pending</span>, <span class="str">paid</span>, <span class="str">refunded</span>]</div>
+  <div class="callout-info">
+    <div class="aha-title">Key Insight</div>
+    <p>A contract isn't just a schema. It includes SLAs (freshness, completeness), semantic definitions (what "amount" means), ownership, and change policies.</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <div class="screen-alt-inner">
+  <h2>Contract <span class="accent">Enforcement</span> in CI/CD</h2>
+  <p>Contracts only work if they're enforced. Here's how they integrate into the development workflow.</p>
+  <div class="flow-diagram">
+    <div class="flow-step">Producer PR<br><small>Changes schema</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step info">CI Check<br><small>Compare to contract</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step warn">Breaking?<br><small>Block merge</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Notify Consumers<br><small>Migration plan</small></div>
+  </div>
+  <div class="card-grid">
+    <div class="card">
+      <h4>Schema Registries</h4>
+      <p>Confluent Schema Registry, AWS Glue Schema Registry. Store versioned schemas, enforce compatibility rules (BACKWARD, FORWARD, FULL).</p>
+    </div>
+    <div class="card blue">
+      <h4>dbt Contracts</h4>
+      <p>dbt 1.5+ supports <code>contract: {enforced: true}</code> on models. Columns, types, and constraints validated at build time.</p>
+    </div>
+    <div class="card green">
+      <h4>Protobuf / Avro</h4>
+      <p>Serialization formats with built-in schema evolution rules. Field additions are safe; removals require deprecation.</p>
+    </div>
+  </div>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>Producer vs <span class="accent">Consumer</span> Responsibilities</h2>
+  <p>Data contracts create clear boundaries. Know who owns what — interviewers test this.</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>Producer Responsibilities</h4>
+      <ul>
+        <li>📝 Define and maintain the contract</li>
+        <li>🔒 Never make breaking changes without notice</li>
+        <li>⏰ Meet freshness and completeness SLAs</li>
+        <li>🧪 Run contract validation in CI</li>
+        <li>📣 Announce deprecations with migration time</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>Consumer Responsibilities</h4>
+      <ul>
+        <li>📖 Read and understand the contract</li>
+        <li>🔧 Tolerate non-breaking changes gracefully</li>
+        <li>🚫 Don't depend on undocumented fields</li>
+        <li>📋 Migrate within deprecation windows</li>
+        <li>🐛 Report contract violations to producers</li>
+      </ul>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">Interview Tip</div>
+    <p>"Data contracts shift accountability to producers. Without contracts, the data team owns every downstream break. With contracts, producers own stability and consumers own adaptation."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s6">
+  <div class="screen-alt-inner">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+  <div class="quiz-box" id="quiz-section-1">
+    <div class="quiz-question-block" data-correct="b" data-success-msg="Correct! A column rename causes downstream SELECTs to return NULLs or fail. Adding a column with a default is typically non-breaking." data-error-msg="Column renames are the classic breaking change — downstream queries reference the old name and get NULLs.">
+      <h4>Q1: Which schema change is most dangerous for downstream consumers?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Adding a new nullable column</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Renaming an existing column</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Adding a new enum value</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Updating a column description</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="c" data-success-msg="Correct! Contracts define schema + SLAs + semantics + ownership + change policies. They're much more than just a schema definition." data-error-msg="Data contracts go beyond schema — they include SLAs, ownership, semantic definitions, and change policies.">
+      <h4>Q2: What distinguishes a data contract from a simple schema definition?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) Contracts are written in YAML, schemas in SQL</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Contracts are only for streaming, schemas for batch</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Contracts include SLAs, ownership, semantics, and change policies beyond just schema</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Contracts are enforced at runtime, schemas at compile time</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="a" data-success-msg="Correct! BACKWARD compatibility means new schemas can read old data. Consumers upgrade first, then producers. This is the safest default." data-error-msg="BACKWARD compatibility ensures new code can read old data — the standard safe default for schema evolution.">
+      <h4>Q3: In a schema registry, what does BACKWARD compatibility mean?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) New schema can read data written by old schema (consumers upgrade first)</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Old schema can read data written by new schema (producers upgrade first)</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) Both old and new schemas can read each other's data</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) Schemas can only be rolled back, never forward</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="d" data-success-msg="Correct! Without contracts, the data team (consumers) bears the cost of every upstream change. Contracts shift responsibility to producers." data-error-msg="Think about who gets paged at 3 AM when an upstream change breaks a dashboard. Without contracts, it's always the data team.">
+      <h4>Q4: Who bears the cost of a breaking schema change when there are NO data contracts?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) The infrastructure team</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) The schema registry</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) The upstream producer team</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) The downstream data / analytics team (consumers)</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-question-block" data-correct="b" data-success-msg="Correct! dbt 1.5+ supports contract enforcement natively with contract: {enforced: true} on models." data-error-msg="dbt 1.5 introduced native contract enforcement — columns, types, and constraints validated at build time.">
+      <h4>Q5: How does dbt enforce data contracts?</h4>
+      <button class="quiz-option" data-value="a" onclick="selectOption(this)">A) By running Great Expectations checks in a post-hook</button>
+      <button class="quiz-option" data-value="b" onclick="selectOption(this)">B) Using <code>contract: {enforced: true}</code> in model config, validating columns and types at build time</button>
+      <button class="quiz-option" data-value="c" onclick="selectOption(this)">C) By connecting to Confluent Schema Registry</button>
+      <button class="quiz-option" data-value="d" onclick="selectOption(this)">D) dbt doesn't support contracts natively</button>
+      <div class="quiz-feedback"></div>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz-section-1')">Check Answers</button>
+  </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-02-quality-dimensions/index.html">← Prev: Quality Dimensions</a>
+  <a href="../module-04-monitoring-alerts/index.html">Next: Monitoring & Alerts →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  var pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){var h=document.documentElement,pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+  var tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(function(el){
+    el.addEventListener('mouseenter',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',function(){tb.classList.remove('visible');});
+    el.addEventListener('click',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+  var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(function(s){io.observe(s);});
+  window.selectOption=function(btn){var block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('selected');});btn.classList.add('selected');};
+  window.checkQuiz=function(sectionId){var container=document.getElementById(sectionId);var questions=container.querySelectorAll('.quiz-question-block');questions.forEach(function(q){var selected=q.querySelector('.quiz-option.selected');var feedback=q.querySelector('.quiz-feedback');var correctValue=q.dataset.correct;if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}q.querySelectorAll('.quiz-option').forEach(function(o){o.disabled=true;});});};
+  document.addEventListener('keydown',function(e){if(e.key==='ArrowRight')window.scrollBy({top:window.innerHeight*0.8,behavior:'smooth'});if(e.key==='ArrowLeft')window.scrollBy({top:-window.innerHeight*0.8,behavior:'smooth'});});
+})();
+</script>
+</body>
+</html>

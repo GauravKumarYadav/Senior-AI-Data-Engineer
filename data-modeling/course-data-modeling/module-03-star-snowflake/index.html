@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 3: Star & Snowflake Schema | Data Modeling Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#2A7B9B;--color-accent-light:#E4F2F7;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.15s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:var(--color-border);text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:var(--color-surface);border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.orange{border-top-color:#C4813D}.card.red{border-top-color:var(--color-error)}
+.card h4{font-family:var(--font-head);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-text-muted);margin-bottom:0}
+.callout{background:linear-gradient(135deg,var(--color-accent-light),#F0F8FB);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.callout p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:var(--color-surface);border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-head);font-weight:700;font-size:1rem;margin-bottom:0.8rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.schema-diagram{background:var(--color-surface);border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;display:flex;flex-direction:column;align-items:center;gap:1rem}
+.schema-center{background:var(--color-accent);color:#fff;padding:1rem 1.5rem;border-radius:12px;font-family:var(--font-head);font-weight:700;font-size:1rem;text-align:center;min-width:180px}
+.schema-dims{display:flex;gap:0.8rem;flex-wrap:wrap;justify-content:center}
+.schema-dim{background:var(--color-accent-light);color:var(--color-accent);padding:0.6rem 1rem;border-radius:10px;font-family:var(--font-mono);font-size:0.8rem;font-weight:600;border:2px solid var(--color-accent);position:relative}
+.schema-dim.sub{background:#F5F0FF;color:#7B5EA7;border-color:#7B5EA7;font-size:0.75rem;padding:0.4rem 0.8rem}
+.schema-arrow{color:var(--color-text-muted);font-size:0.9rem}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-mono);font-size:0.82rem;overflow-x:auto;margin:1rem 0;line-height:1.7;white-space:pre}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.quiz-question-block{background:var(--color-surface);border-radius:16px;padding:1.8rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1rem 0}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1.05rem}
+.quiz-option{display:block;width:100%;text-align:left;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid var(--color-border);border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem;font-family:var(--font-body);background:none}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-option:disabled{cursor:default;opacity:0.7}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#8D6E00}
+.check-btn{display:inline-block;background:var(--color-accent);color:#fff;border:none;padding:0.7rem 2rem;border-radius:100px;font-family:var(--font-head);font-weight:700;font-size:0.95rem;cursor:pointer;margin-top:1rem;transition:transform 0.2s}
+.check-btn:hover{transform:translateY(-2px)}
+.screen-alt{background:var(--color-bg-warm);margin-left:calc(-50vw + 50%);margin-right:calc(-50vw + 50%);padding-left:calc(50vw - 50% + 1.5rem);padding-right:calc(50vw - 50% + 1.5rem);max-width:none}
+.screen-alt>*{max-width:900px}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}.schema-dims{flex-direction:column;align-items:center}}
+</style>
+</head>
+<body>
+<nav class="top-nav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">🏗️ Data Modeling Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-what-is-data-modeling/" class="nav-dot" aria-label="Module 1"></a>
+      <a href="../module-02-facts-dimensions-grain/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-star-snowflake/" class="nav-dot active" aria-label="Module 3 (current)"></a>
+      <a href="../module-04-slowly-changing-dimensions/" class="nav-dot" aria-label="Module 4"></a>
+      <a href="../module-05-advanced-patterns/" class="nav-dot" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a>
+    </div>
+  </div>
+</nav>
+
+<section class="screen" id="s1">
+  <h2>⭐ The <span class="accent">Star Schema</span></h2>
+  <p>The star schema is the most widely used dimensional modeling pattern. A central <span class="tooltip-term" data-tip="A table storing measurable business events with foreign keys pointing to dimension tables.">fact table</span> connects to multiple <span class="tooltip-term" data-tip="Tables holding descriptive attributes (who, what, where, when) used for filtering and grouping.">dimension tables</span> in a hub-and-spoke layout.</p>
+  <div class="schema-diagram">
+    <div class="schema-dims">
+      <div class="schema-dim">dim_customer</div>
+      <div class="schema-dim">dim_product</div>
+      <div class="schema-dim">dim_date</div>
+    </div>
+    <div class="schema-arrow">↕ many-to-one joins ↕</div>
+    <div class="schema-center">fact_sales</div>
+    <div class="schema-arrow">↕ many-to-one joins ↕</div>
+    <div class="schema-dims">
+      <div class="schema-dim">dim_store</div>
+      <div class="schema-dim">dim_promotion</div>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="callout-title">💡 Interview Gold</div>
+    <p>"Star schemas optimize for <strong>query simplicity</strong> and <strong>read performance</strong>. All joins are fact-to-dimension (many-to-one), which BI tools understand natively. Denormalized dimensions mean fewer joins per query."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s2">
+  <h2>❄️ The <span class="accent">Snowflake Schema</span></h2>
+  <p>A snowflake schema <strong>normalizes dimensions</strong> into sub-tables. Instead of one flat dim_product, you split into dim_product → dim_category → dim_department.</p>
+  <div class="schema-diagram">
+    <div class="schema-dims">
+      <div class="schema-dim sub">dim_city</div>
+      <div class="schema-dim sub">dim_state</div>
+    </div>
+    <div class="schema-arrow">↕</div>
+    <div class="schema-dims">
+      <div class="schema-dim">dim_customer</div>
+      <div class="schema-dim">dim_product</div>
+      <div class="schema-dim">dim_date</div>
+    </div>
+    <div class="schema-arrow">↕</div>
+    <div class="schema-center">fact_sales</div>
+    <div class="schema-arrow">↕</div>
+    <div class="schema-dims">
+      <div class="schema-dim sub">dim_category</div>
+      <div class="schema-dim sub">dim_brand</div>
+    </div>
+  </div>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>⭐ Star Schema</h4>
+      <ul>
+        <li>✅ Fewer joins — faster queries</li>
+        <li>✅ BI tools prefer it (auto-aggregation)</li>
+        <li>✅ Simpler for analysts to understand</li>
+        <li>⚠️ Dimension redundancy (city name repeated)</li>
+        <li>⚠️ Larger dimension tables</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid #7B5EA7">
+      <h4>❄️ Snowflake Schema</h4>
+      <ul>
+        <li>✅ Less dimension redundancy</li>
+        <li>✅ Easier to maintain hierarchies</li>
+        <li>✅ Smaller dimension storage</li>
+        <li>⚠️ More joins — slower query patterns</li>
+        <li>⚠️ Harder for analysts to navigate</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2><span class="accent">Conformed</span> Dimensions</h2>
+  <p>A <span class="tooltip-term" data-tip="A dimension shared identically across multiple fact tables or data marts, enabling consistent cross-domain reporting.">conformed dimension</span> is the <strong>same dimension</strong> used consistently across multiple fact tables. This is what makes enterprise-wide analytics possible.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>📅 dim_date</h4>
+      <p>Shared across fact_sales, fact_support_tickets, fact_web_visits. Same date_key, same fiscal calendar attributes everywhere.</p>
+    </div>
+    <div class="card green">
+      <h4>👤 dim_customer</h4>
+      <p>Used by orders, support, campaigns, and billing facts. One definition of "customer" prevents conflicting counts across teams.</p>
+    </div>
+    <div class="card purple">
+      <h4>📦 dim_product</h4>
+      <p>Shared by sales, inventory, returns. Conformed attributes like category, brand, and department enable cross-fact analysis.</p>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="callout-title">🎯 Interview Tip</div>
+    <p>"Without conformed dimensions, you can't drill across fact tables. Marketing says '10K customers,' Sales says '12K.' The difference? Different definitions of 'customer.' Conformed dimensions fix this."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s4">
+  <h2><span class="accent">Data Vault</span> as a Contrast</h2>
+  <p>Interviewers may ask how Data Vault compares to Kimball star schemas. Know the three building blocks:</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔵 Hub</h4>
+      <p>Stores unique business keys (customer_id, product_id). Immutable — once loaded, never changes. The anchor entity.</p>
+    </div>
+    <div class="card green">
+      <h4>🔗 Link</h4>
+      <p>Captures relationships between hubs. Example: "Customer purchased Product." Stores only foreign keys to hubs. No business attributes.</p>
+    </div>
+    <div class="card purple">
+      <h4>🛰️ Satellite</h4>
+      <p>Holds descriptive attributes with full history (load date, record source). All changes are appended, never overwritten. Enables time-travel queries.</p>
+    </div>
+  </div>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>⭐ Kimball Star Schema</h4>
+      <ul>
+        <li>📌 Optimized for BI and ad-hoc queries</li>
+        <li>📌 Business-process oriented</li>
+        <li>📌 Delivers ready-to-query tables</li>
+        <li>📌 Harder to adapt when sources change</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid #C4813D">
+      <h4>🏛️ Data Vault</h4>
+      <ul>
+        <li>📌 Optimized for agility and auditability</li>
+        <li>📌 Source-system oriented</li>
+        <li>📌 Requires business vault / star on top for BI</li>
+        <li>📌 Easily adapts to new sources</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="callout-title">💡 Interview Gold</div>
+    <p>"Data Vault is for the <em>integration layer</em> — it captures everything with full history. Star schemas are for the <em>presentation layer</em> — optimized for consumption. Many architectures use Data Vault underneath with star schemas on top."</p>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>When to Choose <span class="accent">Which</span> Schema</h2>
+  <div class="card-grid">
+    <div class="card">
+      <h4>⭐ Use Star When...</h4>
+      <p>BI tools query directly. Ad-hoc analytics. Performance matters. Analysts need simple self-service. Most common choice for presentation layer.</p>
+    </div>
+    <div class="card purple">
+      <h4>❄️ Use Snowflake When...</h4>
+      <p>Dimension hierarchies change frequently. Storage is very constrained. You need strict normalization for audit. Some cloud warehouses optimize snowflake joins well.</p>
+    </div>
+    <div class="card orange">
+      <h4>🏛️ Use Data Vault When...</h4>
+      <p>Many source systems feed one warehouse. Requirements change frequently. Full history and auditability required. Large enterprise with evolving schemas.</p>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="callout-title">🎯 Interview Tip</div>
+    <p>"In practice, star schema is the default for 80% of warehouse use cases. Snowflake is rare in modern columnar warehouses because the storage savings are negligible. Data Vault is an integration pattern, not a replacement for dimensional modeling."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s6">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+  <div id="quiz1">
+    <div class="quiz-question-block" data-correct="a" data-success-msg="✅ Correct! Star schema's simplicity and fewer joins make it ideal for BI self-service." data-error-msg="❌ Star schemas are preferred for BI because they minimize joins and are easy for analysts to understand.">
+      <h4>Q1: Your BI team needs self-service analytics on sales data. Which schema pattern is best?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Star schema — fewer joins, BI tools prefer it</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Snowflake — normalized dimensions are always better</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Data Vault — it tracks all history</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) 3NF — same as the source system</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Correct! Conformed dimensions enable consistent cross-domain analysis — same customer everywhere." data-error-msg="❌ Without conformed dimensions, different teams define 'customer' differently, leading to conflicting metrics.">
+      <h4>Q2: Marketing counts 10K customers, Sales counts 12K. What's the root cause in a dimensional model?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Different fact table grain</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Missing surrogate keys</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Non-conformed customer dimension — different definitions of "customer"</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Using star instead of snowflake schema</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Satellites hold descriptive attributes with full history in Data Vault." data-error-msg="❌ In Data Vault: Hubs = business keys, Links = relationships, Satellites = descriptive attributes + history.">
+      <h4>Q3: In Data Vault, which component stores descriptive attributes with change history?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Hub</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Satellite</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Link</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Bridge</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="d" data-success-msg="✅ Correct! Modern columnar warehouses compress so well that snowflake's storage savings are negligible. The extra joins hurt more than they help." data-error-msg="❌ In modern columnar warehouses, the compression makes snowflake's storage savings insignificant while the extra joins add cost.">
+      <h4>Q4: Why is snowflake schema LESS common in modern cloud warehouses like Snowflake or BigQuery?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Cloud warehouses don't support multi-table joins</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Snowflake schema was only designed for on-premise systems</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Star schemas use less storage than snowflake</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Columnar compression makes the storage savings negligible, and extra joins hurt performance</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Data Vault is for the integration layer; star schemas sit on top for BI consumption." data-error-msg="❌ Data Vault captures raw integration. Star schemas are built on top for actual business queries.">
+      <h4>Q5: How do Data Vault and Star Schema typically coexist in an enterprise?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) You pick one or the other — never both</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Data Vault is the integration layer; star schemas are built on top for BI</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Star schemas feed into Data Vault for auditing</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) They are different names for the same pattern</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="window.checkQuiz('quiz1')">Check Answers</button>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-02-facts-dimensions-grain/index.html">← Prev: Facts & Grain</a>
+  <a href="../module-04-slowly-changing-dimensions/index.html">Next: SCDs →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=Math.min(pct,100)+'%';},{passive:true});
+
+  const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(s=>observer.observe(s));
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',()=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  window.selectOption=function(btn){const block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(o=>o.classList.remove('selected'));btn.classList.add('selected');};
+  window.checkQuiz=function(sectionId){const container=document.getElementById(sectionId);const questions=container.querySelectorAll('.quiz-question-block');questions.forEach(q=>{const selected=q.querySelector('.quiz-option.selected');const feedback=q.querySelector('.quiz-feedback');const correctValue=q.dataset.correct;if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}q.querySelectorAll('.quiz-option').forEach(o=>o.disabled=true);});};
+
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')window.location.href='../module-04-slowly-changing-dimensions/index.html';if(e.key==='ArrowLeft')window.location.href='../module-02-facts-dimensions-grain/index.html';});
+})();
+</script>
+</body>
+</html>
