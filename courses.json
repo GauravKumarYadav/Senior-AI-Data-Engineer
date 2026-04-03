@@ -4,8 +4,8 @@
     "icon": "⚡",
     "color": "#D94F30",
     "href": "./spark/course-spark-interview/",
-    "desc": "7 interactive modules covering RDDs, DataFrames, architecture, performance tuning, streaming, and 150+ real interview questions.",
-    "tags": ["7 Modules", "150+ Questions", "30+ Quizzes"]
+    "desc": "9 interactive modules covering RDDs, DataFrames, architecture, performance tuning, Spark UI, optimization, bottleneck detection, streaming, and 170+ real interview questions.",
+    "tags": ["9 Modules", "170+ Questions", "30+ Quizzes"]
   },
   {
     "title": "Scala Interview Mastery",

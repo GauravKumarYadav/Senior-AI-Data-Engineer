@@ -28,6 +28,7 @@ body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-t
 .module-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.08)}
 .mod-num{flex-shrink:0;width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:1.2rem;color:#fff}
 .mod-num.c1{background:var(--color-accent)}.mod-num.c2{background:#E07B39}.mod-num.c3{background:var(--color-info)}.mod-num.c4{background:#7B5EA7}.mod-num.c5{background:var(--color-success)}.mod-num.c6{background:#C4813D}.mod-num.c7{background:var(--color-error)}
+.mod-num.c8{background:#3B82B3}.mod-num.c9{background:#6B8E23}
 .mod-info h3{font-family:var(--font-heading);font-size:1.15rem;font-weight:700;margin-bottom:0.3rem}
 .mod-info p{font-size:0.92rem;color:var(--color-muted);line-height:1.5}
 .mod-tags{display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:0.6rem}
@@ -44,10 +45,10 @@ body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-t
   <div class="spark-icon">⚡</div>
   <span class="badge">Interview Prep Course</span>
   <h1>Master <span class="accent">Apache Spark</span> for Your Next Interview</h1>
-  <p>7 interactive modules covering 150+ real interview questions — with visual explanations, quizzes, and scenario-based practice.</p>
+  <p>9 interactive modules covering 170+ real interview questions — with visual explanations, quizzes, and scenario-based practice.</p>
   <div class="stats">
-    <div class="stat"><div class="stat-num">7</div><div class="stat-label">Modules</div></div>
-    <div class="stat"><div class="stat-num">150+</div><div class="stat-label">Questions</div></div>
+    <div class="stat"><div class="stat-num">9</div><div class="stat-label">Modules</div></div>
+    <div class="stat"><div class="stat-num">170+</div><div class="stat-label">Questions</div></div>
     <div class="stat"><div class="stat-num">30+</div><div class="stat-label">Quizzes</div></div>
     <div class="stat"><div class="stat-num">0</div><div class="stat-label">Prerequisites</div></div>
   </div>
@@ -118,6 +119,24 @@ body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-t
       <h3>The Interview Gauntlet 🔥 <span class="arrow">→</span></h3>
       <p>Tricky scenario questions, "what would you choose" debates, debugging puzzles, rapid-fire rounds, and the questions that trip up 90% of candidates.</p>
       <div class="mod-tags"><span class="mod-tag">Tricky Q&A</span><span class="mod-tag">Scenarios</span><span class="mod-tag">Rapid Fire</span><span class="mod-tag">Gotchas</span></div>
+    </div>
+  </a>
+
+  <a href="module-08-spark-ui/index.html" class="module-card">
+    <div class="mod-num c8">08</div>
+    <div class="mod-info">
+      <h3>Spark UI Deep Dive 🖥️ <span class="arrow">→</span></h3>
+      <p>Navigate the Jobs, Stages, SQL, Executors, and Storage tabs like a pro. Learn to read query plans, spot data skew, and interpret every key metric.</p>
+      <div class="mod-tags"><span class="mod-tag">Jobs Tab</span><span class="mod-tag">Stages Tab</span><span class="mod-tag">SQL Plans</span><span class="mod-tag">Executors</span></div>
+    </div>
+  </a>
+
+  <a href="module-09-optimization/index.html" class="module-card">
+    <div class="mod-num c9">09</div>
+    <div class="mod-info">
+      <h3>Optimization & Bottleneck Detection 🔍 <span class="arrow">→</span></h3>
+      <p>Systematic bottleneck triage, shuffle & join optimization, data skew fixes, AQE, predicate pushdown, and a complete decision table for diagnosing slow Spark jobs.</p>
+      <div class="mod-tags"><span class="mod-tag">Bottleneck Triage</span><span class="mod-tag">AQE</span><span class="mod-tag">Skew Fixes</span><span class="mod-tag">Decision Table</span></div>
     </div>
   </a>
 </section>

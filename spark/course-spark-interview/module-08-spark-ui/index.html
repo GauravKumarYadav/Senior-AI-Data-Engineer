@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 8: Spark UI Deep Dive | Spark Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}.nav-dots{display:flex;gap:6px}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none}.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}.screen h2 .accent{color:var(--color-accent)}.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.5rem 0}.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem}.card p{font-size:0.9rem;color:var(--color-muted);margin:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}.aha p{font-size:0.95rem;margin:0}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.2rem 0}.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.05rem}.quiz-opt{display:block;padding:0.7rem 1rem;margin:0.4rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:all 0.2s;font-size:0.93rem}.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}.quiz-feedback{margin-top:0.8rem;padding:0.7rem 1rem;border-radius:8px;font-size:0.88rem;display:none}.quiz-feedback.show{display:block}.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer}.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}.tooltip-box.visible{opacity:1}
+.table-wrap{overflow-x:auto;margin:1.5rem 0}.tbl{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04)}.tbl th{background:var(--color-bg-code);color:#CDD6F4;padding:0.7rem 1rem;font-family:var(--font-heading);font-weight:700;font-size:0.82rem;text-align:left}.tbl td{padding:0.6rem 1rem;border-bottom:1px solid #f0ede8;font-size:0.85rem}.tbl tr:last-child td{border:none}.tbl code{font-family:var(--font-code);font-size:0.8rem}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}.translate-eng .line{padding:0.15rem 0}
+.screen-alt{background:var(--color-bg-warm)}
+footer.module-nav{display:flex;justify-content:space-between;padding:2rem 1.5rem;max-width:900px;margin:0 auto}footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem}
+@media(max-width:600px){.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">⚡ Spark Interview Mastery</a><div class="nav-dots"><a href="../module-01-what-is-spark/" class="nav-dot"></a><a href="../module-02-architecture/" class="nav-dot"></a><a href="../module-03-rdds/" class="nav-dot"></a><a href="../module-04-dataframes-sql/" class="nav-dot"></a><a href="../module-05-performance/" class="nav-dot"></a><a href="../module-06-streaming-libs/" class="nav-dot"></a><a href="../module-07-interview-gauntlet/" class="nav-dot"></a><a href="../module-08-spark-ui/" class="nav-dot active"></a><a href="../module-09-optimization/" class="nav-dot"></a></div></div></nav>
+
+<!-- ===== Screen 1: Why the Spark UI Matters ===== -->
+<section class="screen" id="s1">
+  <h2>Why the <span class="accent">Spark UI</span> Matters</h2>
+  <p>The Spark UI is your <strong>X-ray machine</strong> for understanding what's happening inside a Spark application. It launches automatically on <code style="font-family:var(--font-code)">port 4040</code> whenever a <span class="tooltip-term" data-tip="The entry point for Spark functionality. Only one SparkContext can be active per JVM. It coordinates all distributed computation.">SparkContext</span> is active, and the <span class="tooltip-term" data-tip="A standalone web UI that serves completed Spark application histories. Enabled via spark.eventLog.enabled=true.">History Server</span> preserves it after jobs complete.</p>
+  <p>Every serious Spark interviewer expects you to navigate and interpret the UI fluently. Saying "I'd check the Spark UI" is good — explaining <em>exactly which tab, which metric, and what the value means</em> is what gets you hired.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>📋 Jobs Tab</h4>
+      <p>Shows every action-triggered job, its duration, stage count, and success/failure status — your 30,000-foot view.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔬 Stages Tab</h4>
+      <p>The gold mine. Reveals shuffle sizes, spill metrics, GC time, and per-task distributions for each stage.</p>
+    </div>
+    <div class="card green">
+      <h4>📊 SQL Tab</h4>
+      <p>Displays the physical query plan as a DAG — see exactly which joins, scans, and exchanges Catalyst chose.</p>
+    </div>
+    <div class="card purple">
+      <h4>🖥️ Executors Tab</h4>
+      <p>Per-executor health: GC time, memory usage, active/failed tasks, and input/shuffle read volumes.</p>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>When an interviewer asks "how would you debug a slow Spark job?", start with: "I'd open the Spark UI, go to the Stages tab, and compare Max vs Median task duration to check for skew." That single sentence signals deep operational experience.</p>
+  </div>
+</section>
+
+<!-- ===== Screen 2: Jobs Tab ===== -->
+<section class="screen screen-alt" id="s2">
+  <h2>Jobs Tab — <span class="accent">The Big Picture</span></h2>
+  <p>Every Spark <span class="tooltip-term" data-tip="An action (like collect, count, save) triggers a job. A job is the top-level unit of work in Spark's execution model.">action</span> triggers a Job. Each job is subdivided into <span class="tooltip-term" data-tip="A stage is a set of tasks that can run in parallel without a shuffle. Stage boundaries are created wherever data needs to be redistributed (shuffled).">Stages</span> at shuffle boundaries. The Jobs tab gives you the bird's-eye view — how many jobs ran, how long each took, and whether any failed.</p>
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>What You See</th><th>What It Means</th><th>🚩 Red Flag</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Job Duration</strong></td>
+          <td>Total wall-clock time from action trigger to completion</td>
+          <td>One job takes 10× longer than similar jobs — likely skew or bad partitioning</td>
+        </tr>
+        <tr>
+          <td><strong>Number of Stages</strong></td>
+          <td>How many shuffle boundaries exist in this job's lineage</td>
+          <td>More than 5-6 stages usually means excessive shuffles from chained joins/groupBys</td>
+        </tr>
+        <tr>
+          <td><strong>Failed Stages</strong></td>
+          <td>Stages that threw exceptions and had to be retried or abandoned</td>
+          <td>Any failed stage — check executor logs for OOM errors or data corruption</td>
+        </tr>
+        <tr>
+          <td><strong>Skipped Stages</strong></td>
+          <td>Stages whose output was already cached or persisted, so Spark skipped re-computation</td>
+          <td>Not a red flag! Skipped stages mean your <code>cache()</code> or <code>persist()</code> is working</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 Aha!</div>
+    <p>If a job has many stages, it means multiple shuffles are happening. Ask yourself: can any of these <code style="font-family:var(--font-code)">groupBy</code>, <code style="font-family:var(--font-code)">join</code>, or <code style="font-family:var(--font-code)">repartition</code> calls be eliminated or combined? Fewer stages = fewer shuffles = faster jobs.</p>
+  </div>
+</section>
+
+<!-- ===== Screen 3: Stages Tab ===== -->
+<section class="screen" id="s3">
+  <h2>Stages Tab — <span class="accent">The Gold Mine</span></h2>
+  <p>This is <strong>THE</strong> most important tab in the Spark UI. Click into any stage and you'll find a treasure trove of metrics: <span class="tooltip-term" data-tip="A shuffle is the redistribution of data across partitions, typically triggered by operations like groupBy, join, or repartition. Data is serialized, written to disk, transferred over the network, and deserialized.">shuffle</span> read/write sizes, <span class="tooltip-term" data-tip="Spill occurs when Spark doesn't have enough memory to hold data for an operation (like a sort or aggregation) and must write excess data to disk. Spill (Memory) = bytes read from memory before spill. Spill (Disk) = bytes written to disk.">spill</span> metrics, GC time, and the full task distribution.</p>
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>Metric</th><th>Where to Find</th><th>What It Tells You</th><th>🚨 Danger Zone</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Shuffle Read Size</strong></td>
+          <td>Stage detail → Aggregate Metrics</td>
+          <td>How much data this stage pulled from previous stages' shuffle output</td>
+          <td>Hundreds of GB — consider broadcast joins or pre-filtering</td>
+        </tr>
+        <tr>
+          <td><strong>Shuffle Write Size</strong></td>
+          <td>Stage detail → Aggregate Metrics</td>
+          <td>How much data this stage produced for downstream stages to read</td>
+          <td>Write ≫ Read means data is exploding (possible cartesian join)</td>
+        </tr>
+        <tr>
+          <td><strong>Spill (Memory)</strong></td>
+          <td>Stage detail → Aggregate Metrics</td>
+          <td>Data size in memory before it was spilled — indicates memory pressure</td>
+          <td>Any spill &gt; 0 means an operation exceeded available memory</td>
+        </tr>
+        <tr>
+          <td><strong>Spill (Disk)</strong></td>
+          <td>Stage detail → Aggregate Metrics</td>
+          <td>Data actually written to disk due to memory exhaustion</td>
+          <td>Large disk spill = severe performance hit (10-100× slower than in-memory)</td>
+        </tr>
+        <tr>
+          <td><strong>GC Time</strong></td>
+          <td>Stage detail → Summary Metrics</td>
+          <td>Time each task spent in Java garbage collection</td>
+          <td>&gt;10% of task time signals memory pressure or too many objects</td>
+        </tr>
+        <tr>
+          <td><strong>Scheduler Delay</strong></td>
+          <td>Stage detail → Summary Metrics</td>
+          <td>Time between task being scheduled and actually starting execution</td>
+          <td>&gt;50ms consistently means the cluster is resource-starved</td>
+        </tr>
+        <tr>
+          <td><strong>Task Deser. Time</strong></td>
+          <td>Stage detail → Summary Metrics</td>
+          <td>Time to deserialize the task closure on the executor</td>
+          <td>&gt;100ms means large closures — avoid broadcasting big objects in closures</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 Aha!</div>
+    <p>In an interview, if you're asked about debugging a slow stage, mention these three metrics in order: <strong>(1)</strong> Shuffle Read/Write — is too much data moving? <strong>(2)</strong> Spill — is data hitting disk? <strong>(3)</strong> GC Time — is the JVM struggling? This structured approach shows systematic thinking.</p>
+  </div>
+</section>
+
+<!-- ===== Screen 4: Task Metrics ===== -->
+<section class="screen screen-alt" id="s4">
+  <h2>Task Metrics — <span class="accent">Spotting Skew</span></h2>
+  <p>Inside each stage, the <strong>Summary Metrics</strong> section shows Min, 25th percentile, Median, 75th percentile, and Max for every task metric. This is your primary weapon for detecting <span class="tooltip-term" data-tip="Data skew means some partitions hold significantly more data than others, causing certain tasks to run much longer. The slowest task determines the stage's total runtime.">data skew</span>.</p>
+  <p>The key insight is simple: <strong>if Max ≫ Median, you have skew.</strong> One task is doing far more work than the rest, and the entire stage waits for it to finish.</p>
+  <div class="card-grid">
+    <div class="card green">
+      <h4>✅ Healthy Distribution</h4>
+      <p><strong>Max ≈ 2× Median.</strong> Tasks are processing roughly equal amounts of data. No action needed — this is the target state.</p>
+    </div>
+    <div class="card blue">
+      <h4>⚠️ Moderate Skew</h4>
+      <p><strong>Max ≈ 5–10× Median.</strong> One or a few partitions are heavier. Consider salting keys or increasing partition count to redistribute data.</p>
+    </div>
+    <div class="card">
+      <h4>🔥 Severe Skew</h4>
+      <p><strong>Max ≈ 100×+ Median.</strong> A single key dominates. Requires targeted fixes: salting, isolated processing of hot keys, or adaptive query execution (AQE).</p>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Power Move</div>
+    <p>Always mention checking <strong>Max vs Median task time</strong> as your <em>first</em> skew detection technique. Then follow up with: "I'd also look at Shuffle Read Size per task to confirm which partition is oversized." This two-step answer demonstrates real debugging experience.</p>
+  </div>
+</section>
+
+<!-- ===== Screen 5: SQL Tab ===== -->
+<section class="screen" id="s5">
+  <h2>SQL Tab — <span class="accent">Reading Query Plans</span></h2>
+  <p>When you run DataFrame or Spark SQL operations, the SQL tab visualizes the <span class="tooltip-term" data-tip="The physical plan is the final execution plan chosen by Catalyst after applying optimization rules. It shows the exact operators Spark will use (scans, filters, joins, exchanges).">physical plan</span> as a visual DAG. Each node represents an operator, and understanding these nodes lets you predict performance bottlenecks before they happen.</p>
+  <div class="translate">
+    <div class="translate-code">
+<span style="color:#89B4FA">== Physical Plan ==</span>
+
+*(3) HashAggregate(keys=[dept],
+      functions=[sum(salary)])
++- <span style="color:#F38BA8">Exchange</span> hashpartitioning(dept, 200)
+   +- *(2) HashAggregate(partial,
+            keys=[dept],
+            functions=[sum(salary)])
+      +- *(2) Project [dept, salary]
+         +- *(2) <span style="color:#A6E3A1">BroadcastHashJoin</span>
+                  [emp.dept_id = dept.id]
+            :- *(2) Filter isnotnull(dept_id)
+            :  +- *(2) <span style="color:#F9E2AF">FileScan</span> parquet
+            :           [employees]
+            +- BroadcastExchange
+               +- *(1) <span style="color:#F9E2AF">FileScan</span> parquet
+                        [departments]</div>
+    <div class="translate-eng">
+      <div class="line"><strong>Physical Plan (read bottom-up):</strong></div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔷 <strong>Final aggregation</strong> — combines partial sums into final result per department</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔴 <strong>Exchange</strong> — this is a <strong>shuffle!</strong> Redistributes data by <code style="font-family:var(--font-code)">dept</code> key across 200 partitions</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔷 <strong>Partial aggregation</strong> — each partition computes a local partial sum first (map-side combine)</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🟢 <strong>BroadcastHashJoin</strong> — the small <code style="font-family:var(--font-code)">departments</code> table is broadcast to all executors (no shuffle!)</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🟡 <strong>FileScan</strong> — reads <code style="font-family:var(--font-code)">employees</code> and <code style="font-family:var(--font-code)">departments</code> parquet files with column pruning</div>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 Aha!</div>
+    <p><strong>Exchange = Shuffle.</strong> Every <code style="font-family:var(--font-code)">Exchange</code> node in the plan is a shuffle operation that redistributes data across the network. Fewer exchanges = faster query. In interviews, if you see an Exchange before a join, suggest a broadcast join to eliminate it.</p>
+  </div>
+</section>
+
+<!-- ===== Screen 6: Executors & Storage ===== -->
+<section class="screen screen-alt" id="s6">
+  <h2>Executors &amp; <span class="accent">Storage Tabs</span></h2>
+  <p>The <strong>Executors tab</strong> gives you per-executor health metrics — think of it as the vital signs monitor for each worker in your cluster. The <strong>Storage tab</strong> tells you whether your <code style="font-family:var(--font-code)">cache()</code> and <code style="font-family:var(--font-code)">persist()</code> calls are actually working.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>⏱️ GC Time</h4>
+      <p>Watch for &gt;10% of total task time spent in garbage collection. High GC = memory pressure. Fix with more executor memory or better partitioning.</p>
+    </div>
+    <div class="card blue">
+      <h4>💾 Memory Usage</h4>
+      <p>Shows storage memory and execution memory fractions per executor. Near-max usage signals risk of spill or OOM errors.</p>
+    </div>
+    <div class="card green">
+      <h4>❌ Failed Tasks</h4>
+      <p>Uneven failed task counts across executors suggest executor instability — possibly a bad node, disk issues, or network problems.</p>
+    </div>
+    <div class="card purple">
+      <h4>📦 Storage Fraction</h4>
+      <p>In the Storage tab: shows cached RDDs/DataFrames, what fraction is actually cached, and whether it's in memory or spilled to disk.</p>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 Aha!</div>
+    <p>If one executor has <strong>much higher GC time</strong> than others, it's almost certainly processing a skewed partition. The fix isn't more memory for that executor — it's fixing the skew so all executors get equal work. Cross-reference with the Stages tab to confirm which partition is oversized.</p>
+  </div>
+</section>
+
+<!-- ===== Screen 7: History Server ===== -->
+<section class="screen" id="s7">
+  <h2>Spark <span class="accent">History Server</span></h2>
+  <p>The live Spark UI disappears when your <span class="tooltip-term" data-tip="The SparkContext is the main entry point for Spark. When it's stopped (or the application finishes), the port-4040 UI goes away — unless you've enabled event logging for the History Server.">SparkContext</span> stops. The History Server is a separate process that reads event logs and re-creates the UI for completed applications. It's essential for post-mortem debugging and comparing job runs over time.</p>
+  <div class="card-grid">
+    <div class="card blue">
+      <h4>🔍 When to Use</h4>
+      <p><strong>Post-mortem debugging</strong> — investigate why last night's batch job failed or was slow. <strong>Comparing runs</strong> — diff today's metrics against yesterday's to catch regressions. <strong>Capacity planning</strong> — review historical resource usage patterns.</p>
+    </div>
+    <div class="card green">
+      <h4>⚙️ Key Configuration</h4>
+      <p><code style="font-family:var(--font-code)">spark.eventLog.enabled=true</code> — turns on event logging. <code style="font-family:var(--font-code)">spark.eventLog.dir=hdfs:///spark-logs</code> — where logs are written. <code style="font-family:var(--font-code)">spark.history.fs.logDirectory</code> — where the History Server reads from (same path).</p>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Tip</div>
+    <p>If asked "how do you debug a Spark job that already finished?", say: "We have the Spark History Server enabled with event logs stored on HDFS/S3. I can pull up the full UI — Stages, SQL plan, executor metrics — for any completed application and compare it against previous successful runs." This shows production-level awareness.</p>
+  </div>
+</section>
+
+<!-- ===== Screen 8: Quiz ===== -->
+<section class="screen screen-alt" id="s8">
+  <h2>Quiz: <span class="accent">Spark UI</span> Mastery</h2>
+  <p>Test your ability to navigate the Spark UI like a pro. These are the kinds of questions that separate senior candidates from the rest.</p>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: Which Spark UI tab is MOST useful for detecting data skew?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">A) Jobs tab — check job durations</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',true)">B) Stages tab — check Max vs Median task time</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">C) SQL tab — look for Exchange nodes</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">D) Executors tab — compare memory usage</div>
+    <div class="quiz-feedback" id="q1-fb">✅ The Stages tab's Summary Metrics show Min/25th/Median/75th/Max per task — if Max ≫ Median, you have skew. This is the most direct and reliable detection method.</div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: You see high "Shuffle Read" in the Stages tab. What does this indicate?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">A) Data is being cached to memory</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">B) The executor is running out of disk space</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',true)">C) Large amounts of data are being moved across the network from joins, groupBys, or repartitions</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">D) The query plan has too many FileScan nodes</div>
+    <div class="quiz-feedback" id="q2-fb">✅ Shuffle Read measures data pulled from other executors' shuffle output. High values mean lots of data redistribution — typically from joins, groupByKey, repartition, or wide transformations.</div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: In the SQL tab, what does an "Exchange" node represent?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">A) A data format conversion (e.g., CSV to Parquet)</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',true)">B) A shuffle operation — data redistribution across partitions</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">C) A broadcast of a small table to all executors</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">D) A checkpoint being written to HDFS</div>
+    <div class="quiz-feedback" id="q3-fb">✅ Exchange is Spark's name for a shuffle in the physical plan. Every Exchange node means data is being serialized, written, transferred across the network, and deserialized. Minimizing these is key to performance.</div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: Your executor shows 40% GC time. What's the likely problem?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">A) The executor has too many CPU cores</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">B) The network bandwidth is insufficient</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',true)">C) Memory pressure — the executor needs more memory or data needs better partitioning</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">D) The event log directory is full</div>
+    <div class="quiz-feedback" id="q4-fb">✅ GC time above 10% signals memory pressure. At 40%, the JVM is spending nearly half its time cleaning up objects instead of doing useful work. Solutions: increase executor memory, reduce partition size, or fix data skew.</div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: Where do you check if your cache() is actually being used?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',false)">A) Jobs tab — look for skipped jobs</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',false)">B) Stages tab — look for spill metrics</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',false)">C) SQL tab — look for InMemoryRelation nodes</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',true)">D) Storage tab — shows cached RDDs/DataFrames, fraction cached, and memory vs disk usage</div>
+    <div class="quiz-feedback" id="q5-fb">✅ The Storage tab is the definitive place to verify caching. It lists every cached RDD/DataFrame, shows what percentage is actually in memory, and whether any data spilled to disk. If your dataset doesn't appear here, your cache() call hasn't been triggered by an action yet.</div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-07-interview-gauntlet/index.html">← Previous: Interview Gauntlet</a>
+  <a href="../module-09-optimization/index.html">Next: Optimization & Bottleneck Detection →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;pb.style.width=((h.scrollTop/(h.scrollHeight-h.clientHeight))*100)+'%';},{passive:true});
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));});
+  window.checkQ=function(el,qid,correct){const box=document.getElementById(qid);if(box.dataset.answered)return;box.dataset.answered='true';const fb=document.getElementById(qid+'-fb');if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='\u2705 Perfect! That\'s a strong interview answer.';}else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='\u274c Not quite. Review the concepts above.';}box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');};
+})();
+</script>
+
+</body>
+</html>

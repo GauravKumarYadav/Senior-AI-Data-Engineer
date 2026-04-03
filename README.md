@@ -8,7 +8,7 @@ Interactive HTML courses covering core data engineering topics for interview pre
 
 | Course | Modules | Topics |
 |--------|---------|--------|
-| [Apache Spark](https://gauravkumaryadav.github.io/Senior-AI-Data-Engineer/spark/course-spark-interview/) | 7 | RDDs, DataFrames, architecture, performance, streaming |
+| [Apache Spark](https://gauravkumaryadav.github.io/Senior-AI-Data-Engineer/spark/course-spark-interview/) | 9 | RDDs, DataFrames, architecture, performance, Spark UI, optimization, streaming |
 | [Scala](https://gauravkumaryadav.github.io/Senior-AI-Data-Engineer/scala-interview/course-scala-interview/) | 8 | Case classes, pattern matching, collections, concurrency, implicits |
 | [Data Modeling](https://gauravkumaryadav.github.io/Senior-AI-Data-Engineer/data-modeling/course-data-modeling/) | 6 | Star schemas, SCDs, grain, bridge tables, fact tables |
 | [Data Quality](https://gauravkumaryadav.github.io/Senior-AI-Data-Engineer/data-quality/course-data-quality/) | 6 | Quality dimensions, data contracts, schema drift, testing |

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 9: Optimization & Bottleneck Detection | Spark Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}.nav-dots{display:flex;gap:6px}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none}.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}.screen h2 .accent{color:var(--color-accent)}.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.5rem 0}.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem}.card p{font-size:0.9rem;color:var(--color-muted);margin:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}.aha p{font-size:0.95rem;margin:0}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.2rem 0}.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.05rem}.quiz-opt{display:block;padding:0.7rem 1rem;margin:0.4rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:all 0.2s;font-size:0.93rem}.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}.quiz-feedback{margin-top:0.8rem;padding:0.7rem 1rem;border-radius:8px;font-size:0.88rem;display:none}.quiz-feedback.show{display:block}.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer}.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}.tooltip-box.visible{opacity:1}
+.table-wrap{overflow-x:auto;margin:1.5rem 0}.tbl{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04)}.tbl th{background:var(--color-bg-code);color:#CDD6F4;padding:0.7rem 1rem;font-family:var(--font-heading);font-weight:700;font-size:0.82rem;text-align:left}.tbl td{padding:0.6rem 1rem;border-bottom:1px solid #f0ede8;font-size:0.85rem}.tbl tr:last-child td{border:none}.tbl code{font-family:var(--font-code);font-size:0.8rem}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}.translate-eng .line{padding:0.15rem 0}
+.screen-alt{background:var(--color-bg-warm)}
+footer.module-nav{display:flex;justify-content:space-between;padding:2rem 1.5rem;max-width:900px;margin:0 auto}footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem}
+@media(max-width:600px){.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">⚡ Spark Interview Mastery</a><div class="nav-dots"><a href="../module-01-what-is-spark/" class="nav-dot"></a><a href="../module-02-architecture/" class="nav-dot"></a><a href="../module-03-rdds/" class="nav-dot"></a><a href="../module-04-dataframes-sql/" class="nav-dot"></a><a href="../module-05-performance/" class="nav-dot"></a><a href="../module-06-streaming-libs/" class="nav-dot"></a><a href="../module-07-interview-gauntlet/" class="nav-dot"></a><a href="../module-08-spark-ui/" class="nav-dot"></a><a href="../module-09-optimization/" class="nav-dot active"></a></div></div></nav>
+
+<!-- ==================== SCREEN 1 ==================== -->
+<section class="screen" id="s1">
+  <h2>The Bottleneck <span class="accent">Triage Mindset</span></h2>
+  <p>When a Spark job is slow, don't guess — follow a systematic triage process. The first step is always <strong>classification</strong>. Every performance problem falls into one of three buckets. Knowing which bucket you're in determines what you investigate next.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🧑‍💻 Code Issue</h4>
+      <p>Excessive <span class="tooltip-term" data-tip="Shuffle: redistribution of data across partitions, triggered by operations like groupBy, join, and repartition. Very expensive.">shuffle</span>, data <span class="tooltip-term" data-tip="Skew: when a few partitions have vastly more data than others, causing some tasks to run much longer.">skew</span>, wrong join strategies, repeated full-table scans, Python UDF serialization overhead. These are problems in YOUR code or query plan.</p>
+    </div>
+    <div class="card blue">
+      <h4>🖥️ Cluster Issue</h4>
+      <p>High executor pending time, slow dynamic allocation, low cluster utilization, node-level memory or CPU pressure, YARN queue starvation. These are infrastructure problems — your code might be fine.</p>
+    </div>
+    <div class="card green">
+      <h4>🔀 Mixed Issue</h4>
+      <p>High shuffle combined with <span class="tooltip-term" data-tip="Spill: when data being processed doesn't fit in memory and overflows to disk, dramatically slowing execution.">spill</span>, <span class="tooltip-term" data-tip="GC (Garbage Collection): JVM process that reclaims unused memory. High GC time (>10%) indicates memory pressure.">GC</span> pressure, or OOM errors. Code inefficiency amplified by insufficient cluster resources. Needs fixes on both sides.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Aha!</div>
+    <p>In interviews, always classify the problem FIRST, then dive into metrics. Saying "Let me first determine if this is a code issue, cluster issue, or both" shows structured thinking and instantly sets you apart from candidates who jump straight to random config tuning.</p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 2 ==================== -->
+<section class="screen screen-alt" id="s2">
+  <h2>Priority Checklist — <span class="accent">What to Check First</span></h2>
+  <p>When debugging a slow Spark job, check these metrics in this exact order. Each metric either confirms or eliminates an entire category of problems, letting you converge on the root cause fast.</p>
+
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>#</th><th>Metric to Check</th><th>Why Check This First</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>1</strong></td><td>Slowest stage runtime</td><td>Finds the real bottleneck — ignore fast stages, focus all effort on the stage consuming the most wall-clock time</td></tr>
+        <tr><td><strong>2</strong></td><td><span class="tooltip-term" data-tip="Shuffle Read/Write: the amount of data exchanged between executors during a shuffle. High values indicate expensive data redistribution.">Shuffle read/write</span> volume</td><td>Tells you whether data movement across the network is the dominant cost — if shuffle is low, look elsewhere</td></tr>
+        <tr><td><strong>3</strong></td><td>Max vs median task time</td><td>Detects <span class="tooltip-term" data-tip="Skew: when a few partitions have vastly more data than others, causing some tasks to run much longer.">skew</span> immediately — if max is 10x median, one partition has way more data</td></tr>
+        <tr><td><strong>4</strong></td><td><span class="tooltip-term" data-tip="GC (Garbage Collection): JVM process that reclaims unused memory. High GC time (>10%) indicates memory pressure.">GC time</span> percentage</td><td>Detects memory pressure — if GC > 10% of task time, the JVM is struggling to manage heap</td></tr>
+        <tr><td><strong>5</strong></td><td><span class="tooltip-term" data-tip="Spill: when data being processed doesn't fit in memory and overflows to disk, dramatically slowing execution.">Spill</span> to disk</td><td>Detects memory shortage or oversized partitions — disk I/O is orders of magnitude slower than memory</td></tr>
+        <tr><td><strong>6</strong></td><td>Scheduler delay / pending executors</td><td>Separates cluster wait from actual execution — high delay means resources aren't available, not that code is slow</td></tr>
+        <tr><td><strong>7</strong></td><td>Join strategy in SQL plan</td><td>Finds bad query plans — a <code style="font-family:var(--font-code)">SortMergeJoin</code> on a tiny table means a missed broadcast opportunity</td></tr>
+        <tr><td><strong>8</strong></td><td>Input size / records read</td><td>Shows whether too much data is being scanned — if you only need 1 day but read 365 days, that's the problem</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Aha!</div>
+    <p>Memorize this priority list. When an interviewer asks "Your Spark job is slow — walk me through how you'd debug it," recite this checklist top to bottom. It demonstrates a methodical, production-tested debugging approach rather than random guessing.</p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 3 ==================== -->
+<section class="screen" id="s3">
+  <h2>Shuffle & Join <span class="accent">Optimization</span></h2>
+  <p><span class="tooltip-term" data-tip="Shuffle: redistribution of data across partitions, triggered by operations like groupBy, join, and repartition. Very expensive.">Shuffle</span> is the #1 performance killer in Spark. Every shuffle means serializing data, writing to disk, transferring across the network, and deserializing on the other side. The join strategy you choose directly controls how much shuffle happens.</p>
+
+  <div class="card-grid">
+    <div class="card green">
+      <h4>📡 Broadcast Hash Join</h4>
+      <p>Small table (&lt; 10MB) is broadcast to every executor. The large table stays put — zero shuffle. Fastest join when one side is small enough.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔄 Sort-Merge Join</h4>
+      <p>Default for large-large joins. Both sides are sorted and repartitioned by the join key. Reliable but expensive — requires a full shuffle of both datasets.</p>
+    </div>
+    <div class="card purple">
+      <h4>🗂️ Shuffle Hash Join</h4>
+      <p>One side fits in memory. Data is shuffled by key, then a hash table is built in memory on the smaller side. Faster than sort-merge when one side is moderately small.</p>
+    </div>
+  </div>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#89B4FA">from</span> pyspark.sql.functions <span style="color:#89B4FA">import</span> broadcast
+
+<span style="color:#6C7086"># Force broadcast join</span>
+result = df_large.join(
+    <span style="color:#F9E2AF">broadcast</span>(df_small),
+    <span style="color:#A6E3A1">"customer_id"</span>
+)
+
+<span style="color:#6C7086"># Or set the threshold</span>
+spark.conf.set(
+  <span style="color:#A6E3A1">"spark.sql.autoBroadcastJoinThreshold"</span>,
+  <span style="color:#A6E3A1">"20m"</span>  <span style="color:#6C7086"># 20MB</span>
+)</div>
+    <div class="translate-eng">
+      <div class="line">Import the broadcast hint function</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Join the large table with the small table</div>
+      <div class="line">The <strong>broadcast()</strong> hint tells Spark:</div>
+      <div class="line">"Send df_small to every executor in full"</div>
+      <div class="line">Join on customer_id — no shuffle needed!</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Alternatively, raise the auto-broadcast</div>
+      <div class="line">threshold so Spark broadcasts any table</div>
+      <div class="line">under 20MB automatically</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Aha!</div>
+    <p>Rule of thumb: if one table is &lt; 10MB, always broadcast it. The default <code style="font-family:var(--font-code)">spark.sql.autoBroadcastJoinThreshold</code> is 10MB. If you're certain a table is small, use the <code style="font-family:var(--font-code)">broadcast()</code> hint to force it — Catalyst's size estimates can be wrong, especially after filters.</p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 4 ==================== -->
+<section class="screen screen-alt" id="s4">
+  <h2>Data Skew — <span class="accent">Detection & Fixes</span></h2>
+  <p>Data <span class="tooltip-term" data-tip="Skew: when a few partitions have vastly more data than others, causing some tasks to run much longer while others sit idle.">skew</span> means a few partitions have vastly more data than others. The result: a few tasks run for 15 minutes while 99 others finish in 10 seconds. Your job is only as fast as its slowest task.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔍 Detect</h4>
+      <p>In the Spark UI Stages tab, compare Max task time vs Median. If max is 10x+ the median, you have skew. Also check "Shuffle Read Size" per task for uneven distribution.</p>
+    </div>
+    <div class="card blue">
+      <h4>🧂 Salt the Key</h4>
+      <p>Add a random prefix (0-N) to the skewed join key on both sides, join on the salted key, then remove the prefix. Spreads one hot partition across N partitions.</p>
+    </div>
+    <div class="card green">
+      <h4>⚡ AQE Skew Join</h4>
+      <p>Set <code style="font-family:var(--font-code)">spark.sql.adaptive.skewJoin.enabled=true</code> — Spark 3.0+ automatically detects and splits skewed partitions at runtime. No code changes needed.</p>
+    </div>
+    <div class="card purple">
+      <h4>🔀 Isolated Join</h4>
+      <p>Filter out skewed keys, broadcast-join them separately (since they're few keys with lots of rows), then union the result back with the normal join. Surgical fix.</p>
+    </div>
+  </div>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#89B4FA">from</span> pyspark.sql.functions <span style="color:#89B4FA">import</span> (
+    col, concat, lit, floor, rand
+)
+
+<span style="color:#6C7086"># Step 1: Salt the skewed table</span>
+N = <span style="color:#FAB387">10</span>  <span style="color:#6C7086"># number of salt buckets</span>
+df_big_salted = df_big.withColumn(
+    <span style="color:#A6E3A1">"salted_key"</span>,
+    concat(col(<span style="color:#A6E3A1">"join_key"</span>), lit(<span style="color:#A6E3A1">"_"</span>),
+           floor(rand() * N).cast(<span style="color:#A6E3A1">"string"</span>))
+)
+
+<span style="color:#6C7086"># Step 2: Explode the small table</span>
+<span style="color:#89B4FA">from</span> pyspark.sql.functions <span style="color:#89B4FA">import</span> explode, array
+df_small_exploded = df_small.withColumn(
+    <span style="color:#A6E3A1">"salt"</span>, explode(array([lit(i) <span style="color:#89B4FA">for</span> i <span style="color:#89B4FA">in</span> range(N)]))
+).withColumn(
+    <span style="color:#A6E3A1">"salted_key"</span>,
+    concat(col(<span style="color:#A6E3A1">"join_key"</span>), lit(<span style="color:#A6E3A1">"_"</span>), col(<span style="color:#A6E3A1">"salt"</span>))
+)
+
+<span style="color:#6C7086"># Step 3: Join on salted key</span>
+result = df_big_salted.join(
+    df_small_exploded, <span style="color:#A6E3A1">"salted_key"</span>
+).drop(<span style="color:#A6E3A1">"salted_key"</span>, <span style="color:#A6E3A1">"salt"</span>)</div>
+    <div class="translate-eng">
+      <div class="line">Import the functions we need for salting</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Choose 10 salt buckets — each hot key</div>
+      <div class="line">gets split into 10 smaller partitions</div>
+      <div class="line">Append a random number (0-9) to each</div>
+      <div class="line">join key: "hot_key" → "hot_key_7"</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">The small table must match ALL salt</div>
+      <div class="line">values, so we duplicate each row 10x</div>
+      <div class="line">with salt values 0 through 9</div>
+      <div class="line">Create matching salted keys</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Now the join distributes evenly!</div>
+      <div class="line">Clean up the temporary columns</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Aha!</div>
+    <p><span class="tooltip-term" data-tip="AQE (Adaptive Query Execution): Spark 3.0+ feature that re-optimizes query plans at runtime using actual data statistics collected between stages.">AQE</span> skew handling is the modern answer — it's automatic and requires zero code changes. But know the salting technique too — interviewers love to see you can solve it manually. It proves you understand WHY the fix works, not just which config to flip.</p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 5 ==================== -->
+<section class="screen" id="s5">
+  <h2>Memory: GC, Spill <span class="accent">& OOM</span></h2>
+  <p>Memory problems are the second most common Spark performance killer after shuffle. They manifest in three ways: high GC time, spill to disk, and outright OOM crashes. Here's how to diagnose and fix each one.</p>
+
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>Symptom</th><th>What's Happening</th><th>Fix</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>High <span class="tooltip-term" data-tip="GC (Garbage Collection): JVM process that reclaims unused memory. High GC time (>10%) indicates memory pressure.">GC</span> Time (&gt;10%)</strong></td>
+          <td>JVM is spending too much time collecting garbage instead of running your tasks. Objects are being created and destroyed faster than the heap can handle.</td>
+          <td>Increase <code style="font-family:var(--font-code)">spark.executor.memory</code>, reduce cached data volume, switch cache level to <code style="font-family:var(--font-code)">MEMORY_AND_DISK</code></td>
+        </tr>
+        <tr>
+          <td><strong><span class="tooltip-term" data-tip="Spill: when data being processed doesn't fit in memory and overflows to disk, dramatically slowing execution.">Spill</span> to Disk</strong></td>
+          <td>Data being processed in a task doesn't fit in execution memory, so Spark serializes it to local disk. Disk I/O is 100x slower than memory access.</td>
+          <td>Increase <code style="font-family:var(--font-code)">spark.executor.memory</code>, reduce partition size via more partitions, run fewer concurrent tasks per executor</td>
+        </tr>
+        <tr>
+          <td><strong>Executor OOM / Lost</strong></td>
+          <td>JVM heap is completely exhausted. The executor crashes and its tasks must be retried elsewhere. Often caused by skew or container overhead.</td>
+          <td>Increase <code style="font-family:var(--font-code)">spark.executor.memoryOverhead</code>, reduce partition size, check for skew concentrating data in one task</td>
+        </tr>
+        <tr>
+          <td><strong>High Memory Fraction Used</strong></td>
+          <td>Storage memory (cached DataFrames) and execution memory (shuffles, sorts, aggregations) are competing for the same unified pool.</td>
+          <td>Tune <code style="font-family:var(--font-code)">spark.memory.fraction</code> (default 0.6) and <code style="font-family:var(--font-code)">spark.memory.storageFraction</code> (default 0.5). Unpersist caches you no longer need.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Aha!</div>
+    <p>The memory formula interviewers expect you to know: <strong>Total Executor Memory = spark.executor.memory + spark.executor.memoryOverhead</strong>. Default overhead is <code style="font-family:var(--font-code)">max(384MB, 10% of executor memory)</code>. For PySpark jobs, also account for <code style="font-family:var(--font-code)">spark.executor.pyspark.memory</code> — Python processes run outside the JVM heap and need their own allocation.</p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 6 ==================== -->
+<section class="screen screen-alt" id="s6">
+  <h2>Predicate Pushdown & <span class="accent">Partition Pruning</span></h2>
+  <p><span class="tooltip-term" data-tip="Predicate Pushdown: optimization where filter conditions are pushed down to the data source (e.g., Parquet reader) so only matching data is read from disk.">Predicate pushdown</span> means filters are pushed to the data source — Spark tells Parquet/ORC "only give me rows where date = '2024-01-01'" so it skips entire row groups. <span class="tooltip-term" data-tip="Partition Pruning: when a table is partitioned by a column (e.g., date), Spark only reads the partition directories that match the filter, skipping all others entirely.">Partition pruning</span> goes further — only the relevant partition directories are read from disk at all.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086"># Write a partitioned table</span>
+df.write.partitionBy(<span style="color:#A6E3A1">"date"</span>) \
+  .parquet(<span style="color:#A6E3A1">"s3://bucket/sales/"</span>)
+
+<span style="color:#6C7086"># Query with pushdown-friendly filter</span>
+result = spark.read.parquet(
+    <span style="color:#A6E3A1">"s3://bucket/sales/"</span>
+).filter(
+    <span style="color:#A6E3A1">"date = '2024-01-01'"</span>
+).select(<span style="color:#A6E3A1">"amount"</span>, <span style="color:#A6E3A1">"customer_id"</span>)
+
+<span style="color:#6C7086"># Verify with explain()</span>
+result.explain(<span style="color:#A6E3A1">"formatted"</span>)
+<span style="color:#6C7086"># Look for:</span>
+<span style="color:#6C7086"># PushedFilters: [EqualTo(date,2024-01-01)]</span>
+<span style="color:#6C7086"># PartitionFilters: [date = 2024-01-01]</span></div>
+    <div class="translate-eng">
+      <div class="line">Table is saved partitioned by date —</div>
+      <div class="line">each date gets its own directory on disk</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Read the partitioned Parquet table</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Filter for a single day — Spark pushes</div>
+      <div class="line">this to the Parquet reader level</div>
+      <div class="line">Only select the columns we need</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Use explain() to verify optimization</div>
+      <div class="line"><strong>PushedFilters</strong>: filter sent to Parquet</div>
+      <div class="line">reader — only matching row groups scanned</div>
+      <div class="line"><strong>PartitionFilters</strong>: only the 2024-01-01</div>
+      <div class="line">partition directory is read from disk</div>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🚫 What Breaks Pushdown</h4>
+      <p>UDFs in filter expressions, complex casts like <code style="font-family:var(--font-code)">cast(date as string)</code>, non-native data sources, filters applied after a shuffle, and expressions Parquet can't evaluate (e.g., regex).</p>
+    </div>
+    <div class="card green">
+      <h4>✅ How to Verify</h4>
+      <p>Run <code style="font-family:var(--font-code)">df.explain("formatted")</code> and look for <strong>PushedFilters</strong> in the scan node. If it says <code style="font-family:var(--font-code)">PushedFilters: []</code> — pushdown failed and you're reading everything.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Aha!</div>
+    <p>If you see a full table scan in <code style="font-family:var(--font-code)">explain()</code>, check if a UDF or <code style="font-family:var(--font-code)">cast()</code> is preventing pushdown. The fix: replace with native Spark SQL expressions. For example, instead of a UDF that extracts year, use <code style="font-family:var(--font-code)">year(col("date"))</code> — Spark can push native functions down to the data source.</p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 7 ==================== -->
+<section class="screen" id="s7">
+  <h2>Adaptive Query <span class="accent">Execution (AQE)</span></h2>
+  <p><span class="tooltip-term" data-tip="AQE (Adaptive Query Execution): Spark 3.0+ feature that re-optimizes query plans at runtime using actual data statistics collected between stages.">AQE</span> (Spark 3.0+) is a game-changer: it optimizes queries <strong>at runtime</strong> based on actual data statistics collected between stages. Unlike the Catalyst optimizer which plans everything upfront using potentially stale or inaccurate stats, AQE adapts as it goes.</p>
+
+  <div class="card-grid">
+    <div class="card green">
+      <h4>📦 Coalescing Partitions</h4>
+      <p><code style="font-family:var(--font-code)">spark.sql.adaptive.coalescePartitions.enabled</code> — after a shuffle, AQE merges tiny partitions into larger ones. Eliminates the "too many small tasks" problem without manual repartitioning.</p>
+    </div>
+    <div class="card blue">
+      <h4>⚖️ Skew Join Optimization</h4>
+      <p><code style="font-family:var(--font-code)">spark.sql.adaptive.skewJoin.enabled</code> — automatically detects partitions that are much larger than the median and splits them into smaller sub-partitions. No salting code needed.</p>
+    </div>
+    <div class="card purple">
+      <h4>🔄 Dynamic Join Strategy</h4>
+      <p>If runtime statistics reveal one side of a join is actually small (after filters reduced it), AQE switches from <span class="tooltip-term" data-tip="Sort-Merge Join: default join strategy for large-large joins. Both sides sorted and repartitioned by join key. Requires full shuffle.">sort-merge join</span> to <span class="tooltip-term" data-tip="Broadcast Join: small table sent to every executor in full, eliminating shuffle. Fastest join when one side is small enough.">broadcast join</span> on the fly.</p>
+    </div>
+    <div class="card">
+      <h4>⚙️ Config</h4>
+      <p><code style="font-family:var(--font-code)">spark.sql.adaptive.enabled=true</code> — the master switch. On by default in Spark 3.2+. For Spark 3.0–3.1, you need to enable it explicitly. Almost always a performance win.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Aha!</div>
+    <p>AQE is almost always a win. The key interview answer: <em>"AQE re-optimizes the query plan between stages using runtime statistics, unlike the Catalyst optimizer which only uses static estimates at planning time."</em> This one sentence shows you understand both the what and the why. Follow up with the three features: coalescing, skew handling, and dynamic join switching.</p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 8 ==================== -->
+<section class="screen screen-alt" id="s8">
+  <h2>Decision Table — <span class="accent">Symptom → Root Cause → Fix</span></h2>
+  <p>This is your cheat sheet. When you see a symptom in the Spark UI, follow the chain: check the next metric, identify the root cause, apply the fix. Memorize the top 5 rows — they cover 80% of real-world performance issues.</p>
+
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>If This Is High</th><th>Check Next</th><th>Likely Root Cause</th><th>Quick Fix</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Scheduler Delay</strong></td>
+          <td>Active executors, pending resources</td>
+          <td>Cluster / resources — not enough executors available</td>
+          <td>Add executors, check YARN queue limits, adjust <code style="font-family:var(--font-code)">spark.dynamicAllocation</code></td>
+        </tr>
+        <tr>
+          <td><strong>Shuffle Read/Write</strong></td>
+          <td>Join type, repartition calls, groupBy</td>
+          <td>Code / query design — too much data being moved</td>
+          <td>Use broadcast joins, replace <code style="font-family:var(--font-code)">groupByKey</code> with <code style="font-family:var(--font-code)">reduceByKey</code>, minimize shuffles</td>
+        </tr>
+        <tr>
+          <td><strong>Disk Spill</strong></td>
+          <td>Executor memory, partition size</td>
+          <td>Memory / config — data doesn't fit in execution memory</td>
+          <td>Increase <code style="font-family:var(--font-code)">spark.executor.memory</code>, increase partition count</td>
+        </tr>
+        <tr>
+          <td><strong>GC Time</strong></td>
+          <td>Executor memory, cached data volume</td>
+          <td>Memory pressure — JVM heap under stress</td>
+          <td>Tune memory, unpersist unused caches, use <code style="font-family:var(--font-code)">MEMORY_AND_DISK</code></td>
+        </tr>
+        <tr>
+          <td><strong>Max &gt;&gt; Median task time</strong></td>
+          <td>Key distribution, partition sizes</td>
+          <td>Data skew — a few partitions have most of the data</td>
+          <td>Salt keys, enable AQE skew join, isolated join for hot keys</td>
+        </tr>
+        <tr>
+          <td><strong>Input Size</strong></td>
+          <td>Filter pushdown, partition pruning in plan</td>
+          <td>Reading too much data — full table scan</td>
+          <td>Add filters early, use partitioned tables, verify pushdown with <code style="font-family:var(--font-code)">explain()</code></td>
+        </tr>
+        <tr>
+          <td><strong>Output Write Time</strong></td>
+          <td>File count, output partition count</td>
+          <td>Storage bottleneck — too many small files or slow sink</td>
+          <td>Coalesce output before write, use efficient formats (Parquet/ORC)</td>
+        </tr>
+        <tr>
+          <td><strong>Runtime Varies Across Runs</strong></td>
+          <td>Cluster load, concurrent jobs</td>
+          <td>Cluster contention — sharing resources with other jobs</td>
+          <td>Isolate workloads, schedule off-peak, use dedicated queues</td>
+        </tr>
+        <tr>
+          <td><strong>Lost Executors / OOM</strong></td>
+          <td>Memory overhead, partition size, skew</td>
+          <td>Config + code — container memory exceeded</td>
+          <td>Increase <code style="font-family:var(--font-code)">memoryOverhead</code>, fix skew, reduce partition size</td>
+        </tr>
+        <tr>
+          <td><strong>Too Many / Few Tasks</strong></td>
+          <td>Partition count vs data size</td>
+          <td>Over or under-partitioning</td>
+          <td>Tune <code style="font-family:var(--font-code)">spark.sql.shuffle.partitions</code> (default 200), use AQE coalescing</td>
+        </tr>
+        <tr>
+          <td><strong>Python UDF Stages Slow</strong></td>
+          <td>UDF in hot path, ser/deser overhead</td>
+          <td>Serialization overhead — data moved between JVM and Python</td>
+          <td>Replace with native Spark functions or <code style="font-family:var(--font-code)">pandas_udf</code> (Arrow-based, vectorized)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Aha!</div>
+    <p>In a real interview, you won't recite this entire table. But knowing it lets you instantly pattern-match any scenario they throw at you. Practice by picking a random symptom and tracing through: symptom → check → cause → fix. That's exactly how senior engineers debug in production.</p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 9 ==================== -->
+<section class="screen" id="s9">
+  <h2>Quiz: Optimization & <span class="accent">Bottleneck Detection</span></h2>
+  <p>Test your debugging instincts. Each question simulates a real interview scenario — pick the best answer, then check the explanation.</p>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: Your Spark job has 100 tasks in a stage. 99 finish in 10 seconds, but 1 takes 15 minutes. What's the most likely problem?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">A) The cluster doesn't have enough executors</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',true)">B) Data skew — one partition has far more data than the others</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">C) The shuffle partitions setting is too low</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">D) GC pressure on the driver node</div>
+    <div class="quiz-feedback" id="q1-fb">✅ Data skew. When max task time is 90x the median, one partition has vastly more data. Fix with key salting, AQE skew join, or an isolated broadcast join for the hot keys.</div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: You see 20GB of "Spill to Disk" in the Stages tab. What should you do FIRST?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">A) Add more executors to the cluster</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">B) Switch to a broadcast join</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',true)">C) Increase executor memory or reduce concurrent tasks to give each task more memory</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">D) Enable AQE coalescing</div>
+    <div class="quiz-feedback" id="q2-fb">✅ Spill means data doesn't fit in execution memory. Increasing spark.executor.memory or reducing the number of partitions processed concurrently gives each task more memory to work with, eliminating the need to spill to disk.</div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: Your explain() plan shows SortMergeJoin, but one side is only 5MB. What optimization is missing?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">A) Predicate pushdown</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">B) Partition pruning</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',true)">C) Broadcast join — the small table should be broadcast to avoid shuffling</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">D) AQE coalescing</div>
+    <div class="quiz-feedback" id="q3-fb">✅ A 5MB table is well under the 10MB broadcast threshold. Check that spark.sql.autoBroadcastJoinThreshold isn't set to -1 (disabled), or use broadcast() hint to force it. This eliminates the shuffle on both sides.</div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: What does AQE do differently than the Catalyst optimizer?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">A) AQE uses rule-based optimization instead of cost-based</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',true)">B) AQE re-optimizes at runtime using actual data statistics, while Catalyst uses static estimates at planning time</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">C) AQE replaces Catalyst entirely in Spark 3.0+</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">D) AQE only handles skew; Catalyst handles everything else</div>
+    <div class="quiz-feedback" id="q4-fb">✅ The key distinction: Catalyst plans upfront with static estimates (which can be wrong). AQE collects real statistics between stages and re-optimizes — switching join strategies, coalescing partitions, and splitting skewed partitions based on what actually happened.</div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: A pipeline reads a 500GB Parquet table but only needs 1 day's data. The filter is applied AFTER the scan in the plan. What's wrong?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',false)">A) The table isn't cached</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',false)">B) Too few shuffle partitions</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',true)">C) Predicate pushdown isn't working — likely a UDF or cast preventing it</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',false)">D) The executor memory is too low</div>
+    <div class="quiz-feedback" id="q5-fb">✅ If the filter appears after the scan in explain(), pushdown failed. Common causes: UDFs in filter expressions, type casts, or complex expressions Parquet can't evaluate. Replace with native Spark SQL expressions so the filter gets pushed to the Parquet reader.</div>
+  </div>
+
+  <div class="quiz-box" id="q6">
+    <h4>Q6: Your job's runtime doubles when the cluster is busy but stays consistent off-hours. Is this a code issue or cluster issue?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',false)">A) Code issue — the query plan changes under load</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',true)">B) Cluster issue — the job is competing for resources with other workloads</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',false)">C) Mixed issue — both code and cluster need fixing</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',false)">D) Neither — this is expected behavior for any distributed system</div>
+    <div class="quiz-feedback" id="q6-fb">✅ Cluster issue. If code were the problem, runtime would be consistently slow regardless of cluster load. Variable runtime that correlates with cluster utilization means resource contention. Check scheduler delay and executor allocation time. Fix: dedicated queues, off-peak scheduling, or guaranteed resource allocation.</div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-08-spark-ui/index.html">← Previous: Spark UI Deep Dive</a>
+  <a href="../index.html">Course Home →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;pb.style.width=((h.scrollTop/(h.scrollHeight-h.clientHeight))*100)+'%';},{passive:true});
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));});
+  window.checkQ=function(el,qid,correct){const box=document.getElementById(qid);if(box.dataset.answered)return;box.dataset.answered='true';const fb=document.getElementById(qid+'-fb');if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='\u2705 Perfect! That\'s a strong interview answer.';}else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='\u274c Not quite. Review the concepts above.';}box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');};
+})();
+</script>
+</body>
+</html>
