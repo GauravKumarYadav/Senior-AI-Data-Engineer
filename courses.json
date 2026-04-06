@@ -48,12 +48,52 @@
     "tags": ["6 Modules", "80+ Questions", "20+ Quizzes"]
   },
   {
+    "title": "Backend Services Mastery",
+    "icon": "🌐",
+    "color": "#0284C7",
+    "href": "./backend-services/course-backend/",
+    "desc": "FastAPI, Pydantic, REST APIs, microservice patterns, Docker, Kubernetes, CI/CD pipelines, monitoring — full backend engineering for interviews.",
+    "tags": ["4 Modules", "60+ Questions", "15+ Quizzes"]
+  },
+  {
     "title": "AI & ML Foundations",
     "icon": "🤖",
     "color": "#7B5EA7",
     "href": "./AI-ML-Foundations/course-ai-ml/",
     "desc": "ML fundamentals, deep learning, NLP, transformers, scikit-learn pipelines, PyTorch, Hugging Face — from basics to interview-ready.",
     "tags": ["4 Modules", "60+ Questions", "15+ Quizzes"]
+  },
+  {
+    "title": "LLMs & GenAI Mastery",
+    "icon": "🧠",
+    "color": "#8B5CF6",
+    "href": "./LLMs-GenAI/course-llms-genai/",
+    "desc": "LLM fundamentals, prompt engineering, RAG architecture, LangChain, LangGraph, AI agents — 7 modules from transformers to production agents.",
+    "tags": ["7 Modules", "120+ Questions", "25+ Quizzes"]
+  },
+  {
+    "title": "MLOps & AI Infrastructure",
+    "icon": "⚙️",
+    "color": "#059669",
+    "href": "./MLOps-AI-Infra/course-mlops/",
+    "desc": "MLOps pipelines, model serving, LLMOps, fine-tuning LLMs — experiment tracking, deployment, monitoring, and production ML systems.",
+    "tags": ["5 Modules", "80+ Questions", "20+ Quizzes"]
+  },
+  {
+    "title": "System Design — Data Engineering",
+    "icon": "🏛️",
+    "color": "#B45309",
+    "href": "./system-design-DE/course-system-design-de/",
+    "desc": "Design data platforms, real-time CDC pipelines, batch systems — end-to-end architecture scenarios with tradeoff discussions.",
+    "tags": ["4 Modules", "60+ Questions", "15+ Quizzes"]
+  },
+  {
+    "title": "System Design — AI/ML",
+    "icon": "🏛️",
+    "color": "#DC2626",
+    "href": "./system-design-AI/course-system-design-ai/",
+    "desc": "Design RAG systems, fraud detection, search ranking, AI agents, ML platforms — 9 full system design problems with solutions.",
+    "tags": ["3 Modules", "50+ Questions", "12+ Quizzes"]
   },
   {
     "title": "Data Modeling Interview Mastery",
@@ -86,5 +126,21 @@
     "href": "./data-governance/course-data-governance/",
     "desc": "RBAC vs ABAC, PII handling, GDPR compliance, data catalogs, retention policies, masking, tokenization, and audit strategies.",
     "tags": ["6 Modules", "Interactive", "Scenario Quizzes"]
+  },
+  {
+    "title": "DSA & Coding Mastery",
+    "icon": "🎯",
+    "color": "#DC2626",
+    "href": "./DSA-coding/course-dsa/",
+    "desc": "Arrays, hashmaps, trees, graphs, DP, sorting, heaps, plus DE-specific coding (Pandas/Spark) and SQL coding problems.",
+    "tags": ["8 Modules", "100+ Questions", "25+ Quizzes"]
+  },
+  {
+    "title": "Behavioral & Leadership",
+    "icon": "🎤",
+    "color": "#9333EA",
+    "href": "./behavioral-leadership/course-behavioral/",
+    "desc": "STAR method, communication, project management, incident management — prepare compelling stories for behavioral rounds.",
+    "tags": ["5 Modules", "60+ Questions", "15+ Quizzes"]
   }
 ]
