@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 5: The Interview Gauntlet 🔥 | Behavioral &amp; Leadership</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#9333EA;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+.nav-dot.gauntlet-active{background:var(--color-error) !important}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.screen ul,.screen ol{max-width:700px;margin-bottom:1rem;font-size:1.02rem;padding-left:1.5rem}
+.screen li{margin-bottom:0.4rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.orange{border-top-color:#D97706}.card.red{border-top-color:var(--color-error)}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p,.card ul{font-size:0.9rem;color:var(--color-muted);margin-bottom:0.3rem}
+.card ul{padding-left:1.2rem}
+.card ul li{margin-bottom:0.2rem}
+.aha{background:linear-gradient(135deg,#F5F0FF,#EDE5FF);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.aha.fire{background:linear-gradient(135deg,#FFF5F5,#FFE8E8);border-left-color:var(--color-error)}
+.aha.fire .aha-title{color:var(--color-error)}
+.quiz-box{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.5rem;font-size:1.05rem}
+.quiz-box .eval{font-style:italic;font-size:0.9rem;color:var(--color-muted);margin-bottom:0.8rem}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.checklist{list-style:none;padding:0;margin:1rem 0}
+.checklist li{padding:0.5rem 0;font-size:0.98rem;display:flex;align-items:flex-start;gap:0.6rem;border-bottom:1px solid rgba(0,0,0,0.04)}
+.checklist li:last-child{border:none}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+section.screen.screen-alt{max-width:100%;padding:0}
+section.screen.screen-alt .screen-inner{max-width:900px;margin:0 auto;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;min-height:100vh;min-height:100dvh}
+/* Gauntlet-specific styles */
+.reveal-btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;border:2px solid var(--color-accent);border-radius:8px;background:transparent;color:var(--color-accent);font-family:var(--font-heading);font-weight:600;font-size:0.85rem;cursor:pointer;transition:all 0.2s;margin-top:0.5rem}
+.reveal-btn:hover{background:var(--color-accent);color:#fff}
+.reveal-btn.revealed{background:var(--color-accent);color:#fff}
+.reveal-content{max-height:0;overflow:hidden;transition:max-height 0.4s ease;opacity:0}
+.reveal-content.open{max-height:5000px;opacity:1;transition:max-height 0.6s ease,opacity 0.3s ease}
+.reveal-inner{padding:1rem 0 0.5rem;font-size:0.92rem;line-height:1.7}
+.reveal-inner p{font-size:0.92rem}
+.reveal-inner .star-label{font-family:var(--font-heading);font-weight:700;color:var(--color-accent);font-size:0.85rem;margin-top:0.6rem}
+.key-phrase{background:rgba(147,51,234,0.08);padding:0.1rem 0.4rem;border-radius:4px;font-weight:600;font-size:0.88rem}
+.red-flags{background:#FFF5F5;border-radius:10px;padding:1rem;margin-top:0.8rem}
+.red-flags p{font-size:0.88rem;color:var(--color-error);margin-bottom:0.3rem}
+.gauntlet-tracker{display:flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;background:rgba(201,59,59,0.08);border-radius:8px;font-family:var(--font-heading);font-weight:600;font-size:0.85rem;margin-bottom:1rem;color:var(--color-error)}
+.gauntlet-tracker .count{color:var(--color-text)}
+.rapid-grid{display:grid;grid-template-columns:1fr;gap:0.8rem;margin:1.5rem 0}
+.rapid-card{background:#fff;border-radius:12px;padding:1rem 1.2rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);border-left:4px solid var(--color-accent)}
+.rapid-card strong{font-family:var(--font-heading);font-size:0.95rem}
+.company-section{margin:1.5rem 0}
+.company-section h4{font-family:var(--font-heading);font-size:1.15rem;margin-bottom:0.8rem}
+.check-item{display:flex;align-items:flex-start;gap:0.6rem;padding:0.4rem 0;font-size:0.95rem}
+.check-item input[type=checkbox]{margin-top:0.3rem;accent-color:var(--color-accent);width:18px;height:18px;cursor:pointer}
+.check-item.checked label{text-decoration:line-through;color:var(--color-muted)}
+.checklist-progress{font-family:var(--font-heading);font-weight:700;font-size:1rem;color:var(--color-accent);margin:0.5rem 0}
+@media(max-width:600px){.card-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎤 Behavioral &amp; Leadership</a><div class="nav-dots"><a href="../module-01-star-method/" class="nav-dot" title="STAR Method"></a><a href="../module-02-communication/" class="nav-dot" title="Communication"></a><a href="../module-03-project-management/" class="nav-dot" title="Project Management"></a><a href="../module-04-incident-management/" class="nav-dot" title="Incident Management"></a><a href="../module-05-interview-gauntlet/" class="nav-dot gauntlet-active active" title="Interview Gauntlet"></a></div></div></nav>
+
+<!-- ==================== SCREEN 1: STAR Story Practice ==================== -->
+<section class="screen" id="s1">
+  <h2>🔥 STAR Story <span class="accent">Practice</span></h2>
+  <p><strong>No more theory. No more frameworks. This is pure reps.</strong> Eight behavioral prompts covering the core dimensions that show up in every senior engineering interview loop.</p>
+
+  <div class="aha fire">
+    <div class="aha-title">🔥 THE GAUNTLET RULES</div>
+    <p><strong>1.</strong> Say your answer OUT LOUD before revealing the model. <strong>2.</strong> Time yourself — aim for 90–120 seconds. <strong>3.</strong> If you stumble, mark it — those need the most reps.</p>
+  </div>
+
+  <div class="gauntlet-tracker" id="tracker1">🔥 Revealed: <span class="count" id="count1">0</span>/8</div>
+
+  <!-- 1.1 Leadership Without Authority -->
+  <div class="quiz-box" data-tracker="tracker1">
+    <h4>1. Leadership Without Authority</h4>
+    <p><strong>"Tell me about a time you led a project or initiative without having formal authority over the people involved."</strong></p>
+    <p class="eval">What they're evaluating: Can you influence outcomes through credibility and relationship-building — not just a title?</p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Model Answer</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p class="star-label">SITUATION</p>
+      <p>Our data platform team identified that five product teams were each building their own event tracking implementations — duplicating effort and producing inconsistent schemas across the analytics layer.</p>
+      <p class="star-label">TASK</p>
+      <p>I took ownership of driving alignment on a unified event tracking standard, even though I had no authority over any of the product teams.</p>
+      <p class="star-label">ACTION</p>
+      <p>I started by interviewing the tech lead from each product team to understand their needs and pain points. I synthesized findings into a one-page RFC proposing a shared event schema registry with a lightweight SDK. Instead of prescribing a solution, I hosted a working session where all five teams <span class="key-phrase">co-designed the schema contract</span>. I volunteered to build the first version of the SDK and integrated it as a proof of concept. When two teams pushed back on timelines, I <span class="key-phrase">offered to pair with their engineers</span> for the first sprint.</p>
+      <p class="star-label">RESULT</p>
+      <p>Within two months, all five teams adopted the shared schema. Inconsistencies dropped from <strong>23% to under 2%</strong>. Cross-product reporting — previously impossible without manual reconciliation — was now automated. Cited in quarterly engineering review as a model for cross-team collaboration.</p>
+      <p style="margin-top:0.6rem;font-size:0.85rem"><strong>Key phrases:</strong> <span class="key-phrase">"I took ownership"</span> <span class="key-phrase">"co-designed"</span> <span class="key-phrase">"volunteered to build"</span> <span class="key-phrase">"offered to pair"</span></p>
+    </div></div>
+  </div>
+
+  <!-- 1.2 Navigating Conflict -->
+  <div class="quiz-box" data-tracker="tracker1">
+    <h4>2. Navigating Conflict</h4>
+    <p><strong>"Describe a time you had a significant disagreement with a colleague. How did you handle it?"</strong></p>
+    <p class="eval">What they're evaluating: Do you handle conflict constructively? Can you separate the person from the problem?</p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Model Answer</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p class="star-label">SITUATION</p>
+      <p>During the design phase of a real-time fraud detection pipeline, a senior colleague and I disagreed on storage: he advocated DynamoDB for low-latency lookups; I believed we needed DynamoDB + S3-backed Iceberg tables for historical analysis and ML retraining.</p>
+      <p class="star-label">TASK</p>
+      <p>Advocate for the dual-write architecture without damaging our working relationship or creating a political battle.</p>
+      <p class="star-label">ACTION</p>
+      <p>I first made sure I fully understood his position by <span class="key-phrase">asking clarifying questions</span> in a 1:1. His concern about operational complexity was valid — I hadn't fully weighted it. I wrote a comparison doc across five dimensions: latency, cost at 12-month scale, operational burden, analytics flexibility, and ML requirements. I <span class="key-phrase">shared it with him privately</span> before bringing it to the team. We ended up <span class="key-phrase">co-presenting a hybrid proposal</span>: DynamoDB for the hot path with async replication to Iceberg.</p>
+      <p class="star-label">RESULT</p>
+      <p>The hybrid approach reduced operational complexity by <strong>40%</strong> vs. my original proposal while preserving analytical access. Fraud model retraining went from weekly to daily. We <span class="key-phrase">co-authored the architecture doc</span>.</p>
+      <p style="margin-top:0.6rem;font-size:0.85rem"><strong>Key phrases:</strong> <span class="key-phrase">"That was a valid concern"</span> <span class="key-phrase">"shared privately"</span> <span class="key-phrase">"co-presenting"</span></p>
+    </div></div>
+  </div>
+
+  <!-- 1.3 Failure and Recovery -->
+  <div class="quiz-box" data-tracker="tracker1">
+    <h4>3. Failure and Recovery</h4>
+    <p><strong>"Tell me about a time you failed. What happened and what did you learn?"</strong></p>
+    <p class="eval">What they're evaluating: Self-awareness and growth mindset. Can you own a mistake without deflecting?</p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Model Answer</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p class="star-label">SITUATION</p>
+      <p>Leading the migration from Airflow 1.x to 2.x. 180+ DAGs, complex dependencies, tight four-week timeline driven by end-of-support deadline.</p>
+      <p class="star-label">TASK</p>
+      <p>Responsible for migration plan, testing strategy, and cutover coordination. I decided to skip building a parallel-run environment to save time.</p>
+      <p class="star-label">ACTION</p>
+      <p>First two batches (~60 DAGs) migrated cleanly. <span class="key-phrase">I got overconfident.</span> Third batch: a subtle XCom serialization change broke 14 DAGs in production on Monday morning. Finance's daily revenue reconciliation was delayed 6 hours. I immediately triaged, rolled back, and set up a shadow Airflow 2.x instance over two days.</p>
+      <p class="star-label">RESULT</p>
+      <p>Migration completed one week late. <span class="key-phrase">The real failure wasn't the bug</span> — it was my decision to skip the parallel environment. I wrote a post-mortem and proposed a new standard: any migration affecting 10+ DAGs requires parallel validation, no exceptions. That standard prevented issues on <strong>three subsequent migrations</strong>.</p>
+      <p style="margin-top:0.6rem;font-size:0.85rem"><strong>Key phrases:</strong> <span class="key-phrase">"I made the decision"</span> <span class="key-phrase">"I got overconfident"</span> <span class="key-phrase">"proposed a new standard"</span></p>
+    </div></div>
+  </div>
+
+  <!-- 1.4 Innovation -->
+  <div class="quiz-box" data-tracker="tracker1">
+    <h4>4. Innovation and Improvement</h4>
+    <p><strong>"Tell me about a time you identified and solved a problem that nobody asked you to work on."</strong></p>
+    <p class="eval">What they're evaluating: Proactive ownership. Do you see problems and act, or wait for tickets?</p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Model Answer</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p class="star-label">SITUATION</p>
+      <p>Team spending ~15 hours/week answering analyst Slack questions: "Why does this metric differ between dashboard X and report Y?" Root cause: different aggregation logic at different pipeline layers.</p>
+      <p class="star-label">TASK</p>
+      <p><span class="key-phrase">Nobody had asked me to fix this.</span> But it was a massive tax on productivity and was eroding analyst trust.</p>
+      <p class="star-label">ACTION</p>
+      <p>I spent two evenings prototyping a metrics definition layer using YAML configs that defined each metric's canonical calculation. Integrated with our dbt project. Built an internal docs page auto-generated from configs. Presented at the team's Friday demo and got buy-in for a two-week productionization sprint.</p>
+      <p class="star-label">RESULT</p>
+      <p>"Why don't these numbers match?" messages dropped by <strong>80%+</strong>. Analyst trust scores went from <strong>3.1 to 4.4/5</strong>. Pattern adopted by two other business units. Key factor in my promotion case.</p>
+      <p style="margin-top:0.6rem;font-size:0.85rem"><strong>Key phrases:</strong> <span class="key-phrase">"Nobody asked me"</span> <span class="key-phrase">"quantified the problem first"</span> <span class="key-phrase">"bias toward action"</span></p>
+    </div></div>
+  </div>
+
+  <!-- 1.5 Mentoring -->
+  <div class="quiz-box" data-tracker="tracker1">
+    <h4>5. Mentoring and Developing Others</h4>
+    <p><strong>"Tell me about a time you helped someone on your team grow their skills or advance their career."</strong></p>
+    <p class="eval">What they're evaluating: Teaching ability, patience, tailored coaching, measurable growth outcomes.</p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Model Answer</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p class="star-label">SITUATION</p>
+      <p>Priya, a mid-level engineer, was technically strong in Spark but consistently struggled during design reviews — couldn't articulate trade-offs. This was blocking her promotion.</p>
+      <p class="star-label">TASK</p>
+      <p>I volunteered to mentor her on technical communication and design thinking, targeting promotion-readiness within two quarters.</p>
+      <p class="star-label">ACTION</p>
+      <p>I had her observe two of my design reviews. Created a template: for every decision, write the option chosen, two alternatives rejected, and why. Before her next review, we did a dry run where I <span class="key-phrase">role-played as a skeptical stakeholder</span>. Gave specific feedback: not "be clearer" but "when you said X, try framing it as Y instead." Repeated this for three reviews over six weeks.</p>
+      <p class="star-label">RESULT</p>
+      <p>Priya handled pushback confidently by review #4. Rated "exceeds expectations" on design communication. <strong>Promoted to senior engineer</strong> the following quarter. She later used the same template to mentor a junior engineer — the best result of all.</p>
+      <p style="margin-top:0.6rem;font-size:0.85rem"><strong>Key phrases:</strong> <span class="key-phrase">"I volunteered"</span> <span class="key-phrase">"specific, actionable feedback"</span> <span class="key-phrase">"role-played"</span></p>
+    </div></div>
+  </div>
+
+  <!-- 1.6 Time Pressure -->
+  <div class="quiz-box" data-tracker="tracker1">
+    <h4>6. Working Under Time Pressure</h4>
+    <p><strong>"Tell me about a time you had to deliver a critical project under a very tight deadline."</strong></p>
+    <p class="eval">What they're evaluating: How do you prioritize when everything feels urgent? Do you cut corners recklessly or make intelligent trade-offs?</p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Model Answer</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p class="star-label">SITUATION</p>
+      <p>SOX compliance audit flagged our financial data pipeline: no lineage tracking, no access controls. 18 business days to implement column-level lineage and RBAC across Snowflake or face a finding delaying our IPO.</p>
+      <p class="star-label">TASK</p>
+      <p>Lead engineer for remediation. 340+ tables across 12 schemas, zero existing lineage metadata.</p>
+      <p class="star-label">ACTION</p>
+      <p>I triaged tables into three tiers: Tier 1 (45 financial tables), Tier 2 (120 upstream deps), Tier 3 (everything else). <span class="key-phrase">Negotiated scope</span>: Tiers 1-2 in 18 days, Tier 3 in a 30-day follow-up. Built automated lineage extraction via Snowflake's ACCESS_HISTORY and OBJECT_DEPENDENCIES (covered 70%). Handled the remaining 30% manually for complex financial models. Sent daily red/yellow/green dashboards to compliance lead and VP.</p>
+      <p class="star-label">RESULT</p>
+      <p>Delivered Tiers 1-2 on <strong>day 16 — two days early</strong>. Auditors closed the finding with no escalation. Lineage tooling became permanent — adopted by three other teams within the quarter.</p>
+      <p style="margin-top:0.6rem;font-size:0.85rem"><strong>Key phrases:</strong> <span class="key-phrase">"immediate triage"</span> <span class="key-phrase">"negotiated scope"</span> <span class="key-phrase">"built automation to multiply effort"</span></p>
+    </div></div>
+  </div>
+
+  <!-- 1.7 Navigating Ambiguity -->
+  <div class="quiz-box" data-tracker="tracker1">
+    <h4>7. Navigating Ambiguity</h4>
+    <p><strong>"Tell me about a time you had to make progress on a project with unclear or changing requirements."</strong></p>
+    <p class="eval">What they're evaluating: Can you create clarity through action? Senior engineers reduce ambiguity for their teams.</p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Model Answer</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p class="star-label">SITUATION</p>
+      <p>VP of Product sent a single Slack message: "We need a way to predict which enterprise customers are likely to churn. Can you build something by end of quarter?" No spec, no defined inputs, no agreement on what "customer health" meant.</p>
+      <p class="star-label">TASK</p>
+      <p>Turn a vague executive request into a working data product without waiting for perfect requirements.</p>
+      <p class="star-label">ACTION</p>
+      <p>Spent three days on discovery: interviewed Customer Success lead, VP of Sales, two account managers. <span class="key-phrase">Synthesized into a one-page problem statement</span> with a v1 scope: daily health score based on five signals. Presented it as a <span class="key-phrase">"v1 hypothesis"</span> — explicitly iterative. Built incrementally, delivering a working Looker dashboard with the first two signals <strong>within one week</strong> for early feedback.</p>
+      <p class="star-label">RESULT</p>
+      <p>V1 identified <strong>8 of 11 churned accounts</strong>, giving Customer Success a 45-day earlier warning signal. V2 followed the next month with three additional signals. Became a permanent data product.</p>
+      <p style="margin-top:0.6rem;font-size:0.85rem"><strong>Key phrases:</strong> <span class="key-phrase">"discovery interviews"</span> <span class="key-phrase">"v1 hypothesis"</span> <span class="key-phrase">"shipped something small, fast"</span></p>
+    </div></div>
+  </div>
+
+  <!-- 1.8 Cross-Team Collaboration -->
+  <div class="quiz-box" data-tracker="tracker1">
+    <h4>8. Cross-Team Collaboration</h4>
+    <p><strong>"Tell me about a time you worked across multiple teams to deliver a complex project. What was your role?"</strong></p>
+    <p class="eval">What they're evaluating: Can you navigate organizational complexity? Build bridges between teams?</p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Model Answer</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p class="star-label">SITUATION</p>
+      <p>Company migrating from monolithic MySQL to event-driven microservices. Our data platform was downstream of everything — every schema change impacted our pipelines, models, and 40+ business dashboards.</p>
+      <p class="star-label">TASK</p>
+      <p>Ensure data platform remained functional throughout — zero dashboard breakage, zero data loss, zero SLA misses — while five backend teams simultaneously refactored.</p>
+      <p class="star-label">ACTION</p>
+      <p>Established a weekly <span class="key-phrase">"Data Contract Sync"</span> with tech leads from all five teams. Created a shared Notion tracker mapping every event schema to downstream impacts. When the payments team proposed a breaking schema change, I <span class="key-phrase">designed a compatibility layer</span> handling both formats simultaneously. Set up automated schema compatibility checks in CI.</p>
+      <p class="star-label">RESULT</p>
+      <p>Over six months: <strong>200+ schema changes, zero pipeline outages, zero dashboard breakages.</strong> The sync meeting became permanent. CI checks caught <strong>34 breaking changes</strong> pre-merge. Backend engineering director called our coordination "the reason the migration stayed on track."</p>
+      <p style="margin-top:0.6rem;font-size:0.85rem"><strong>Key phrases:</strong> <span class="key-phrase">"established a weekly sync"</span> <span class="key-phrase">"blast radius mapping"</span> <span class="key-phrase">"automated compatibility checks"</span></p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 2: Leadership Scenarios ==================== -->
+<section class="screen screen-alt" id="s2">
+  <div class="screen-inner">
+  <h2>🎯 Leadership <span class="accent">Scenarios</span></h2>
+  <p>Situational "What <em>would</em> you do?" questions test your judgment, instincts, and leadership philosophy.</p>
+  <div class="gauntlet-tracker" id="tracker2">🎯 Revealed: <span class="count" id="count2">0</span>/6</div>
+
+  <!-- 2.1 -->
+  <div class="quiz-box" data-tracker="tracker2">
+    <h4>🔧 Kafka vs Kinesis Team Deadlock</h4>
+    <p><strong>"Your team disagrees on Kafka vs Kinesis for a new streaming pipeline. The debate has gone on for a week. How do you drive a decision?"</strong></p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Strong Answer</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p>First, make sure we're arguing about the right thing — a lot of technology debates are really requirement disagreements. Write down non-negotiable requirements and align.</p>
+      <p>Then structure the comparison: decision matrix across performance, operational complexity, cost, team expertise, ecosystem integration. Assign two people — one from each "camp" — to build a <strong>time-boxed POC</strong> (3 days max).</p>
+      <p>If data clearly favors one option, go with it. If it's close, <span class="key-phrase">make the call based on optionality</span> and document it in an ADR. The worst outcome isn't picking the "wrong" tool — it's spending another week debating.</p>
+      <p><em>"I believe in making reversible decisions quickly and irreversible decisions carefully."</em></p>
+      <div class="red-flags">
+        <p>❌ "I'd just pick one and tell the team" — authoritarian, no buy-in</p>
+        <p>❌ "I'd let them debate until consensus" — consensus can take forever</p>
+        <p>❌ "I'd escalate to my manager" — you should resolve this at your level</p>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- 2.2 -->
+  <div class="quiz-box" data-tracker="tracker2">
+    <h4>👤 The Neglected Junior's PR</h4>
+    <p><strong>"A junior engineer's PR has sat for 3 days. No reviews. They seem disengaged in standup. What do you do?"</strong></p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Strong Answer</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p><strong>Immediately:</strong> Review the PR yourself today. Even if it's not your area, you can check clarity, testing, documentation, and design. If you need domain expertise, tag the right person directly.</p>
+      <p><strong>Then:</strong> Casual check-in with the junior — not a formal meeting. <span class="key-phrase">"Hey, I noticed your PR sitting. I'm taking a look now. Sorry about the delay."</span> Unreviewed PRs tell a junior their work doesn't matter.</p>
+      <p><strong>Systemic fix:</strong> Raise at retro: "We're averaging X days for reviews. Can we set a <strong>24-hour SLA</strong>?" Propose a PR review rotation or daily triage.</p>
+      <div class="red-flags">
+        <p>❌ "That's the tech lead's job" — senior engineers own team health</p>
+        <p>❌ "Tell the junior to be patient" — the system is the problem</p>
+        <p>❌ Addressing only the PR without fixing the pattern</p>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- 2.3 -->
+  <div class="quiz-box" data-tracker="tracker2">
+    <h4>⚠️ Manager Says Cut Testing</h4>
+    <p><strong>"Your manager asks you to skip tests to meet a tight deadline. How do you respond?"</strong></p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Strong Answer</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p>First, understand the constraint — is the deadline contractual, competitive, or has flexibility?</p>
+      <p>If immovable, propose a <span class="key-phrase">middle path</span>: "Let me write the critical-path tests — happy path + failure modes that'd cause production incidents. That's ~60% of the suite, adds a day instead of three. We ship on time, backfill remaining tests next sprint."</p>
+      <p>If flexible: "Shipping without tests saves two days now but costs two weeks of debugging later. Can we negotiate the deadline by two days?"</p>
+      <p><em>What I wouldn't do is quietly skip tests and hope nothing breaks.</em></p>
+      <div class="red-flags">
+        <p>❌ "I'd never skip tests, period" — inflexible; no business pragmatism</p>
+        <p>❌ "Sure, we can skip tests" — no engineering principles</p>
+        <p>❌ Framing it as an adversarial standoff</p>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- 2.4 -->
+  <div class="quiz-box" data-tracker="tracker2">
+    <h4>⚖️ Conflicting Stakeholder Priorities</h4>
+    <p><strong>"Marketing needs campaign data in 2 weeks. Finance needs revenue reconciliation in 3 weeks. Your team can only do one at a time. How do you handle it?"</strong></p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Strong Answer</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p>Don't make a unilateral call. <span class="key-phrase">Make the trade-off visible</span> and let leadership make an informed decision.</p>
+      <p>Meet each stakeholder separately: What's the impact of a 2-week delay? Any workaround? Hard external deadlines?</p>
+      <p>Create a one-pager: two requests, estimated effort, impact of A-then-B vs B-then-A, and your recommendation based on: harder external deadline, larger blast radius, and whether you can partially deliver one while completing the other.</p>
+      <p>Present to your manager for the prioritization conversation. <em>Cross-functional prioritization should be made at the right organizational level.</em></p>
+      <div class="red-flags">
+        <p>❌ "I'd just do both" — ignores the constraint</p>
+        <p>❌ "Pick the more senior stakeholder" — rank ≠ priority</p>
+        <p>❌ Not communicating to the deprioritized stakeholder</p>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- 2.5 -->
+  <div class="quiz-box" data-tracker="tracker2">
+    <h4>📦 Zero-Documentation Codebase</h4>
+    <p><strong>"You inherit a critical pipeline with zero documentation. The previous owner left. What's your first week?"</strong></p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Strong Answer</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p><strong>Days 1–2: Triage and observe.</strong> Read code end-to-end. Check: schedule, monitoring, alerting, last 30 days of run history. Identify downstream consumers — what breaks if this pipeline breaks?</p>
+      <p><strong>Days 3–4: Talk to humans.</strong> Meet analysts and stakeholders who use the output. Ask: "What does this power? What if it broke for 24 hours?" Check Slack history and tickets.</p>
+      <p><strong>Day 5: Safety nets + document.</strong> Write lightweight architecture doc. Add basic monitoring: <span class="key-phrase">job completion alerts, row count anomaly detection, freshness checks</span>. Identify top 3 risks.</p>
+      <p><em>Meta-principle: I'm not trying to master the codebase in a week. I'm trying to confidently triage a 2 AM alert without making things worse.</em></p>
+      <div class="red-flags">
+        <p>❌ "I'd rewrite the whole thing" — premature; you don't understand it yet</p>
+        <p>❌ Not talking to anyone — code doesn't tell you business context</p>
+        <p>❌ No urgency around monitoring</p>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- 2.6 -->
+  <div class="quiz-box" data-tracker="tracker2">
+    <h4>🚪 Departing Engineer's Critical Pipeline</h4>
+    <p><strong>"A critical real-time pipeline (payment events → fraud detection) is owned by an engineer who just gave two-week notice. How do you handle the transition?"</strong></p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Strong Answer</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p><strong>Day 1:</strong> Align with engineer + manager. Focus remaining time on knowledge transfer, not feature work. Identify primary + secondary owners.</p>
+      <p><strong>Days 1–5:</strong> Two-hour daily pairing sessions. <span class="key-phrase">Screen-record everything.</span> Cover: architecture, deployment, failure modes, monitoring, tribal knowledge ("this fails on month-end volume spikes"). Recorded runbook walkthrough: "Show me what you do for a 2 AM page."</p>
+      <p><strong>Days 5–10:</strong> New owner does supervised on-call while departing engineer is still the safety net. Audit for single points of failure.</p>
+      <p><strong>Long-term:</strong> Raise bus-factor issue in retro. Propose minimum-two-owner policy for Tier 1 pipelines with quarterly knowledge-sharing rotations.</p>
+      <div class="red-flags">
+        <p>❌ "Ask them to write docs" — departing employees' docs are often incomplete</p>
+        <p>❌ No urgency — treating this like a normal sprint task</p>
+        <p>❌ Not addressing systemic bus-factor issue</p>
+      </div>
+    </div></div>
+  </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 3: Communication Challenges ==================== -->
+<section class="screen" id="s3">
+  <h2>💬 Communication <span class="accent">Challenges</span></h2>
+  <p>Senior engineers don't just build systems — they <strong>explain</strong> systems. Practice saying these out loud. The best answers are simple, analogy-rich, and empathetic to the audience.</p>
+  <div class="gauntlet-tracker" id="tracker3">💬 Revealed: <span class="count" id="count3">0</span>/6</div>
+
+  <!-- 3.1 -->
+  <div class="quiz-box" data-tracker="tracker3">
+    <h4>🏢 VP Asks: "Why 6 Months for a Migration?"</h4>
+    <p><strong>A VP asks in a hallway conversation: "Why is migrating to the new data warehouse going to take six months? Can't we just copy the data over?"</strong></p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Model Response</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p>"Great question — I wish it were that simple. The data itself is the easy part. What takes six months is everything <em>around</em> the data.</p>
+      <p><span class="key-phrase">Think of it like moving offices.</span> Packing boxes is fast. But you also have to redirect the mail, update your address everywhere, set up the phones, and train everyone on the new layout.</p>
+      <p>Specifically: <strong>(1)</strong> 200+ reports/dashboards need re-pointing and validation — we can't have the board seeing wrong numbers. <strong>(2)</strong> 15 upstream pipelines need reconfiguration and parallel testing. <strong>(3)</strong> Both systems must run simultaneously for at least a month to verify identical results.</p>
+      <p>I'm confident in the timeline, and I can share the phase-by-phase plan if helpful."</p>
+    </div></div>
+  </div>
+
+  <!-- 3.2 -->
+  <div class="quiz-box" data-tracker="tracker3">
+    <h4>📊 Explaining Partitioning to a PM</h4>
+    <p><strong>"The engineers keep talking about 'partitioning' the data. What does that actually mean, and why should I care?"</strong></p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Model Response</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p>"Partitioning is how we organize data so it's faster and cheaper to access.</p>
+      <p><span class="key-phrase">Imagine a library.</span> If every book were on one giant shelf in no order, finding a book takes forever. But organize by genre, then author — you go straight to the right section.</p>
+      <p>For your team: <strong>(1)</strong> Dashboards load faster — database scans the relevant 'section,' not the whole library. <strong>(2)</strong> Costs less — cloud charges per data scanned, so partitioning by date means 'last week's sales' scans only last week, not five years.</p>
+      <p>The trade-off: we need to choose the right strategy upfront — changing it later is expensive. That's why we're discussing it now — we want to match how your team actually queries the data."</p>
+    </div></div>
+  </div>
+
+  <!-- 3.3 -->
+  <div class="quiz-box" data-tracker="tracker3">
+    <h4>💰 Dashboard Numbers Don't Match</h4>
+    <p><strong>Head of Sales storms in: "Dashboard says $4.2M last month but source system shows $4.5M. Which is right?"</strong></p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Model Response</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p>"Both are 'right' — they're measuring slightly different things.</p>
+      <p>The source shows $4.5M including backdated deals and pending-legal contracts. Our dashboard excludes those. <span class="key-phrase">The $300K gap: ~$180K backdated + ~$120K pending-legal.</span></p>
+      <p><strong>Recommendation:</strong> Align on a single definition of 'closed revenue.' I'll schedule a 30-min meeting with you and your ops lead, then update the pipeline so both systems match. I'll also add an automated reconciliation check that flags drift &gt;1%.</p>
+      <p>Can I schedule that meeting for this week?"</p>
+    </div></div>
+  </div>
+
+  <!-- 3.4 -->
+  <div class="quiz-box" data-tracker="tracker3">
+    <h4>🛠️ Pitching Data Quality Tooling (5-min business case)</h4>
+    <p><strong>Present to a Director and VP: Make the case for investing one quarter of engineering time into data quality tooling.</strong></p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Model Response</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p>"Last quarter: <strong>142 engineering hours</strong> — 3.5 engineer-weeks — spent investigating data quality issues. That's not building features.</p>
+      <p><strong>Three real examples:</strong> March — schema change silently dropped a column, revenue dashboard underreported <span class="key-phrase">$1.2M for four days</span>. February — duplicates inflated user count by 8%, went into a board deck. January — null-handling bug caused marketing to misallocate $200K in ad spend.</p>
+      <p><strong>Proposal:</strong> Two engineers, one quarter. Three deliverables: automated schema validation, anomaly detection (1-hour alert vs. 4-day discovery), and a data contract framework.</p>
+      <p><strong>ROI:</strong> 70% reduction in data quality incidents. 3.5 engineer-weeks reclaimed per quarter. Pays for itself in two quarters.</p>
+      <p><em>I'd rather invest proactively than keep explaining to the board why our numbers were wrong.</em>"</p>
+    </div></div>
+  </div>
+
+  <!-- 3.5 -->
+  <div class="quiz-box" data-tracker="tracker3">
+    <h4>🐌 Why Is My Query Slow?</h4>
+    <p><strong>An analyst messages: "My orders table query has been running for 45 minutes. It used to take 2 minutes. Help?"</strong></p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Model Response</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <p>"Hey! Yeah, 45 minutes is not right. Quick question — are you filtering by date range? The orders table just crossed <strong>2 billion rows</strong> after the APAC onboarding. Without a date filter, it scans everything.</p>
+      <p>Try adding <code>WHERE order_date >= '2026-01-01'</code> and let me know. Should bring it back to a few minutes.</p>
+      <p>Still slow after that? Send me the query — might need a table statistics update. Sometimes the optimizer makes bad decisions after big volume changes.</p>
+      <p><span class="key-phrase">Either way, I'll get you unblocked.</span> Ping me if the filter doesn't fix it."</p>
+    </div></div>
+  </div>
+
+  <!-- 3.6 -->
+  <div class="quiz-box" data-tracker="tracker3">
+    <h4>📢 Pipeline Delay — Slack Status Update</h4>
+    <p><strong>Critical daily pipeline delayed 4 hours due to upstream provider outage. Write a 3-sentence Slack message to stakeholders.</strong></p>
+    <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Model Response</button>
+    <div class="reveal-content"><div class="reveal-inner">
+      <div class="code-block">🟡 <strong>Data Update — Executive Dashboard Delayed</strong>
+
+The daily executive dashboard refresh is delayed approximately 4 hours
+(expected by 1 PM CT instead of 9 AM) due to an outage at our upstream
+data provider that began at 6:15 AM. Yesterday's data on the dashboard
+is still accurate and available — only today's refresh is affected.
+I'm monitoring the provider's status and will send an update by 11 AM
+or when the pipeline completes, whichever comes first.</div>
+      <p style="margin-top:0.8rem"><strong>Why it works:</strong> Visual indicator (🟡), three critical pieces (what/impact/when), proactively answers "is old data safe?", commits to follow-up, no jargon, concise.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 4: Company-Specific Prep ==================== -->
+<section class="screen screen-alt" id="s4">
+  <div class="screen-inner">
+  <h2>🏢 Company-Specific <span class="accent">Prep</span></h2>
+  <p>Same story, different angle. Different companies evaluate different things.</p>
+
+  <!-- Amazon -->
+  <div class="company-section">
+    <h4>🟠 Amazon — Leadership Principles</h4>
+    <div class="card-grid">
+      <div class="quiz-box" style="border-top:4px solid var(--color-error)">
+        <h4>Customer Obsession</h4>
+        <p><strong>"Tell me about a time you went above and beyond for an internal/external customer."</strong></p>
+        <p class="eval">Maps to: Customer Obsession — Start with the customer, work backwards.</p>
+        <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Outline</button>
+        <div class="reveal-content"><div class="reveal-inner">
+          <p>Situation: Analytics team manually reconciling data daily because your pipeline didn't surface metrics they needed on time.</p>
+          <p>Action: <span class="key-phrase">Proactively met with them</span>, redesigned pipeline schedule, added specific breakdowns — without being asked.</p>
+          <p>Key emphasis: Identified customer pain <em>before they escalated</em>. Worked backwards from their need.</p>
+          <p>Result: Quantify time savings for the analytics team, not just technical metrics.</p>
+        </div></div>
+      </div>
+      <div class="quiz-box" style="border-top:4px solid var(--color-error)">
+        <h4>Ownership</h4>
+        <p><strong>"Tell me about a time you took on something that wasn't part of your job description."</strong></p>
+        <p class="eval">Maps to: Ownership — Leaders never say "that's not my job."</p>
+        <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Outline</button>
+        <div class="reveal-content"><div class="reveal-inner">
+          <p>Situation: Cross-team dependency gap causing repeated production incidents — nobody owned the integration layer.</p>
+          <p>Action: Stepped in, documented integration points, set up monitoring, proposed long-term ownership model.</p>
+          <p>Key emphasis: <span class="key-phrase">Saw a gap and filled it</span>. Thought long-term, not just immediate fix.</p>
+        </div></div>
+      </div>
+      <div class="quiz-box" style="border-top:4px solid var(--color-error)">
+        <h4>Dive Deep</h4>
+        <p><strong>"Tell me about a time you deeply investigated a problem to find root cause."</strong></p>
+        <p class="eval">Maps to: Dive Deep — Skeptical when metrics and anecdotes differ.</p>
+        <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Outline</button>
+        <div class="reveal-content"><div class="reveal-inner">
+          <p>Situation: Dashboard showed 15% DAU increase but support tickets were up and feedback was negative.</p>
+          <p>Action: Investigated tracking implementation, found mobile SDK bug double-counting sessions, built deduplication query, presented corrected numbers.</p>
+          <p>Key emphasis: <span class="key-phrase">Skeptical of good-looking data</span>. Went to raw data level.</p>
+        </div></div>
+      </div>
+      <div class="quiz-box" style="border-top:4px solid var(--color-error)">
+        <h4>Bias for Action</h4>
+        <p><strong>"Tell me about a time you made a decision with incomplete information."</strong></p>
+        <p class="eval">Maps to: Bias for Action — Speed matters. Many decisions are reversible.</p>
+        <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Outline</button>
+        <div class="reveal-content"><div class="reveal-inner">
+          <p>Situation: 10 business days to implement PII masking across data warehouse — no time for full design review.</p>
+          <p>Action: Phased approach — highest-risk tables in 3 days, communicated plan to compliance, iterated on rest.</p>
+          <p>Key emphasis: <span class="key-phrase">Calculated risk, moved fast on a reversible decision</span>, didn't let perfect be the enemy of good.</p>
+        </div></div>
+      </div>
+      <div class="quiz-box" style="border-top:4px solid var(--color-error)">
+        <h4>Earn Trust</h4>
+        <p><strong>"Tell me about a time you delivered difficult feedback."</strong></p>
+        <p class="eval">Maps to: Earn Trust — Candid, respectful, vocally self-critical.</p>
+        <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Outline</button>
+        <div class="reveal-content"><div class="reveal-inner">
+          <p>Situation: Peer engineer's code quality declining — rushed PRs, missing tests, copy-pasted logic.</p>
+          <p>Action: Private, empathetic conversation: <span class="key-phrase">"I've noticed these PRs aren't at your usual standard — is everything okay?"</span> Led with concern, not blame.</p>
+          <p>Result: Engineer was overwhelmed; helped them push back on scope. Quality recovered, relationship strengthened.</p>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google -->
+  <div class="company-section">
+    <h4>🔵 Google — Googleyness + Technical Leadership</h4>
+    <div class="card-grid">
+      <div class="quiz-box" style="border-top:4px solid var(--color-info)">
+        <h4>Navigating Ambiguity</h4>
+        <p><strong>"Tell me about a time you started a project with very unclear requirements."</strong></p>
+        <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Outline</button>
+        <div class="reveal-content"><div class="reveal-inner">
+          <p>Lead with process: discovery interviews, problem statement synthesis, iterative delivery. Show you <span class="key-phrase">created structure from chaos</span>. "Shipped v1 in two weeks for feedback, then iterated." Google values iteration speed + intellectual rigor.</p>
+        </div></div>
+      </div>
+      <div class="quiz-box" style="border-top:4px solid var(--color-info)">
+        <h4>Collaboration Across Teams</h4>
+        <p><strong>"Describe working with a team that had different priorities than yours."</strong></p>
+        <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Outline</button>
+        <div class="reveal-content"><div class="reveal-inner">
+          <p>Show empathy for the other team's constraints. Describe finding <span class="key-phrase">mutual benefit</span> — not how you "won." Emphasize shared docs, aligned metrics, joint planning. Google values consensus-building and treating other teams as partners.</p>
+        </div></div>
+      </div>
+      <div class="quiz-box" style="border-top:4px solid var(--color-info)">
+        <h4>Technical Vision</h4>
+        <p><strong>"Tell me about a technical vision you set for your team. How did you get buy-in?"</strong></p>
+        <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Outline</button>
+        <div class="reveal-content"><div class="reveal-inner">
+          <p>Describe a forward-looking direction (lakehouse, streaming). Show how you <span class="key-phrase">built the case: data, prototypes, industry research</span>. Socialized the vision with stakeholders before committing. Result: team aligned, early wins validated the vision.</p>
+        </div></div>
+      </div>
+      <div class="quiz-box" style="border-top:4px solid var(--color-info)">
+        <h4>Raising the Bar</h4>
+        <p><strong>"How have you raised the engineering bar on your team?"</strong></p>
+        <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Outline</button>
+        <div class="reveal-content"><div class="reveal-inner">
+          <p>Specific initiatives: code review standards, design doc templates, architecture reviews, post-mortem culture. Show <span class="key-phrase">measurable improvement</span>: PR quality, incident frequency, onboarding time. You didn't just create processes — you modeled the behavior. Google looks for <em>multiplier</em> engineers.</p>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Meta -->
+  <div class="company-section">
+    <h4>🟣 Meta — Impact at Scale + Move Fast</h4>
+    <div class="card-grid">
+      <div class="quiz-box" style="border-top:4px solid #7B5EA7">
+        <h4>Impact</h4>
+        <p><strong>"What's the most impactful project you've worked on? How do you measure impact?"</strong></p>
+        <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Outline</button>
+        <div class="reveal-content"><div class="reveal-inner">
+          <p>Choose highest-scale, highest-business-impact project. <span class="key-phrase">Lead with business metric, not technical solution</span>: "Saved $2M/year" not "refactored the Spark pipeline." Show your impact measurement framework.</p>
+        </div></div>
+      </div>
+      <div class="quiz-box" style="border-top:4px solid #7B5EA7">
+        <h4>Moving Fast</h4>
+        <p><strong>"Tell me about shipping quickly. What trade-offs did you make?"</strong></p>
+        <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Outline</button>
+        <div class="reveal-content"><div class="reveal-inner">
+          <p>Show intelligent trade-offs, not recklessness: "Shipped without full test coverage but added monitoring." Emphasize rapid iteration, MVPs, feedback loops. <span class="key-phrase">Know when 80% is good enough.</span></p>
+        </div></div>
+      </div>
+      <div class="quiz-box" style="border-top:4px solid #7B5EA7">
+        <h4>Scale</h4>
+        <p><strong>"Tell me about a system you built that operates at significant scale."</strong></p>
+        <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Outline</button>
+        <div class="reveal-content"><div class="reveal-inner">
+          <p>Emphasize numbers: events/sec, data volume, user base. Design choices <em>driven by</em> scale requirements. Discuss monitoring, graceful degradation, capacity planning. <span class="key-phrase">Think about 10x the current load.</span></p>
+        </div></div>
+      </div>
+      <div class="quiz-box" style="border-top:4px solid #7B5EA7">
+        <h4>Open Collaboration</h4>
+        <p><strong>"Tell me about feedback that significantly changed an outcome."</strong></p>
+        <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Outline</button>
+        <div class="reveal-content"><div class="reveal-inner">
+          <p>Best if you show <em>receiving</em> tough feedback gracefully. Describe specific feedback, how you processed it (maybe uncomfortably), what you changed. <span class="key-phrase">Show vulnerability and growth.</span></p>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Startup -->
+  <div class="company-section">
+    <h4>🟢 Startup — Wearing Many Hats</h4>
+    <div class="card-grid">
+      <div class="quiz-box" style="border-top:4px solid var(--color-success)">
+        <h4>Wearing Many Hats</h4>
+        <p><strong>"Tell me about working way outside your core expertise to get something done."</strong></p>
+        <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Outline</button>
+        <div class="reveal-content"><div class="reveal-inner">
+          <p>Show you didn't wait for the "right" person: data engineer who set up CI/CD, wrote frontends, handled vendor negotiations. Emphasize <span class="key-phrase">learning speed, scrappiness, willingness to be uncomfortable</span>.</p>
+        </div></div>
+      </div>
+      <div class="quiz-box" style="border-top:4px solid var(--color-success)">
+        <h4>Resourcefulness</h4>
+        <p><strong>"Tell me about delivering significant results with very limited resources."</strong></p>
+        <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Outline</button>
+        <div class="reveal-content"><div class="reveal-inner">
+          <p>Time, budget, or headcount constraints. Creative solutions: open-source tools, automation, intelligent scope reduction. Emphasize ROI: <span class="key-phrase">"Built with 20% of typical budget."</span></p>
+        </div></div>
+      </div>
+      <div class="quiz-box" style="border-top:4px solid var(--color-success)">
+        <h4>Speed and Pragmatism</h4>
+        <p><strong>"What's the fastest you've gone from idea to production?"</strong></p>
+        <button class="reveal-btn" onclick="toggleReveal(this)">👁️ Reveal Outline</button>
+        <div class="reveal-content"><div class="reveal-inner">
+          <p>Concrete example — ideally days, not months. Show what you <em>didn't</em> build (intentional scope cuts). <span class="key-phrase">"Reversible decision with low blast radius, so I optimized for speed."</span></p>
+        </div></div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 5: Rapid Fire ==================== -->
+<section class="screen" id="s5">
+  <h2>⚡ Rapid <span class="accent">Fire</span></h2>
+  <p>Twenty questions. Two to three sentences each. <strong>Under 20 seconds per answer.</strong> Practice until they're automatic.</p>
+  <div class="gauntlet-tracker" id="tracker5">⚡ Revealed: <span class="count" id="count5">0</span>/20</div>
+
+  <div class="rapid-grid">
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q1: "What's your working style?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>I'm a deep-work optimizer. Block mornings for focused engineering, afternoons for collaboration. Over-communicate asynchronously through docs and written updates.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q2: "How do you handle a missed deadline?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>Communicate early — the moment I know, not the day it's due. Come with a revised timeline, root cause, and prevention plan. Surprises erode trust; transparency builds it.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q3: "What's your approach to code reviews?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>Review for clarity, correctness, maintainability — in that order. Give specific, actionable feedback with suggested alternatives. Treat reviews as teaching opportunities, not gatekeeping.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q4: "How do you stay current with technology?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>High-signal engineering blogs, newsletters, conference talks. But the best learning comes from building — small prototypes and POCs when evaluating tech for real use.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q5: "Describe your ideal team culture."</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>High trust, low ego. People write things down, give direct feedback kindly, celebrate wins, and treat incidents as learning — not blame. Psychological safety is foundational.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q6: "How do you prioritize when everything is urgent?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>Force-rank by business impact and reversibility. What's the cost of delay? Be explicit with stakeholders: "I can do A or B this week. Here's my rec and why."</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q7: "What's a technical hill you'd die on?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>Data pipelines must have automated testing and monitoring before they're production-ready. The fastest way to go slow is to ship untested pipelines.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q8: "How do you onboard to a new codebase?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>Start with outputs, work backwards: what does it produce, who consumes it, what breaks? Trace data flow source to sink. Pair with someone who knows the tricky parts.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q9: "What do you do when you disagree with your manager?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>Share my perspective with data and reasoning, privately. Make my case, listen to theirs, and if they still disagree, commit and execute wholeheartedly. Disagree and commit.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q10: "How do you handle underperformance?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>Start with curiosity, not judgment. Private conversation: "I've noticed X — is something going on?" Set clear expectations with a timeline, offer support, follow up. Kindness and accountability aren't opposites.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q11: "What's your biggest weakness?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>I tend to over-engineer initial designs. I've learned to ask: "What's the simplest thing that works for 6 months?" and build that first.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q12: "How do you build relationships with non-technical stakeholders?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>Learn their language, attend their meetings occasionally, never make them feel dumb. Create dashboards in their terms. Trust comes from consistently delivering and translating complexity into clarity.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q13: "What's a project you're most proud of?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p><em>[Insert your own]</em> — Best answer has: technical challenge, leadership component, measurable business impact, and a reflection on what you learned. Be specific, not generic.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q14: "How do you approach documentation?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>Three audiences: future me (runbooks, decision logs), teammates (arch docs, onboarding guides), stakeholders (data dictionaries, SLAs). Maintain as part of the work, not an afterthought. Undocumented systems are unfinished.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q15: "What makes a senior engineer 'senior'?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>Scope and judgment. Solving problems beyond your immediate code. Considering team velocity, system maintainability, business context. Multiplying the team's effectiveness, not just your own.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q16: "How do you handle production incidents?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>Mitigate first, investigate second, blame never. Stabilize, communicate impact, then proper root cause analysis. Every incident gets a post-mortem focused on systemic improvements.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q17: "Tell me about a time you said no."</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>I said no by saying "yes, but." Stakeholder wanted real-time in a week. Proposed near-real-time (15-min refresh) deliverable on time. They agreed — they needed "faster than daily," not actual real-time.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q18: "How do you evaluate build vs buy?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>Three questions: Does a solution cover 80%+ of requirements? Can we afford ongoing custom maintenance? Is it core to our business or operational overhead? If not a core differentiator, lean toward buying.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q19: "What questions do you ask joining a new team?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p>What breaks most often? Biggest pain point? Where do you want to be in 6 months? What's on-call like? These tell me where I can have the most impact fastest.</p></div></div></div>
+
+    <div class="rapid-card" data-tracker="tracker5"><strong>Q20: "Why are you looking for a new role?"</strong><button class="reveal-btn" onclick="toggleReveal(this)" style="margin-left:0.5rem">👁️</button><div class="reveal-content"><div class="reveal-inner"><p><em>[Insert your own]</em> — Strong answers: seeking greater scope, specific problem domain, stronger mentorship/peers, next level of impact. Focus on what you're running <em>toward</em>, not from. Never badmouth current company.</p></div></div></div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 6: Key Takeaways & Checklist ==================== -->
+<section class="screen screen-alt" id="s6">
+  <div class="screen-inner">
+  <h2>🏁 Key Takeaways &amp; <span class="accent">Prep Checklist</span></h2>
+
+  <h3>10 Key Takeaways from the Entire Course</h3>
+  <ol style="max-width:700px">
+    <li><strong>Structure beats brilliance.</strong> A well-structured STAR answer with a modest story outperforms a brilliant story told poorly every single time.</li>
+    <li><strong>"I" not "we."</strong> Use "I" for decisions, analysis, and leadership actions. Use "we" sparingly for team execution.</li>
+    <li><strong>Quantify everything.</strong> "Made it faster" is forgettable. "Reduced runtime from 4 hours to 45 minutes — 81% improvement" is undeniable. Every story needs at least two concrete metrics.</li>
+    <li><strong>Own your failures.</strong> The failure question is a gift — your chance to show self-awareness and growth mindset. Pick a real failure. Own it completely.</li>
+    <li><strong>Two minutes, not five.</strong> 90–120 seconds. Practice with a timer. If they want more, they'll ask.</li>
+    <li><strong>Know the company's values.</strong> Amazon → LPs. Google → Googleyness. Meta → impact at scale. Startups → scrappiness. Same story, different angle.</li>
+    <li><strong>Technical leadership &gt; technical execution.</strong> At senior level, interviewers care less about what you coded and more about what you decided, who you influenced, and what trade-offs you evaluated.</li>
+    <li><strong>Translate for your audience.</strong> Explain a complex concept to a VP in 30 seconds and to a junior engineer in 5 minutes. Communication is a force multiplier.</li>
+    <li><strong>Prepare questions for the interviewer.</strong> Thoughtful questions demonstrate genuine interest and senior-level thinking. Never ask things you could have Googled.</li>
+    <li><strong>Reps, reps, reps.</strong> Reading is not preparation. Saying your answers out loud is preparation. Record yourself. Do mock interviews.</li>
+  </ol>
+
+  <h3>Pre-Interview Checklist</h3>
+  <p>Check every box before you walk into an interview. <span class="checklist-progress" id="checkProgress">0/27 complete</span></p>
+
+  <h4 style="font-family:var(--font-heading);margin-top:1rem">📝 Story Preparation</h4>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>8–10 STAR stories written out in full (200–300 words each)</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Every story has at least 2 quantified metrics in the Result</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Stories cover: leadership, conflict, failure, innovation, mentoring, time pressure, ambiguity, cross-team</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Each story mapped to 2–3 question types (Story Selection Matrix)</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Stories from the last 2–3 years (at most one exception)</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Every story uses "I" for actions, "we" only for team execution</label></div>
+
+  <h4 style="font-family:var(--font-heading);margin-top:1rem">🎙️ Practice &amp; Polish</h4>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Each story practiced out loud at least 5 times</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Every story under 2 minutes when spoken (timed)</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Recorded yourself and listened back at least once</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Completed at least one full mock interview with a partner</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Practiced handling follow-ups ("What would you do differently?")</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Genuine, thoughtful reflection/learning for each story</label></div>
+
+  <h4 style="font-family:var(--font-heading);margin-top:1rem">🏢 Company Research</h4>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Company values / leadership principles researched and understood</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Stories re-angled to match company-specific values</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Company's tech stack and data infrastructure researched (engineering blog)</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Team/role understood (job posting, LinkedIn, org chart)</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>5–7 thoughtful questions prepared for the interviewer</label></div>
+
+  <h4 style="font-family:var(--font-heading);margin-top:1rem">📄 Technical Artifacts</h4>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>1–2 RFC or design documents ready to discuss (anonymized)</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>At least one ADR or technology evaluation walkthrough</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>1–2 incident response stories with timeline, root cause, metrics</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Examples of mentoring or code review feedback ready</label></div>
+
+  <h4 style="font-family:var(--font-heading);margin-top:1rem">📅 Day-Of Logistics</h4>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Interview schedule confirmed — names and roles of each interviewer</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Setup tested: camera, microphone, screen sharing, stable internet</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Quiet environment secured</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>Water and notes within reach</label></div>
+  <div class="check-item"><input type="checkbox" onchange="updateChecklist()"><label>2-minute self-introduction practiced</label></div>
+
+  <div class="aha fire" style="margin-top:2rem">
+    <div class="aha-title">🔥 YOU'RE READY. GO CRUSH IT.</div>
+    <p>You've put in the work. Five modules. Hundreds of practice prompts. You've written your stories, structured your answers, practiced your delivery, and sharpened your edge. That's more preparation than 90% of candidates will ever do.</p>
+    <p style="margin-top:0.8rem"><strong>The goal isn't to be perfect. The goal is to be clear, authentic, and prepared.</strong> Interviewers aren't looking for flawless humans — they're looking for thoughtful engineers who can communicate their impact, own their mistakes, and lead with both confidence and humility.</p>
+    <p style="margin-top:0.8rem">You've got the stories. You've got the structure. You've got the reps. <strong>Now go show them what you've built — not just the systems, but yourself.</strong> 🔥</p>
+  </div>
+
+  <p style="text-align:center;margin-top:1.5rem"><a href="../index.html" style="color:var(--color-accent);font-family:var(--font-heading);font-weight:700;font-size:1.1rem;text-decoration:none">← Back to Course Home</a></p>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-04-incident-management/index.html">← Incident Management &amp; Common Questions</a>
+  <a href="../index.html">🎤 Course Home →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Persist checklist state
+  const STORAGE_KEY='gauntlet-checklist';
+  const checkboxes=document.querySelectorAll('.check-item input[type=checkbox]');
+  const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
+  checkboxes.forEach((cb,i)=>{if(saved[i]){cb.checked=true;cb.parentElement.classList.add('checked');}});
+  window.updateChecklist=function(){
+    const states=[];let count=0;
+    checkboxes.forEach(cb=>{states.push(cb.checked);if(cb.checked){count++;cb.parentElement.classList.add('checked');}else{cb.parentElement.classList.remove('checked');}});
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(states));
+    document.getElementById('checkProgress').textContent=count+'/'+checkboxes.length+' complete';
+  };
+  window.updateChecklist();
+})();
+
+// Reveal toggle with tracker counting
+function toggleReveal(btn){
+  const content=btn.nextElementSibling;
+  const wasOpen=content.classList.contains('open');
+  content.classList.toggle('open');
+  btn.classList.toggle('revealed');
+  btn.textContent=wasOpen?'👁️ Reveal':'👁️ Hide';
+
+  // Update tracker
+  const parent=btn.closest('[data-tracker]');
+  if(parent){
+    const trackerId=parent.dataset.tracker;
+    const container=document.getElementById(trackerId);
+    if(container){
+      const section=container.parentElement;
+      const boxes=section.querySelectorAll('[data-tracker="'+trackerId+'"]');
+      let revealed=0;
+      boxes.forEach(b=>{if(b.querySelector('.reveal-content.open'))revealed++;});
+      document.getElementById(trackerId.replace('tracker','count')).textContent=revealed;
+    }
+  }
+}
+</script>
+</body>
+</html>
