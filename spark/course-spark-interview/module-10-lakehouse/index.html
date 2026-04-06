@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 10: Delta Lake, Iceberg & the Lakehouse | Spark Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}.nav-dots{display:flex;gap:6px}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none}.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}.screen h2 .accent{color:var(--color-accent)}.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.5rem 0}.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem}.card p{font-size:0.9rem;color:var(--color-muted);margin:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}.aha p{font-size:0.95rem;margin:0}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.2rem 0}.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.05rem}.quiz-opt{display:block;padding:0.7rem 1rem;margin:0.4rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:all 0.2s;font-size:0.93rem}.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}.quiz-feedback{margin-top:0.8rem;padding:0.7rem 1rem;border-radius:8px;font-size:0.88rem;display:none}.quiz-feedback.show{display:block}.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer}.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}.tooltip-box.visible{opacity:1}
+.table-wrap{overflow-x:auto;margin:1.5rem 0}.tbl{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04)}.tbl th{background:var(--color-bg-code);color:#CDD6F4;padding:0.7rem 1rem;font-family:var(--font-heading);font-weight:700;font-size:0.82rem;text-align:left}.tbl td{padding:0.6rem 1rem;border-bottom:1px solid #f0ede8;font-size:0.85rem}.tbl tr:last-child td{border:none}.tbl code{font-family:var(--font-code);font-size:0.8rem}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}.translate-eng .line{padding:0.15rem 0}
+.screen-alt{background:var(--color-bg-warm)}
+footer.module-nav{display:flex;justify-content:space-between;padding:2rem 1.5rem;max-width:900px;margin:0 auto}footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem}
+@media(max-width:600px){.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">⚡ Spark Interview Mastery</a><div class="nav-dots"><a href="../module-01-what-is-spark/" class="nav-dot"></a><a href="../module-02-architecture/" class="nav-dot"></a><a href="../module-03-rdds/" class="nav-dot"></a><a href="../module-04-dataframes-sql/" class="nav-dot"></a><a href="../module-05-performance/" class="nav-dot"></a><a href="../module-06-streaming-libs/" class="nav-dot"></a><a href="../module-07-interview-gauntlet/" class="nav-dot"></a><a href="../module-08-spark-ui/" class="nav-dot"></a><a href="../module-09-optimization/" class="nav-dot"></a><a href="../module-10-lakehouse/" class="nav-dot active"></a><a href="../module-11-structured-streaming/" class="nav-dot"></a><a href="../module-12-advanced-spark/" class="nav-dot"></a></div></div></nav>
+
+<!-- ==================== SCREEN 1 ==================== -->
+<section class="screen" id="s1">
+  <h2>What Is a <span class="accent">Lakehouse?</span></h2>
+  <p>For over a decade, data teams lived in a painful split reality. <strong>Data Lakes</strong> (Hadoop/S3) gave you cheap storage and any format — but zero governance, no ACID, and silent data corruption. <strong>Data Warehouses</strong> (Snowflake, Redshift, BigQuery) gave you structure and ACID — but at massive cost, vendor lock-in, and no support for ML workloads.</p>
+  <p>Most enterprises ran <strong>both</strong> — a lake for raw/ML data and a warehouse for BI — with fragile ETL pipelines copying data between them. Double storage cost, double governance headaches, stale data.</p>
+  <p>A <span class="tooltip-term" data-tip="Lakehouse: an architecture that puts warehouse-like capabilities (ACID, schema enforcement, time travel) directly on top of cheap data lake storage (S3, ADLS, GCS).">Lakehouse</span> puts <strong>warehouse-like capabilities directly on top of data lake storage</strong>. You keep the cheap, open, scalable storage but add ACID transactions, schema enforcement, time travel, indexing, and unified batch + streaming — all in open file formats.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔍 Query Engine Layer</h4>
+      <p>Spark · Trino · Presto · Flink · Dremio — the engines that run your queries. They read metadata from the table format layer to know what to scan.</p>
+    </div>
+    <div class="card blue">
+      <h4>📋 Table Format Layer</h4>
+      <p>Delta Lake · Apache Iceberg · Apache Hudi — the magic layer. A metadata specification that manages transactions, schema, and statistics on top of open files.</p>
+    </div>
+    <div class="card green">
+      <h4>💾 Storage Layer</h4>
+      <p>S3 · ADLS · GCS · HDFS · MinIO — cheap, durable, scalable object storage. The actual Parquet/ORC files live here.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>When asked <em>"What is a Lakehouse?"</em>, say: <strong>"A lakehouse gives you warehouse-like reliability — ACID transactions, schema enforcement, time travel — on top of data lake economics. The key enabler is the table format layer (Delta, Iceberg, or Hudi) which adds transactional metadata on top of open file formats like Parquet stored on cheap object storage like S3."</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 2 ==================== -->
+<section class="screen screen-alt" id="s2">
+  <h2>Delta Lake <span class="accent">Deep Dive</span></h2>
+  <p><span class="tooltip-term" data-tip="Delta Lake: an open-source table format created by Databricks. A Delta table is Parquet files + a transaction log (_delta_log/) that provides ACID transactions.">Delta Lake</span> is an open-source table format created by Databricks. At its core, a Delta table is just <strong>Parquet files + a transaction log</strong>. That transaction log transforms a messy pile of Parquet files into a proper ACID-compliant table.</p>
+  <p>Every Delta table has a <code style="font-family:var(--font-code)">_delta_log/</code> directory — the single source of truth. Each JSON commit file records which Parquet files were <strong>added</strong> or <strong>removed</strong>. Every 10 commits, a <span class="tooltip-term" data-tip="Checkpoint: a Parquet file that consolidates the table state every 10 commits, so readers don't have to replay hundreds of JSON files.">checkpoint</span> consolidates the state so readers start from the latest checkpoint.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086"># MERGE — the most interview-asked op</span>
+<span style="color:#89B4FA">from</span> delta.tables <span style="color:#89B4FA">import</span> DeltaTable
+
+target = DeltaTable.forPath(spark, <span style="color:#A6E3A1">"/data/customers"</span>)
+source = spark.read.parquet(<span style="color:#A6E3A1">"/data/customer_updates"</span>)
+
+target.alias(<span style="color:#A6E3A1">"t"</span>).merge(
+    source.alias(<span style="color:#A6E3A1">"s"</span>),
+    <span style="color:#A6E3A1">"t.customer_id = s.customer_id"</span>
+).whenMatchedUpdate(
+    condition=<span style="color:#A6E3A1">"s.updated_at > t.updated_at"</span>,
+    set={<span style="color:#A6E3A1">"name"</span>: <span style="color:#A6E3A1">"s.name"</span>,
+         <span style="color:#A6E3A1">"email"</span>: <span style="color:#A6E3A1">"s.email"</span>}
+).whenNotMatchedInsert(
+    values={<span style="color:#A6E3A1">"customer_id"</span>: <span style="color:#A6E3A1">"s.customer_id"</span>,
+            <span style="color:#A6E3A1">"name"</span>: <span style="color:#A6E3A1">"s.name"</span>,
+            <span style="color:#A6E3A1">"email"</span>: <span style="color:#A6E3A1">"s.email"</span>}
+).execute()</div>
+    <div class="translate-eng">
+      <div class="line">MERGE combines INSERT + UPDATE atomically</div>
+      <div class="line">Import the DeltaTable API</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Load existing Delta table as "target"</div>
+      <div class="line">Load incoming updates as "source"</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Alias both sides for clarity</div>
+      <div class="line">Join condition: match on customer_id</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">If customer exists AND data is newer →</div>
+      <div class="line">update their name and email</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">If customer doesn't exist →</div>
+      <div class="line">insert them as a new row</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Execute the whole thing atomically</div>
+    </div>
+  </div>
+
+  <p>Under the hood, MERGE joins source against target, rewrites affected Parquet files entirely (Delta doesn't do in-place edits), and records which old files were <code style="font-family:var(--font-code)">removed</code> and which new files were <code style="font-family:var(--font-code)">added</code> in the commit log. The whole operation is <strong>atomic</strong>.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How does Delta Lake handle concurrent writes?"</strong> — Say: <strong>"Delta uses optimistic concurrency control. Multiple writers proceed independently without locking. At commit time, Delta checks the transaction log for conflicting changes. If two writers modified the same partition, one gets a ConcurrentModificationException and can retry. This is more performant than pessimistic locking because conflicts are rare."</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 3 ==================== -->
+<section class="screen" id="s3">
+  <h2>Time Travel & <span class="accent">Schema Evolution</span></h2>
+  <p>Because Delta's transaction log records every change as a versioned commit, you can <strong>read any historical version</strong> of your table. This is called <span class="tooltip-term" data-tip="Time Travel: querying a Delta table as it existed at a previous version or timestamp. Powered by the transaction log — no data duplication.">time travel</span>.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086"># Read by version number</span>
+df = spark.read.format(<span style="color:#A6E3A1">"delta"</span>) \
+    .option(<span style="color:#A6E3A1">"versionAsOf"</span>, <span style="color:#FAB387">5</span>) \
+    .load(<span style="color:#A6E3A1">"/data/events"</span>)
+
+<span style="color:#6C7086"># Read by timestamp</span>
+df = spark.read.format(<span style="color:#A6E3A1">"delta"</span>) \
+    .option(<span style="color:#A6E3A1">"timestampAsOf"</span>, <span style="color:#A6E3A1">"2024-01-15"</span>) \
+    .load(<span style="color:#A6E3A1">"/data/events"</span>)
+
+<span style="color:#6C7086"># Rollback with RESTORE</span>
+delta_table.restoreToVersion(<span style="color:#FAB387">42</span>)</div>
+    <div class="translate-eng">
+      <div class="line">Query the table as it was at version 5</div>
+      <div class="line">Delta replays the log to commit 5</div>
+      <div class="line">and reads only files active at that point</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Query by a specific point in time</div>
+      <div class="line">Same mechanism — Delta finds the version</div>
+      <div class="line">closest to this timestamp</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Roll the table back to version 42</div>
+      <div class="line">Creates a new commit that reverts the file list</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>Use Case</th><th>How Time Travel Helps</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Auditing</strong></td><td>Show the customer table as it was on Dec 31 for year-end compliance</td></tr>
+        <tr><td><strong>Debugging</strong></td><td>Compare today's data vs yesterday's to find what broke the dashboard</td></tr>
+        <tr><td><strong>Rollback</strong></td><td>A bad ETL job corrupted the table — restore to the last known good version</td></tr>
+        <tr><td><strong>Reproducibility</strong></td><td>Re-run ML model training on exactly the same data used last month</td></tr>
+        <tr><td><strong>Change comparison</strong></td><td><code>df_before.exceptAll(df_after)</code> to see exactly what rows changed</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Schema enforcement</strong> rejects writes with mismatched schemas — no more silent downstream failures. <strong>Schema evolution</strong> lets you add columns with <code style="font-family:var(--font-code)">mergeSchema</code> (additive, safe) or replace the schema entirely with <code style="font-family:var(--font-code)">overwriteSchema</code> (breaking changes).</p>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086"># Additive schema evolution</span>
+df_with_new_col.write \
+    .format(<span style="color:#A6E3A1">"delta"</span>) \
+    .mode(<span style="color:#A6E3A1">"append"</span>) \
+    .option(<span style="color:#A6E3A1">"mergeSchema"</span>, <span style="color:#A6E3A1">"true"</span>) \
+    .save(<span style="color:#A6E3A1">"/data/events"</span>)
+<span style="color:#6C7086"># Existing rows get NULL for new column</span></div>
+    <div class="translate-eng">
+      <div class="line">DataFrame has a new "region" column</div>
+      <div class="line">Write as Delta, appending to existing table</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">mergeSchema=true tells Delta:</div>
+      <div class="line">"It's OK — add the new column to the schema"</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Old rows automatically get NULL for "region"</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How does time travel work?"</strong> — Say: <strong>"Each commit creates a new version by recording which Parquet files were added or removed. When you query version N, Delta reads the log up to commit N and determines which files composed the table at that point. No data is duplicated — unchanged files are shared across versions. The only constraint is that VACUUM can delete old files, so retention periods must align with time travel needs."</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 4 ==================== -->
+<section class="screen screen-alt" id="s4">
+  <h2>Optimization <span class="accent">Operations</span></h2>
+  <p>Streaming jobs and frequent appends create thousands of tiny Parquet files. This destroys read performance — each file requires a separate I/O operation, object store LIST operations are slow, and Spark creates one task per file with massive scheduling overhead.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📦 OPTIMIZE</h4>
+      <p>Reads small files and rewrites them into larger, optimally-sized files (~1GB). Solves the <span class="tooltip-term" data-tip="Small Files Problem: thousands of tiny Parquet files from streaming/frequent appends that destroy read performance due to per-file I/O overhead.">small files problem</span>. Old files remain for time travel until VACUUM.</p>
+    </div>
+    <div class="card blue">
+      <h4>🗂️ Z-ORDER BY</h4>
+      <p>Co-locates related data within files by chosen columns. Enables data skipping — Spark reads file-level min/max stats and skips irrelevant files. Choose 2-4 high-cardinality columns you filter on frequently.</p>
+    </div>
+    <div class="card green">
+      <h4>🧹 VACUUM</h4>
+      <p>Deletes old Parquet files no longer referenced within the retention period (default: 7 days / 168 hours). After VACUUM, time travel beyond retention is impossible — those files are gone.</p>
+    </div>
+  </div>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086"># Production maintenance playbook</span>
+<span style="color:#89B4FA">from</span> delta.tables <span style="color:#89B4FA">import</span> DeltaTable
+
+table = DeltaTable.forPath(spark, <span style="color:#A6E3A1">"/data/events"</span>)
+
+<span style="color:#6C7086"># Step 1: Compact + cluster by key columns</span>
+table.optimize().executeZOrderBy(
+    <span style="color:#A6E3A1">"user_id"</span>, <span style="color:#A6E3A1">"event_date"</span>
+)
+
+<span style="color:#6C7086"># Step 2: Clean up old files</span>
+table.vacuum(retentionHours=<span style="color:#FAB387">168</span>)
+
+<span style="color:#6C7086"># Step 3: Update statistics</span>
+spark.sql(<span style="color:#A6E3A1">"ANALYZE TABLE events COMPUTE STATISTICS FOR ALL COLUMNS"</span>)</div>
+    <div class="translate-eng">
+      <div class="line">Run nightly or weekly depending on volume</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Load the Delta table reference</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">OPTIMIZE compacts small files into ~1GB each</div>
+      <div class="line">ZORDER co-locates data by user_id &amp; date</div>
+      <div class="line">for maximum data skipping</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Delete unreferenced files older than 7 days</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Refresh column statistics for the optimizer</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>Feature</th><th>What It Does</th><th>When It Runs</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Optimized Writes</strong></td><td>Coalesces small partitions before writing — reduces file count at write time</td><td>During write</td></tr>
+        <tr><td><strong>Auto Compaction</strong></td><td>Triggers a lightweight OPTIMIZE after writes if many small files are detected</td><td>After write</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How do you handle the small files problem?"</strong> — Say: <strong>"I use OPTIMIZE to compact files into optimal sizes, with ZORDER BY on frequently-queried columns for data skipping. VACUUM cleans up old files after the retention period. For streaming tables, I enable autoOptimize.optimizeWrite and autoCompact to prevent the problem at write time. I run OPTIMIZE + VACUUM as a nightly or weekly maintenance job."</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 5 ==================== -->
+<section class="screen" id="s5">
+  <h2>Apache <span class="accent">Iceberg</span></h2>
+  <p><span class="tooltip-term" data-tip="Apache Iceberg: an open table format created at Netflix (2017). Uses a layered metadata tree (catalog → metadata file → manifest list → manifest files → data files) for query planning and partition pruning.">Apache Iceberg</span> is an open table format created at Netflix and donated to Apache. Like Delta, it brings ACID transactions to data lakes — but with a different architecture. Iceberg is a <strong>table format specification</strong>, not a query engine. Spark, Trino, Presto, Flink, Dremio, and Snowflake all support it natively.</p>
+
+  <p>Iceberg's killer feature is <span class="tooltip-term" data-tip="Hidden Partitioning: partition transforms defined in metadata, not in the data layout. Users query naturally without knowing partition structure — the engine prunes automatically.">hidden partitioning</span>. In traditional Hive-style partitioning, users MUST know and filter on partition columns explicitly or suffer full table scans. With Iceberg, partition transforms are defined in <strong>metadata</strong> — users write natural queries and the engine prunes automatically.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086"># Iceberg hidden partitioning</span>
+spark.sql(<span style="color:#A6E3A1">"""
+    CREATE TABLE my_catalog.db.events (
+        event_id   BIGINT,
+        user_id    BIGINT,
+        event_ts   TIMESTAMP,
+        payload    STRING
+    ) USING iceberg
+    PARTITIONED BY (
+        days(event_ts),
+        bucket(16, user_id)
+    )
+"""</span>)
+
+<span style="color:#6C7086"># Users query naturally — no partition knowledge needed!</span>
+<span style="color:#A6E3A1">SELECT * FROM my_catalog.db.events
+WHERE event_ts BETWEEN '2024-01-15' AND '2024-01-16'
+  AND user_id = 42;</span>
+<span style="color:#6C7086"># Engine auto-prunes day-partitions AND user-buckets</span></div>
+    <div class="translate-eng">
+      <div class="line">Define a table with partition transforms</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Partition by day extracted from timestamp</div>
+      <div class="line">Hash user_id into 16 buckets</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Users don't need to know about partitions!</div>
+      <div class="line">Just filter on the actual column naturally</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Iceberg metadata handles pruning for you</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>Transform</th><th>Example</th><th>What It Does</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>year(ts)</code></td><td>2024</td><td>Extract year from timestamp</td></tr>
+        <tr><td><code>month(ts)</code></td><td>2024-01</td><td>Extract year-month</td></tr>
+        <tr><td><code>day(ts)</code></td><td>2024-01-15</td><td>Extract date</td></tr>
+        <tr><td><code>hour(ts)</code></td><td>2024-01-15-10</td><td>Extract date-hour</td></tr>
+        <tr><td><code>bucket(N, col)</code></td><td>bucket(16, user_id)</td><td>Hash into N buckets</td></tr>
+        <tr><td><code>truncate(L, col)</code></td><td>truncate(3, city) → "Chi"</td><td>Truncate string/number</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Partition evolution</strong> lets you change partitioning strategy without rewriting data. Old data stays in the old layout, new data uses the new layout, and queries on both work seamlessly. Iceberg also tracks columns by <strong>unique IDs</strong> (not name/position), so renames and reorders are metadata-only — zero data rewriting.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"What makes Iceberg different from Delta?"</strong> — Say: <strong>"Hidden partitioning — users write natural queries without knowing partition structure, and the engine prunes automatically. Iceberg also supports partition evolution (change partitioning without rewriting data) and full schema evolution by tracking columns with unique IDs. Architecturally, Iceberg is engine-agnostic — used natively by Spark, Trino, Flink, Snowflake — whereas Delta has historically been Databricks-centric."</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 6 ==================== -->
+<section class="screen screen-alt" id="s6">
+  <h2>Delta vs Iceberg <span class="accent">vs Hudi</span></h2>
+  <p>All three solve the same core problem (ACID on data lakes), but each originated from different pain points. <span class="tooltip-term" data-tip="Apache Hudi: Hadoop Upserts Deletes and Incrementals. Created at Uber for high-frequency streaming upserts. Offers Copy-on-Write (fast reads) and Merge-on-Read (fast writes) storage types.">Hudi</span> was built at Uber for high-frequency upserts. Its unique contribution is two storage types: <strong>Copy-on-Write</strong> (fast reads, slow writes) and <strong>Merge-on-Read</strong> (fast writes, reads merge delta logs on the fly).</p>
+
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>Feature</th><th>Delta Lake</th><th>Apache Iceberg</th><th>Apache Hudi</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Origin</strong></td><td>Databricks (2019)</td><td>Netflix → Apache (2017)</td><td>Uber → Apache (2016)</td></tr>
+        <tr><td><strong>Core design goal</strong></td><td>Unified batch+streaming on Spark</td><td>Large-scale analytics, engine flexibility</td><td>Incremental processing (CDC/upserts)</td></tr>
+        <tr><td><strong>Hidden partitioning</strong></td><td>❌</td><td>✅ (killer feature)</td><td>❌</td></tr>
+        <tr><td><strong>Partition evolution</strong></td><td>❌ (requires rewrite)</td><td>✅ (no rewrite needed)</td><td>❌ (requires rewrite)</td></tr>
+        <tr><td><strong>Schema evolution</strong></td><td>Add columns, widen types</td><td>Add, drop, rename, reorder</td><td>Add columns, limited renames</td></tr>
+        <tr><td><strong>File formats</strong></td><td>Parquet only</td><td>Parquet, ORC, Avro</td><td>Parquet only</td></tr>
+        <tr><td><strong>Ecosystem</strong></td><td>Databricks-centric</td><td>Engine-agnostic</td><td>Spark, Flink</td></tr>
+        <tr><td><strong>MERGE performance</strong></td><td>Excellent (CoW)</td><td>Good (improving fast)</td><td>Excellent (MoR option)</td></tr>
+        <tr><td><strong>Metadata approach</strong></td><td>Flat transaction log</td><td>Layered metadata tree</td><td>Timeline-based (instants)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🏢 Choose Delta Lake</h4>
+      <p>Databricks-native shop. Tightest integration, best tooling, largest community, managed by Databricks.</p>
+    </div>
+    <div class="card blue">
+      <h4>🌐 Choose Iceberg</h4>
+      <p>Multi-engine environment (Spark + Trino + Flink). Engine-agnostic design, no vendor lock-in. Native Snowflake support.</p>
+    </div>
+    <div class="card green">
+      <h4>⚡ Choose Hudi</h4>
+      <p>Streaming CDC with millions of upserts/sec. Merge-on-Read storage type optimized for high write throughput.</p>
+    </div>
+  </div>
+
+  <p>The formats are <strong>converging</strong>: Delta UniForm emits Iceberg-compatible metadata, Apache XTable translates between all three, and Snowflake/BigQuery/Redshift are adopting Iceberg natively. Understanding the <em>differences</em> is what separates senior from junior in interviews.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Which table format would you choose?"</strong> — <strong>Never</strong> say one is universally better. Say: <strong>"It depends on the stack. Delta for Databricks shops — tightest integration. Iceberg for multi-engine environments — engine-agnostic with hidden partitioning. Hudi for streaming-heavy CDC — Merge-on-Read is hard to beat. The formats are converging via Delta UniForm and Apache XTable."</strong> This shows trade-off thinking.</p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 7 ==================== -->
+<section class="screen" id="s7">
+  <h2>Quiz — <span class="accent">Test Your Lakehouse Knowledge</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: What problem does the Lakehouse architecture solve?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">A) It replaces both data lakes and data warehouses with a new storage system</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',true)">B) It combines data lake economics (cheap open storage) with warehouse capabilities (ACID, schema enforcement, governance)</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">C) It eliminates the need for ETL pipelines</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">D) It makes all queries run in real-time</div>
+    <div class="quiz-feedback" id="q1-fb">✅ The Lakehouse doesn't replace storage systems — it adds a metadata/transaction layer (Delta, Iceberg, Hudi) on top of existing cheap object storage to provide ACID, schema enforcement, and time travel that previously required an expensive warehouse.</div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: How does Delta Lake achieve ACID transactions?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">A) By using a distributed lock manager that prevents concurrent writes</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',true)">B) Through a transaction log (_delta_log/) that records every change as an ordered, atomic JSON commit</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">C) By writing data to a relational database first and syncing to Parquet</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">D) By using write-ahead logs in the Spark driver</div>
+    <div class="quiz-feedback" id="q2-fb">✅ The _delta_log/ directory contains sequentially numbered JSON files recording which Parquet files were added or removed in each commit. Atomicity comes from writing the commit file only after all data files succeed. Checkpoints every 10 commits speed up log replay.</div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: A bad ETL job corrupted your Delta table 3 hours ago. The table has a 7-day VACUUM retention. How do you fix it?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">A) Delete the Parquet files manually and re-run the ETL</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',true)">B) Use RESTORE TABLE to roll back to the pre-corruption state</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">C) Re-create the table from scratch using a backup</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">D) Use VACUUM to clean up the corrupted files</div>
+    <div class="quiz-feedback" id="q3-fb">✅ Since the corruption is within the 7-day retention, all historical Parquet files still exist. RESTORE TABLE creates a new commit that reverts the file list to the pre-corruption state. No data is copied — it just changes which files the table references.</div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: What is Iceberg's "hidden partitioning" and why does it matter?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">A) Partitions are encrypted so users can't see the data</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',true)">B) Partition transforms are defined in metadata — users query naturally without knowing the partition structure, and the engine prunes automatically</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">C) Partitions are hidden from the query optimizer to prevent biased plans</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">D) Data is stored without partitions but Iceberg simulates partitioning at read time</div>
+    <div class="quiz-feedback" id="q4-fb">✅ In Hive-style partitioning, users must filter on partition columns explicitly or get full table scans. With Iceberg, transforms like days(event_ts) are defined at table creation. Users query WHERE event_ts > '2024-01-15' naturally, and Iceberg auto-prunes. This decouples physical layout from logical queries.</div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: Your Delta table has 50,000 small files from streaming micro-batches. What's your maintenance plan?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',false)">A) Run VACUUM immediately to delete old files</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',true)">B) Run OPTIMIZE (with optional ZORDER BY) to compact files, then VACUUM to clean up old files after the retention period</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',false)">C) Increase the number of Spark partitions to spread the load</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',false)">D) Switch to Iceberg to solve the problem</div>
+    <div class="quiz-feedback" id="q5-fb">✅ OPTIMIZE compacts the 50,000 small files into fewer, optimally-sized files. ZORDER BY co-locates data for data skipping. VACUUM (after retention period) deletes old files. Going forward, enable autoOptimize.optimizeWrite and autoCompact to prevent recurrence.</div>
+  </div>
+
+  <div class="quiz-box" id="q6">
+    <h4>Q6: When would you choose Hudi over Delta Lake or Iceberg?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',false)">A) When you need the best schema evolution support</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',true)">B) When your primary workload is streaming CDC/upserts — Hudi's Merge-on-Read storage type is optimized for high write throughput</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',false)">C) When you need to query from multiple engines like Trino and Flink</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',false)">D) When you want the largest community support</div>
+    <div class="quiz-feedback" id="q6-fb">✅ Hudi was built at Uber for high-frequency upsert workloads. Merge-on-Read writes updates as small delta log files (fast appends) instead of rewriting Parquet files. For schema evolution, Iceberg is strongest (A). For multi-engine (C), Iceberg wins. For community (D), Delta leads.</div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-09-optimization/">← Optimization</a>
+  <a href="../module-11-structured-streaming/">Next: Structured Streaming →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;pb.style.width=((h.scrollTop/(h.scrollHeight-h.clientHeight))*100)+'%';},{passive:true});
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));});
+  window.checkQ=function(el,qid,correct){const box=document.getElementById(qid);if(box.dataset.answered)return;box.dataset.answered='true';const fb=document.getElementById(qid+'-fb');if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';}else{el.classList.add('wrong');fb.className='quiz-feedback show error';}fb.style.display='block';box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');};
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 12: Partitioning, File Formats & Modern Spark | Spark Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}.nav-dots{display:flex;gap:6px}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none}.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}.screen h2 .accent{color:var(--color-accent)}.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.5rem 0}.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem}.card p{font-size:0.9rem;color:var(--color-muted);margin:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}.aha p{font-size:0.95rem;margin:0}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.2rem 0}.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.05rem}.quiz-opt{display:block;padding:0.7rem 1rem;margin:0.4rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:all 0.2s;font-size:0.93rem}.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}.quiz-feedback{margin-top:0.8rem;padding:0.7rem 1rem;border-radius:8px;font-size:0.88rem;display:none}.quiz-feedback.show{display:block}.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer}.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}.tooltip-box.visible{opacity:1}
+.table-wrap{overflow-x:auto;margin:1.5rem 0}.tbl{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04)}.tbl th{background:var(--color-bg-code);color:#CDD6F4;padding:0.7rem 1rem;font-family:var(--font-heading);font-weight:700;font-size:0.82rem;text-align:left}.tbl td{padding:0.6rem 1rem;border-bottom:1px solid #f0ede8;font-size:0.85rem}.tbl tr:last-child td{border:none}.tbl code{font-family:var(--font-code);font-size:0.8rem}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}.translate-eng .line{padding:0.15rem 0}
+.screen-alt{background:var(--color-bg-warm)}
+footer.module-nav{display:flex;justify-content:space-between;padding:2rem 1.5rem;max-width:900px;margin:0 auto}footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem}
+@media(max-width:600px){.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">⚡ Spark Interview Mastery</a><div class="nav-dots"><a href="../module-01-what-is-spark/" class="nav-dot"></a><a href="../module-02-architecture/" class="nav-dot"></a><a href="../module-03-rdds/" class="nav-dot"></a><a href="../module-04-dataframes-sql/" class="nav-dot"></a><a href="../module-05-performance/" class="nav-dot"></a><a href="../module-06-streaming-libs/" class="nav-dot"></a><a href="../module-07-interview-gauntlet/" class="nav-dot"></a><a href="../module-08-spark-ui/" class="nav-dot"></a><a href="../module-09-optimization/" class="nav-dot"></a><a href="../module-10-lakehouse/" class="nav-dot"></a><a href="../module-11-structured-streaming/" class="nav-dot"></a><a href="../module-12-advanced-spark/" class="nav-dot active"></a></div></div></nav>
+
+<!-- ==================== SCREEN 1 ==================== -->
+<section class="screen" id="s1">
+  <h2>Partitioning <span class="accent">Strategy Deep Dive</span></h2>
+  <p>Every shuffle operation — joins, aggregations, <code style="font-family:var(--font-code)">groupBy</code>, <code style="font-family:var(--font-code)">distinct</code> — produces output partitions. The default <code style="font-family:var(--font-code)">spark.sql.shuffle.partitions = 200</code> is <strong>almost never right for production.</strong> It's a compromise that breaks down at TB-scale: 200 partitions on 1 TB = 5 GB per partition = guaranteed OOM.</p>
+  <p>The industry-standard rule: <strong>ideal_partitions = total_shuffle_data_size ÷ 128 MB.</strong> Why 128 MB? It amortizes task scheduling overhead (~50–100 ms), fits in executor memory, and aligns with HDFS/cloud block sizes. Check "Shuffle Write" in the Spark UI to estimate shuffle data size.</p>
+
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>Shuffle Data</th><th>Default (200) Size</th><th>Ideal Partitions</th><th>Ideal Size</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>10 GB</td><td>50 MB</td><td>~80</td><td>128 MB</td></tr>
+        <tr><td>100 GB</td><td>500 MB ⚠️</td><td>~800</td><td>128 MB</td></tr>
+        <tr><td>1 TB</td><td>5 GB 💥</td><td>~8,000</td><td>128 MB</td></tr>
+        <tr><td>10 TB</td><td>50 GB 💀</td><td>~80,000</td><td>128 MB</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086"># Calculate and set dynamically</span>
+shuffle_data_mb = <span style="color:#FAB387">100_000</span>  <span style="color:#6C7086"># 100 GB estimated</span>
+target = max(shuffle_data_mb // <span style="color:#FAB387">128</span>, <span style="color:#FAB387">200</span>)
+spark.conf.set(<span style="color:#A6E3A1">"spark.sql.shuffle.partitions"</span>, str(target))
+
+<span style="color:#6C7086"># Hash partitioning — even distribution</span>
+df.repartition(<span style="color:#FAB387">100</span>, <span style="color:#A6E3A1">"user_id"</span>)
+
+<span style="color:#6C7086"># Range partitioning — sorted output</span>
+df.repartitionByRange(<span style="color:#FAB387">100</span>, <span style="color:#A6E3A1">"timestamp"</span>)</div>
+    <div class="translate-eng">
+      <div class="line">Estimate shuffle data from Spark UI</div>
+      <div class="line">100 GB ÷ 128 MB ≈ 781 → at least 200</div>
+      <div class="line">Never go below 200 as a safety floor</div>
+      <div class="line">Set the config before your action runs</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">hash(user_id) % 100 → same key = same partition</div>
+      <div class="line">Great for joins on the same key</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Samples data, creates range boundaries</div>
+      <div class="line">Partitions are globally ordered — good for time-series</div>
+    </div>
+  </div>
+
+  <p><strong><span class="tooltip-term" data-tip="Hash Partitioning: assigns rows via hash(key) % N. Even distribution, deterministic placement, but no ordering. Use for co-located joins.">Hash partitioning</span></strong> = randomly but evenly distributing books across shelves by title hash. Fast to find any book, but no logical shelf order. <strong>Range partitioning</strong> = organizing alphabetically (A–D on shelf 1, E–H on shelf 2). Easy to scan a range, but some letters have more books (skew risk).</p>
+
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>Problem</th><th>Symptom</th><th>Root Cause</th><th>Fix</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Over-partitioning</strong></td><td>Thousands of tasks &lt;100 ms, long total job time</td><td>Scheduler overhead dominates (~50–100 ms per task)</td><td>Reduce partitions. Target 128 MB each.</td></tr>
+        <tr><td><strong>Under-partitioning</strong></td><td>OOM, massive GC, spill-to-disk, few active tasks</td><td>Partitions too large, fewer than available cores</td><td>Increase partitions. Max 1 GB each.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"The default 200 shuffle partitions works for small data. For production TB-scale jobs, I calculate: total shuffle data ÷ 128 MB = target partition count. I verify in the Spark UI that task durations are 200 ms–2 minutes — that's the healthy range. The sweet spot is 128–256 MB per partition, with count at least 2–3× available cores."</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 2 ==================== -->
+<section class="screen screen-alt" id="s2">
+  <h2>Bucketing — <span class="accent">The Hidden Join Optimization</span></h2>
+  <p><span class="tooltip-term" data-tip="Bucketing: a write-time optimization that pre-hashes and pre-sorts data into N fixed files by a key column. When two tables share the same bucketing, Spark joins them without any shuffle.">Bucketing</span> is a <strong>write-time optimization</strong> that pre-organizes data on disk by a key column. Spark hashes each row's bucket column, assigns it to one of N buckets (files), and optionally sorts within each bucket. The result: same-key data always lives in the same file.</p>
+  <p><strong>Analogy:</strong> Imagine a mail room. Without bucketing, every morning you dump both filing cabinets on the floor and re-sort to match employee records with payroll (that's the shuffle). With bucketing, both cabinets are permanently organized by employee_id — joining is just opening matching drawers.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086"># STEP 1: Bucket both tables identically</span>
+orders_df.write \
+    .bucketBy(<span style="color:#FAB387">256</span>, <span style="color:#A6E3A1">"user_id"</span>) \
+    .sortBy(<span style="color:#A6E3A1">"user_id"</span>) \
+    .saveAsTable(<span style="color:#A6E3A1">"orders_bucketed"</span>)
+
+users_df.write \
+    .bucketBy(<span style="color:#FAB387">256</span>, <span style="color:#A6E3A1">"user_id"</span>) \
+    .sortBy(<span style="color:#A6E3A1">"user_id"</span>) \
+    .saveAsTable(<span style="color:#A6E3A1">"users_bucketed"</span>)
+
+<span style="color:#6C7086"># STEP 2: Join — zero shuffle!</span>
+result = spark.table(<span style="color:#A6E3A1">"orders_bucketed"</span>) \
+    .join(spark.table(<span style="color:#A6E3A1">"users_bucketed"</span>), <span style="color:#A6E3A1">"user_id"</span>)
+
+<span style="color:#6C7086"># Verify: no Exchange node in plan</span>
+result.explain()</div>
+    <div class="translate-eng">
+      <div class="line">Write both tables with identical bucketing</div>
+      <div class="line">256 buckets, hashed by user_id</div>
+      <div class="line">Sort within each bucket for merge-join</div>
+      <div class="line">Must use saveAsTable (Hive metastore)</div>
+      <div class="line">.save(path) or .parquet(path) won't work!</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Same bucket count + same column = critical</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Spark detects matching bucketing → skips shuffle</div>
+      <div class="line">Reads bucket 0 from both → joins locally. Repeat.</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Look for "BucketedScan" in the physical plan</div>
+      <div class="line">Exchange hashpartitioning should be absent</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>Scenario</th><th>Best Strategy</th><th>Why</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Small table (&lt; 10 MB) + Large</td><td><strong>Broadcast join</strong></td><td>Small table fits in memory, no shuffle</td></tr>
+        <tr><td>Large + Large, joined once</td><td><strong>Shuffle join</strong> (let AQE optimize)</td><td>Bucketing setup cost not justified</td></tr>
+        <tr><td>Large + Large, joined repeatedly on same key</td><td><strong>Bucketing</strong></td><td>Amortize one-time cost across many queries</td></tr>
+        <tr><td>Large + Large, different join keys</td><td><strong>Shuffle join</strong></td><td>Can't bucket for every key combination</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Bucketing answers: 'two LARGE tables joined frequently on the same key.' Pre-bucketing eliminates shuffle at query time — it's a write-time investment that pays off at read time. Key requirements: same bucket column, same bucket count, and data read through the Hive metastore. Bucket count rule of thumb: table_size ÷ 256 MB target file size."</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 3 ==================== -->
+<section class="screen" id="s3">
+  <h2>File Formats — <span class="accent">Parquet vs ORC vs Avro</span></h2>
+  <p><strong>Columnar (Parquet, ORC)</strong> stores values column-by-column: <code style="font-family:var(--font-code)">[Alice, Bob, Carol] [28, 35, 42] [NYC, LA, NYC]</code>. Reading <code style="font-family:var(--font-code)">SELECT avg(age)</code> on a 100-column table skips ~97% of I/O. Same-type values compress dramatically — a column of ages compresses far better than mixed-type rows.</p>
+  <p><strong>Row-based (Avro, CSV, JSON)</strong> stores complete rows: <code style="font-family:var(--font-code)">[Alice, 28, NYC] [Bob, 35, LA]</code>. Simple appends, low-latency writes — ideal for streaming and CDC. But reading one column means reading <em>every</em> column.</p>
+
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>Feature</th><th>Parquet</th><th>ORC</th><th>Avro</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Layout</strong></td><td>Columnar</td><td>Columnar</td><td>Row-based</td></tr>
+        <tr><td><strong>Best With</strong></td><td>Spark, Flink, Trino, BigQuery</td><td>Hive, Presto (Meta fork)</td><td>Kafka, streaming, CDC</td></tr>
+        <tr><td><strong>Nested Data</strong></td><td>Excellent (Dremel encoding)</td><td>Good but less mature</td><td>Good (schema-based)</td></tr>
+        <tr><td><strong>Compression</strong></td><td>Snappy (default), GZIP, ZSTD</td><td>ZLIB (default), Snappy, ZSTD</td><td>Snappy, Deflate</td></tr>
+        <tr><td><strong>Built-in Indexes</strong></td><td>Min/max stats only</td><td>Min/max + <span class="tooltip-term" data-tip="Bloom Filter: a probabilistic data structure that says 'definitely NOT here' or 'maybe here.' ORC uses bloom filters on high-cardinality columns to skip stripes that don't contain target values.">bloom filters</span> + row index</td><td>None</td></tr>
+        <tr><td><strong>ACID Support</strong></td><td>Via Delta/Iceberg (external)</td><td>Built-in with Hive ACID</td><td>None</td></tr>
+        <tr><td><strong>Schema Evolution</strong></td><td>Add/rename columns</td><td>Add columns</td><td>Add/remove/rename (aliases)</td></tr>
+        <tr><td><strong>Spark Default?</strong></td><td>✅ Yes</td><td>No (must specify)</td><td>No (must specify)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Parquet's internal structure: <strong><span class="tooltip-term" data-tip="Row Group: a horizontal slice of a Parquet file (~128 MB). Contains all columns for a subset of rows. Each row group has per-column min/max stats enabling data skipping. Spark maps each row group to a task.">Row Groups</span></strong> (~128 MB) contain Column Chunks with min/max stats. If you filter <code style="font-family:var(--font-code)">WHERE age > 60</code> and a chunk's max is 45, Spark skips it entirely — that's <strong>data skipping</strong>, not just predicate pushdown.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📊 Analytics / OLAP</h4>
+      <p><strong>Parquet</strong> — columnar, Spark-native, great compression, ecosystem standard for data lakes.</p>
+    </div>
+    <div class="card blue">
+      <h4>📨 Kafka / Streaming</h4>
+      <p><strong>Avro</strong> — row-based, schema registry integration, compact binary, schema evolution champion.</p>
+    </div>
+    <div class="card green">
+      <h4>🐝 Hive-Centric</h4>
+      <p><strong>ORC</strong> — Hive-optimized, bloom filters for high-cardinality lookups, built-in ACID.</p>
+    </div>
+    <div class="card purple">
+      <h4>🔄 CDC Pipelines</h4>
+      <p><strong>Avro → Parquet</strong> — Avro for transport (change events), Parquet + Delta/Iceberg for storage.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Never say 'Parquet is always best.' The senior answer: Parquet for analytics reads, Avro for streaming transport, ORC for Hive-heavy environments. The key distinction is columnar vs row-based — analytics benefits from columnar (read only needed columns), streaming benefits from row-based (append a full record quickly). Modern data lakes often use Avro for ingestion and Parquet for the serving layer."</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 4 ==================== -->
+<section class="screen screen-alt" id="s4">
+  <h2>The Small Files <span class="accent">Problem & Compaction</span></h2>
+  <p>The <strong>small files problem</strong> is the most common production Spark issue. Imagine a directory with 5,000 files averaging 34 KB each. Each file requires separate metadata requests (HDFS NameNode call or S3 HEAD+GET). The driver lists all files and parses footers — millions of small files can OOM the driver before executors start. Poor compression, task overhead, and rate limits compound the damage.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📉 Coalesce Before Write</h4>
+      <p>Calculate target files: output_size ÷ 256 MB. Cheap operation (no shuffle) when reducing partitions. Best for batch with known output size.</p>
+    </div>
+    <div class="card blue">
+      <h4>📏 maxRecordsPerFile</h4>
+      <p>Spark splits output into files of ~N records each. Prevents large files but won't combine small ones. Best when output size is unknown.</p>
+    </div>
+    <div class="card green">
+      <h4>🔧 Compaction Job</h4>
+      <p>Read all small files → coalesce → write as fewer large files. Schedule as periodic maintenance. Best for fixing existing messes.</p>
+    </div>
+    <div class="card purple">
+      <h4>⚡ Delta OPTIMIZE</h4>
+      <p>For Delta Lake: <code style="font-family:var(--font-code)">OPTIMIZE table</code> auto-compacts. Pair with Z-ORDER for co-locating related data. Best for streaming sinks.</p>
+    </div>
+  </div>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086"># Coalesce before write</span>
+output_size_mb = <span style="color:#FAB387">5000</span>  <span style="color:#6C7086"># 5 GB output</span>
+target_files = max(output_size_mb // <span style="color:#FAB387">256</span>, <span style="color:#FAB387">1</span>)
+df.coalesce(target_files).write.parquet(path)
+
+<span style="color:#6C7086"># maxRecordsPerFile — size-based splitting</span>
+df.write \
+    .option(<span style="color:#A6E3A1">"maxRecordsPerFile"</span>, <span style="color:#FAB387">1_000_000</span>) \
+    .parquet(path)
+
+<span style="color:#6C7086"># Smart partitionBy: pair with repartition</span>
+df.repartition(<span style="color:#FAB387">100</span>, <span style="color:#A6E3A1">"date"</span>) \
+    .write.partitionBy(<span style="color:#A6E3A1">"date"</span>) \
+    .parquet(path)
+
+<span style="color:#6C7086"># DANGER: high-cardinality partitioning</span>
+df.write.partitionBy(<span style="color:#A6E3A1">"user_id"</span>).parquet(path)
+<span style="color:#6C7086"># 10M users = 10M directories! 💀</span></div>
+    <div class="translate-eng">
+      <div class="line">Reduce file count at write time</div>
+      <div class="line">5 GB ÷ 256 MB ≈ 20 target files</div>
+      <div class="line">Never go below 1 file</div>
+      <div class="line">Coalesce = cheap (no shuffle)</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Spark auto-splits when files get too big</div>
+      <div class="line">Prevents oversized files</div>
+      <div class="line">But won't combine small ones</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">repartition controls file count per directory</div>
+      <div class="line">partitionBy controls directory structure</div>
+      <div class="line">Use them together for best results</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Never partitionBy high-cardinality columns!</div>
+      <div class="line">Safe: date (365/yr), hour (8,760/yr)</div>
+      <div class="line">Dangerous: user_id, session_id, etc.</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Small files are the #1 production Spark problem. My playbook: for batch, coalesce before write targeting 256 MB files. For streaming, Delta with periodic OPTIMIZE. For existing messes, compaction jobs. The critical metric is average file size — healthy is 128 MB to 1 GB. I also avoid high-cardinality partitionBy columns and always pair partitionBy with repartition on the same key."</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 5 ==================== -->
+<section class="screen" id="s5">
+  <h2>Dynamic Partition <span class="accent">Pruning (DPP)</span></h2>
+  <p><span class="tooltip-term" data-tip="Dynamic Partition Pruning (DPP): a Spark 3.0+ optimization that derives filter values from a join's broadcast side at runtime, then uses those values to skip partitions on the fact table scan. Can reduce I/O by 90%+ on star-schema queries.">DPP</span> solves a classic star-schema problem. Consider: <code style="font-family:var(--font-code)">SELECT sum(amount) FROM sales JOIN dim_date ON date_key WHERE year = 2024</code>. Without DPP, Spark reads ALL 10 TB of sales — the filter is on the dimension table, not the fact table. With DPP (Spark 3.0+), Spark first resolves the filter to get 365 date_key values, then injects them as a runtime filter on the sales scan. <strong>10 TB → ~300 GB. Potentially 30× faster.</strong></p>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086">-- Star-schema query with DPP</span>
+<span style="color:#89B4FA">SELECT</span> sum(s.amount)
+<span style="color:#89B4FA">FROM</span> sales s
+<span style="color:#89B4FA">JOIN</span> dim_date d <span style="color:#89B4FA">ON</span> s.date_key = d.key
+<span style="color:#89B4FA">WHERE</span> d.year = <span style="color:#FAB387">2024</span>
+
+<span style="color:#6C7086">-- DPP conceptually transforms to:</span>
+<span style="color:#89B4FA">SELECT</span> sum(s.amount)
+<span style="color:#89B4FA">FROM</span> sales s
+<span style="color:#89B4FA">WHERE</span> s.date_key <span style="color:#89B4FA">IN</span> (
+    <span style="color:#89B4FA">SELECT</span> d.key <span style="color:#89B4FA">FROM</span> dim_date d
+    <span style="color:#89B4FA">WHERE</span> d.year = <span style="color:#FAB387">2024</span>
+)
+<span style="color:#89B4FA">JOIN</span> dim_date d <span style="color:#89B4FA">ON</span> s.date_key = d.key
+<span style="color:#89B4FA">WHERE</span> d.year = <span style="color:#FAB387">2024</span></div>
+    <div class="translate-eng">
+      <div class="line">Classic star-schema join</div>
+      <div class="line">Fact table: 10 TB, partitioned by date_key</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Join with dimension table</div>
+      <div class="line">Filter is on dim, not fact!</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">DPP rewrites the plan internally:</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Inject a subquery filter on the fact scan</div>
+      <div class="line">Resolve dim_date first → get 365 keys</div>
+      <div class="line">Use those keys to prune sales partitions</div>
+      <div class="line">Only ~3% of fact data is actually read</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Join proceeds on dramatically less data</div>
+      <div class="line">Look for "DynamicPruningExpression" in plan</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>Aspect</th><th>Static Predicate Pushdown</th><th>Dynamic Partition Pruning</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>When filter is known</strong></td><td>At planning time (your WHERE clause)</td><td>At runtime (derived from join results)</td></tr>
+        <tr><td><strong>Example</strong></td><td><code>WHERE date = '2024-01-15'</code></td><td><code>WHERE dim.year = 2024</code> (derived)</td></tr>
+        <tr><td><strong>Mechanism</strong></td><td>Push filter to Parquet/ORC reader → skip row groups</td><td>Build filter from broadcast → skip partitions</td></tr>
+        <tr><td><strong>Works without joins?</strong></td><td>Yes</td><td>No — requires a join</td></tr>
+        <tr><td><strong>Spark version</strong></td><td>All versions</td><td>3.0+ only</td></tr>
+        <tr><td><strong>Relationship</strong></td><td colspan="2">Complementary — both can apply to the same query</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"DPP is the runtime cousin of predicate pushdown. Static pushdown handles explicit filters like WHERE date = '2024-01-15'. DPP handles implicit filters that flow through joins — like filtering a date dimension to year 2024, which automatically prunes the fact table's date partitions. Requirements: fact table partitioned by join key, dimension side broadcastable, Spark 3.0+, inner or left-semi join. In star schemas, DPP can reduce I/O by 90%+."</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 6 ==================== -->
+<section class="screen screen-alt" id="s6">
+  <h2>Pandas UDFs & <span class="accent">PySpark Performance</span></h2>
+  <p>PySpark has an architectural bottleneck: Spark's engine runs on the <strong>JVM</strong>, but Python code runs in a <strong>separate process</strong>. Regular Python UDFs serialize data <strong>row-by-row via pickle</strong> between JVM and Python — for 100M rows, that's 100M serialize/deserialize round trips. Easily 10–100× slower than Scala.</p>
+  <p>Pandas UDFs fix this using <strong><span class="tooltip-term" data-tip="Apache Arrow: a columnar, zero-copy in-memory format understood by both JVM and Python. Transfers data in batches of thousands of rows instead of one at a time. No pickle serialization needed.">Arrow</span></strong> — a columnar format both JVM and Python understand. Data transfers in <strong>batches of thousands of rows</strong> (not one at a time), and Python operates on vectorized pandas Series with NumPy operations. Result: <strong>10–100× faster</strong> than regular UDFs.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086"># ❌ SLOW: Regular Python UDF (row-by-row pickle)</span>
+<span style="color:#89B4FA">from</span> pyspark.sql.functions <span style="color:#89B4FA">import</span> udf
+<span style="color:#89B4FA">from</span> pyspark.sql.types <span style="color:#89B4FA">import</span> DoubleType
+
+@udf(returnType=DoubleType())
+<span style="color:#89B4FA">def</span> <span style="color:#A6E3A1">slow_normalize</span>(value, mean, std):
+    <span style="color:#89B4FA">return</span> (value - mean) / std
+
+<span style="color:#6C7086"># ✅ FAST: Pandas UDF (Arrow-based vectorized)</span>
+<span style="color:#89B4FA">import</span> pandas <span style="color:#89B4FA">as</span> pd
+<span style="color:#89B4FA">from</span> pyspark.sql.functions <span style="color:#89B4FA">import</span> pandas_udf
+
+@pandas_udf(<span style="color:#A6E3A1">"double"</span>)
+<span style="color:#89B4FA">def</span> <span style="color:#A6E3A1">fast_normalize</span>(s: pd.Series) -> pd.Series:
+    <span style="color:#89B4FA">return</span> (s - s.mean()) / s.std()
+
+<span style="color:#6C7086"># ✅ Iterator pattern — load model once</span>
+@pandas_udf(<span style="color:#A6E3A1">"double"</span>)
+<span style="color:#89B4FA">def</span> <span style="color:#A6E3A1">predict</span>(iter: Iterator[pd.Series]) -> Iterator[pd.Series]:
+    model = load_heavy_model()  <span style="color:#6C7086"># once!</span>
+    <span style="color:#89B4FA">for</span> batch <span style="color:#89B4FA">in</span> iter:
+        <span style="color:#89B4FA">yield</span> pd.Series(model.predict(batch))</div>
+    <div class="translate-eng">
+      <div class="line">Regular UDF — DON'T use in production</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Each row: JVM → pickle → socket → Python</div>
+      <div class="line">→ compute → socket → unpickle → JVM 😱</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Pandas UDF — vectorized via Apache Arrow</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Operates on batches of rows (pandas Series)</div>
+      <div class="line">NumPy vectorized ops — no Python loops</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Iterator variant for expensive setup (ML models)</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Model loads ONCE per worker, not per batch</div>
+      <div class="line">Critical for ML inference at scale</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Score in vectorized batches</div>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🥇 Native Spark SQL</h4>
+      <p>JVM-only, zero serialization. 300+ built-in functions: <code style="font-family:var(--font-code)">upper()</code>, <code style="font-family:var(--font-code)">split()</code>, <code style="font-family:var(--font-code)">when()</code>. Always try this first.</p>
+    </div>
+    <div class="card blue">
+      <h4>🥈 Pandas UDFs</h4>
+      <p>Arrow-based batches, vectorized pandas/NumPy. 10–100× faster than regular UDFs. Use when built-ins aren't enough.</p>
+    </div>
+    <div class="card green">
+      <h4>🥉 Regular Python UDFs</h4>
+      <p>Row-by-row pickle serialization. Last resort only. Check <code style="font-family:var(--font-code)">dir(pyspark.sql.functions)</code> before reaching for these.</p>
+    </div>
+    <div class="card purple">
+      <h4>🔌 Spark Connect (3.4+)</h4>
+      <p>Thin gRPC client — no local Spark JARs. Connect from any Python env via <code style="font-family:var(--font-code)">.remote("sc://server:15002")</code>.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Three-level PySpark performance answer: (1) Use native Spark SQL functions — JVM-only, no serialization, always fastest. There are 300+ built-ins. (2) If you need Python logic, use Pandas UDFs — vectorized via Arrow, batches of rows, 10–100× faster than regular UDFs. (3) Never use plain Python UDFs or RDD .map() with lambdas in production — the row-by-row JVM↔Python pickle serialization kills performance. For ML inference, Iterator Pandas UDFs load the model once and score in batches."</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 7 ==================== -->
+<section class="screen" id="s7">
+  <h2>Quiz — <span class="accent">Test Your Mastery</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: Your job shuffles 50 GB. How many shuffle partitions should you target?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">A) Keep the default 200 — it's fine for most jobs</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">B) Set to 50 — one partition per GB</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',true)">C) Set to ~400 — using the 128 MB rule: 50,000 MB ÷ 128 MB ≈ 390, round to 400</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">D) Set to 2,000 — more partitions is always better</div>
+    <div class="quiz-feedback" id="q1-fb">✅ The 128 MB rule gives 50,000 ÷ 128 ≈ 390 → round to 400. Default 200 = 250 MB partitions (survivable but large). 2,000 = 25 MB each — too small, scheduler overhead dominates. Option C balances parallelism and per-task efficiency.</div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Two large tables (100 GB + 80 GB) are joined daily on user_id. What eliminates the shuffle entirely?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">A) Broadcast the smaller table</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">B) Cache both tables in memory</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',true)">C) Bucket both tables by user_id with the same bucket count using saveAsTable()</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">D) Repartition both tables by user_id before each join</div>
+    <div class="quiz-feedback" id="q2-fb">✅ At 80 GB, broadcasting is impossible (default limit 10 MB). Caching doesn't eliminate shuffle. Repartitioning still shuffles every run. Bucketing pre-partitions on disk — same column, same count, read via spark.table() → zero shuffle. It's a write-time investment for repeated read-time wins.</div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: When would you choose Avro over Parquet?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">A) For analytics dashboards with columnar aggregations</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',true)">B) For Kafka message serialization with schema registry integration</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">C) When you need the best compression ratio for cold storage</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">D) For Spark SQL tables that are read frequently</div>
+    <div class="quiz-feedback" id="q3-fb">✅ Avro is row-based — perfect for serializing individual records in streaming. It integrates with Schema Registry (4-byte schema ID per message), supports schema evolution, and has compact binary encoding. Parquet is superior for analytics (columnar reads), but Avro excels at write-heavy, record-level streaming workloads.</div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: After one week, your streaming job has 500,000 files averaging 45 KB each. Problem and fix?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">A) Normal for streaming — just add more executors</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">B) Switch from Parquet to CSV for smaller files</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">C) Increase spark.sql.shuffle.partitions to create more partitions</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',true)">D) Small files problem. Fix: coalesce before write, maxRecordsPerFile, or Delta OPTIMIZE. Target 128 MB–1 GB per file.</div>
+    <div class="quiz-feedback" id="q4-fb">✅ 500K files at 45 KB = severe small files problem. Each file open has metadata overhead, the driver may OOM on listing, and compression is poor. Coalesce in each micro-batch, use maxRecordsPerFile, or use Delta OPTIMIZE for automated compaction. Never increase shuffle partitions — that creates MORE files.</div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: What is Dynamic Partition Pruning (DPP), and how does it differ from static predicate pushdown?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',false)">A) DPP pushes WHERE clause filters to storage — same as predicate pushdown</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',false)">B) DPP dynamically adjusts the number of partitions during a shuffle</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',true)">C) DPP derives filter values from a join's broadcast side at runtime to prune fact table partitions — pushdown handles explicit filters at planning time</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',false)">D) DPP is another name for AQE's coalesce shuffle partitions</div>
+    <div class="quiz-feedback" id="q5-fb">✅ Static pushdown handles explicit filters (WHERE date = '2024-01-15') known at planning time. DPP handles implicit filters derived from joins: filtering dim_date.year = 2024 resolves matching date_keys at runtime and prunes sales partitions. Requirements: fact partitioned by join key, dimension broadcastable, Spark 3.0+. They're complementary.</div>
+  </div>
+
+  <div class="quiz-box" id="q6">
+    <h4>Q6: A PySpark job with regular Python UDFs is 50× slower than the Scala version. Why, and how do you fix it?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',false)">A) Python is inherently 50× slower than Scala — nothing you can do</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',false)">B) Use cache() on the input DataFrame</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',false)">C) Increase executor memory to compensate for Python's overhead</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',true)">D) Row-by-row pickle serialization between JVM and Python. Replace with Pandas UDFs (Arrow-based, 10–100× faster) or native Spark SQL functions (zero serialization).</div>
+    <div class="quiz-feedback" id="q6-fb">✅ The bottleneck isn't Python's speed — it's serialization overhead. Each row is pickled, sent via socket, unpickled, processed, repickled, sent back, and unpickled again. For 100M rows = 100M round trips. Pandas UDFs use Arrow columnar batches (thousands of rows, zero-copy). Native Spark SQL functions are best — entirely JVM, zero Python.</div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-11-structured-streaming/">← Streaming</a>
+  <a href="../index.html">Course Home →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;pb.style.width=((h.scrollTop/(h.scrollHeight-h.clientHeight))*100)+'%';},{passive:true});
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));});
+  window.checkQ=function(el,qid,correct){const box=document.getElementById(qid);if(box.dataset.answered)return;box.dataset.answered='true';const fb=document.getElementById(qid+'-fb');if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';}else{el.classList.add('wrong');fb.className='quiz-feedback show error';}fb.style.display='block';box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');};
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+Here’s a practical table you can use for Spark bottleneck triage.
+
+| Area                   | Metric / Signal to Check                               | Where to Check                                                                    | What the Metric Means                                                                            | What Usually It Indicates                                                                                            |
+| ---------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| Cluster availability   | **Job start delay / executor allocation delay**        | Spark UI, cluster manager UI (YARN/K8s/Databricks/EMR), driver logs               | Time spent before executors actually begin processing tasks                                      | High delay usually means **cluster/resource issue**                                                                  |
+| Stage scheduling       | **Scheduler Delay**                                    | Spark UI → Stages → task summary                                                  | Time a task waits in scheduling/serialization/deserialization overhead instead of real execution | High scheduler delay suggests **resource contention**, too many tiny tasks, or cluster pressure                      |
+| Parallelism            | **Active executors vs expected executors**             | Spark UI → Executors; cluster manager UI                                          | Whether Spark got the number of executors it requested                                           | Fewer executors than expected indicates **cluster capacity issue** or slow dynamic allocation                        |
+| Executor utilization   | **Executor task time distribution**                    | Spark UI → Executors                                                              | Shows whether all executors are being used evenly                                                | Low or uneven usage may mean **data skew**, bad partitioning, or underutilized cluster                               |
+| CPU saturation         | **Executor CPU utilization**                           | Cluster monitoring (Ganglia, CloudWatch, Datadog, Prometheus, Databricks metrics) | Whether CPUs are busy doing actual compute                                                       | High CPU with long runtime often means **code/compute-heavy issue**; low CPU with long runtime points to waiting/I/O |
+| Memory pressure        | **GC Time**                                            | Spark UI → Executors / Stages                                                     | Time executors spend in garbage collection instead of processing                                 | High GC usually means **memory pressure**, poor executor sizing, large cached data, or large shuffles                |
+| Memory pressure        | **Executor OOM / lost executors**                      | Spark UI, executor logs, driver logs, cluster logs                                | Executors are dying because memory is insufficient                                               | Usually **cluster/config issue**, but can be triggered by bad code patterns too                                      |
+| Shuffle cost           | **Shuffle Read Size**                                  | Spark UI → Stages / SQL tab                                                       | Amount of data pulled across network after wide transformations                                  | Very high shuffle read often means **join/groupBy/repartition-heavy code issue**                                     |
+| Shuffle cost           | **Shuffle Write Size**                                 | Spark UI → Stages / SQL tab                                                       | Amount of intermediate data written for downstream stages                                        | High shuffle write means Spark is moving a lot of data; often a **code/query design issue**                          |
+| Spill                  | **Memory Spill / Disk Spill**                          | Spark UI → Stages / task metrics                                                  | Data did not fit in memory and spilled to memory pages/disk                                      | High spill indicates **insufficient memory**, poor partition sizing, or expensive wide ops                           |
+| Skew                   | **Max task time vs median task time**                  | Spark UI → Stages → Summary Metrics                                               | Compares longest-running task to typical task                                                    | Big gap strongly indicates **data skew** or uneven partitions                                                        |
+| Partition sizing       | **Number of tasks per stage**                          | Spark UI → Stages                                                                 | Roughly tied to partition count for that stage                                                   | Too few tasks → low parallelism; too many tiny tasks → scheduling overhead                                           |
+| Input efficiency       | **Input Size / Records Read**                          | Spark UI → Stages / SQL tab                                                       | How much raw data Spark is scanning                                                              | Very high input means code is reading too much data or not pruning early enough                                      |
+| Predicate pushdown     | **Scan filters / partition pruning**                   | Spark UI → SQL tab; `explain("formatted")`                                        | Whether filters are being pushed to source and partitions pruned                                 | Missing pushdown/pruning indicates **code/query optimization issue**                                                 |
+| Join strategy          | **Broadcast join vs sort-merge join**                  | Spark UI → SQL tab; query plan via `explain()`                                    | Whether Spark used the efficient join strategy for small tables                                  | Wrong join type often indicates **code/config/statistics issue**                                                     |
+| Repartition overhead   | **Exchange nodes / repartitions**                      | Spark UI → SQL tab; `explain()`                                                   | Extra shuffles inserted by Spark plan                                                            | Many exchanges usually mean **expensive code path**                                                                  |
+| Recompute              | **Repeated stages / repeated scans**                   | Spark UI → Jobs / SQL tab                                                         | Same data/work being recomputed multiple times                                                   | Missing `cache/persist`, poor DAG design, or multiple actions                                                        |
+| Write path             | **Output write time / commit time**                    | Spark UI → final stages; storage logs                                             | Time taken to write results and commit files                                                     | High write time may mean **storage bottleneck**, too many small files, or output contention                          |
+| Storage layout         | **Small files count / file listing overhead**          | Source storage metrics, driver logs, Spark event logs                             | Too many input/output files increase metadata and open/close overhead                            | Usually **data layout / pipeline design issue**                                                                      |
+| Network / remote I/O   | **Remote read wait / storage latency**                 | Cloud/storage monitoring, executor logs, source system metrics                    | Tasks are waiting on object store, JDBC, BigQuery, etc.                                          | Usually **external system / cluster I/O issue**                                                                      |
+| Variability            | **Same job runtime variation across runs**             | Scheduler history, Spark history server                                           | Compare same pipeline across time windows                                                        | Large variation without code changes suggests **cluster contention**                                                 |
+| Adaptive execution     | **AQE partition coalescing / skew handling decisions** | Spark UI → SQL tab; Spark config                                                  | Whether Adaptive Query Execution is helping optimize runtime                                     | If AQE is absent/misconfigured, performance may suffer due to **config/code mismatch**                               |
+| Serialization overhead | **Task deserialization / result serialization time**   | Spark UI → Stages → task metrics                                                  | Time spent converting objects before/after execution                                             | High values may indicate **large closures**, Python overhead, or inefficient object handling                         |
+| Python overhead        | **Python UDF-heavy stages**                            | SQL plan, code review, task runtime pattern                                       | Python UDFs often break Spark optimizations and add serialization overhead                       | Usually **code issue**                                                                                               |
+| Caching efficiency     | **Storage memory usage / cache hit usefulness**        | Spark UI → Storage tab                                                            | Whether cached datasets are actually stored and reused                                           | Ineffective caching means wasted memory or repeated recomputation                                                    |
+| Dynamic allocation     | **Executors ramp-up time**                             | Spark UI, driver logs, cluster manager                                            | Time Spark takes to scale executors up                                                           | Slow ramp-up indicates **cluster/config issue**                                                                      |
+| Data volume scaling    | **Runtime change with smaller sample**                 | Experimental comparison                                                           | Whether runtime drops proportionally with less data                                              | Proportional drop → compute/code issue; weak drop → fixed overhead/cluster issue                                     |
+
+## How to interpret this quickly
+
+Here’s the simplest way to read the table:
+
+| Pattern you see                                                 | Likely Meaning                                    |
+| --------------------------------------------------------------- | ------------------------------------------------- |
+| High **scheduler delay**, low executor count, long pending time | Cluster issue                                     |
+| High **shuffle read/write**, many exchanges, expensive joins    | Code/query design issue                           |
+| High **GC**, spill, executor OOM                                | Memory/config issue, sometimes worsened by code   |
+| A few tasks are much slower than others                         | Data skew / partition issue                       |
+| CPU low but runtime high                                        | Waiting on I/O, storage, or cluster               |
+| CPU high and consistent across executors                        | Heavy compute or inefficient code logic           |
+| Runtime varies a lot across runs                                | Cluster contention or external source instability |
+| Same stage always slow                                          | Code bottleneck                                   |
+| Final write stage slow                                          | Output/storage/file layout issue                  |
+
+## Best places to check each type of metric
+
+| Tool / Screen                                                | Best For                                                  |
+| ------------------------------------------------------------ | --------------------------------------------------------- |
+| **Spark UI → Jobs tab**                                      | Finding which jobs/stages consume most time               |
+| **Spark UI → Stages tab**                                    | Shuffle, spill, skew, scheduler delay, task distribution  |
+| **Spark UI → SQL tab**                                       | Join strategy, exchanges, scans, query plan problems      |
+| **Spark UI → Executors tab**                                 | GC time, executor failures, utilization, skew by executor |
+| **Spark UI → Storage tab**                                   | Cache/persist effectiveness                               |
+| **Driver / executor logs**                                   | OOMs, executor lost, fetch failures, serialization issues |
+| **Cluster manager UI** (YARN/K8s/Databricks/EMR)             | Resource wait, allocation delays, node pressure           |
+| **Cloud monitoring** (CloudWatch/Datadog/Prometheus/Grafana) | CPU, memory, network, disk, storage latency               |
+| **Source/storage system metrics**                            | JDBC/object store/warehouse read bottlenecks              |
+
+## A very usable decision table
+
+| If this metric is high                | Check next                             | Likely root cause              |
+| ------------------------------------- | -------------------------------------- | ------------------------------ |
+| Scheduler Delay                       | Active executors, pending resources    | Cluster/resources              |
+| Shuffle Read/Write                    | Join type, repartition, groupBy        | Code/query design              |
+| Disk Spill                            | Executor memory, partition size        | Memory/config or large shuffle |
+| GC Time                               | Executor memory, cached data, skew     | Memory pressure                |
+| Max task time much higher than median | Key distribution, skew handling        | Data skew                      |
+| Input Size                            | Filter pushdown, partition pruning     | Reading too much data          |
+| Output write time                     | File count, output partitions, storage | Storage/write path             |
+| Runtime variance across runs          | Cluster load, concurrent jobs          | Cluster contention             |
+| Lost executors / OOM                  | Memory overhead, partition size, joins | Cluster config + code          |
+| Too many tasks                        | Partition count                        | Over-partitioning              |
+| Too few tasks                         | Parallelism, partition count           | Under-partitioning             |
+
+## Practical rule of thumb
+
+You can classify most slow Spark pipelines like this:
+
+* **Code issue**: high shuffle, skew, repeated scans, wrong joins, too much data read, Python UDF overhead
+* **Cluster issue**: high pending time, slow executor allocation, low utilization because resources unavailable, node memory pressure
+* **Mixed issue**: high shuffle plus high spill/GC/OOM
+
+## Most important metrics to check first
+
+If you want the shortest checklist, check these first:
+
+| Priority | Metric                              | Why                                             |
+| -------- | ----------------------------------- | ----------------------------------------------- |
+| 1        | Slowest stage runtime               | Finds the real bottleneck                       |
+| 2        | Shuffle read/write                  | Tells whether data movement is the problem      |
+| 3        | Max vs median task time             | Detects skew immediately                        |
+| 4        | GC time                             | Detects memory pressure                         |
+| 5        | Spill to disk                       | Detects memory shortage or oversized partitions |
+| 6        | Scheduler delay / pending executors | Separates cluster wait from execution           |
+| 7        | Join strategy in SQL plan           | Finds bad query plans                           |
+| 8        | Input size / records read           | Shows whether too much data is being scanned    |
+
+If you want, I can turn this into an even cleaner **one-page runbook table** with columns like **symptom → metric → threshold hint → likely issue → action to take**.

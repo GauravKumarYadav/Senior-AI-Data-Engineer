@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 11: Structured Streaming Mastery | Spark Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}.nav-dots{display:flex;gap:6px}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none}.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}.screen h2 .accent{color:var(--color-accent)}.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.5rem 0}.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem}.card p{font-size:0.9rem;color:var(--color-muted);margin:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}.aha p{font-size:0.95rem;margin:0}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.2rem 0}.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.05rem}.quiz-opt{display:block;padding:0.7rem 1rem;margin:0.4rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:all 0.2s;font-size:0.93rem}.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}.quiz-feedback{margin-top:0.8rem;padding:0.7rem 1rem;border-radius:8px;font-size:0.88rem;display:none}.quiz-feedback.show{display:block}.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer}.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}.tooltip-box.visible{opacity:1}
+.table-wrap{overflow-x:auto;margin:1.5rem 0}.tbl{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04)}.tbl th{background:var(--color-bg-code);color:#CDD6F4;padding:0.7rem 1rem;font-family:var(--font-heading);font-weight:700;font-size:0.82rem;text-align:left}.tbl td{padding:0.6rem 1rem;border-bottom:1px solid #f0ede8;font-size:0.85rem}.tbl tr:last-child td{border:none}.tbl code{font-family:var(--font-code);font-size:0.8rem}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}.translate-eng .line{padding:0.15rem 0}
+.screen-alt{background:var(--color-bg-warm)}
+footer.module-nav{display:flex;justify-content:space-between;padding:2rem 1.5rem;max-width:900px;margin:0 auto}footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem}
+@media(max-width:600px){.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">⚡ Spark Interview Mastery</a><div class="nav-dots"><a href="../module-01-what-is-spark/" class="nav-dot"></a><a href="../module-02-architecture/" class="nav-dot"></a><a href="../module-03-rdds/" class="nav-dot"></a><a href="../module-04-dataframes-sql/" class="nav-dot"></a><a href="../module-05-performance/" class="nav-dot"></a><a href="../module-06-streaming-libs/" class="nav-dot"></a><a href="../module-07-interview-gauntlet/" class="nav-dot"></a><a href="../module-08-spark-ui/" class="nav-dot"></a><a href="../module-09-optimization/" class="nav-dot"></a><a href="../module-10-lakehouse/" class="nav-dot"></a><a href="../module-11-structured-streaming/" class="nav-dot active"></a><a href="../module-12-advanced-spark/" class="nav-dot"></a></div></div></nav>
+
+<!-- ==================== SCREEN 1 ==================== -->
+<section class="screen" id="s1">
+  <h2>The Structured <span class="accent">Streaming Model</span></h2>
+  <p>Forget everything you know about traditional stream processing. Structured Streaming flips the model: <strong>every streaming source is just a table that keeps getting new rows appended to it.</strong> Your query runs against this ever-growing <span class="tooltip-term" data-tip="Unbounded Table: the mental model of Structured Streaming — a streaming source is treated as an infinite table that keeps growing. Your query runs against it, and Spark executes incrementally.">unbounded table</span>, and Spark figures out how to execute it incrementally.</p>
+  <p>The brilliance of this design is <strong>API unification</strong>. The same DataFrame/Dataset/SQL code you write for a batch job works for streaming — no new abstractions. A <code style="font-family:var(--font-code)">groupBy().count()</code> just works, and Spark handles incremental execution automatically via the Catalyst optimizer and Tungsten engine.</p>
+  <p>This is a <strong>fundamentally different execution model</strong> from DStreams. DStreams were RDD-based <span class="tooltip-term" data-tip="Micro-batch: Spark's default streaming execution model. Data is collected into small batches and processed using the standard Spark engine. Latency is typically 100ms–few seconds.">micro-batches</span> — a loop of tiny batch jobs with no native event-time support. Structured Streaming gets predicate pushdown, whole-stage code generation, logical plan optimization, and native event-time windowing for free.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086"># End-to-end: Kafka → Windowed Agg → Console</span>
+<span style="color:#89B4FA">from</span> pyspark.sql <span style="color:#89B4FA">import</span> SparkSession
+<span style="color:#89B4FA">from</span> pyspark.sql.functions <span style="color:#89B4FA">import</span> window, col
+
+spark = SparkSession.builder.appName(<span style="color:#A6E3A1">"Demo"</span>).getOrCreate()
+
+<span style="color:#6C7086"># Step 1: Read from Kafka</span>
+df = (spark.readStream
+    .format(<span style="color:#A6E3A1">"kafka"</span>)
+    .option(<span style="color:#A6E3A1">"kafka.bootstrap.servers"</span>, <span style="color:#A6E3A1">"broker:9092"</span>)
+    .option(<span style="color:#A6E3A1">"subscribe"</span>, <span style="color:#A6E3A1">"clickstream"</span>)
+    .option(<span style="color:#A6E3A1">"startingOffsets"</span>, <span style="color:#A6E3A1">"latest"</span>)
+    .load()
+)
+
+<span style="color:#6C7086"># Step 2: Parse — same DataFrame API as batch!</span>
+parsed = (df
+    .selectExpr(
+        <span style="color:#A6E3A1">"CAST(value AS STRING) AS raw_event"</span>,
+        <span style="color:#A6E3A1">"timestamp AS kafka_ts"</span>
+    )
+    .where(<span style="color:#A6E3A1">"raw_event IS NOT NULL"</span>)
+)
+
+<span style="color:#6C7086"># Step 3: Windowed aggregation</span>
+windowed = (parsed
+    .groupBy(window(<span style="color:#A6E3A1">"kafka_ts"</span>, <span style="color:#A6E3A1">"5 minutes"</span>))
+    .count()
+)
+
+<span style="color:#6C7086"># Step 4: Write to console</span>
+query = (windowed.writeStream
+    .outputMode(<span style="color:#A6E3A1">"update"</span>)
+    .format(<span style="color:#A6E3A1">"console"</span>)
+    .start()
+)
+query.awaitTermination()</div>
+    <div class="translate-eng">
+      <div class="line">Kafka → transform → aggregate → sink</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">readStream = streaming source (unbounded table)</div>
+      <div class="line">Kafka format — returns key, value, offset, etc.</div>
+      <div class="line">Connect to Kafka broker(s)</div>
+      <div class="line">Subscribe to the "clickstream" topic</div>
+      <div class="line">"latest" = only new data; "earliest" = backfill</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Same API as batch! Replace readStream→read</div>
+      <div class="line">and this would be a valid batch job</div>
+      <div class="line">Kafka value is binary — cast to STRING</div>
+      <div class="line">Use Kafka ingestion timestamp</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Filter out bad records</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">5-minute tumbling window aggregation</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">writeStream = streaming sink</div>
+      <div class="line">update mode: only emit changed rows</div>
+      <div class="line">Console sink for debugging</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Block until stopped or failed</div>
+    </div>
+  </div>
+
+  <p>Under the hood, Spark doesn't re-run the entire query on each trigger. The planner converts your logical plan into an <strong>incremental execution plan</strong>. For a <code style="font-family:var(--font-code)">groupBy().count()</code>: read only new data, update an internal <span class="tooltip-term" data-tip="State Store: an internal key-value store that Spark uses to maintain running aggregations across micro-batches. Backed by HDFS (default) or RocksDB for large state.">state store</span> (key → running count), and emit results based on the output mode.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Structured Streaming is NOT micro-batching DStreams. It's a completely different execution model built on Catalyst and Tungsten, using DataFrames — which means you get all the optimizations (predicate pushdown, whole-stage code generation) for free. The key abstraction is the unbounded table: your query is logically applied to the entire input history, but Spark executes it incrementally using a state store."</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 2 ==================== -->
+<section class="screen screen-alt" id="s2">
+  <h2>Output Modes — <span class="accent">Append, Complete, Update</span></h2>
+  <p>When Spark finishes processing a <span class="tooltip-term" data-tip="Micro-batch: a small chunk of new data processed as a unit. Spark reads new offsets, processes them, updates state, and writes results — then repeats.">micro-batch</span>, it has an updated <strong>Result Table</strong>. The output mode controls <strong>which part of that result table gets written to the sink.</strong></p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📤 Append Mode</h4>
+      <p>Only <strong>newly added</strong> rows are written. Once emitted, rows are final — never changed or retracted. Like a printer: once printed, it's done. Requires watermark for aggregations.</p>
+    </div>
+    <div class="card blue">
+      <h4>📋 Complete Mode</h4>
+      <p>The <strong>entire result table</strong> is written every trigger. Previous output is overwritten. Like a whiteboard — erase and redraw every time. Only works with aggregations.</p>
+    </div>
+    <div class="card green">
+      <h4>🔄 Update Mode</h4>
+      <p>Only <strong>changed rows</strong> are written. Most flexible — works with and without aggregations. Like a notification system: you only hear about changes.</p>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>Aspect</th><th>Append</th><th>Complete</th><th>Update</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>What's Written</strong></td><td>New rows only</td><td>Entire result table</td><td>Only changed rows</td></tr>
+        <tr><td><strong>With Aggregations?</strong></td><td>Only with watermark</td><td>Yes (required)</td><td>Yes</td></tr>
+        <tr><td><strong>Without Aggregations?</strong></td><td>Yes</td><td>No</td><td>Yes (behaves like append)</td></tr>
+        <tr><td><strong>Rows Change After Emit?</strong></td><td>No — final once emitted</td><td>Yes — full rewrite each time</td><td>Yes — updates overwrite</td></tr>
+        <tr><td><strong>State Cleanup</strong></td><td>After watermark passes</td><td>Never (keeps all state)</td><td>After watermark passes</td></tr>
+        <tr><td><strong>Best Sink Types</strong></td><td>Files, append-only logs</td><td>Dashboards, in-memory tables</td><td>Databases, Delta Lake</td></tr>
+        <tr><td><strong>Typical Use Case</strong></td><td>Log ingestion, event archival</td><td>Real-time dashboards</td><td>Incremental DB updates</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Common mistakes:</strong> (1) Append mode + aggregations without watermark → <code style="font-family:var(--font-code)">AnalysisException</code>. (2) Complete mode with huge cardinality → sink overwhelmed. (3) Update mode with file sink → <code style="font-family:var(--font-code)">AnalysisException</code> (files are immutable).</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Start with update mode as your default mental model — it's the most flexible and efficient. Switch to append for write-once sinks like raw Parquet files or Kafka topics. Use complete only when the downstream system needs the full picture every time, and only when the result table has bounded cardinality."</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 3 ==================== -->
+<section class="screen" id="s3">
+  <h2>Triggers — <span class="accent">When Does Processing Happen?</span></h2>
+  <p>A <strong>trigger</strong> defines <strong>when</strong> Spark kicks off the next micro-batch. It doesn't control <em>what</em> data is processed — that's determined by source offsets. It controls the <em>cadence</em> of processing.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>⚡ Default (No Trigger)</h4>
+      <p>Next batch starts <strong>immediately</strong> after the previous one finishes. Lowest latency (~100ms–few seconds). Standard "streaming" mode for always-on clusters.</p>
+    </div>
+    <div class="card blue">
+      <h4>⏱️ Fixed Interval</h4>
+      <p><code style="font-family:var(--font-code)">.trigger(processingTime="30s")</code> — waits at least 30s between batch starts. If a batch takes longer, starts immediately. A polite neighbor on shared clusters.</p>
+    </div>
+    <div class="card green">
+      <h4>🔂 Trigger Once</h4>
+      <p><code style="font-family:var(--font-code)">.trigger(once=True)</code> — processes all available data in one batch, then stops. The underrated superpower: streaming reliability + batch cost efficiency.</p>
+    </div>
+    <div class="card purple">
+      <h4>📦 Available Now (3.3+)</h4>
+      <p><code style="font-family:var(--font-code)">.trigger(availableNow=True)</code> — like Once, but splits into multiple batches respecting rate limits. Prevents OOM on large backlogs.</p>
+    </div>
+  </div>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086"># Trigger Once — scheduled batch superpower</span>
+<span style="color:#6C7086"># Run hourly in Airflow, keep exactly-once</span>
+query = (result.writeStream
+    .trigger(once=<span style="color:#FAB387">True</span>)
+    .format(<span style="color:#A6E3A1">"delta"</span>)
+    .option(<span style="color:#A6E3A1">"checkpointLocation"</span>, <span style="color:#A6E3A1">"/chk/my_q"</span>)
+    .start(<span style="color:#A6E3A1">"/output/events"</span>)
+)
+
+<span style="color:#6C7086"># Available Now — backlog-safe version</span>
+query = (result.writeStream
+    .trigger(availableNow=<span style="color:#FAB387">True</span>)
+    .option(<span style="color:#A6E3A1">"maxOffsetsPerTrigger"</span>, <span style="color:#FAB387">100000</span>)
+    .format(<span style="color:#A6E3A1">"delta"</span>)
+    .start(<span style="color:#A6E3A1">"/output/events"</span>)
+)
+
+<span style="color:#6C7086"># Continuous (experimental) — true ~1ms latency</span>
+query = (result.writeStream
+    .trigger(continuous=<span style="color:#A6E3A1">"1 second"</span>)
+    .format(<span style="color:#A6E3A1">"kafka"</span>)
+    .start()
+)</div>
+    <div class="translate-eng">
+      <div class="line">Process all available data, then STOP</div>
+      <div class="line">Checkpoint saves state between runs</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Processes everything in ONE big batch</div>
+      <div class="line">Write to Delta Lake</div>
+      <div class="line">Checkpoint tracks offsets across runs</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Same as Once, but splits into chunks</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Respects rate limits — 100K msgs per batch</div>
+      <div class="line">Prevents OOM on 10M+ message backlogs</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">NOT micro-batching — true continuous loop</div>
+      <div class="line">"1 second" = checkpoint interval, not latency</div>
+      <div class="line">Only supports map-like ops (no aggs/joins)</div>
+      <div class="line">&nbsp;</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Trigger.Once() is an underrated superpower. It lets you run a streaming pipeline as a scheduled batch job — say, hourly in Airflow — while keeping exactly-once semantics and checkpoint state across runs. You get streaming reliability with batch cost efficiency. For large backlogs, Spark 3.3's Trigger.AvailableNow is even better because it respects rate limits and processes in manageable chunks instead of one giant batch."</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 4 ==================== -->
+<section class="screen screen-alt" id="s4">
+  <h2>Watermarks & <span class="accent">Late Data</span></h2>
+  <p>In reality, events arrive late — mobile apps buffer on subways, sensors lose connectivity, Kafka consumers lag. If you're doing <strong>event-time</strong> windowed aggregations, late data means a window you thought was complete can get new events at any time.</p>
+  <p>Without any mechanism to handle this, Spark keeps <strong>every window's state forever</strong> → unbounded state growth → <code style="font-family:var(--font-code)">OutOfMemoryError</code>.</p>
+  <p>A <span class="tooltip-term" data-tip="Watermark: a threshold that tells Spark how late data can be. Defined as max(event_time seen so far) - threshold. Events older than the watermark are dropped. Enables state cleanup.">watermark</span> tells Spark: <em>"Data can arrive late, but I don't care about data more than X time units late. Discard it."</em> The watermark is defined as <code style="font-family:var(--font-code)">max(event_time) - threshold</code>. It only moves forward, never backward.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086"># Full example: Kafka → watermarked agg → Parquet</span>
+<span style="color:#89B4FA">from</span> pyspark.sql.functions <span style="color:#89B4FA">import</span> window, col, from_json
+<span style="color:#89B4FA">from</span> pyspark.sql.types <span style="color:#89B4FA">import</span> StructType, StringType, TimestampType
+
+schema = (StructType()
+    .add(<span style="color:#A6E3A1">"user_id"</span>, StringType())
+    .add(<span style="color:#A6E3A1">"event_time"</span>, TimestampType())
+)
+
+events = (spark.readStream
+    .format(<span style="color:#A6E3A1">"kafka"</span>)
+    .option(<span style="color:#A6E3A1">"subscribe"</span>, <span style="color:#A6E3A1">"user_events"</span>)
+    .load()
+    .select(from_json(col(<span style="color:#A6E3A1">"value"</span>).cast(<span style="color:#A6E3A1">"string"</span>), schema).alias(<span style="color:#A6E3A1">"data"</span>))
+    .select(<span style="color:#A6E3A1">"data.user_id"</span>, <span style="color:#A6E3A1">"data.event_time"</span>)
+)
+
+<span style="color:#6C7086"># Watermark MUST come before groupBy</span>
+windowed = (events
+    .withWatermark(<span style="color:#A6E3A1">"event_time"</span>, <span style="color:#A6E3A1">"10 minutes"</span>)
+    .groupBy(
+        window(<span style="color:#A6E3A1">"event_time"</span>, <span style="color:#A6E3A1">"5 minutes"</span>),
+        <span style="color:#A6E3A1">"user_id"</span>
+    )
+    .count()
+)
+
+query = (windowed.writeStream
+    .outputMode(<span style="color:#A6E3A1">"append"</span>)
+    .format(<span style="color:#A6E3A1">"parquet"</span>)
+    .option(<span style="color:#A6E3A1">"checkpointLocation"</span>, <span style="color:#A6E3A1">"/chk/uc"</span>)
+    .start(<span style="color:#A6E3A1">"/output/user_counts"</span>)
+)</div>
+    <div class="translate-eng">
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Define schema for JSON parsing</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Read from Kafka streaming source</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Parse JSON value into struct columns</div>
+      <div class="line">Extract user_id and event_time</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Tolerate up to 10 minutes of lateness</div>
+      <div class="line">watermark = max(event_time) - 10 min</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">5-minute tumbling windows</div>
+      <div class="line">Group by window AND user</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Append: emit ONLY after watermark passes window</div>
+      <div class="line">Guarantees completeness — count won't change</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>Output Mode</th><th>With Watermark</th><th>Behavior</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Append</strong></td><td>Required for aggregations</td><td>Results emitted <strong>only after watermark passes window end</strong>. Guarantees completeness — count won't change after emission.</td></tr>
+        <tr><td><strong>Update</strong></td><td>Optional (recommended)</td><td>Results emitted <strong>every trigger</strong> as they update. Watermark used only for <strong>state cleanup</strong>.</td></tr>
+        <tr><td><strong>Complete</strong></td><td>Ignored for output</td><td>Entire result table emitted every trigger. Watermark still used for state cleanup internally.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Choosing the right duration:</strong> Too short (1 min) → lose legitimate late data. Too long (24 hrs) → huge state in memory. Analyze your lateness distribution — if 99.9% arrive within 15 minutes, set 15–20 min. Many production systems use <strong>2–3× expected maximum lateness</strong>.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Watermarks solve two problems simultaneously: they prevent unbounded state growth (which would cause OOM), and they define when results are 'final' enough to emit in append mode. The formula is simple: watermark = max(event_time) - threshold. Any event older than the watermark is dropped. In production, always set a watermark for windowed aggregations — the question is not if, but how long."</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 5 ==================== -->
+<section class="screen" id="s5">
+  <h2>Streaming <span class="accent">Joins</span></h2>
+  <p>Streaming joins come in three flavors, each with increasing complexity. Understanding the differences separates candidates who've built streaming pipelines from those who've only read the docs.</p>
+
+  <p><strong>Stream-Static Joins:</strong> Join a streaming DataFrame with a regular (batch) DataFrame. No <span class="tooltip-term" data-tip="State Store: Spark's internal key-value store for maintaining state across micro-batches. For stream-stream joins, each side of the join gets its own state buffer.">state store</span> needed — the static side is just a lookup table, cached and reused across micro-batches.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span style="color:#6C7086"># Stream-Static: enrich events with user data</span>
+user_profiles = spark.read.parquet(<span style="color:#A6E3A1">"/data/users"</span>)
+click_events = (spark.readStream.format(<span style="color:#A6E3A1">"kafka"</span>)
+    .option(<span style="color:#A6E3A1">"subscribe"</span>, <span style="color:#A6E3A1">"clicks"</span>).load()
+    .selectExpr(<span style="color:#A6E3A1">"CAST(value AS STRING) AS user_id"</span>)
+)
+enriched = click_events.join(user_profiles, <span style="color:#A6E3A1">"user_id"</span>)
+
+<span style="color:#6C7086"># Stream-Stream: match impressions with clicks</span>
+impressions = (spark.readStream.format(<span style="color:#A6E3A1">"kafka"</span>)
+    .option(<span style="color:#A6E3A1">"subscribe"</span>, <span style="color:#A6E3A1">"impressions"</span>).load()
+    .selectExpr(<span style="color:#A6E3A1">"CAST(value AS STRING) AS ad_id"</span>,
+                <span style="color:#A6E3A1">"timestamp AS imp_time"</span>)
+    .withWatermark(<span style="color:#A6E3A1">"imp_time"</span>, <span style="color:#A6E3A1">"2 hours"</span>)
+)
+clicks = (spark.readStream.format(<span style="color:#A6E3A1">"kafka"</span>)
+    .option(<span style="color:#A6E3A1">"subscribe"</span>, <span style="color:#A6E3A1">"clicks"</span>).load()
+    .selectExpr(<span style="color:#A6E3A1">"CAST(value AS STRING) AS ad_id"</span>,
+                <span style="color:#A6E3A1">"timestamp AS click_time"</span>)
+    .withWatermark(<span style="color:#A6E3A1">"click_time"</span>, <span style="color:#A6E3A1">"3 hours"</span>)
+)
+
+matched = impressions.join(clicks, expr(<span style="color:#A6E3A1">"""
+    impressions.ad_id = clicks.ad_id AND
+    click_time >= imp_time AND
+    click_time <= imp_time + INTERVAL 1 HOUR
+"""</span>))</div>
+    <div class="translate-eng">
+      <div class="line">Static side: regular DataFrame (lookup table)</div>
+      <div class="line">No watermark needed — no state to manage</div>
+      <div class="line">Streaming side: live Kafka events</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Inner join — each batch joins new rows vs static</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Stream-stream: BOTH sides are live streams</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Watermark on BOTH sides for state cleanup</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Can use different thresholds per side</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Time-range condition bounds state size</div>
+      <div class="line">Match on ad_id within 1-hour window</div>
+      <div class="line">Without this, state grows forever</div>
+      <div class="line">&nbsp;</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>Join Type</th><th>Watermark Required?</th><th>Why</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Inner</strong></td><td>Optional (strongly recommended)</td><td>Without watermark, state grows forever. With watermark + time range, old unmatched rows are purged.</td></tr>
+        <tr><td><strong>Left Outer</strong></td><td>Required on the <strong>right</strong> stream</td><td>Spark needs to know when a left row will NEVER find a match → emit (left, NULL).</td></tr>
+        <tr><td><strong>Right Outer</strong></td><td>Required on the <strong>left</strong> stream</td><td>Mirror of left outer — needs to know when right rows will never match.</td></tr>
+        <tr><td><strong>Full Outer</strong></td><td>Required on <strong>both</strong> streams</td><td>Both sides need deadlines for emitting unmatched rows with NULLs.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Stream-stream joins are the hardest Structured Streaming topic. The key insight is about state management: inner joins work without watermarks but state grows forever. Outer joins REQUIRE watermarks because Spark needs to know when to emit NULL for unmatched rows — it's the deadline for 'giving up' on finding a match. Always pair watermarks with a time-range condition in the join predicate to bound state size."</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 6 ==================== -->
+<section class="screen screen-alt" id="s6">
+  <h2>Exactly-Once & <span class="accent">Fault Tolerance</span></h2>
+  <p>End-to-end exactly-once processing requires <strong>three components working together.</strong> If any one is missing, you degrade to at-least-once (or worse).</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔄 Replayable Source</h4>
+      <p>The source must support reading from a specific offset. Kafka does this natively. File sources use file lists as offsets. A random TCP socket does NOT.</p>
+    </div>
+    <div class="card blue">
+      <h4>💾 Checkpointing</h4>
+      <p>Spark records processing progress in a <span class="tooltip-term" data-tip="Checkpoint: a directory storing offset logs (planned ranges), commit logs (completed batches), state store snapshots, and query metadata. Enables exactly-once recovery.">checkpoint</span> directory. Before each batch, offsets are logged. On failure, Spark resumes from the last committed batch.</p>
+    </div>
+    <div class="card green">
+      <h4>✅ Idempotent Sink</h4>
+      <p>Since Spark replays on failure, the sink may receive duplicates. Must handle gracefully — file overwrite, Delta Lake MERGE, or application-level dedup.</p>
+    </div>
+  </div>
+
+  <p><strong>Recovery flow:</strong> (1) Read <code style="font-family:var(--font-code)">commits/</code> to find last completed batch. (2) Read <code style="font-family:var(--font-code)">offsets/</code> to find planned-but-not-committed batch. (3) Replay that batch from source. (4) Idempotent sink handles any duplicate writes from the failed attempt.</p>
+
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>Aspect</th><th>HDFS State Store (Default)</th><th>RocksDB State Store (3.2+)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Storage</strong></td><td>All in JVM heap</td><td>Memory + local disk (SSD)</td></tr>
+        <tr><td><strong>Max State Size</strong></td><td>Limited by executor memory</td><td>Limited by disk space</td></tr>
+        <tr><td><strong>Latency</strong></td><td>Faster (in-memory)</td><td>Slightly slower (disk I/O)</td></tr>
+        <tr><td><strong>GC Pressure</strong></td><td>High with large state</td><td>Low (off-heap via RocksDB)</td></tr>
+        <tr><td><strong>Checkpointing</strong></td><td>Full snapshot each time</td><td>Incremental (only changed keys)</td></tr>
+        <tr><td><strong>Recommended For</strong></td><td>&lt; 1M state keys</td><td>&gt; 1M state keys, production</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Checkpoint compatibility:</strong> Safe changes include adding output columns, relaxing filters, changing trigger intervals. <strong>Breaking changes</strong> (require new checkpoint): changing grouping keys, window duration, watermark threshold, or adding/removing stateful operations. <em>Pro tip:</em> version your checkpoint directories (<code style="font-family:var(--font-code)">/checkpoints/my_query/v2/</code>) for rollback safety.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Exactly-once in Structured Streaming requires three things working together: a replayable source (like Kafka with offset-based replay), an idempotent sink (like Delta Lake with MERGE or file overwrite semantics), and checkpointing (which stores offset ranges and state). If any one is missing, you degrade to at-least-once. The formula is: replayable source + idempotent sink + checkpointing = exactly-once."</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 7 ==================== -->
+<section class="screen" id="s7">
+  <h2>Quiz — <span class="accent">Test Your Streaming Knowledge</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: What's the difference between append, complete, and update output modes?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">A) They all write the same data, just to different sink types</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',true)">B) Append = new rows only; Complete = entire result table; Update = only changed rows</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">C) Append = aggregated results; Complete = raw events; Update = deleted rows</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">D) They're aliases for the same behavior</div>
+    <div class="quiz-feedback" id="q1-fb">✅ Append writes only newly added rows (once, final). Complete rewrites the entire result table every trigger (only works with aggregations). Update writes only rows that changed since the last trigger — most flexible. Key gotcha: append mode with aggregations requires a watermark because Spark needs to know when a window's result is final.</div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Your streaming aggregation runs out of memory after a few hours. Most likely cause and fix?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">A) The Kafka topic has too many partitions — reduce them</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">B) The output mode is wrong — switch to append</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',true)">C) A watermark is missing — without it, Spark keeps all windowed state forever</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">D) The executor memory is too low — just increase spark.executor.memory</div>
+    <div class="quiz-feedback" id="q2-fb">✅ Without a watermark, Spark keeps state for every window ever seen — state grows linearly with time → OOM. Adding .withWatermark("event_time", "10 minutes") tells Spark to discard state for windows older than the watermark. Increasing memory (D) only delays the inevitable.</div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: You want to run a streaming pipeline hourly in Airflow with exactly-once semantics between runs. What trigger?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">A) .trigger(processingTime="1 hour") — it pauses for an hour between batches</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',true)">B) .trigger(once=True) or .trigger(availableNow=True) — process all available data then stop</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">C) .trigger(continuous="1 hour") — runs continuously with 1-hour checkpoints</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">D) No trigger needed — just kill the job and restart it hourly</div>
+    <div class="quiz-feedback" id="q3-fb">✅ Trigger.Once() processes all available data in a single batch and stops, saving checkpoint state. Trigger.AvailableNow() (Spark 3.3+) does the same but splits into multiple batches for better memory management. Both maintain checkpoint state between runs. Option A keeps the app running for the full hour, wasting resources. Option D loses checkpoint state.</div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: Can you perform an outer join between two streams without a watermark?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">A) Yes — Spark buffers everything and eventually matches</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',true)">B) No — outer joins require watermarks so Spark knows when to emit NULL for unmatched rows</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">C) Yes, but only for full outer joins, not left or right</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">D) No — stream-stream joins of any type require watermarks</div>
+    <div class="quiz-feedback" id="q4-fb">✅ For outer joins, Spark needs to decide when an unmatched row will never find a partner — that's when it emits (row, NULL). Without a watermark, it can never make this determination. Inner joins work without watermarks (D is wrong) but should still have watermarks to prevent unbounded state growth.</div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: What three components are needed for end-to-end exactly-once processing?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',false)">A) Kafka, Spark, and HDFS</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',false)">B) Watermarks, triggers, and output modes</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',true)">C) Replayable source, idempotent sink, and checkpointing</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',false)">D) State store, RocksDB, and Delta Lake</div>
+    <div class="quiz-feedback" id="q5-fb">✅ The three pillars: (1) Replayable source — can re-read from a specific offset (Kafka, files). (2) Idempotent sink — handles duplicate writes gracefully (Delta Lake, file overwrite). (3) Checkpointing — records offsets and state for recovery. Kafka/HDFS (A) are specific technologies, not abstract requirements. RocksDB/Delta (D) are implementation choices.</div>
+  </div>
+
+  <div class="quiz-box" id="q6">
+    <h4>Q6: A streaming query fails mid-batch and restarts. How does Spark avoid duplicates?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',false)">A) Spark contacts Kafka to decommit the consumed offsets</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',true)">B) The checkpoint stores committed offsets; on restart, Spark replays from the last committed offset, and the idempotent sink handles any duplicate writes</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',false)">C) Spark uses distributed locks to prevent any re-processing</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',false)">D) Duplicate data is unavoidable — Spark provides at-most-once guarantees</div>
+    <div class="quiz-feedback" id="q6-fb">✅ Recovery: (1) Read commits/ to find last completed batch. (2) Read offsets/ to find the planned-but-not-committed batch. (3) Replay that batch from source. (4) Idempotent sink handles partial writes from the failed attempt. Spark does NOT interact with Kafka's consumer group offsets — it manages offsets independently in its own checkpoint.</div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-10-lakehouse/">← Lakehouse</a>
+  <a href="../module-12-advanced-spark/">Next: Advanced Spark →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;pb.style.width=((h.scrollTop/(h.scrollHeight-h.clientHeight))*100)+'%';},{passive:true});
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));});
+  window.checkQ=function(el,qid,correct){const box=document.getElementById(qid);if(box.dataset.answered)return;box.dataset.answered='true';const fb=document.getElementById(qid+'-fb');if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';}else{el.classList.add('wrong');fb.className='quiz-feedback show error';}fb.style.display='block';box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');};
+})();
+</script>
+</body>
+</html>
