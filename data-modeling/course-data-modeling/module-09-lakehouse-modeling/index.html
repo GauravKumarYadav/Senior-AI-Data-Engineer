@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 9: Modeling for Lakehouse | Data Modeling Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#2A7B9B;--color-accent-light:#E4F2F7;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.15s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:var(--color-border);text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:var(--color-surface);border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.orange{border-top-color:#C4813D}.card.red{border-top-color:var(--color-error)}
+.card h4{font-family:var(--font-head);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-text-muted);margin-bottom:0}
+.callout{background:linear-gradient(135deg,var(--color-accent-light),#F0F8FB);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.callout p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:var(--color-surface);border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-head);font-weight:700;font-size:1rem;margin-bottom:0.8rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.schema-diagram{background:var(--color-surface);border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;display:flex;flex-direction:column;align-items:center;gap:0.8rem}
+.schema-center{background:var(--color-accent);color:#fff;padding:0.8rem 1.2rem;border-radius:12px;font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-align:center}
+.schema-dims{display:flex;gap:0.8rem;flex-wrap:wrap;justify-content:center}
+.schema-dim{background:var(--color-accent-light);color:var(--color-accent);padding:0.5rem 0.8rem;border-radius:10px;font-family:var(--font-mono);font-size:0.78rem;font-weight:600;border:2px solid var(--color-accent)}
+.schema-dim.bridge{background:#F5F0FF;color:#7B5EA7;border-color:#7B5EA7}
+.schema-dim.gold{background:#FFF8E1;color:#C4813D;border-color:#C4813D}
+.schema-arrow{color:var(--color-text-muted);font-size:0.9rem}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-mono);font-size:0.8rem;overflow-x:auto;margin:1rem 0;line-height:1.7;white-space:pre}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}.code-block .num{color:#FAB387}
+.table-example{background:var(--color-surface);border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin:1.5rem 0;font-size:0.82rem}
+.table-example table{width:100%;border-collapse:collapse}
+.table-example th{background:var(--color-accent);color:#fff;padding:0.6rem 0.8rem;text-align:left;font-family:var(--font-mono);font-size:0.75rem;font-weight:600}
+.table-example td{padding:0.5rem 0.8rem;border-bottom:1px solid var(--color-border);font-family:var(--font-mono);font-size:0.78rem}
+.table-example tr:last-child td{border:none}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.quiz-question-block{background:var(--color-surface);border-radius:16px;padding:1.8rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1rem 0}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1.05rem}
+.quiz-option{display:block;width:100%;text-align:left;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid var(--color-border);border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem;font-family:var(--font-body);background:none}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-option:disabled{cursor:default;opacity:0.7}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#8D6E00}
+.check-btn{display:inline-block;background:var(--color-accent);color:#fff;border:none;padding:0.7rem 2rem;border-radius:100px;font-family:var(--font-head);font-weight:700;font-size:0.95rem;cursor:pointer;margin-top:1rem;transition:transform 0.2s}
+.check-btn:hover{transform:translateY(-2px)}
+.screen-alt{background:var(--color-bg-warm);margin-left:calc(-50vw + 50%);margin-right:calc(-50vw + 50%);padding-left:calc(50vw - 50% + 1.5rem);padding-right:calc(50vw - 50% + 1.5rem);max-width:none}
+.screen-alt>*{max-width:900px}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.capstone-banner{text-align:center;margin-bottom:2rem}
+.capstone-banner .emoji{font-size:3rem;display:block;margin-bottom:0.5rem}
+.capstone-banner p{color:var(--color-text-secondary);font-size:1.1rem;font-style:italic}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}.schema-dims{flex-direction:column;align-items:center}}
+</style>
+</head>
+<body>
+<nav class="top-nav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">🏗️ Data Modeling Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-what-is-data-modeling/" class="nav-dot" aria-label="Module 1"></a>
+      <a href="../module-02-facts-dimensions-grain/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-star-snowflake/" class="nav-dot" aria-label="Module 3"></a>
+      <a href="../module-04-slowly-changing-dimensions/" class="nav-dot" aria-label="Module 4"></a>
+      <a href="../module-05-advanced-patterns/" class="nav-dot" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a>
+      <a href="../module-07-data-vault/" class="nav-dot" aria-label="Module 7"></a>
+      <a href="../module-08-modern-patterns/" class="nav-dot" aria-label="Module 8"></a>
+      <a href="../module-09-lakehouse-modeling/" class="nav-dot active" aria-label="Module 9 (current)"></a>
+    </div>
+  </div>
+</nav>
+
+<!-- =========== SCREEN 1: Medallion Architecture =========== -->
+<section class="screen" id="s1">
+  <h2>🏅 <span class="accent">Medallion Architecture</span> — The Layered Foundation</h2>
+  <p>The <span class="tooltip-term" data-tip="A data organization pattern with three progressive layers of quality — Bronze (raw), Silver (cleaned), Gold (business-optimized) — popularized by Databricks but universally applicable to any lakehouse.">Medallion Architecture</span> solves the data swamp problem by organizing data into three layers of <strong>increasing quality</strong>: <span class="tooltip-term" data-tip="The raw ingestion layer. Schema-on-read, append-only, full source fidelity. Your audit trail and time machine. Never update, never delete.">Bronze</span>, <span class="tooltip-term" data-tip="The cleaned, conformed layer. Schema-on-write, deduplicated, entity-level grain. Data types enforced, business keys resolved. The single source of truth per entity.">Silver</span>, and <span class="tooltip-term" data-tip="The business-optimized layer. Star schemas, One Big Tables, or pre-aggregated summaries purpose-built for specific consumers like dashboards, ML models, or reports.">Gold</span>.</p>
+
+  <div class="schema-diagram">
+    <div class="schema-dims">
+      <div class="schema-dim">📥 Sources</div>
+      <div class="schema-arrow">→</div>
+      <div class="schema-dim" style="background:#FFF0E0;color:#8B5E3C;border-color:#C4813D">🥉 Bronze</div>
+      <div class="schema-arrow">→</div>
+      <div class="schema-dim bridge">🥈 Silver</div>
+      <div class="schema-arrow">→</div>
+      <div class="schema-dim gold">🥇 Gold</div>
+    </div>
+    <div class="schema-arrow">Schema-on-read → Schema enforced → Business-optimized</div>
+    <div class="schema-center">Append-only → Deduplicated → Star schemas / OBTs</div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card orange">
+      <h4>🥉 Bronze (Raw)</h4>
+      <p>Store as-is from source. Append-only. Add metadata: <code>_ingested_at</code>, <code>_source_file</code>. Your immutable audit trail.</p>
+    </div>
+    <div class="card purple">
+      <h4>🥈 Silver (Cleaned)</h4>
+      <p>Enforce types, deduplicate, resolve business keys, apply SCD logic. One row per entity per version.</p>
+    </div>
+    <div class="card green">
+      <h4>🥇 Gold (Business)</h4>
+      <p>Star schemas, OBTs, pre-aggregations. Purpose-built for dashboards, ML features, executive reports.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm">-- Example folder/table structure</span>
+lakehouse/
+├── bronze/
+│   ├── ecommerce/
+│   │   ├── raw_orders/          <span class="cm">-- partitioned by _ingested_date</span>
+│   │   └── raw_customers/       <span class="cm">-- partitioned by _ingested_date</span>
+│   └── erp/
+│       └── raw_invoices/
+├── silver/
+│   ├── clean_orders/            <span class="cm">-- partitioned by order_date</span>
+│   ├── clean_customers/         <span class="cm">-- no partition (small dim)</span>
+│   └── clean_products/          <span class="cm">-- no partition (small dim)</span>
+└── gold/
+    ├── daily_sales_summary/     <span class="cm">-- partitioned by sale_date</span>
+    ├── customer_360/            <span class="cm">-- one big table</span>
+    └── customer_ltv/</div>
+
+  <div class="callout">
+    <div class="callout-title">📖 Analogy</div>
+    <p>Medallion is like a <strong>water treatment plant</strong>. Bronze is raw intake — pump in whatever comes from the river (mud, fish, debris). Silver is filtration — remove impurities, standardize pH, test for contaminants. Gold is tap water — clean, safe, optimized for drinking. You never throw away the raw intake logs because if someone gets sick, you trace back to the source.</p>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">💡 Interview Insight</div>
+    <p>\"Medallion organizes lakehouse data into three layers of increasing quality. Bronze guarantees <strong>completeness</strong>, Silver guarantees <strong>correctness</strong>, and Gold guarantees <strong>performance</strong>. It works for both batch and streaming because the layer contracts are independent of the execution engine.\"</p>
+  </div>
+</section>
+
+<!-- =========== SCREEN 2: Schema-on-Read vs Schema-on-Write =========== -->
+<section class="screen screen-alt" id="s2">
+  <h2>📋 <span class="accent">Schema-on-Read</span> vs <span class="accent">Schema-on-Write</span></h2>
+  <p>The question of <em>when</em> to enforce schema determines where your team spends debugging time, how fast you onboard new sources, and whether consumers trust the data.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📝 <span class="tooltip-term" data-tip="Data must conform to a predefined schema before being written. If a record doesn't match expected types or constraints, it's rejected at load time. Traditional warehouse approach.">Schema-on-Write</span></h4>
+      <ul>
+        <li>✅ Errors caught immediately — no garbage in</li>
+        <li>✅ Consumers trust data — schema is a contract</li>
+        <li>✅ Predictable query performance</li>
+        <li>⚠️ Rigid — ALTER TABLE + ETL changes for new columns</li>
+        <li>⚠️ Slow onboarding — schema mapping first</li>
+        <li>⚠️ Upstream changes break pipelines instantly</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid #7B5EA7">
+      <h4>📖 <span class="tooltip-term" data-tip="Data is stored as-is (raw files, JSON, Avro). Schema is applied only when querying — the reader decides how to interpret the data. The data lake approach.">Schema-on-Read</span></h4>
+      <ul>
+        <li>✅ Fast ingestion — no upfront schema design</li>
+        <li>✅ Flexible — store anything, decide meaning later</li>
+        <li>✅ No data loss — every record preserved</li>
+        <li>⚠️ Errors shift downstream to query time</li>
+        <li>⚠️ Every reader reimplements parsing logic</li>
+        <li>⚠️ Data swamp risk without discipline</li>
+      </ul>
+    </div>
+  </div>
+
+  <p>The lakehouse resolves this with a <strong>hybrid</strong>: schema-on-read at Bronze, schema-on-write at Silver.</p>
+
+  <div class="code-block"><span class="cm">-- Bronze: store raw, both API versions coexist peacefully</span>
+<span class="cm">-- v1: {"customer_id": 12345, "name": "Alice"}</span>
+<span class="cm">-- v2: {"customer_id": "CUST-12345", "name": "Alice"}</span>
+
+<span class="cm">-- Silver: transformation handles both versions</span>
+<span class="kw">INSERT INTO</span> silver.clean_customers
+<span class="kw">SELECT</span>
+    <span class="kw">CASE</span>
+        <span class="kw">WHEN</span> <span class="fn">typeof</span>(raw:customer_id) = <span class="str">'INTEGER'</span>
+        <span class="kw">THEN</span> <span class="fn">CONCAT</span>(<span class="str">'CUST-'</span>, <span class="fn">CAST</span>(raw:customer_id <span class="kw">AS</span> STRING))
+        <span class="kw">ELSE</span> raw:customer_id::STRING
+    <span class="kw">END</span> <span class="kw">AS</span> customer_id,
+    raw:name::STRING <span class="kw">AS</span> customer_name
+<span class="kw">FROM</span> bronze.raw_customers
+<span class="kw">WHERE</span> raw:customer_id <span class="kw">IS NOT NULL</span>;</div>
+
+  <div class="table-example">
+    <table>
+      <tr><th>Scenario</th><th>Strategy</th><th>Why</th></tr>
+      <tr><td>Financial / regulatory data</td><td>Strict schema-on-write</td><td>Compliance requires integrity</td></tr>
+      <tr><td>Exploratory / new sources</td><td>Schema-on-read at Bronze</td><td>Don't block ingestion</td></tr>
+      <tr><td>ML feature stores</td><td>Strict at Silver, flex at Bronze</td><td>Type consistency for training</td></tr>
+      <tr><td>Event / clickstream data</td><td>Schema-on-read at Bronze</td><td>High volume, evolving schema</td></tr>
+      <tr><td>Master data (customer, product)</td><td>Strict schema-on-write at Silver</td><td>Core entities need SSOT</td></tr>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">📖 Analogy</div>
+    <p>Schema-on-write is <strong>airport security</strong> — check everything before boarding. Schema-on-read is a <strong>train station</strong> — anyone can board. The lakehouse hybrid is <strong>TSA PreCheck</strong> — let everyone into the terminal (Bronze), but validate thoroughly before they board the flight (Silver).</p>
+  </div>
+</section>
+
+<!-- =========== SCREEN 3: Silver vs Gold Modeling =========== -->
+<section class="screen" id="s3">
+  <h2>🎯 When to Model at <span class="accent">Silver</span> vs <span class="accent">Gold</span></h2>
+  <p>Everyone understands Bronze (dump raw) and Gold (build dashboards). The real craft is deciding <em>how much modeling</em> happens at Silver versus Gold.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid #7B5EA7">
+      <h4>🥈 Model at Silver when…</h4>
+      <ul>
+        <li>📌 Multiple Gold tables need the same cleaned entity</li>
+        <li>📌 You need a single source of truth for a business key</li>
+        <li>📌 Dedup/conforming logic should be applied once</li>
+        <li>📌 SCD history tracking is needed at entity level</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>🥇 Model at Gold when…</h4>
+      <ul>
+        <li>📌 Aggregation is specific to one business process</li>
+        <li>📌 You need to denormalize for query performance</li>
+        <li>📌 Pre-computation saves significant dashboard runtime</li>
+        <li>📌 The model represents a specific KPI (CLV, churn)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm">-- ❌ WRONG: Building star schemas in Silver (premature coupling)</span>
+silver.fact_sales           <span class="cm">-- Too specific for Silver</span>
+silver.dim_customer         <span class="cm">-- "dim_" implies Gold-level design</span>
+silver.bridge_promotions    <span class="cm">-- Way too specific</span>
+
+<span class="cm">-- ✅ RIGHT: Entity-centric Silver</span>
+silver.clean_sales_transactions  <span class="cm">-- One row per transaction</span>
+silver.clean_customers           <span class="cm">-- One row per customer</span>
+silver.clean_products            <span class="cm">-- One row per product</span></div>
+
+  <div class="code-block"><span class="cm">-- SILVER: cleaned once, reused everywhere</span>
+<span class="kw">CREATE TABLE</span> silver.clean_orders <span class="kw">AS</span>
+<span class="kw">SELECT</span> order_id, customer_id, order_date,
+    <span class="fn">CAST</span>(total_amount <span class="kw">AS</span> DECIMAL(<span class="num">12</span>,<span class="num">2</span>)) <span class="kw">AS</span> total_amount,
+    order_status, updated_at
+<span class="kw">FROM</span> bronze.raw_orders
+<span class="kw">QUALIFY</span> <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (
+    <span class="kw">PARTITION BY</span> order_id <span class="kw">ORDER BY</span> updated_at <span class="kw">DESC</span>
+) = <span class="num">1</span>;
+
+<span class="cm">-- GOLD 1: Finance needs daily revenue</span>
+<span class="kw">CREATE TABLE</span> gold.daily_revenue <span class="kw">AS</span>
+<span class="kw">SELECT</span> order_date, <span class="fn">SUM</span>(total_amount) <span class="kw">AS</span> total_revenue
+<span class="kw">FROM</span> silver.clean_orders
+<span class="kw">WHERE</span> order_status = <span class="str">'completed'</span>
+<span class="kw">GROUP BY</span> order_date;
+
+<span class="cm">-- GOLD 2: Marketing needs customer LTV</span>
+<span class="kw">CREATE TABLE</span> gold.customer_ltv <span class="kw">AS</span>
+<span class="kw">SELECT</span> c.customer_id, <span class="fn">SUM</span>(o.total_amount) <span class="kw">AS</span> lifetime_value
+<span class="kw">FROM</span> silver.clean_customers c
+<span class="kw">LEFT JOIN</span> silver.clean_orders o <span class="kw">ON</span> c.customer_id = o.customer_id
+<span class="kw">GROUP BY</span> c.customer_id;</div>
+
+  <div class="callout">
+    <div class="callout-title">💡 Interview Insight</div>
+    <p>\"Dimensional modeling lives in the <strong>Gold layer</strong>. Silver tables are entity-centric — cleaned and conformed but not shaped for any specific business process. Model at Silver what's <strong>universally true</strong> about an entity; model at Gold what's <strong>specifically useful</strong> for a business question.\"</p>
+  </div>
+</section>
+
+<!-- =========== SCREEN 4: Partitioning Strategy =========== -->
+<section class="screen screen-alt" id="s4">
+  <h2>📂 <span class="accent">Partitioning</span> Strategy</h2>
+  <p>In a lakehouse, your partition strategy is inseparable from your data model. The wrong partition key turns a sub-second query into a full-scan nightmare. The right one eliminates 99% of data scanned via <span class="tooltip-term" data-tip="A query optimization where the engine reads only the partition directories that match the WHERE clause predicate, skipping all others entirely. Eliminates scanning irrelevant data at the file-system level.">partition pruning</span>.</p>
+
+  <div class="code-block"><span class="cm">-- How partitioning works: file-system-level directories</span>
+delta_table/
+├── order_date=2024-01-01/
+│   ├── part-00000.parquet    (<span class="num">50</span> MB)
+│   └── part-00001.parquet    (<span class="num">48</span> MB)
+├── order_date=2024-01-02/
+│   ├── part-00000.parquet    (<span class="num">52</span> MB)
+│   └── part-00001.parquet    (<span class="num">47</span> MB)
+
+<span class="cm">-- Query: WHERE order_date = '2024-01-02'</span>
+<span class="cm">-- Engine reads ONLY the 2024-01-02 directory (~99 MB)</span>
+<span class="cm">-- Skips all other directories entirely</span></div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📅 By Time (Most Common)</h4>
+      <p>Aligns with how queries filter (by date range) and how data arrives (daily batches, hourly streams).</p>
+    </div>
+    <div class="card green">
+      <h4>🏢 By Business Entity</h4>
+      <p>Multi-tenant SaaS or regional data with strict isolation needs. Partition by tenant_id or region.</p>
+    </div>
+    <div class="card purple">
+      <h4>⚠️ Over-Partitioning</h4>
+      <p>Partitioning by (year, month, day, hour, user_id) = millions of tiny 1KB files. Query planning exceeds query execution!</p>
+    </div>
+    <div class="card orange">
+      <h4>📏 Right-Sizing Rule</h4>
+      <p>Each partition should hold at least <strong>128 MB</strong> (ideally 256 MB – 1 GB). Too small? Coarsen the key.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm">-- Delta Lake: partition by date</span>
+<span class="kw">CREATE TABLE</span> silver.clean_orders
+<span class="kw">USING</span> DELTA
+<span class="kw">PARTITIONED BY</span> (order_date)
+<span class="kw">AS SELECT</span> * <span class="kw">FROM</span> transformed_orders;
+
+<span class="cm">-- Iceberg: hidden partitioning by month (game-changer!)</span>
+<span class="kw">CREATE TABLE</span> silver.clean_orders (
+    order_id BIGINT, order_ts TIMESTAMP, amount DECIMAL(<span class="num">12</span>,<span class="num">2</span>)
+) <span class="kw">USING</span> ICEBERG
+<span class="kw">PARTITIONED BY</span> (<span class="fn">months</span>(order_ts));
+
+<span class="cm">-- Users query naturally — Iceberg prunes automatically</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> silver.clean_orders
+<span class="kw">WHERE</span> order_ts <span class="kw">BETWEEN</span> <span class="str">'2024-01-15'</span> <span class="kw">AND</span> <span class="str">'2024-01-20'</span>;
+
+<span class="cm">-- Partition evolution WITHOUT rewriting data!</span>
+<span class="kw">ALTER TABLE</span> silver.clean_orders
+<span class="kw">REPLACE PARTITION FIELD</span> <span class="fn">days</span>(order_ts) <span class="kw">WITH</span> <span class="fn">months</span>(order_ts);</div>
+
+  <div class="table-example">
+    <table>
+      <tr><th>Factor</th><th>Recommendation</th><th>Example</th></tr>
+      <tr><td>Queries filter by date</td><td>Partition by date/month</td><td>PARTITIONED BY (order_date)</td></tr>
+      <tr><td>Multi-tenant isolation</td><td>Partition by tenant_id</td><td>PARTITIONED BY (tenant_id)</td></tr>
+      <tr><td>Table &lt; 1 GB total</td><td>Don't partition at all</td><td>Small dimension tables</td></tr>
+      <tr><td>High-cardinality (user_id)</td><td>Don't partition — Z-ORDER</td><td>Z-ORDER BY (user_id)</td></tr>
+      <tr><td>Streaming (many small files)</td><td>Partition by date + auto-compact</td><td>Schedule OPTIMIZE regularly</td></tr>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">📖 Analogy</div>
+    <p>Partitioning is like organizing a <strong>library</strong>. Partition by genre and you skip entire aisles. But partition by author's last name AND first name AND year AND edition? Millions of shelves, each holding a single pamphlet — the librarian spends more time walking than reading. Z-ordering sorts books <em>within</em> a shelf by multiple criteria.</p>
+  </div>
+</section>
+
+<!-- =========== SCREEN 5: Storage Formats =========== -->
+<section class="screen" id="s5">
+  <h2>💾 Integration with <span class="accent">Storage Formats</span></h2>
+  <p>Your data model lives inside Delta Lake, Iceberg, or Hudi. These table formats dictate what operations are efficient, which schema changes are safe, and how physical layout affects query performance.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔄 MERGE for SCD2</h4>
+      <p>Delta/Iceberg make MERGE efficient — the foundation for SCD2 in the lakehouse. Z-ORDER by the merge key for minimal file reads.</p>
+    </div>
+    <div class="card green">
+      <h4>📊 Z-ORDER Alignment</h4>
+      <p>Z-ORDER columns should match your model's most common join and filter keys. Fact tables → customer_id, product_id.</p>
+    </div>
+    <div class="card purple">
+      <h4>📈 Column Statistics</h4>
+      <p>Put filtered columns first in table definitions. Formats collect stats for the first N columns — enables file pruning.</p>
+    </div>
+    <div class="card orange">
+      <h4>🔀 Schema Evolution</h4>
+      <p>Iceberg tracks columns by ID (renames safe). Delta tracks by name (renames risky). Matters when Silver evolves over time.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm">-- SCD Type 2 via MERGE in Delta Lake</span>
+<span class="kw">MERGE INTO</span> silver.dim_customer <span class="kw">AS</span> target
+<span class="kw">USING</span> (
+    <span class="kw">SELECT</span> customer_id, customer_name, city,
+        <span class="fn">current_timestamp</span>() <span class="kw">AS</span> effective_from
+    <span class="kw">FROM</span> bronze.raw_customers_batch
+) <span class="kw">AS</span> source
+<span class="kw">ON</span> target.customer_id = source.customer_id
+   <span class="kw">AND</span> target.is_current = <span class="num">true</span>
+
+<span class="cm">-- Expire changed records</span>
+<span class="kw">WHEN MATCHED AND</span> (
+    target.customer_name != source.customer_name <span class="kw">OR</span>
+    target.city != source.city
+) <span class="kw">THEN UPDATE SET</span>
+    target.is_current = <span class="num">false</span>,
+    target.effective_to = source.effective_from
+
+<span class="cm">-- Insert new customers</span>
+<span class="kw">WHEN NOT MATCHED THEN INSERT</span> (
+    customer_id, customer_name, city,
+    effective_from, effective_to, is_current
+) <span class="kw">VALUES</span> (
+    source.customer_id, source.customer_name, source.city,
+    source.effective_from, <span class="kw">NULL</span>, <span class="num">true</span>
+);</div>
+
+  <div class="code-block"><span class="cm">-- Z-ORDER + compaction: align with model grain</span>
+<span class="kw">OPTIMIZE</span> silver.clean_orders
+<span class="kw">ZORDER BY</span> (customer_id, order_date);
+
+<span class="cm">-- Schema evolution: Iceberg is safer</span>
+<span class="kw">ALTER TABLE</span> silver.clean_customers
+<span class="kw">RENAME COLUMN</span> customer_email <span class="kw">TO</span> email_address;
+<span class="cm">-- Iceberg: existing Parquet files NOT rewritten (maps by column ID)</span>
+<span class="cm">-- Delta: would break references (tracks by column name)</span></div>
+
+  <div class="table-example">
+    <table>
+      <tr><th>Model Pattern</th><th>Z-ORDER Columns</th><th>Why</th></tr>
+      <tr><td>Fact table (orders)</td><td>customer_id, product_id</td><td>Common join keys for star queries</td></tr>
+      <tr><td>Event table (clickstream)</td><td>user_id, session_id</td><td>Filter/group by user then session</td></tr>
+      <tr><td>SCD2 dimension</td><td>business_key</td><td>MERGE finds all versions quickly</td></tr>
+      <tr><td>Aggregated Gold table</td><td>No Z-ORDER needed</td><td>Already small and pre-filtered</td></tr>
+      <tr><td>OBT (One Big Table)</td><td>Top 2-3 filter columns</td><td>Most impactful for wide scans</td></tr>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">💡 Interview Insight</div>
+    <p>\"The table format dictates what's cheap. Delta and Iceberg make MERGE efficient — that's why SCD2 works well in the lakehouse. I align Z-ORDER with primary join/filter keys, schedule compaction after MERGE jobs targeting 128-256 MB files, and prefer Iceberg's hidden partitioning to decouple physical layout from queries. The partition key, Z-ORDER columns, and model grain must tell a <strong>consistent story</strong>.\"</p>
+  </div>
+</section>
+
+<!-- =========== SCREEN 6: Real-World Problems =========== -->
+<section class="screen screen-alt" id="s6">
+  <h2>🔥 Real-World <span class="accent">Problems</span> & Solutions</h2>
+  <p>Every lakehouse hits the same failure modes. These four problems distinguish engineers who've operated production systems from those who've only read the docs.</p>
+
+  <div class="card-grid">
+    <div class="card red">
+      <h4>🏚️ Problem 1: Silver Becomes a Swamp</h4>
+      <p>Duplicate rows, no clear grain, multiple teams building overlapping Silver tables. Fix: grain contracts, PK constraints, post-load verification, single ownership.</p>
+    </div>
+    <div class="card orange">
+      <h4>🐌 Problem 2: Gold Tables Too Slow</h4>
+      <p>Gold is just VIEWs on Silver — recomputed every query. Fix: materialize Gold tables, partition-align with dashboards, incremental MERGE.</p>
+    </div>
+    <div class="card purple">
+      <h4>💥 Problem 3: Schema Drift Breaks Pipes</h4>
+      <p>Source adds columns or changes types. Fix: schema drift detection before writes, auto-evolve non-breaking changes, quarantine breaking ones.</p>
+    </div>
+    <div class="card">
+      <h4>📬 Problem 4: Late-Arriving Data</h4>
+      <p>January 5th order arrives January 20th. Gold already computed. Fix: reprocessing windows — MERGE last N days at Gold on every run.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm">-- Enforce grain: post-load verification (MUST return 0 rows)</span>
+<span class="kw">SELECT</span> order_id, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> row_count
+<span class="kw">FROM</span> silver.clean_orders
+<span class="kw">GROUP BY</span> order_id
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) > <span class="num">1</span>;
+
+<span class="cm">-- Materialize Gold instead of VIEWs</span>
+<span class="kw">CREATE TABLE</span> gold.daily_sales_summary
+<span class="kw">USING</span> DELTA <span class="kw">PARTITIONED BY</span> (order_date)
+<span class="kw">AS SELECT</span>
+    o.order_date, s.store_name,
+    <span class="fn">SUM</span>(o.total_amount) <span class="kw">AS</span> total_revenue,
+    <span class="fn">COUNT</span>(<span class="kw">DISTINCT</span> o.order_id) <span class="kw">AS</span> order_count
+<span class="kw">FROM</span> silver.clean_orders o
+<span class="kw">JOIN</span> silver.clean_stores s <span class="kw">ON</span> o.store_id = s.store_id
+<span class="kw">WHERE</span> o.order_status = <span class="str">'completed'</span>
+<span class="kw">GROUP BY</span> o.order_date, s.store_name;</div>
+
+  <div class="code-block"><span class="cm">-- Late-arriving data: reprocess last 7 days every run</span>
+<span class="kw">MERGE INTO</span> gold.daily_sales_summary <span class="kw">AS</span> target
+<span class="kw">USING</span> (
+    <span class="kw">SELECT</span> order_date, store_id,
+        <span class="fn">SUM</span>(total_amount) <span class="kw">AS</span> total_revenue,
+        <span class="fn">COUNT</span>(<span class="kw">DISTINCT</span> order_id) <span class="kw">AS</span> order_count
+    <span class="kw">FROM</span> silver.clean_orders
+    <span class="kw">WHERE</span> order_date >= <span class="fn">current_date</span>() - <span class="kw">INTERVAL</span> <span class="num">7</span> DAYS
+    <span class="kw">GROUP BY</span> order_date, store_id
+) <span class="kw">AS</span> source
+<span class="kw">ON</span> target.order_date = source.order_date
+   <span class="kw">AND</span> target.store_id = source.store_id
+<span class="kw">WHEN MATCHED THEN UPDATE SET</span> *
+<span class="kw">WHEN NOT MATCHED THEN INSERT</span> *;</div>
+
+  <div class="callout">
+    <div class="callout-title">📖 Analogy</div>
+    <p>Late-arriving data is like a <strong>postcard from vacation</strong> that arrives three weeks after you're home. Your photo album (Gold) already has a \"January 5th\" page. You don't throw away the album — you open to that page and add the postcard. The reprocessing window is checking your mailbox for late postcards every day for a week.</p>
+  </div>
+</section>
+
+<!-- =========== SCREEN 7: Quiz =========== -->
+<section class="screen" id="s7">
+  <h2>Quiz: <span class="accent">Lakehouse Modeling Mastery</span></h2>
+  <div id="quiz1">
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Silver enforces schema-on-write after raw ingestion, before business consumption. Bronze preserves raw fidelity." data-error-msg="❌ Bronze is schema-on-read to preserve flexibility. Silver applies schema-on-write to enforce types, constraints, and grain. Gold inherits Silver's quality.">
+      <h4>Q1: In Medallion Architecture, which layer should enforce schema and data types?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Bronze — catch errors as early as possible</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Silver — enforce after raw ingestion, before business consumption</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Gold — let business teams define schemas</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) All layers should enforce the same schema</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! The Silver MERGE/dedup logic is missing or using the wrong key. Fix: ROW_NUMBER() OVER (PARTITION BY order_id ORDER BY updated_at DESC) = 1." data-error-msg="❌ Duplicates in Silver = broken dedup logic. Apply QUALIFY ROW_NUMBER() and add a PK constraint to catch future violations.">
+      <h4>Q2: Silver table <code>clean_orders</code> has duplicates — same order_id appears 3 times. Most likely cause?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) The Bronze layer is corrupted</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Silver MERGE/dedup logic is missing or using the wrong key</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) The partition key is wrong</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Z-ordering needs to be applied</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="a" data-success-msg="✅ Correct! Partition by order_date (primary filter, well-sized partitions), Z-ORDER by customer_id (common join key within each partition)." data-error-msg="❌ Partition by order_date aligns with the primary filter (last 30 days) and produces ~110 MB/day. Z-ORDER by customer_id for the common join key. Partitioning by customer_id would create millions of tiny directories.">
+      <h4>Q3: 200 GB Silver table, queries filter by last 30 days, frequent joins on customer_id. Optimal layout?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Partition by order_date, Z-ORDER by customer_id</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Partition by customer_id, Z-ORDER by order_date</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Partition by both order_date and customer_id</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) No partitioning — rely entirely on Z-ORDER</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Delta rejects writes with mismatched types. Implement drift detection that catches type changes, quarantines the batch, and alerts the team." data-error-msg="❌ With schema enforcement, Delta rejects type-mismatched writes. The fix: schema drift detection before the write, quarantine breaking changes for manual review.">
+      <h4>Q4: Source changes customer_id from INT to STRING. Delta has schema enforcement enabled. What happens?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Delta silently casts STRING to INT</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Write fails — implement schema drift detection and quarantine</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Delta auto-evolves the schema</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) The Silver table becomes corrupted</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Materialize the Gold table — views recompute on every query, re-scanning hundreds of GB. A materialized table stores pre-computed results." data-error-msg="❌ Views recompute on every query. Materializing Gold stores pre-computed aggregations — dashboards scan MB instead of GB.">
+      <h4>Q5: Gold table <code>daily_sales_summary</code> is a VIEW. Dashboard queries take 45 seconds. Primary fix?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Add more Z-ordering to Silver tables</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Materialize Gold as a Delta/Iceberg table with pre-computed aggregations</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Increase the cluster size</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Move query logic into the BI tool</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! MERGE on customer_id + is_current efficiently handles 100K daily changes without touching the other 49.9M. Z-ORDER by customer_id for minimal file reads." data-error-msg="❌ MERGE is the standard lakehouse SCD2 pattern — it identifies only the ~100K changed records. Full rebuild is wasteful for 0.2% change rate.">
+      <h4>Q6: 50M customer SCD2 table, ~100K changes daily. Most efficient approach?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Full table rebuild daily</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) MERGE on customer_id + is_current, expire changed rows, insert new versions</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Append-only with effective_from/effective_to</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Separate history table, keep dim_customer as Type 1</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Iceberg's hidden partitioning translates timestamp predicates into partition predicates automatically — no explicit partition column needed." data-error-msg="❌ Iceberg's hidden partitioning is the key. It knows the table is partitioned by days(order_ts), so it translates the BETWEEN predicate automatically. Delta would need the partition column literally in the WHERE clause.">
+      <h4>Q7: Iceberg table partitioned by <code>days(order_ts)</code>. Query uses <code>WHERE order_ts BETWEEN '2024-01-15 08:00' AND '2024-01-15 17:00'</code>. Does partition pruning occur?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) No — query uses a timestamp range, not date equality</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Yes — Iceberg's hidden partitioning translates the predicate automatically</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Only if user adds AND order_date = '2024-01-15' explicitly</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Only with Hive-style partitioning</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="window.checkQuiz('quiz1')">Check Answers</button>
+  </div>
+</section>
+
+<!-- =========== SCREEN 8: Key Takeaways (Capstone) =========== -->
+<section class="screen screen-alt" id="s8">
+  <div class="capstone-banner">
+    <span class="emoji">🎓</span>
+    <h2>🏆 <span class="accent">Course Complete</span> — Key Takeaways</h2>
+    <p>You've mastered all 9 modules. Here's your lakehouse modeling cheat sheet — and a summary of the entire course.</p>
+  </div>
+
+  <div class="card-grid">
+    <div class="card orange">
+      <h4>🏅 Medallion Architecture</h4>
+      <p>Bronze = completeness (raw, append-only). Silver = correctness (cleaned, deduplicated). Gold = performance (star schemas, OBTs). Each layer has a clear contract.</p>
+    </div>
+    <div class="card purple">
+      <h4>📋 Schema Strategy</h4>
+      <p>Schema-on-read at Bronze, schema-on-write at Silver. Detect drift before it breaks pipes. Auto-evolve non-breaking changes; quarantine breaking ones.</p>
+    </div>
+    <div class="card green">
+      <h4>🎯 Silver vs Gold</h4>
+      <p>Silver = entity-centric (universally true). Gold = business-process-centric (specifically useful). Anti-pattern: star schemas at Silver = premature coupling.</p>
+    </div>
+    <div class="card">
+      <h4>📂 Partitioning</h4>
+      <p>Low-cardinality WHERE columns. 128 MB–1 GB per partition. Z-ORDER for high-cardinality joins. Iceberg hidden partitioning decouples layout from queries.</p>
+    </div>
+    <div class="card red">
+      <h4>💾 Storage Formats</h4>
+      <p>MERGE = lakehouse SCD2. Align Z-ORDER with merge keys. Iceberg tracks columns by ID (safe renames). Compact to 128-256 MB files after writes.</p>
+    </div>
+    <div class="card" style="border-top-color:#C4813D">
+      <h4>🔥 Production Survival</h4>
+      <p>Grain contracts prevent swamps. Materialize Gold (no VIEWs). Reprocessing windows for late data. Schema drift detection saves 3 AM pages.</p>
+    </div>
+  </div>
+
+  <div class="callout" style="background:linear-gradient(135deg,var(--color-success-light),#E0F5E8);border-left-color:var(--color-success)">
+    <div class="callout-title" style="color:var(--color-success)">🎓 The Big Picture</div>
+    <p>\"The lakehouse doesn't eliminate modeling — it changes <strong>where</strong> and <strong>when</strong> you model. Bronze defers decisions, Silver makes them, and Gold serves them. Get the boundaries right and everything downstream flows.\"</p>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📘 Modules 1-3</h4>
+      <p>Foundations: what modeling is, facts/dimensions/grain, star vs snowflake schemas.</p>
+    </div>
+    <div class="card green">
+      <h4>📗 Modules 4-6</h4>
+      <p>Core skills: SCDs, advanced patterns (bridge/junk/role-playing), interview gauntlet.</p>
+    </div>
+    <div class="card purple">
+      <h4>📕 Modules 7-9</h4>
+      <p>Modern mastery: Data Vault, activity schema & OBTs, and lakehouse modeling.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-08-modern-patterns/index.html">← Prev: Modern Patterns</a>
+  <a href="../index.html">Back to Course Home →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=Math.min(pct,100)+'%';},{passive:true});
+
+  const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(s=>observer.observe(s));
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',()=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  window.selectOption=function(btn){const block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(o=>o.classList.remove('selected'));btn.classList.add('selected');};
+  window.checkQuiz=function(sectionId){const container=document.getElementById(sectionId);const questions=container.querySelectorAll('.quiz-question-block');questions.forEach(q=>{const selected=q.querySelector('.quiz-option.selected');const feedback=q.querySelector('.quiz-feedback');const correctValue=q.dataset.correct;if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}q.querySelectorAll('.quiz-option').forEach(o=>o.disabled=true);});};
+
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')window.location.href='../index.html';if(e.key==='ArrowLeft')window.location.href='../module-08-modern-patterns/index.html';});
+})();
+</script>
+</body>
+</html>

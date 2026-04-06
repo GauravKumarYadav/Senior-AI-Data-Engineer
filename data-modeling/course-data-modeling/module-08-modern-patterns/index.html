@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 8: Modern Modeling Patterns | Data Modeling Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-text-secondary:#6B6560;--color-text-muted:#9E9790;--color-border:#E5DFD6;--color-surface:#FFFFFF;--color-accent:#2A7B9B;--color-accent-light:#E4F2F7;--color-success:#2D8B55;--color-success-light:#E8F5EE;--color-error:#C93B3B;--color-error-light:#FDE8E8;--font-head:'Bricolage Grotesque',Georgia,serif;--font-body:'DM Sans',-apple-system,sans-serif;--font-mono:'JetBrains Mono','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.15s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:var(--color-border);text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+section.screen.visible{opacity:1;transform:translateY(0)}
+.screen h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:var(--color-surface);border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.orange{border-top-color:#C4813D}.card.red{border-top-color:var(--color-error)}
+.card h4{font-family:var(--font-head);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-text-muted);margin-bottom:0}
+.callout{background:linear-gradient(135deg,var(--color-accent-light),#F0F8FB);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.callout-title{font-family:var(--font-head);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.callout p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:var(--color-surface);border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-head);font-weight:700;font-size:1rem;margin-bottom:0.8rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.schema-diagram{background:var(--color-surface);border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;display:flex;flex-direction:column;align-items:center;gap:0.8rem}
+.schema-center{background:var(--color-accent);color:#fff;padding:0.8rem 1.2rem;border-radius:12px;font-family:var(--font-head);font-weight:700;font-size:0.95rem;text-align:center}
+.schema-dims{display:flex;gap:0.8rem;flex-wrap:wrap;justify-content:center}
+.schema-dim{background:var(--color-accent-light);color:var(--color-accent);padding:0.5rem 0.8rem;border-radius:10px;font-family:var(--font-mono);font-size:0.78rem;font-weight:600;border:2px solid var(--color-accent)}
+.schema-dim.bridge{background:#F5F0FF;color:#7B5EA7;border-color:#7B5EA7}
+.schema-arrow{color:var(--color-text-muted);font-size:0.9rem}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-mono);font-size:0.8rem;overflow-x:auto;margin:1rem 0;line-height:1.7;white-space:pre}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}.code-block .num{color:#FAB387}
+.table-example{background:var(--color-surface);border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin:1.5rem 0;font-size:0.82rem}
+.table-example table{width:100%;border-collapse:collapse}
+.table-example th{background:var(--color-accent);color:#fff;padding:0.6rem 0.8rem;text-align:left;font-family:var(--font-mono);font-size:0.75rem;font-weight:600}
+.table-example td{padding:0.5rem 0.8rem;border-bottom:1px solid var(--color-border);font-family:var(--font-mono);font-size:0.78rem}
+.table-example tr:last-child td{border:none}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.quiz-question-block{background:var(--color-surface);border-radius:16px;padding:1.8rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1rem 0}
+.quiz-question-block h4{font-family:var(--font-head);font-weight:700;margin-bottom:1rem;font-size:1.05rem}
+.quiz-option{display:block;width:100%;text-align:left;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid var(--color-border);border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem;font-family:var(--font-body);background:none}
+.quiz-option:hover{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.selected{border-color:var(--color-accent);background:var(--color-accent-light)}
+.quiz-option.correct{border-color:var(--color-success);background:var(--color-success-light)}
+.quiz-option.incorrect{border-color:var(--color-error);background:var(--color-error-light)}
+.quiz-option:disabled{cursor:default;opacity:0.7}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:var(--color-success-light);color:var(--color-success)}
+.quiz-feedback.error{background:var(--color-error-light);color:var(--color-error)}
+.quiz-feedback.warning{background:#FFF8E1;color:#8D6E00}
+.check-btn{display:inline-block;background:var(--color-accent);color:#fff;border:none;padding:0.7rem 2rem;border-radius:100px;font-family:var(--font-head);font-weight:700;font-size:0.95rem;cursor:pointer;margin-top:1rem;transition:transform 0.2s}
+.check-btn:hover{transform:translateY(-2px)}
+.screen-alt{background:var(--color-bg-warm);margin-left:calc(-50vw + 50%);margin-right:calc(-50vw + 50%);padding-left:calc(50vw - 50% + 1.5rem);padding-right:calc(50vw - 50% + 1.5rem);max-width:none}
+.screen-alt>*{max-width:900px}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-head);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}.schema-dims{flex-direction:column;align-items:center}}
+</style>
+</head>
+<body>
+<nav class="top-nav" role="navigation" aria-label="Course navigation">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-title">🏗️ Data Modeling Mastery</a>
+    <div class="nav-dots">
+      <a href="../module-01-what-is-data-modeling/" class="nav-dot" aria-label="Module 1"></a>
+      <a href="../module-02-facts-dimensions-grain/" class="nav-dot" aria-label="Module 2"></a>
+      <a href="../module-03-star-snowflake/" class="nav-dot" aria-label="Module 3"></a>
+      <a href="../module-04-slowly-changing-dimensions/" class="nav-dot" aria-label="Module 4"></a>
+      <a href="../module-05-advanced-patterns/" class="nav-dot" aria-label="Module 5"></a>
+      <a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a>
+      <a href="../module-07-data-vault/" class="nav-dot" aria-label="Module 7"></a>
+      <a href="../module-08-modern-patterns/" class="nav-dot active" aria-label="Module 8 (current)"></a>
+      <a href="../module-09-lakehouse-modeling/" class="nav-dot" aria-label="Module 9"></a>
+    </div>
+  </div>
+</nav>
+
+<!-- Screen 1: OBT -->
+<section class="screen" id="s1">
+  <h2>📊 <span class="accent">One Big Table</span> (OBT)</h2>
+  <p>Every data modeling course teaches you to normalize. The <span class="tooltip-term" data-tip="One Big Table — a fully denormalized table where all dimensions are pre-joined into the fact table, eliminating joins at query time. Works well as a serving-layer pattern in columnar engines like Snowflake and BigQuery.">OBT</span> pattern says: <strong>forget all that — pre-join everything into a single, massively wide, completely denormalized table.</strong></p>
+  <p>An OBT takes your entire star schema — fact table plus every dimension — and materializes it into one flat table. No joins. No lookups. Just one table to rule them all.</p>
+  <p>In the age of <strong>columnar cloud warehouses</strong> — Snowflake, BigQuery, ClickHouse, Redshift — OBT has become a surprisingly practical pattern. A query touching 3 columns out of 200 only scans those 3 columns.</p>
+
+  <div class="schema-diagram">
+    <div class="schema-center">OBT: 1 table, 0 joins</div>
+    <div class="schema-arrow">↕ Pre-joined from ↕</div>
+    <div class="schema-dims">
+      <div class="schema-dim">fact_sales</div>
+      <div class="schema-dim">dim_customer</div>
+      <div class="schema-dim">dim_product</div>
+      <div class="schema-dim">dim_store</div>
+      <div class="schema-dim">dim_date</div>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm">-- Materialize an OBT from a star schema</span>
+<span class="kw">CREATE TABLE</span> analytics.obt_sales <span class="kw">AS</span>
+<span class="kw">SELECT</span>
+    f.order_id, f.order_date, f.quantity, f.revenue,
+    <span class="cm">-- Customer dimension</span>
+    c.customer_name, c.customer_segment, c.customer_region,
+    <span class="cm">-- Product dimension</span>
+    p.product_name, p.product_category, p.brand,
+    <span class="cm">-- Store dimension</span>
+    s.store_name, s.store_city, s.store_state,
+    <span class="cm">-- Date dimension</span>
+    d.day_of_week, d.month_name, d.quarter, d.fiscal_year
+<span class="kw">FROM</span> fact_sales f
+<span class="kw">JOIN</span> dim_customer c <span class="kw">ON</span> f.customer_key = c.customer_key
+<span class="kw">JOIN</span> dim_product p  <span class="kw">ON</span> f.product_key = p.product_key
+<span class="kw">JOIN</span> dim_store s    <span class="kw">ON</span> f.store_key = s.store_key
+<span class="kw">JOIN</span> dim_date d     <span class="kw">ON</span> f.date_key = d.date_key;</div>
+
+  <div class="table-example">
+    <table>
+      <tr><th>Aspect</th><th>OBT Advantage</th><th>OBT Drawback</th></tr>
+      <tr><td>Query simplicity</td><td>No joins — any analyst can query</td><td>—</td></tr>
+      <tr><td>Performance</td><td>Columnar scans only needed cols</td><td>Expensive if SELECT *</td></tr>
+      <tr><td>Onboarding</td><td>One table to learn</td><td>Column explosion (200+ cols)</td></tr>
+      <tr><td>Storage</td><td>Columnar compression mitigates</td><td>2–10× more raw storage</td></tr>
+      <tr><td>Freshness</td><td>Materialized for speed</td><td>Stale until next rebuild</td></tr>
+      <tr><td>Updates</td><td>—</td><td>Full rebuild on dim change</td></tr>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">📖 Analogy</div>
+    <p>OBT is like a <strong>fully printed report binder</strong>. A star schema is a filing cabinet where you pull invoices, customer info, and product specs from separate drawers and staple them together. OBT is the pre-stapled binder — every page has all context already assembled. More paper (storage), but anyone can grab it and read instantly.</p>
+  </div>
+  <div class="callout">
+    <div class="callout-title">💡 Interview Insight</div>
+    <p>"OBT is a fully denormalized table where all dimensions are pre-joined into the fact table. It works in columnar engines because they only scan columns your query references — so a 200-column table querying 3 columns is just as fast. I'd use OBT for read-heavy dashboards and self-serve BI. The tradeoff is storage redundancy and rebuild cost. <strong>It's a serving-layer pattern, not a storage-layer pattern.</strong>"</p>
+  </div>
+</section>
+
+<!-- Screen 2: Activity Schema -->
+<section class="screen screen-alt" id="s2">
+  <h2>⚡ <span class="accent">Activity Schema</span></h2>
+  <p>Modern apps emit hundreds of event types. In Kimball, each gets its own fact table — <code>fact_page_views</code>, <code>fact_purchases</code>, <code>fact_signups</code>. With 50+ event types, you get 50+ tables and 50+ pipelines.</p>
+  <p>The <span class="tooltip-term" data-tip="A modeling pattern where all event types are stored in a single unified fact table with columns for entity_id, activity_type, timestamp, and a flexible JSON column for event-specific attributes. Proposed by Ahmed Elsamadisi at Fivetran.">Activity Schema</span> takes a radically different approach: <strong>one unified fact table for all event types.</strong></p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Traditional (50 tables)</h4>
+      <ul>
+        <li>📌 fact_page_views</li>
+        <li>📌 fact_purchases</li>
+        <li>📌 fact_signups</li>
+        <li>📌 fact_refunds</li>
+        <li>📌 fact_clicks … × 50</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Activity Schema (1 table)</h4>
+      <ul>
+        <li>📌 activity_id (UUID)</li>
+        <li>📌 entity_id (who)</li>
+        <li>📌 activity_type (what)</li>
+        <li>📌 ts (when)</li>
+        <li>📌 feature_json (details)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm">-- Activity Schema table definition</span>
+<span class="kw">CREATE TABLE</span> activity_stream (
+    activity_id     <span class="fn">STRING</span>,        <span class="cm">-- Unique event ID</span>
+    entity_id       <span class="fn">STRING</span>,        <span class="cm">-- Who did it</span>
+    activity_type   <span class="fn">STRING</span>,        <span class="cm">-- What happened</span>
+    ts              <span class="fn">TIMESTAMP</span>,     <span class="cm">-- When</span>
+    revenue_impact  <span class="fn">DECIMAL</span>(<span class="num">18</span>,<span class="num">2</span>),<span class="cm">-- Revenue if applicable</span>
+    feature_json    <span class="fn">JSON</span>           <span class="cm">-- Everything else</span>
+);
+
+<span class="cm">-- User journey in one query</span>
+<span class="kw">SELECT</span> entity_id, activity_type, ts
+<span class="kw">FROM</span> activity_stream
+<span class="kw">WHERE</span> entity_id = <span class="str">'user_12345'</span>
+<span class="kw">ORDER BY</span> ts;
+
+<span class="cm">-- Extract from JSON for specific event type</span>
+<span class="kw">SELECT</span>
+    entity_id, ts,
+    <span class="fn">JSON_EXTRACT_SCALAR</span>(feature_json, <span class="str">'$.product_id'</span>) <span class="kw">AS</span> product_id
+<span class="kw">FROM</span> activity_stream
+<span class="kw">WHERE</span> activity_type = <span class="str">'add_to_cart'</span>
+  <span class="kw">AND</span> ts >= <span class="fn">CURRENT_DATE</span> - <span class="kw">INTERVAL</span> <span class="str">'7'</span> <span class="fn">DAY</span>;</div>
+
+  <div class="table-example">
+    <table>
+      <tr><th>Aspect</th><th>Benefit</th><th>Drawback</th></tr>
+      <tr><td>Flexibility</td><td>New event = new value, no schema change</td><td>No schema enforcement per event</td></tr>
+      <tr><td>Simplicity</td><td>One table, one pipeline</td><td>Overloaded columns lose meaning</td></tr>
+      <tr><td>Funnel analysis</td><td>Trivial — all events co-located</td><td>JSON parsing slower than typed cols</td></tr>
+      <tr><td>Data quality</td><td>—</td><td>Typo in activity_type = silent loss</td></tr>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">📖 Analogy</div>
+    <p>Activity Schema is like a <strong>universal journal</strong>. Instead of separate notebooks for work, personal, and exercise, you write everything in one journal with a tag on each entry. Flexible and easy to carry — but reviewing only your exercise history means flipping past a lot of irrelevant entries.</p>
+  </div>
+  <div class="callout">
+    <div class="callout-title">💡 Interview Insight</div>
+    <p>"Activity Schema stores all event types in a single table with entity_id, activity_type, timestamp, and a JSON column. Proposed by Ahmed Elsamadisi at Fivetran. Excellent for user journey analysis and funnel conversion. The tradeoff is weaker governance — no schema contract per event type, JSON parsing adds cost, and a typo in activity_type creates silent data quality issues."</p>
+  </div>
+</section>
+
+<!-- Screen 3: Wide Tables & Columnar Storage -->
+<section class="screen" id="s3">
+  <h2>📐 <span class="accent">Wide Tables</span> &amp; Columnar Storage</h2>
+  <p>For decades: <strong>wider tables = slower queries.</strong> In row-store databases, reading one column from a 200-column table means loading all 200 columns. <span class="tooltip-term" data-tip="A massively denormalized table with hundreds of columns, efficient in columnar storage engines because only the columns referenced in a query are read from disk. Sparse columns compress to nearly nothing via RLE and dictionary encoding.">Wide Table</span> patterns were impractical.</p>
+  <p><strong>Columnar storage flipped the equation.</strong> In Snowflake, BigQuery, or ClickHouse, each column is stored independently. A query touching 3 out of 200 columns reads <strong>only those 3</strong>. The other 197 have zero I/O cost.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>🐌 Row Store (PostgreSQL)</h4>
+      <ul>
+        <li>📌 All columns stored together per row</li>
+        <li>📌 SELECT city, SUM(revenue) reads ALL columns</li>
+        <li>📌 NULLs consume space in each row</li>
+        <li>📌 Wide tables = massive I/O waste</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>🚀 Columnar Store (Snowflake)</h4>
+      <ul>
+        <li>📌 Each column stored independently on disk</li>
+        <li>📌 SELECT city, SUM(revenue) reads ONLY 2 cols</li>
+        <li>📌 RLE: NULL×1,000,000 = one instruction</li>
+        <li>📌 Dictionary encoding: repeated strings → tiny ints</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📦 Run-Length Encoding</h4>
+      <p>Long consecutive runs of the same value (including NULL) stored as a single entry. A column that's NULL for 1M rows → "NULL × 1,000,000". Sparse columns are nearly free.</p>
+    </div>
+    <div class="card green">
+      <h4>📖 Dictionary Encoding</h4>
+      <p>Low-cardinality columns (e.g., 5 regions across 100M rows) replaced with integer lookups. Column of repeated strings becomes tiny integers + a 5-entry dictionary.</p>
+    </div>
+  </div>
+
+  <div class="table-example">
+    <table>
+      <tr><th>Scenario</th><th>Normalized Model</th><th>Wide Table</th></tr>
+      <tr><td>Dashboard query (3 cols)</td><td>4 joins across 5 tables</td><td>Direct scan, 3 cols only</td></tr>
+      <tr><td>Ad-hoc exploration</td><td>Must know schema relationships</td><td>One table, autocomplete</td></tr>
+      <tr><td>Adding new attribute</td><td>ALTER TABLE or new table + join</td><td>ALTER TABLE ADD COLUMN</td></tr>
+      <tr><td>Storage (sparse data)</td><td>Compact per table, join overhead</td><td>RLE/dictionary → NULLs ~free</td></tr>
+      <tr><td>Write performance</td><td>Fast (narrow inserts)</td><td>Slower (wide inserts)</td></tr>
+      <tr><td>Transactional updates</td><td>Efficient (one table)</td><td>Expensive (wide row)</td></tr>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">💡 Interview Insight</div>
+    <p>"Columnar engines store each column independently, so a query touching 3 of 300 columns reads only those 3. Combined with RLE (making NULLs essentially free) and dictionary encoding (replacing repeated strings with tiny integers), wide sparse tables are storage-efficient. <strong>Columnar storage decouples table width from query cost — you pay for what you read, not what exists.</strong>"</p>
+  </div>
+</section>
+
+<!-- Screen 4: EAV -->
+<section class="screen screen-alt" id="s4">
+  <h2>🔄 <span class="accent">EAV</span> — The Flexibility Trap</h2>
+  <p><span class="tooltip-term" data-tip="Entity-Attribute-Value — a modeling pattern that stores data vertically: each attribute becomes a row with entity_id, attribute_name, and attribute_value columns. Maximally flexible but terrible for analytics due to self-joins, string typing, and no schema enforcement.">EAV</span> (Entity-Attribute-Value) stores data <strong>vertically</strong> instead of horizontally. Instead of one column per attribute, you have three columns: entity_id, attribute_name, and attribute_value.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📋 Relational (Horizontal)</h4>
+      <ul>
+        <li>📌 id=1 | name=Shirt | color=Blue | weight=0.3</li>
+        <li>📌 id=2 | name=Drill | color=Red | voltage=120</li>
+        <li>📌 2 rows × typed columns</li>
+        <li>📌 Simple: WHERE color='Blue' AND weight>1</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid #7B5EA7">
+      <h4>🔄 EAV (Vertical)</h4>
+      <ul>
+        <li>📌 (1, 'name', 'Shirt'), (1, 'color', 'Blue')</li>
+        <li>📌 (1, 'weight', '0.3'), (1, 'fabric', 'Cotton')</li>
+        <li>📌 8 rows × 3 string columns</li>
+        <li>📌 Nightmare: self-joins + CAST</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm">-- In a normal table: simple and fast</span>
+<span class="kw">SELECT</span> product_id, name
+<span class="kw">FROM</span> products
+<span class="kw">WHERE</span> color = <span class="str">'Blue'</span> <span class="kw">AND</span> weight_kg > <span class="num">1.0</span>;
+
+<span class="cm">-- In EAV: a nightmare of self-joins</span>
+<span class="kw">SELECT</span> e.entity_id
+<span class="kw">FROM</span> product_attributes e
+<span class="kw">JOIN</span> product_attributes c
+  <span class="kw">ON</span> e.entity_id = c.entity_id
+  <span class="kw">AND</span> c.attribute_name = <span class="str">'color'</span>
+  <span class="kw">AND</span> c.attribute_value = <span class="str">'Blue'</span>
+<span class="kw">JOIN</span> product_attributes w
+  <span class="kw">ON</span> e.entity_id = w.entity_id
+  <span class="kw">AND</span> w.attribute_name = <span class="str">'weight'</span>
+  <span class="kw">AND</span> <span class="fn">CAST</span>(w.attribute_value <span class="kw">AS</span> <span class="fn">DECIMAL</span>) > <span class="num">1.0</span>
+<span class="kw">WHERE</span> e.attribute_name = <span class="str">'name'</span>;</div>
+
+  <div class="table-example">
+    <table>
+      <tr><th>Problem</th><th>Why It Hurts</th></tr>
+      <tr><td>Type coercion</td><td>Everything is VARCHAR — CAST at query time</td></tr>
+      <tr><td>No constraints</td><td>Can't enforce "weight must be positive"</td></tr>
+      <tr><td>Query complexity</td><td>Self-joins or pivoting — 10× more complex SQL</td></tr>
+      <tr><td>Performance</td><td>Self-joins on large EAV tables are expensive</td></tr>
+      <tr><td>BI incompatibility</td><td>Tableau/Looker expect columnar data</td></tr>
+      <tr><td>Indexing</td><td>Can't index mixed-type attribute_value</td></tr>
+    </table>
+  </div>
+
+  <div class="card-grid">
+    <div class="card green">
+      <h4>✅ When EAV Is Right</h4>
+      <p>Attributes truly unknowable at design time (CMS form builders), thousands of attributes with tiny subsets per entity, or when you never query across attributes.</p>
+    </div>
+    <div class="card orange">
+      <h4>🔄 Modern Alternative</h4>
+      <p>JSON/JSONB in PostgreSQL or VARIANT in Snowflake provide EAV flexibility with better query ergonomics, type support, and indexing.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">📖 Analogy</div>
+    <p>EAV is like storing your wardrobe as a spreadsheet with three columns: "Item ID", "Property", "Value." Your shirt becomes four rows (color=blue, size=M, fabric=cotton, sleeve=long). Great for inventory — but try answering "what blue cotton shirts in size M?" and you're doing gymnastics instead of looking in your closet.</p>
+  </div>
+  <div class="callout">
+    <div class="callout-title">💡 Interview Insight</div>
+    <p>"EAV is maximally flexible — adding a new attribute is just inserting a row. But it's terrible for analytics: self-joins or pivoting to reconstruct rows, all values are strings requiring runtime casting, and you lose schema enforcement and indexability. I'd use EAV only when attributes are truly dynamic and user-defined. Even then, <strong>I'd first consider JSON columns</strong> as a better alternative."</p>
+  </div>
+</section>
+
+<!-- Screen 5: Feature Stores & Point-in-Time -->
+<section class="screen" id="s5">
+  <h2>🧠 <span class="accent">Feature Stores</span> &amp; Point-in-Time Correctness</h2>
+  <p>ML models don't just need data — they need data <strong>as it existed at a specific point in time.</strong> This is the fundamental difference between analytics modeling and ML modeling.</p>
+  <p><span class="tooltip-term" data-tip="The principle that ML features must reflect only data available before the prediction timestamp. Prevents data leakage — using future information in training — which makes models look great in backtesting but fail in production.">Point-in-Time Correctness</span> prevents <strong>data leakage</strong> — when training data includes information that wouldn't have been available at prediction time.</p>
+
+  <div class="schema-diagram">
+    <div class="schema-center">Data Leakage Timeline</div>
+    <div class="schema-dims">
+      <div class="schema-dim" style="background:var(--color-success-light);color:var(--color-success);border-color:var(--color-success)">✅ Jan 1 – Feb 28: Use this data</div>
+      <div class="schema-dim bridge" style="background:var(--color-error-light);color:var(--color-error);border-color:var(--color-error)">❌ Mar 1 – Mar 20: Future data!</div>
+    </div>
+    <div class="schema-arrow">Mar 1 = Prediction Point → Features must use only data before this</div>
+  </div>
+
+  <div class="code-block"><span class="cm">-- Feature table: entity key + timestamp + features</span>
+<span class="kw">CREATE TABLE</span> features.customer_daily (
+    customer_id     <span class="fn">STRING</span>,
+    feature_ts      <span class="fn">TIMESTAMP</span>,      <span class="cm">-- When features were computed</span>
+    orders_last_30d         <span class="fn">INT</span>,
+    revenue_last_30d        <span class="fn">DECIMAL</span>(<span class="num">12</span>,<span class="num">2</span>),
+    days_since_last_order   <span class="fn">INT</span>,
+    support_tickets_30d     <span class="fn">INT</span>,
+    loyalty_tier            <span class="fn">STRING</span>,
+    <span class="kw">PRIMARY KEY</span> (customer_id, feature_ts)
+);
+
+<span class="cm">-- Point-in-time join: get latest features BEFORE prediction date</span>
+<span class="kw">SELECT</span> pe.customer_id, pe.prediction_date, pe.label_churned, f.*
+<span class="kw">FROM</span> prediction_events pe
+<span class="kw">LEFT JOIN</span> features.customer_daily f
+  <span class="kw">ON</span> pe.customer_id = f.customer_id
+  <span class="kw">AND</span> f.feature_ts = (
+      <span class="kw">SELECT</span> <span class="fn">MAX</span>(f2.feature_ts)
+      <span class="kw">FROM</span> features.customer_daily f2
+      <span class="kw">WHERE</span> f2.customer_id = pe.customer_id
+        <span class="kw">AND</span> f2.feature_ts &lt;= pe.prediction_date
+  );</div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📚 Offline Store</h4>
+      <ul>
+        <li>📌 Data warehouse / data lake</li>
+        <li>📌 Latency: seconds to minutes</li>
+        <li>📌 Full history (all timestamps)</li>
+        <li>📌 Use case: model training with PIT joins</li>
+        <li>📌 Batch updates (hourly/daily)</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid #7B5EA7">
+      <h4>⚡ Online Store</h4>
+      <ul>
+        <li>📌 Redis, DynamoDB, Bigtable</li>
+        <li>📌 Latency: &lt; 10 milliseconds</li>
+        <li>📌 Latest values only</li>
+        <li>📌 Use case: real-time model serving</li>
+        <li>📌 Streaming / near-real-time updates</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">📖 Analogy</div>
+    <p>A <span class="tooltip-term" data-tip="A centralized repository for storing, managing, and serving ML features. Has two stores: an offline store (warehouse) for batch training with full history, and an online store (Redis/DynamoDB) for low-latency real-time serving with latest values only.">Feature Store</span> is like a library with two rooms. The <strong>archive room</strong> (offline store) has every edition of every book ever published — researchers study how knowledge evolved over time. The <strong>reference desk</strong> (online store) has only the latest edition — visitors grab the current answer fast. Same books, different access patterns.</p>
+  </div>
+  <div class="callout">
+    <div class="callout-title">💡 Interview Insight</div>
+    <p>"The critical principle is point-in-time correctness — features must reflect only data available before the prediction timestamp to prevent data leakage. Feature tables use a composite key of entity_id + feature_timestamp. For training, use ASOF joins. Architecture has offline store (warehouse, full history, batch training) and online store (Redis, latest values, low-latency serving). <strong>The biggest mistake is computing features without temporal boundaries — that introduces leakage.</strong>"</p>
+  </div>
+</section>
+
+<!-- Screen 6: Decision Matrix -->
+<section class="screen screen-alt" id="s6">
+  <h2>🧭 <span class="accent">Decision Matrix</span> — When to Use What</h2>
+  <p>There is no single "best" data model. Each pattern optimizes for different axes. Senior data engineers don't argue about which model is best; they ask <strong>"best for what?"</strong></p>
+
+  <div class="table-example">
+    <table>
+      <tr><th>Pattern</th><th>Query Simplicity</th><th>Schema Flex</th><th>Governance</th><th>Storage Eff.</th><th>Update Cost</th><th>ML-Ready</th></tr>
+      <tr><td><strong>3NF</strong></td><td>⭐⭐</td><td>⭐⭐</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐</td></tr>
+      <tr><td><strong>Star Schema</strong></td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐</td></tr>
+      <tr><td><strong>OBT</strong></td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐</td><td>⭐</td><td>⭐⭐⭐⭐</td></tr>
+      <tr><td><strong>Activity Schema</strong></td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td></tr>
+      <tr><td><strong>Wide Table</strong></td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐</td><td>⭐⭐⭐⭐</td></tr>
+      <tr><td><strong>EAV</strong></td><td>⭐</td><td>⭐⭐⭐⭐⭐</td><td>⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐</td></tr>
+      <tr><td><strong>Data Vault</strong></td><td>⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐</td></tr>
+    </table>
+  </div>
+
+  <div class="table-example">
+    <table>
+      <tr><th>Scenario</th><th>Recommended Pattern</th><th>Why</th></tr>
+      <tr><td>Executive dashboard (5 KPIs)</td><td><strong>OBT</strong></td><td>Max simplicity, zero SQL expertise</td></tr>
+      <tr><td>E-commerce catalog (10K+ attrs)</td><td><strong>EAV / JSON cols</strong></td><td>Truly dynamic attributes</td></tr>
+      <tr><td>Multi-source enterprise DWH</td><td><strong>Data Vault → Star</strong></td><td>Integration + audit + BI serving</td></tr>
+      <tr><td>Product analytics (clickstream)</td><td><strong>Activity Schema</strong></td><td>All events in one place</td></tr>
+      <tr><td>ML churn prediction</td><td><strong>Feature Store (PIT)</strong></td><td>Point-in-time correctness</td></tr>
+      <tr><td>Self-serve for 200 analysts</td><td><strong>Star + OBT marts</strong></td><td>Governed metrics + exploration</td></tr>
+      <tr><td>IoT sensor data (100+ types)</td><td><strong>Wide Table</strong></td><td>Sparse cols compress well</td></tr>
+      <tr><td>Regulatory reporting</td><td><strong>3NF / Data Vault</strong></td><td>Max integrity + audit trail</td></tr>
+      <tr><td>Startup MVP (3-person team)</td><td><strong>OBT / Star Schema</strong></td><td>Ship fast, refactor later</td></tr>
+    </table>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📐 The Layered Reality</h4>
+      <p>Mature orgs use different patterns at different layers: Data Vault (raw integration) → Star Schema (semantic) → OBT (serving) → Feature Store (ML).</p>
+    </div>
+    <div class="card green">
+      <h4>🎯 The Right Answer</h4>
+      <p>Usually 2–3 patterns aligned to your team's capabilities. Worst mistake: one pattern everywhere. Second worst: six patterns when two would suffice.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">📖 Analogy</div>
+    <p>Choosing a data modeling pattern is like choosing a vehicle. A 3NF sedan is reliable for daily commutes. A star schema SUV handles most terrain. An OBT bus carries everyone without them driving. A Data Vault freight train moves massive volumes. <strong>You don't argue which vehicle is "best" — you pick the right one for the journey.</strong></p>
+  </div>
+  <div class="callout">
+    <div class="callout-title">💡 Interview Insight</div>
+    <p>"I start with the use case, not the pattern. OLTP → 3NF. Enterprise integration → Data Vault. Analyst BI → Star Schema. Self-serve → OBT. Events → Activity Schema. ML → Feature Store. In practice, mature platforms use multiple patterns in layers. The worst mistake is picking one and forcing everything into it."</p>
+  </div>
+</section>
+
+<!-- Screen 7: Quiz -->
+<section class="screen" id="s7">
+  <h2>✅ Quiz: <span class="accent">Test Yourself</span></h2>
+  <div id="quiz1">
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Columnar engines only scan referenced columns, so table width doesn't affect query cost for most queries." data-error-msg="❌ In columnar engines, each column is stored independently — a query touching 3 of 200 columns reads only those 3. Table width ≠ query cost.">
+      <h4>Q1: What is the primary reason OBT works well in columnar databases like Snowflake?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Columnar databases compress data better regardless of table width</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Columnar databases only scan columns referenced in the query, so width doesn't affect cost</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Columnar databases store OBT tables differently than other tables</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) OBT tables are always smaller than star schema tables in columnar databases</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Activity Schema trades schema enforcement for flexibility — event-specific attributes go into JSON, losing type safety and constraints." data-error-msg="❌ The main tradeoff is losing schema enforcement per event type. JSON parsing is slower, and a typo in activity_type silently creates a new event type.">
+      <h4>Q2: In the Activity Schema pattern, what is the main tradeoff for having all events in one table?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Increased storage cost due to duplication of event data</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Loss of schema enforcement per event type and reliance on JSON parsing</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Inability to track user journeys across event types</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Requirement for separate indexes per event type</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! RLE stores consecutive runs of the same value (including NULL) as a single entry — sparse columns become nearly free." data-error-msg="❌ RLE replaces repeated consecutive values with a value-count pair. NULL × 1,000,000 is stored as one instruction — the NULLs exist logically but consume almost no space.">
+      <h4>Q3: Why is run-length encoding (RLE) particularly beneficial for wide tables with many NULL columns?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) RLE converts NULLs to zeros, making them easier to query</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) RLE stores consecutive runs of the same value as a single entry, making sparse columns nearly free</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) RLE eliminates NULL columns from the table entirely</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) RLE replaces NULLs with default values to improve performance</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Correct! EAV requires self-joins or pivoting to reconstruct rows, and all values are strings requiring runtime CAST — making queries 5-10× more complex." data-error-msg="❌ The biggest EAV problem for analytics is self-joins/pivoting to reconstruct horizontal rows, plus all values being strings needing runtime type casting.">
+      <h4>Q4: What is the biggest problem with using EAV for analytical queries?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) EAV tables cannot be indexed</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) EAV tables use too much storage compared to relational tables</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Querying across attributes requires self-joins/pivoting, and all values are strings needing CAST</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) EAV tables cannot handle NULL values</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Data leakage = training with future information. Point-in-time joins solve this by ensuring features only use data available before each prediction timestamp." data-error-msg="❌ Data leakage occurs when features include information from after the prediction timestamp — making models look great in training but fail in production.">
+      <h4>Q5: What is "data leakage" in ML feature engineering?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) When sensitive data is accidentally exposed to unauthorized users</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) When training data includes information that wouldn't exist at prediction time</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) When data is lost during ETL pipeline processing</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) When duplicate records leak into the feature store</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Offline store = full history for batch training with PIT joins. Online store = latest values only for low-latency real-time serving." data-error-msg="❌ The offline store retains full history with timestamps for point-in-time training. The online store holds only latest values for &lt;10ms real-time serving.">
+      <h4>Q6: What is the difference between the offline store and online store in a feature store?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Offline uses SQL, online uses NoSQL</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Offline holds full history for batch training; online holds latest values for real-time serving</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Offline is for testing and online is for production</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) They hold identical data but at different price points</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Correct! Small team + non-technical users = OBT or Star Schema with OBT marts. Data Vault is overkill, 3NF requires too much SQL expertise, EAV is a dashboard nightmare." data-error-msg="❌ A 3-person team needs simplicity. OBT or Star + OBT marts gives non-technical users single-table simplicity while letting the small team ship fast.">
+      <h4>Q7: A 3-person data team needs to serve dashboards to 50 non-technical users. Best pattern?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Data Vault with Business Vault and Information Marts</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Third Normal Form (3NF) with complex joins</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) OBT or Star Schema with OBT serving layer</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) EAV for maximum flexibility</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! Use different patterns at different layers — each excels where it matters most. Intentional layering, not pattern proliferation." data-error-msg="❌ Mature platforms use the right pattern at each layer: Data Vault for integration, Star Schema for semantics, OBT for serving, Feature Store for ML.">
+      <h4>Q8: In a mature data platform, what is the recommended approach to modeling patterns?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Pick one pattern and use it everywhere for consistency</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Use different patterns at different layers: integration, semantic, serving, ML</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Always use the newest pattern — OBT replaces all older approaches</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) Let each team choose independently without coordination</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="window.checkQuiz('quiz1')">Check Answers</button>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-07-data-vault/index.html">← Prev: Data Vault 2.0</a>
+  <a href="../module-09-lakehouse-modeling/index.html">Next: Lakehouse Modeling →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=Math.min(pct,100)+'%';},{passive:true});
+
+  const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.15});
+  document.querySelectorAll('.screen').forEach(s=>observer.observe(s));
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',()=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  window.selectOption=function(btn){const block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(o=>o.classList.remove('selected'));btn.classList.add('selected');};
+  window.checkQuiz=function(sectionId){const container=document.getElementById(sectionId);const questions=container.querySelectorAll('.quiz-question-block');questions.forEach(q=>{const selected=q.querySelector('.quiz-option.selected');const feedback=q.querySelector('.quiz-feedback');const correctValue=q.dataset.correct;if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}q.querySelectorAll('.quiz-option').forEach(o=>o.disabled=true);});};
+
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')window.location.href='../module-09-lakehouse-modeling/index.html';if(e.key==='ArrowLeft')window.location.href='../module-07-data-vault/index.html';});
+})();
+</script>
+</body>
+</html>

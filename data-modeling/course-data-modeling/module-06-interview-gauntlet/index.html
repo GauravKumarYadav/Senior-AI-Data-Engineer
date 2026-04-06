@@ -77,6 +77,9 @@ footer.module-nav a:hover{opacity:0.7}
       <a href="../module-04-slowly-changing-dimensions/" class="nav-dot" aria-label="Module 4"></a>
       <a href="../module-05-advanced-patterns/" class="nav-dot" aria-label="Module 5"></a>
       <a href="../module-06-interview-gauntlet/" class="nav-dot active" aria-label="Module 6 (current)"></a>
+      <a href="../module-07-data-vault/" class="nav-dot" aria-label="Module 7"></a>
+      <a href="../module-08-modern-patterns/" class="nav-dot" aria-label="Module 8"></a>
+      <a href="../module-09-lakehouse-modeling/" class="nav-dot" aria-label="Module 9"></a>
     </div>
   </div>
 </nav>
@@ -324,7 +327,7 @@ footer.module-nav a:hover{opacity:0.7}
 
 <footer class="module-nav">
   <a href="../module-05-advanced-patterns/index.html">← Prev: Advanced Patterns</a>
-  <a href="../index.html">Course Home 🏗️</a>
+  <a href="../module-07-data-vault/index.html">Next: Data Vault 2.0 →</a>
 </footer>
 
 <script>
@@ -340,7 +343,7 @@ footer.module-nav a:hover{opacity:0.7}
   window.selectOption=function(btn){const block=btn.closest('.quiz-question-block');block.querySelectorAll('.quiz-option').forEach(o=>o.classList.remove('selected'));btn.classList.add('selected');};
   window.checkQuiz=function(sectionId){const container=document.getElementById(sectionId);const questions=container.querySelectorAll('.quiz-question-block');questions.forEach(q=>{const selected=q.querySelector('.quiz-option.selected');const feedback=q.querySelector('.quiz-feedback');const correctValue=q.dataset.correct;if(!selected){feedback.textContent='Pick an answer first!';feedback.className='quiz-feedback show warning';return;}if(selected.dataset.value===correctValue){selected.classList.add('correct');feedback.innerHTML=q.dataset.successMsg||'Correct!';feedback.className='quiz-feedback show success';}else{selected.classList.add('incorrect');q.querySelector('[data-value="'+correctValue+'"]').classList.add('correct');feedback.innerHTML=q.dataset.errorMsg||'Not quite.';feedback.className='quiz-feedback show error';}q.querySelectorAll('.quiz-option').forEach(o=>o.disabled=true);});};
 
-  document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')window.location.href='../module-05-advanced-patterns/index.html';});
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')window.location.href='../module-07-data-vault/index.html';if(e.key==='ArrowLeft')window.location.href='../module-05-advanced-patterns/index.html';});
 })();
 </script>
 </body>

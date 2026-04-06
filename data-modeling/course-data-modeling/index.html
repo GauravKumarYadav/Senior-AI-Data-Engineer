@@ -30,7 +30,7 @@ body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-t
 .module-card{display:flex;align-items:flex-start;gap:1.5rem;background:var(--color-surface);border-radius:16px;padding:1.8rem;margin-bottom:1.2rem;box-shadow:0 2px 12px rgba(0,0,0,0.04);transition:transform 0.2s,box-shadow 0.2s;text-decoration:none;color:var(--color-text);border:1px solid rgba(0,0,0,0.04)}
 .module-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.08)}
 .mod-num{flex-shrink:0;width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:800;font-size:1.2rem;color:#fff}
-.mod-num.c1{background:#2A7B9B}.mod-num.c2{background:#2D8B55}.mod-num.c3{background:#7B5EA7}.mod-num.c4{background:#C4813D}.mod-num.c5{background:#D94F30}.mod-num.c6{background:#C93B3B}
+.mod-num.c1{background:#2A7B9B}.mod-num.c2{background:#2D8B55}.mod-num.c3{background:#7B5EA7}.mod-num.c4{background:#C4813D}.mod-num.c5{background:#D94F30}.mod-num.c6{background:#C93B3B}.mod-num.c7{background:#2A7B9B}.mod-num.c8{background:#7B5EA7}.mod-num.c9{background:#C4813D}
 .mod-info h3{font-family:var(--font-head);font-size:1.15rem;font-weight:700;margin-bottom:0.3rem}
 .mod-info p{font-size:0.92rem;color:var(--color-text-muted);line-height:1.5}
 .mod-tags{display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:0.6rem}
@@ -46,11 +46,11 @@ body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-t
   <div class="course-icon">🏗️</div>
   <span class="badge">Interview Prep Course</span>
   <h1>Master <span class="accent">Data Modeling</span> for Your Next Interview</h1>
-  <p class="lead">6 interactive modules covering star schemas, SCDs, fact tables, grain, bridge tables, surrogate keys — with quizzes, visual diagrams, and scenario-based practice.</p>
+  <p class="lead">9 interactive modules covering star schemas, SCDs, Data Vault, modern patterns, lakehouse modeling — with quizzes, visual diagrams, and scenario-based practice.</p>
   <div class="stats">
-    <div class="stat"><div class="stat-num">6</div><div class="stat-label">Modules</div></div>
-    <div class="stat"><div class="stat-num">80+</div><div class="stat-label">Questions</div></div>
-    <div class="stat"><div class="stat-num">30+</div><div class="stat-label">Quizzes</div></div>
+    <div class="stat"><div class="stat-num">9</div><div class="stat-label">Modules</div></div>
+    <div class="stat"><div class="stat-num">120+</div><div class="stat-label">Questions</div></div>
+    <div class="stat"><div class="stat-num">45+</div><div class="stat-label">Quizzes</div></div>
     <div class="stat"><div class="stat-num">0</div><div class="stat-label">Prerequisites</div></div>
   </div>
   <a href="module-01-what-is-data-modeling/index.html" class="cta-btn">Start Learning 🏗️</a>
@@ -111,6 +111,33 @@ body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-t
       <h3>The Interview Gauntlet 🔥 <span class="arrow">→</span></h3>
       <p>15 tricky scenario questions, "design this model" exercises, common pitfalls, rapid-fire Q&A, and the gotchas that trip up 90% of candidates.</p>
       <div class="mod-tags"><span class="mod-tag">Tricky Q&A</span><span class="mod-tag">Design Exercises</span><span class="mod-tag">Rapid Fire</span><span class="mod-tag">Gotchas</span></div>
+    </div>
+  </a>
+
+  <a href="module-07-data-vault/index.html" class="module-card">
+    <div class="mod-num c7">07</div>
+    <div class="mod-info">
+      <h3>Data Vault 2.0 Deep Dive <span class="arrow">→</span></h3>
+      <p>Hubs, Links, Satellites, hash keys, PIT tables, bridge tables in Data Vault, and the decision framework for Data Vault vs Kimball.</p>
+      <div class="mod-tags"><span class="mod-tag">Hubs</span><span class="mod-tag">Links</span><span class="mod-tag">Satellites</span><span class="mod-tag">Hash Keys</span></div>
+    </div>
+  </a>
+
+  <a href="module-08-modern-patterns/index.html" class="module-card">
+    <div class="mod-num c8">08</div>
+    <div class="mod-info">
+      <h3>Modern Modeling Patterns <span class="arrow">→</span></h3>
+      <p>One Big Table (OBT), Activity Schema, wide tables in columnar storage, EAV pattern, and modeling for ML feature stores with point-in-time correctness.</p>
+      <div class="mod-tags"><span class="mod-tag">OBT</span><span class="mod-tag">Activity Schema</span><span class="mod-tag">EAV</span><span class="mod-tag">Feature Stores</span></div>
+    </div>
+  </a>
+
+  <a href="module-09-lakehouse-modeling/index.html" class="module-card">
+    <div class="mod-num c9">09</div>
+    <div class="mod-info">
+      <h3>Modeling for Lakehouse 🏔️ <span class="arrow">→</span></h3>
+      <p>Medallion architecture (Bronze→Silver→Gold), schema-on-read vs write, partitioning strategies, storage format integration, and real-world lakehouse problems.</p>
+      <div class="mod-tags"><span class="mod-tag">Medallion</span><span class="mod-tag">Partitioning</span><span class="mod-tag">Delta/Iceberg</span><span class="mod-tag">Real-World</span></div>
     </div>
   </a>
 </section>

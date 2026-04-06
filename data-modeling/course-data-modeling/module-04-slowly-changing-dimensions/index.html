@@ -85,6 +85,9 @@ footer.module-nav a:hover{opacity:0.7}
       <a href="../module-04-slowly-changing-dimensions/" class="nav-dot active" aria-label="Module 4 (current)"></a>
       <a href="../module-05-advanced-patterns/" class="nav-dot" aria-label="Module 5"></a>
       <a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a>
+      <a href="../module-07-data-vault/" class="nav-dot" aria-label="Module 7"></a>
+      <a href="../module-08-modern-patterns/" class="nav-dot" aria-label="Module 8"></a>
+      <a href="../module-09-lakehouse-modeling/" class="nav-dot" aria-label="Module 9"></a>
     </div>
   </div>
 </nav>
@@ -212,7 +215,125 @@ footer.module-nav a:hover{opacity:0.7}
   </div>
 </section>
 
-<section class="screen" id="s5">
+<section class="screen screen-alt" id="s5">
+  <h2>SCD Implementation in <span class="accent">dbt</span></h2>
+  <p>dbt has first-class support for SCD Type 2 via <strong>snapshots</strong>. Instead of writing manual UPDATE/INSERT logic, dbt detects changes and manages versioned rows automatically.</p>
+  <div class="code-block"><span class="cm">-- models/snapshots/customer_snapshot.sql</span>
+{% snapshot customer_snapshot %}
+{{
+    <span class="fn">config</span>(
+      target_schema=<span class="str">'snapshots'</span>,
+      unique_key=<span class="str">'customer_id'</span>,
+      strategy=<span class="str">'timestamp'</span>,
+      updated_at=<span class="str">'updated_at'</span>,
+    )
+}}
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> {{ <span class="fn">source</span>(<span class="str">'raw'</span>, <span class="str">'customers'</span>) }}
+{% endsnapshot %}</div>
+
+  <p>dbt supports <strong>two snapshot strategies</strong> for detecting changes:</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>⏱️ Timestamp Strategy</h4>
+      <ul>
+        <li>📌 Compares an <code>updated_at</code> column between runs</li>
+        <li>📌 Only detects changes when the timestamp advances</li>
+        <li>📌 Preferred when source has a reliable updated_at</li>
+        <li>📌 More efficient — no need to compare every column</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid #C4813D">
+      <h4>🔍 Check Strategy</h4>
+      <ul>
+        <li>📌 Compares specified columns value-by-value</li>
+        <li>📌 Detects changes even without a timestamp column</li>
+        <li>📌 Use <code>check_cols='all'</code> or list specific columns</li>
+        <li>📌 More expensive — hashes/compares every row</li>
+      </ul>
+    </div>
+  </div>
+
+  <p>When dbt detects a change, it automatically generates these metadata columns:</p>
+  <div class="table-example">
+    <table>
+      <tr><th>customer_id</th><th>name</th><th>city</th><th>dbt_scd_id</th><th>dbt_valid_from</th><th>dbt_valid_to</th></tr>
+      <tr class="old"><td>C-42</td><td>Alice</td><td>NYC</td><td>abc123…</td><td>2023-01-01</td><td>2024-06-15</td></tr>
+      <tr class="highlight"><td>C-42</td><td>Alice</td><td>LA</td><td>def456…</td><td>2024-06-15</td><td><em>null</em></td></tr>
+    </table>
+  </div>
+  <p><code>dbt_valid_to = null</code> means the row is current. <code>dbt_scd_id</code> is a unique hash per version — it's your surrogate key.</p>
+
+  <div class="callout">
+    <div class="callout-title">🎯 Interview Callout</div>
+    <p>"How do you implement SCD2 in dbt? → Use <strong>dbt snapshots</strong> with <code>timestamp</code> or <code>check</code> strategy. dbt automatically manages <code>valid_from</code>/<code>valid_to</code> and detects changes. No manual UPDATE/INSERT logic needed."</p>
+  </div>
+</section>
+
+<section class="screen" id="s6">
+  <h2>SCD Implementation in <span class="accent">Spark / Delta Lake</span></h2>
+  <p>In Spark + Delta Lake, SCD Type 2 is implemented using the <strong>MERGE</strong> operation. Delta's ACID transactions guarantee the close-old + insert-new steps happen atomically.</p>
+  <div class="code-block"><span class="kw">from</span> delta.tables <span class="kw">import</span> DeltaTable
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> col, lit
+
+target = DeltaTable.<span class="fn">forPath</span>(spark, <span class="str">"/data/dim_customer"</span>)
+source = spark.read.<span class="fn">parquet</span>(<span class="str">"/data/customer_changes"</span>)
+
+<span class="cm"># Step 1: Identify changed records</span>
+changes = target.<span class="fn">toDF</span>().<span class="fn">alias</span>(<span class="str">"t"</span>).<span class="fn">join</span>(
+    source.<span class="fn">alias</span>(<span class="str">"s"</span>), <span class="str">"customer_id"</span>
+).<span class="fn">where</span>(<span class="str">"s.updated_at > t.updated_at AND t.is_current = true"</span>)
+
+<span class="cm"># Step 2: Stage new versions + closed records</span>
+new_versions = changes.<span class="fn">select</span>(
+    <span class="fn">col</span>(<span class="str">"s.customer_id"</span>), <span class="fn">col</span>(<span class="str">"s.name"</span>), <span class="fn">col</span>(<span class="str">"s.city"</span>),
+    <span class="fn">col</span>(<span class="str">"s.updated_at"</span>).<span class="fn">alias</span>(<span class="str">"eff_start"</span>),
+    <span class="fn">lit</span>(<span class="str">"9999-12-31"</span>).<span class="fn">cast</span>(<span class="str">"date"</span>).<span class="fn">alias</span>(<span class="str">"eff_end"</span>),
+    <span class="fn">lit</span>(<span class="kw">True</span>).<span class="fn">alias</span>(<span class="str">"is_current"</span>)
+)
+
+closed_records = changes.<span class="fn">select</span>(
+    <span class="fn">col</span>(<span class="str">"t.customer_id"</span>), <span class="fn">col</span>(<span class="str">"t.name"</span>), <span class="fn">col</span>(<span class="str">"t.city"</span>),
+    <span class="fn">col</span>(<span class="str">"t.eff_start"</span>),
+    <span class="fn">col</span>(<span class="str">"s.updated_at"</span>).<span class="fn">alias</span>(<span class="str">"eff_end"</span>),
+    <span class="fn">lit</span>(<span class="kw">False</span>).<span class="fn">alias</span>(<span class="str">"is_current"</span>)
+)
+
+<span class="cm"># Step 3: MERGE — close old + insert new atomically</span>
+target.<span class="fn">alias</span>(<span class="str">"t"</span>).<span class="fn">merge</span>(
+    closed_records.<span class="fn">union</span>(new_versions).<span class="fn">alias</span>(<span class="str">"s"</span>),
+    <span class="str">"t.customer_id = s.customer_id AND t.eff_start = s.eff_start"</span>
+).<span class="fn">whenMatchedUpdate</span>(set={
+    <span class="str">"eff_end"</span>: <span class="str">"s.eff_end"</span>,
+    <span class="str">"is_current"</span>: <span class="str">"s.is_current"</span>
+}).<span class="fn">whenNotMatchedInsertAll</span>().<span class="fn">execute</span>()</div>
+
+  <p>The same logic as <strong>pure SQL MERGE</strong> (useful for Databricks SQL or Spark SQL):</p>
+  <div class="code-block"><span class="kw">MERGE INTO</span> dim_customer t
+<span class="kw">USING</span> staged_changes s
+  <span class="kw">ON</span> t.customer_id = s.customer_id <span class="kw">AND</span> t.eff_start = s.eff_start
+<span class="kw">WHEN MATCHED THEN UPDATE SET</span>
+  t.eff_end = s.eff_end,
+  t.is_current = s.is_current
+<span class="kw">WHEN NOT MATCHED THEN INSERT</span> *;</div>
+
+  <div class="card-grid">
+    <div class="card green">
+      <h4>🔒 Delta Lake Advantage</h4>
+      <p>ACID transactions make SCD2 <strong>atomic</strong> — readers never see a partially-closed old row without its new version. No "half-updated" dimensions.</p>
+    </div>
+    <div class="card purple">
+      <h4>⏳ Time Travel Bonus</h4>
+      <p>Delta's time travel (<code>VERSION AS OF</code>) gives you point-in-time queries for free, complementing SCD2's own effective dates.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">🎯 Interview Callout</div>
+    <p>"When should you use dbt snapshots vs Spark MERGE? → <strong>dbt snapshots</strong> are ideal for batch ELT in a warehouse (Snowflake, BigQuery, Redshift) — zero custom code. <strong>Spark MERGE</strong> is better for lakehouse architectures (Delta Lake, Iceberg) where you need fine-grained control, handle large-scale data, or run SCD logic inside a Spark pipeline."</p>
+  </div>
+</section>
+
+<section class="screen screen-alt" id="s7">
   <h2>Quiz: <span class="accent">Test Yourself</span></h2>
   <div id="quiz1">
     <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Correct! SCD Type 2 preserves full history with multiple rows per entity." data-error-msg="❌ SCD2 adds a new row for each change, preserving full history with effective dates.">
@@ -257,6 +378,24 @@ footer.module-nav a:hover{opacity:0.7}
       <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) It stores 6 versions of each attribute</button>
       <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) It combines Types 1+2+3 (1+2+3=6) — versioned rows with current-value overwrite</button>
       <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) It uses 6 columns for tracking history</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="b" data-success-msg="✅ Correct! The timestamp strategy compares an updated_at column, while the check strategy compares actual column values." data-error-msg="❌ dbt's timestamp strategy uses an updated_at column; the check strategy compares specified column values directly.">
+      <h4>Q6: In dbt snapshots, what is the difference between the 'timestamp' and 'check' strategies?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) Timestamp uses row counts; check uses checksums</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) Timestamp compares an updated_at column; check compares specified column values</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) Timestamp only works with Snowflake; check works everywhere</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) They are identical but timestamp is deprecated</button>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-question-block" data-correct="c" data-success-msg="✅ Correct! Delta Lake's ACID transactions ensure the close-old and insert-new steps happen atomically — no partial updates visible to readers." data-error-msg="❌ The key advantage is ACID transactions — the MERGE operation is atomic, so readers never see inconsistent intermediate states.">
+      <h4>Q7: Why is Delta Lake's MERGE preferred over separate UPDATE + INSERT for SCD Type 2?</h4>
+      <button class="quiz-option" data-value="a" onclick="window.selectOption(this)">A) MERGE is faster because it only scans the table once</button>
+      <button class="quiz-option" data-value="b" onclick="window.selectOption(this)">B) MERGE automatically generates surrogate keys</button>
+      <button class="quiz-option" data-value="c" onclick="window.selectOption(this)">C) MERGE is atomic via ACID transactions — no partial updates visible to readers</button>
+      <button class="quiz-option" data-value="d" onclick="window.selectOption(this)">D) MERGE supports more SCD types than UPDATE + INSERT</button>
       <div class="quiz-feedback"></div>
     </div>
 
