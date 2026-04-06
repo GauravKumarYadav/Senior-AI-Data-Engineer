@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 3: Trees & Graphs | DSA & Coding Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#DC2626;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎯 DSA &amp; Coding Mastery</a><div class="nav-dots"><a href="../module-01-arrays-strings/" class="nav-dot"></a><a href="../module-02-hashmaps/" class="nav-dot"></a><a href="../module-03-trees-graphs/" class="nav-dot active"></a><a href="../module-04-dynamic-programming/" class="nav-dot"></a><a href="../module-05-sorting-heaps/" class="nav-dot"></a><a href="../module-06-de-coding/" class="nav-dot"></a><a href="../module-07-sql-coding/" class="nav-dot"></a><a href="../module-08-interview-gauntlet/" class="nav-dot" style="background:var(--color-error)"></a></div></div></nav>
+
+<!-- Screen 1: Tree Fundamentals + BST -->
+<section class="screen" id="s1">
+  <h2>🌳 Tree <span class="accent">Fundamentals</span> &amp; BST</h2>
+  <p>Trees and graphs are where interviews separate <strong>"can code"</strong> from <strong>"can think recursively and model real systems."</strong> Let's start with the building blocks.</p>
+
+  <h3>Binary Tree Terminology</h3>
+  <div class="code-block"><span class="cm">        8          ← root (depth 0)</span>
+<span class="cm">       / \</span>
+<span class="cm">      3   10       ← depth 1</span>
+<span class="cm">     / \    \</span>
+<span class="cm">    1   6    14    ← depth 2 (leaves: 1, 6, 14)</span>
+<span class="cm">       / \   /</span>
+<span class="cm">      4   7 13     ← depth 3</span></div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🌱 Root</h4>
+      <p>The topmost node — no parent. Every tree has exactly one.</p>
+    </div>
+    <div class="card blue">
+      <h4>🍃 Leaf</h4>
+      <p>A node with no children. The endpoints of the tree.</p>
+    </div>
+    <div class="card green">
+      <h4>📏 Depth</h4>
+      <p>Number of edges from root to that node. Root has depth 0.</p>
+    </div>
+    <div class="card purple">
+      <h4>📐 Height</h4>
+      <p>Max depth of any leaf. A single-node tree has height 0.</p>
+    </div>
+    <div class="card">
+      <h4>⚖️ Balanced</h4>
+      <p>Height of left and right subtrees differ by ≤ 1 at every node.</p>
+    </div>
+    <div class="card blue">
+      <h4>✅ Complete</h4>
+      <p>Every level full except possibly the last, which fills left-to-right.</p>
+    </div>
+  </div>
+
+  <h3>Binary Search Tree Property</h3>
+  <p>For every node: <code>left subtree values &lt; node.value &lt; right subtree values</code>. This gives O(log n) search, insert, and delete — <em>if balanced</em>. Worst case (sorted input), it degenerates into a linked list: O(n).</p>
+
+  <h3>The Node Class</h3>
+  <div class="code-block"><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="str">"""Standard binary tree node used throughout this module."""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, val: <span class="fn">int</span> = <span class="fn">0</span>,
+                 left: <span class="str">'TreeNode | None'</span> = <span class="fn">None</span>,
+                 right: <span class="str">'TreeNode | None'</span> = <span class="fn">None</span>) -> <span class="fn">None</span>:
+        self.val = val
+        self.left = left
+        self.right = right</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Why BSTs Degenerate</div>
+    <p>Inserting <code>[1, 2, 3, 4, 5]</code> into a BST produces a linked list. This is why self-balancing trees exist: AVL trees, Red-Black trees (Java's <code>TreeMap</code>), and B-trees (databases). In Python, <code>sortedcontainers.SortedList</code> provides a balanced BST-like interface.</p>
+  </div>
+</section>
+
+<!-- Screen 2: BFS -->
+<section class="screen screen-alt" id="s2">
+  <h2>🌊 BFS — <span class="accent">Level-Order</span> Traversal</h2>
+  <p>BFS explores nodes <strong>level by level</strong> using a queue (FIFO). It visits all nodes at depth <code>d</code> before any node at depth <code>d + 1</code>.</p>
+
+  <h3>BFS Template</h3>
+  <div class="code-block"><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">bfs</span>(root: TreeNode | <span class="fn">None</span>) -> <span class="fn">list</span>[<span class="fn">list</span>[<span class="fn">int</span>]]:
+    <span class="kw">if not</span> root:
+        <span class="kw">return</span> []
+
+    result: <span class="fn">list</span>[<span class="fn">list</span>[<span class="fn">int</span>]] = []
+    queue: deque[TreeNode] = deque([root])
+
+    <span class="kw">while</span> queue:
+        level_size = <span class="fn">len</span>(queue)  <span class="cm"># nodes at current level</span>
+        level: <span class="fn">list</span>[<span class="fn">int</span>] = []
+
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(level_size):
+            node = queue.popleft()
+            level.append(node.val)
+
+            <span class="kw">if</span> node.left:
+                queue.append(node.left)
+            <span class="kw">if</span> node.right:
+                queue.append(node.right)
+
+        result.append(level)
+    <span class="kw">return</span> result</div>
+
+  <h3>When to Use BFS</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>📊 Level-Order Traversal</h4>
+      <p>Process nodes level by level — zigzag, right side view, level averages.</p>
+    </div>
+    <div class="card blue">
+      <h4>📏 Shortest Path (Unweighted)</h4>
+      <p>BFS finds it naturally since it explores in order of distance.</p>
+    </div>
+    <div class="card green">
+      <h4>🌱 Minimum Depth</h4>
+      <p>BFS hits the first leaf at the shallowest depth — stop early!</p>
+    </div>
+    <div class="card purple">
+      <h4>💾 Serialization</h4>
+      <p>Level-order is often the most natural tree serialization format.</p>
+    </div>
+  </div>
+
+  <h3>BFS for Graphs (with visited set)</h3>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">bfs_graph</span>(start: <span class="fn">str</span>, graph: <span class="fn">dict</span>[<span class="fn">str</span>, <span class="fn">list</span>[<span class="fn">str</span>]]) -> <span class="fn">list</span>[<span class="fn">str</span>]:
+    visited: <span class="fn">set</span>[<span class="fn">str</span>] = {start}
+    queue: deque[<span class="fn">str</span>] = deque([start])
+    order: <span class="fn">list</span>[<span class="fn">str</span>] = []
+
+    <span class="kw">while</span> queue:
+        node = queue.popleft()
+        order.append(node)
+        <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
+            <span class="kw">if</span> neighbor <span class="kw">not in</span> visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+    <span class="kw">return</span> order</div>
+
+  <div class="aha">
+    <div class="aha-title">🔥 Airflow Connection</div>
+    <p>BFS is how Airflow's scheduler explores DAG dependencies to determine which tasks are ready to execute. Tasks with all upstream dependencies completed (in-degree = 0) get queued first — exactly like BFS processing nodes level by level. If you're interviewing for DE roles, drop this connection!</p>
+  </div>
+</section>
+
+<!-- Screen 3: DFS -->
+<section class="screen" id="s3">
+  <h2>🔍 DFS — <span class="accent">Depth-First</span> Search</h2>
+  <p>DFS explores as <strong>deep</strong> as possible along each branch before backtracking. It uses a stack (explicit or implicit via recursion).</p>
+
+  <h3>Three Traversal Orders</h3>
+  <div class="code-block"><span class="cm">    1          Pre-order:  1, 2, 4, 5, 3</span>
+<span class="cm">   / \         In-order:   4, 2, 5, 1, 3</span>
+<span class="cm">  2   3        Post-order: 4, 5, 2, 3, 1</span>
+<span class="cm"> / \</span>
+<span class="cm">4   5</span></div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📋 Order &amp; Mnemonic</h4>
+      <ul>
+        <li>🔴 <strong>Pre-order:</strong> Node → Left → Right</li>
+        <li>🟢 <strong>In-order:</strong> Left → Node → Right</li>
+        <li>🔵 <strong>Post-order:</strong> Left → Right → Node</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🎯 Use Cases</h4>
+      <ul>
+        <li>🔴 Copying/serializing a tree</li>
+        <li>🟢 BST gives <strong>sorted</strong> order</li>
+        <li>🔵 Deleting a tree, evaluating expressions</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Recursive Implementations</h3>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">preorder</span>(root: TreeNode | <span class="fn">None</span>) -> <span class="fn">list</span>[<span class="fn">int</span>]:
+    <span class="kw">if not</span> root: <span class="kw">return</span> []
+    <span class="kw">return</span> [root.val] + preorder(root.left) + preorder(root.right)
+
+<span class="kw">def</span> <span class="fn">inorder</span>(root: TreeNode | <span class="fn">None</span>) -> <span class="fn">list</span>[<span class="fn">int</span>]:
+    <span class="kw">if not</span> root: <span class="kw">return</span> []
+    <span class="kw">return</span> inorder(root.left) + [root.val] + inorder(root.right)
+
+<span class="kw">def</span> <span class="fn">postorder</span>(root: TreeNode | <span class="fn">None</span>) -> <span class="fn">list</span>[<span class="fn">int</span>]:
+    <span class="kw">if not</span> root: <span class="kw">return</span> []
+    <span class="kw">return</span> postorder(root.left) + postorder(root.right) + [root.val]</div>
+
+  <h3>Iterative DFS (Pre-order with Explicit Stack)</h3>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">preorder_iterative</span>(root: TreeNode | <span class="fn">None</span>) -> <span class="fn">list</span>[<span class="fn">int</span>]:
+    <span class="kw">if not</span> root: <span class="kw">return</span> []
+
+    result: <span class="fn">list</span>[<span class="fn">int</span>] = []
+    stack: <span class="fn">list</span>[TreeNode] = [root]
+
+    <span class="kw">while</span> stack:
+        node = stack.pop()
+        result.append(node.val)
+        <span class="cm"># Push right first so left is processed first (LIFO)</span>
+        <span class="kw">if</span> node.right: stack.append(node.right)
+        <span class="kw">if</span> node.left:  stack.append(node.left)
+    <span class="kw">return</span> result</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 When to Use DFS</div>
+    <p><strong>Path problems</strong> ("find all paths," "path sum = K"), <strong>tree validation</strong> (BST validation via in-order), <strong>backtracking</strong> (DFS is the backbone), and <strong>connected components</strong> (DFS from each unvisited node). If the problem has a recursive structure, DFS is your friend.</p>
+  </div>
+</section>
+
+<!-- Screen 4: Topological Sort + Graph Representations -->
+<section class="screen screen-alt" id="s4">
+  <h2>📊 Topological Sort &amp; <span class="accent">Graphs</span></h2>
+  <p>A <strong>topological ordering</strong> of a DAG is a linear ordering of vertices such that for every edge <code>u → v</code>, vertex <code>u</code> comes before <code>v</code>. It answers: "In what order should I process tasks with dependencies?"</p>
+
+  <h3>Kahn's Algorithm (BFS-Based)</h3>
+  <div class="code-block"><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">topological_sort_kahn</span>(num_nodes: <span class="fn">int</span>,
+                         edges: <span class="fn">list</span>[<span class="fn">tuple</span>[<span class="fn">int</span>, <span class="fn">int</span>]]) -> <span class="fn">list</span>[<span class="fn">int</span>]:
+    <span class="str">"""Kahn's algorithm — BFS-based topological sort.
+    Returns topological order, or empty list if cycle detected.
+    Time: O(V + E)  |  Space: O(V + E)"""</span>
+    graph: <span class="fn">dict</span>[<span class="fn">int</span>, <span class="fn">list</span>[<span class="fn">int</span>]] = {i: [] <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(num_nodes)}
+    in_degree = [<span class="fn">0</span>] * num_nodes
+
+    <span class="kw">for</span> prereq, dependent <span class="kw">in</span> edges:
+        graph[prereq].append(dependent)
+        in_degree[dependent] += <span class="fn">1</span>
+
+    <span class="cm"># Start with nodes that have no prerequisites</span>
+    queue: deque[<span class="fn">int</span>] = deque(
+        node <span class="kw">for</span> node <span class="kw">in</span> <span class="fn">range</span>(num_nodes) <span class="kw">if</span> in_degree[node] == <span class="fn">0</span>
+    )
+    order: <span class="fn">list</span>[<span class="fn">int</span>] = []
+
+    <span class="kw">while</span> queue:
+        node = queue.popleft()
+        order.append(node)
+        <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
+            in_degree[neighbor] -= <span class="fn">1</span>
+            <span class="kw">if</span> in_degree[neighbor] == <span class="fn">0</span>:
+                queue.append(neighbor)
+
+    <span class="kw">return</span> order <span class="kw">if</span> <span class="fn">len</span>(order) == num_nodes <span class="kw">else</span> []  <span class="cm"># cycle!</span></div>
+
+  <h3>Graph Representations</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📋 Adjacency List</h4>
+      <ul>
+        <li>💾 Space: O(V + E)</li>
+        <li>🔍 Edge check: O(degree)</li>
+        <li>✅ Best for sparse graphs</li>
+        <li>✅ Fast traversal (BFS/DFS)</li>
+        <li>🐍 <code>dict[str, list[str]]</code></li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📊 Adjacency Matrix</h4>
+      <ul>
+        <li>💾 Space: O(V²)</li>
+        <li>🔍 Edge check: O(1)</li>
+        <li>✅ Best for dense graphs</li>
+        <li>✅ Floyd-Warshall, small graphs</li>
+        <li>🐍 <code>list[list[int]]</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Grid as Implicit Graph</h3>
+  <div class="code-block">DIRECTIONS = [(<span class="fn">0</span>, <span class="fn">1</span>), (<span class="fn">0</span>, -<span class="fn">1</span>), (<span class="fn">1</span>, <span class="fn">0</span>), (-<span class="fn">1</span>, <span class="fn">0</span>)]  <span class="cm"># R, L, D, U</span>
+
+<span class="kw">def</span> <span class="fn">get_neighbors</span>(row, col, rows, cols):
+    neighbors = []
+    <span class="kw">for</span> dr, dc <span class="kw">in</span> DIRECTIONS:
+        nr, nc = row + dr, col + dc
+        <span class="kw">if</span> <span class="fn">0</span> <= nr < rows <span class="kw">and</span> <span class="fn">0</span> <= nc < cols:
+            neighbors.append((nr, nc))
+    <span class="kw">return</span> neighbors</div>
+
+  <div class="aha">
+    <div class="aha-title">🔥 Airflow DAGs — This Is Literally Topological Sort</div>
+    <p>Each Airflow DAG is a directed acyclic graph. The scheduler performs a topological sort to determine task execution order. Tasks with no unfinished dependencies run first — this is <em>exactly</em> Kahn's algorithm.<br><br><strong>In an interview, say:</strong> "Topological sort is how Airflow determines task execution order. Each task's dependencies must complete before it runs, and Kahn's algorithm naturally handles this by processing tasks whose in-degree reaches zero."</p>
+  </div>
+</section>
+
+<!-- Screen 5: Union-Find + Dijkstra's -->
+<section class="screen" id="s5">
+  <h2>🔗 Union-Find &amp; <span class="accent">Dijkstra's</span></h2>
+  <p>Union-Find manages disjoint sets with near-O(1) operations. Dijkstra's finds shortest paths in weighted graphs. Both are essential graph tools.</p>
+
+  <h3>Union-Find (Disjoint Set)</h3>
+  <div class="code-block"><span class="kw">class</span> <span class="fn">UnionFind</span>:
+    <span class="str">"""Path compression + union by rank. O(α(n)) ≈ O(1) per op."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, n: <span class="fn">int</span>) -> <span class="fn">None</span>:
+        self.parent = <span class="fn">list</span>(<span class="fn">range</span>(n))
+        self.rank = [<span class="fn">0</span>] * n
+        self.components = n
+
+    <span class="kw">def</span> <span class="fn">find</span>(self, x: <span class="fn">int</span>) -> <span class="fn">int</span>:
+        <span class="kw">if</span> self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])  <span class="cm"># path compression</span>
+        <span class="kw">return</span> self.parent[x]
+
+    <span class="kw">def</span> <span class="fn">union</span>(self, x: <span class="fn">int</span>, y: <span class="fn">int</span>) -> <span class="fn">bool</span>:
+        root_x, root_y = self.find(x), self.find(y)
+        <span class="kw">if</span> root_x == root_y: <span class="kw">return</span> <span class="fn">False</span>
+        <span class="kw">if</span> self.rank[root_x] < self.rank[root_y]:
+            root_x, root_y = root_y, root_x
+        self.parent[root_y] = root_x
+        <span class="kw">if</span> self.rank[root_x] == self.rank[root_y]:
+            self.rank[root_x] += <span class="fn">1</span>
+        self.components -= <span class="fn">1</span>
+        <span class="kw">return</span> <span class="fn">True</span></div>
+
+  <h3>Union-Find Use Cases</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔗 Connected Components</h4>
+      <p>Group nodes in undirected graphs. Track count with <code>self.components</code>.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔄 Cycle Detection</h4>
+      <p>If <code>union(u, v)</code> returns False, the edge creates a cycle.</p>
+    </div>
+    <div class="card green">
+      <h4>🌲 Kruskal's MST</h4>
+      <p>Process edges by weight, union vertices. Skip edges that create cycles.</p>
+    </div>
+    <div class="card purple">
+      <h4>⚡ Dynamic Connectivity</h4>
+      <p>Efficiently answer "are A and B connected?" as edges are added.</p>
+    </div>
+  </div>
+
+  <h3>Dijkstra's Algorithm</h3>
+  <div class="code-block"><span class="kw">import</span> heapq
+
+<span class="kw">def</span> <span class="fn">dijkstra</span>(graph: <span class="fn">dict</span>[<span class="fn">str</span>, <span class="fn">list</span>[<span class="fn">tuple</span>[<span class="fn">str</span>, <span class="fn">int</span>]]],
+             start: <span class="fn">str</span>) -> <span class="fn">dict</span>[<span class="fn">str</span>, <span class="fn">int</span>]:
+    <span class="str">"""Shortest path from start to all reachable nodes.
+    Time: O((V + E) log V)  |  Space: O(V)"""</span>
+    distances: <span class="fn">dict</span>[<span class="fn">str</span>, <span class="fn">int</span>] = {start: <span class="fn">0</span>}
+    heap: <span class="fn">list</span>[<span class="fn">tuple</span>[<span class="fn">int</span>, <span class="fn">str</span>]] = [(<span class="fn">0</span>, start)]
+
+    <span class="kw">while</span> heap:
+        dist, node = heapq.heappop(heap)
+        <span class="kw">if</span> dist > distances.get(node, <span class="fn">float</span>(<span class="str">"inf"</span>)):
+            <span class="kw">continue</span>  <span class="cm"># already found shorter path</span>
+        <span class="kw">for</span> neighbor, weight <span class="kw">in</span> graph[node]:
+            new_dist = dist + weight
+            <span class="kw">if</span> new_dist < distances.get(neighbor, <span class="fn">float</span>(<span class="str">"inf"</span>)):
+                distances[neighbor] = new_dist
+                heapq.heappush(heap, (new_dist, neighbor))
+    <span class="kw">return</span> distances</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Dijkstra's Key Limitation</div>
+    <p>Doesn't work with <strong>negative edge weights</strong> — use Bellman-Ford instead. You rarely need to implement Dijkstra's from scratch in a 45-minute interview. But knowing <em>when</em> to apply it (priority queue + relaxation) is essential.</p>
+  </div>
+</section>
+
+<!-- Screen 6: Problem Solutions 1–3 -->
+<section class="screen screen-alt" id="s6">
+  <h2>🧩 Solutions: <span class="accent">Problems 1–3</span></h2>
+
+  <h3>Problem 1: Binary Tree Level Order Traversal</h3>
+  <p>Return level-order traversal as a list of lists. Classic BFS with level tracking.</p>
+  <div class="translate">
+    <div class="translate-code"><span class="kw">def</span> <span class="fn">level_order</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> []
+    result, queue = [], deque([root])
+
+    <span class="kw">while</span> queue:
+        level_size = <span class="fn">len</span>(queue)
+        level = []
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(level_size):
+            node = queue.popleft()
+            level.append(node.val)
+            <span class="kw">if</span> node.left:
+                queue.append(node.left)
+            <span class="kw">if</span> node.right:
+                queue.append(node.right)
+        result.append(level)
+    <span class="kw">return</span> result
+<span class="cm"># O(n) time, O(n) space</span></div>
+    <div class="translate-eng">
+      <div class="line">📌 Base case: empty tree → empty list</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔄 Process level by level</div>
+      <div class="line">📏 Snapshot queue size = nodes at THIS level</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔄 Process exactly level_size nodes</div>
+      <div class="line">📥 Dequeue and record value</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">➡️ Enqueue children for next level</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📦 Collect the completed level</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⚡ level_size = len(queue) is the CRUX</div>
+    </div>
+  </div>
+
+  <h3>Problem 2: Maximum Depth of Binary Tree</h3>
+  <p>Return the maximum depth. Recursive DFS — elegant and simple.</p>
+  <div class="translate">
+    <div class="translate-code"><span class="kw">def</span> <span class="fn">max_depth</span>(root):
+    <span class="kw">if not</span> root:
+        <span class="kw">return</span> <span class="fn">0</span>
+
+    left_depth = max_depth(root.left)
+    right_depth = max_depth(root.right)
+
+    <span class="kw">return</span> <span class="fn">1</span> + <span class="fn">max</span>(left_depth, right_depth)
+
+<span class="cm"># O(n) time, O(h) space (recursion stack)</span>
+<span class="cm"># h = O(log n) balanced, O(n) skewed</span></div>
+    <div class="translate-eng">
+      <div class="line">📌 Define: depth of tree rooted here</div>
+      <div class="line">🛑 Empty tree has depth 0</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⬅️ How deep is the left side?</div>
+      <div class="line">➡️ How deep is the right side?</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🏆 1 (this node) + deeper subtree</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⚡ Solve this in 2 mins — build confidence</div>
+      <div class="line">⚠️ Python recursion limit = 1000</div>
+    </div>
+  </div>
+
+  <h3>Problem 3: Validate Binary Search Tree</h3>
+  <p>Pass a valid range <code>(low, high)</code> down the tree. Each node must satisfy <code>low &lt; val &lt; high</code>.</p>
+  <div class="translate">
+    <div class="translate-code"><span class="kw">def</span> <span class="fn">is_valid_bst</span>(root):
+    <span class="kw">def</span> <span class="fn">validate</span>(node, low, high):
+        <span class="kw">if not</span> node: <span class="kw">return</span> <span class="fn">True</span>
+        <span class="kw">if not</span> (low < node.val < high):
+            <span class="kw">return</span> <span class="fn">False</span>
+        <span class="kw">return</span> (
+            validate(node.left, low, node.val)
+            <span class="kw">and</span> validate(node.right, node.val, high)
+        )
+    <span class="kw">return</span> validate(root, <span class="fn">float</span>(<span class="str">"-inf"</span>),
+                          <span class="fn">float</span>(<span class="str">"inf"</span>))
+<span class="cm"># O(n) time, O(h) space</span></div>
+    <div class="translate-eng">
+      <div class="line">📌 Helper with valid range bounds</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">✅ Empty subtree is always valid</div>
+      <div class="line">❌ Value outside valid range?</div>
+      <div class="line">🛑 BST violation — reject!</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⬅️ Left: tighten upper bound to node.val</div>
+      <div class="line">➡️ Right: tighten lower bound to node.val</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🚀 Start with (-∞, +∞)</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⚠️ Don't just check immediate children!</div>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 7: Problem Solutions 4–6 -->
+<section class="screen" id="s7">
+  <h2>🧩 Solutions: <span class="accent">Problems 4–6</span></h2>
+
+  <h3>Problem 4: Number of Islands</h3>
+  <p>Count connected components of <code>'1'</code>s in a 2D grid. DFS flood fill — "sink" each island as you find it.</p>
+  <div class="translate">
+    <div class="translate-code"><span class="kw">def</span> <span class="fn">num_islands</span>(grid):
+    <span class="kw">if not</span> grid: <span class="kw">return</span> <span class="fn">0</span>
+    rows, cols = <span class="fn">len</span>(grid), <span class="fn">len</span>(grid[<span class="fn">0</span>])
+    count = <span class="fn">0</span>
+
+    <span class="kw">def</span> <span class="fn">dfs</span>(r, c):
+        <span class="kw">if</span> (r < <span class="fn">0</span> <span class="kw">or</span> r >= rows <span class="kw">or</span>
+            c < <span class="fn">0</span> <span class="kw">or</span> c >= cols <span class="kw">or</span>
+            grid[r][c] != <span class="str">'1'</span>): <span class="kw">return</span>
+        grid[r][c] = <span class="str">'0'</span>  <span class="cm"># sink it</span>
+        dfs(r+<span class="fn">1</span>, c); dfs(r-<span class="fn">1</span>, c)
+        dfs(r, c+<span class="fn">1</span>); dfs(r, c-<span class="fn">1</span>)
+
+    <span class="kw">for</span> r <span class="kw">in</span> <span class="fn">range</span>(rows):
+        <span class="kw">for</span> c <span class="kw">in</span> <span class="fn">range</span>(cols):
+            <span class="kw">if</span> grid[r][c] == <span class="str">'1'</span>:
+                count += <span class="fn">1</span>
+                dfs(r, c)
+    <span class="kw">return</span> count
+<span class="cm"># O(m·n) time &amp; space</span></div>
+    <div class="translate-eng">
+      <div class="line">📌 Edge case: empty grid</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔍 DFS: sink connected land</div>
+      <div class="line">🛑 Out of bounds or water? Stop</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">💧 Mark as visited (sink the land)</div>
+      <div class="line">↕️↔️ Explore all 4 directions</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔄 Scan every cell</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🏝️ Found land! New island</div>
+      <div class="line">🌊 Sink the entire island via DFS</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⚠️ Modifies input — mention side effects!</div>
+    </div>
+  </div>
+
+  <h3>Problem 5: Course Schedule (Cycle Detection)</h3>
+  <p>Can you finish all courses? Build dependency graph → Kahn's algorithm → check if all nodes processed.</p>
+  <div class="translate">
+    <div class="translate-code"><span class="kw">def</span> <span class="fn">can_finish</span>(num_courses, prerequisites):
+    graph = [[] <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(num_courses)]
+    in_degree = [<span class="fn">0</span>] * num_courses
+
+    <span class="kw">for</span> course, prereq <span class="kw">in</span> prerequisites:
+        graph[prereq].append(course)
+        in_degree[course] += <span class="fn">1</span>
+
+    queue = deque(
+        i <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(num_courses)
+        <span class="kw">if</span> in_degree[i] == <span class="fn">0</span>)
+    completed = <span class="fn">0</span>
+
+    <span class="kw">while</span> queue:
+        course = queue.popleft()
+        completed += <span class="fn">1</span>
+        <span class="kw">for</span> next_c <span class="kw">in</span> graph[course]:
+            in_degree[next_c] -= <span class="fn">1</span>
+            <span class="kw">if</span> in_degree[next_c] == <span class="fn">0</span>:
+                queue.append(next_c)
+    <span class="kw">return</span> completed == num_courses</div>
+    <div class="translate-eng">
+      <div class="line">📌 Build adjacency list + in-degree</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔗 prereq → course (directed edge)</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🚀 Start with no-prereq courses</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔄 Process ready courses (Kahn's)</div>
+      <div class="line">✅ One more course completed</div>
+      <div class="line">➡️ Reduce dependents' in-degree</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🆓 Dependent now free? Enqueue it</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🎯 All done? No cycle! (= Airflow DAG is valid)</div>
+    </div>
+  </div>
+
+  <h3>Problem 6: Lowest Common Ancestor (BST)</h3>
+  <p>Exploit BST ordering: if both values are smaller, go left. Both larger, go right. Otherwise — you're at the split point.</p>
+  <div class="translate">
+    <div class="translate-code"><span class="kw">def</span> <span class="fn">lowest_common_ancestor</span>(root, p, q):
+    node = root
+    <span class="kw">while</span> node:
+        <span class="kw">if</span> p.val < node.val <span class="kw">and</span> q.val < node.val:
+            node = node.left
+        <span class="kw">elif</span> p.val > node.val <span class="kw">and</span> q.val > node.val:
+            node = node.right
+        <span class="kw">else</span>:
+            <span class="kw">return</span> node
+    <span class="kw">return</span> <span class="fn">None</span>
+<span class="cm"># O(h) time, O(1) space — beautifully simple</span>
+<span class="cm"># For general binary tree: O(n) recursive DFS</span></div>
+    <div class="translate-eng">
+      <div class="line">📌 Start at root, walk down</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⬅️ Both smaller → LCA is in left subtree</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">➡️ Both larger → LCA is in right subtree</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🎯 Split point! One left, one right</div>
+      <div class="line">✅ This node IS the LCA</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⚡ Always ask: "BST or general tree?"</div>
+      <div class="line">💡 BST = O(h), general = O(n)</div>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 8: Quiz + Recognition Guide -->
+<section class="screen screen-alt" id="s8">
+  <h2>🧠 Quiz &amp; <span class="accent">Recognition Guide</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: You need the shortest path in an unweighted graph. Which algorithm?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) DFS</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) BFS</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) Dijkstra's</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Topological Sort</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: What line is the "crux" of level-order BFS that separates nodes by level?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) <code>queue.popleft()</code></div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) <code>level_size = len(queue)</code></div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) <code>queue.append(node.left)</code></div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) <code>result.append(level)</code></div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: In Validate BST, why is checking only immediate children insufficient?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) It's actually sufficient — the range approach is just cleaner</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) It misses duplicate values</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">C) A deeper node can violate the BST property even if its parent is valid</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Python can't compare None values</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: What does Kahn's algorithm detect if it processes fewer nodes than total?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Disconnected components</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) A cycle in the directed graph</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) Negative edge weights</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Missing edges in the adjacency list</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <h3>🗺️ Tree vs Graph Recognition</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🌳 "Binary tree," "root"</h4>
+      <p><strong>DFS</strong> (recursive) or <strong>BFS</strong>. First instinct: recursive DFS.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔍 "BST," "sorted," "validate"</h4>
+      <p><strong>In-order traversal</strong> or range checking. O(h) solutions exist.</p>
+    </div>
+    <div class="card green">
+      <h4>📊 "Level order," "min depth"</h4>
+      <p><strong>BFS</strong> with level tracking. level_size = len(queue) is key.</p>
+    </div>
+    <div class="card purple">
+      <h4>🏝️ "Grid," "islands," "connected"</h4>
+      <p><strong>DFS/BFS flood fill</strong> on implicit graph. 4-directional neighbors.</p>
+    </div>
+    <div class="card">
+      <h4>📋 "Prerequisites," "dependencies"</h4>
+      <p><strong>Topological sort</strong> (Kahn's). Think Airflow DAGs!</p>
+    </div>
+    <div class="card blue">
+      <h4>🔗 "Connected components"</h4>
+      <p><strong>Union-Find</strong> or DFS. Union-Find is better for dynamic edges.</p>
+    </div>
+    <div class="card green">
+      <h4>📏 "Shortest path" (weighted)</h4>
+      <p><strong>Dijkstra's</strong> (non-negative weights). Priority queue + relaxation.</p>
+    </div>
+    <div class="card purple">
+      <h4>🔄 "Cycle detection"</h4>
+      <p>Directed → <strong>topological sort / DFS states</strong>. Undirected → <strong>Union-Find</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-02-hashmaps/index.html">← Hash Maps &amp; Sets</a>
+  <a href="../module-04-dynamic-programming/index.html">Next: Dynamic Programming →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly the right approach for this scenario.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite — review the recognition guide above and think about what each algorithm guarantees.';}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

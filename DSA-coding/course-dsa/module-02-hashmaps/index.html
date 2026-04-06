@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 2: Hash Maps & Sets | DSA & Coding Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#DC2626;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎯 DSA &amp; Coding Mastery</a><div class="nav-dots"><a href="../module-01-arrays-strings/" class="nav-dot"></a><a href="../module-02-hashmaps/" class="nav-dot active"></a><a href="../module-03-trees-graphs/" class="nav-dot"></a><a href="../module-04-dynamic-programming/" class="nav-dot"></a><a href="../module-05-sorting-heaps/" class="nav-dot"></a><a href="../module-06-de-coding/" class="nav-dot"></a><a href="../module-07-sql-coding/" class="nav-dot"></a><a href="../module-08-interview-gauntlet/" class="nav-dot" style="background:var(--color-error)"></a></div></div></nav>
+
+<!-- Screen 1: Hash Map Internals -->
+<section class="screen" id="s1">
+  <h2>🗺️ Hash Map <span class="accent">Internals</span></h2>
+  <p>Hash maps are the <strong>single most frequently used data structure</strong> in coding interviews. If you master nothing else, master this. Let's open the hood and see how they actually work.</p>
+  <p>A hash map stores key-value pairs in an underlying array. To decide <em>where</em> a key goes: compute <code>hash(key)</code> → reduce to an index: <code>index = hash(key) % array_size</code> → store the pair there. Lookup follows the same path. This is <span class="tooltip-term" data-tip="O(1) on average because computing a hash and indexing into an array are both constant-time operations. Worst case is O(n) if all keys collide.">O(1) average</span>.</p>
+
+  <h3>Collision Handling</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>⛓️ Chaining (Separate Chaining)</h4>
+      <ul>
+        <li>📦 Each slot holds a linked list</li>
+        <li>➕ Colliding keys appended to the list</li>
+        <li>✅ Average: O(1) per operation</li>
+        <li>⚠️ Worst: O(n) if all keys hash to same slot</li>
+        <li>❌ Pointer chasing hurts cache locality</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🏠 Open Addressing (Linear Probing)</h4>
+      <ul>
+        <li>🔍 If slot occupied, probe the next slot</li>
+        <li>📦 All entries live directly in the array</li>
+        <li>✅ Better cache locality (no pointers)</li>
+        <li>⚠️ Degrades badly at high load factors</li>
+        <li>⚠️ Clustering can create hot spots</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Python's dict — Under the Hood</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🏗️ Open Addressing</h4>
+      <p>Python uses open addressing with perturbation (not pure linear probing) to spread clusters.</p>
+    </div>
+    <div class="card blue">
+      <h4>📐 Load Factor ~0.66</h4>
+      <p>Resizes when 2/3 full. Since Python 3.7, dict preserves insertion order (guaranteed by spec).</p>
+    </div>
+    <div class="card green">
+      <h4>💾 Compact Layout</h4>
+      <p>Since 3.6: dense array of (hash, key, value) + sparse index table. ~25% less memory, faster iteration.</p>
+    </div>
+    <div class="card purple">
+      <h4>🔐 Hash Randomization</h4>
+      <p>PYTHONHASHSEED since 3.3 prevents adversarial O(n) attacks. Always say "O(1) average, O(n) worst case."</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Sets vs Dicts</div>
+    <p>A <code>set</code> is essentially a <code>dict</code> without values — same hash table, same O(1) lookup. Use a set when you only need membership testing ("have I seen this before?"). Clearer intent, slightly less memory.</p>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">📊 Memory Comparison</div>
+    <p><strong>dict with string keys:</strong> ~100 bytes/entry. <strong>Fixed-size list of 26 ints:</strong> ~280 bytes total. For character frequency, [0]*26 is a 10× memory reduction — not premature optimization!</p>
+  </div>
+</section>
+
+<!-- Screen 2: Frequency Counting + Two Sum -->
+<section class="screen screen-alt" id="s2">
+  <h2>📊 Frequency Counting &amp; <span class="accent">Two Sum</span></h2>
+
+  <h3>Frequency Counting — Bread and Butter</h3>
+  <div class="code-block"><span class="kw">from</span> collections <span class="kw">import</span> Counter
+
+freq = Counter(<span class="str">"hello"</span>)       <span class="cm"># Counter({'l': 2, 'h': 1, 'e': 1, 'o': 1})</span>
+freq.most_common(<span class="fn">2</span>)          <span class="cm"># [('l', 2), ('h', 1)]</span>
+
+<span class="cm"># For small key spaces, use a fixed-size array (faster!):</span>
+freq = [<span class="fn">0</span>] * <span class="fn">26</span>
+<span class="kw">for</span> c <span class="kw">in</span> s:
+    freq[<span class="fn">ord</span>(c) - <span class="fn">ord</span>(<span class="str">'a'</span>)] += <span class="fn">1</span></div>
+
+  <h3>Top-K Pattern: Heap + HashMap</h3>
+  <p>For "top K frequent elements": count frequencies with hashmap → O(n), then use a min-heap of size K → <strong>O(n log k)</strong>. Better than sorting when k ≪ n. Or use <strong>bucket sort</strong> for O(n).</p>
+
+  <h3>The Two Sum Pattern</h3>
+  <p>Arguably the <strong>most important single pattern</strong> in interviews. It embodies the core idea of hashmaps: <em>trade space for time</em> by pre-storing complements.</p>
+  <div class="code-block"><span class="cm"># The core idea — O(n²) → O(n)</span>
+<span class="kw">for</span> each number:
+    complement = target - number
+    <span class="kw">if</span> complement <span class="kw">in</span> seen:
+        <span class="kw">return</span> answer
+    seen[number] = index</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Why One Pass Works</div>
+    <p>"Don't you need two passes?" No! When you reach the <em>second</em> number of a valid pair, the <em>first</em> is already in the hashmap. You can't double-count because you check <em>before</em> inserting. This subtlety is worth mentioning in interviews.</p>
+  </div>
+
+  <h3>Two Sum Variations</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔢 Unsorted → HashMap</h4>
+      <p>Store complement → index. Classic O(n).</p>
+    </div>
+    <div class="card blue">
+      <h4>📊 Sorted → Two Pointers</h4>
+      <p>No extra space needed. O(n) time, O(1) space.</p>
+    </div>
+    <div class="card green">
+      <h4>🔱 3Sum → Sort + Two Ptr</h4>
+      <p>Fix one element, two-pointer on rest. O(n²).</p>
+    </div>
+    <div class="card purple">
+      <h4>🔄 Count Pairs → Freq Map</h4>
+      <p>HashMap of complement → frequency count.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 3: Grouping + Sliding Window + HashMap -->
+<section class="screen" id="s3">
+  <h2>📦 Grouping &amp; <span class="accent">Window + HashMap</span></h2>
+
+  <h3>Group Anagrams — The Canonical Key Trick</h3>
+  <p>To group anagrams, create a <strong>canonical key</strong> that's the same for all anagrams. Sort each string → all anagrams produce the same sorted key.</p>
+  <div class="code-block"><span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+
+groups = defaultdict(<span class="fn">list</span>)
+<span class="kw">for</span> s <span class="kw">in</span> strs:
+    key = <span class="str">""</span>.join(<span class="fn">sorted</span>(s))   <span class="cm"># "eat" → "aet"</span>
+    groups[key].append(s)
+<span class="kw">return</span> <span class="fn">list</span>(groups.values())</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 General Grouping Pattern</div>
+    <p>This pattern applies any time you bucket items by a shared property: group files by extension, employees by department, logs by error code. Always: <code>defaultdict(list)</code> + compute key + append.</p>
+  </div>
+
+  <h3>Sliding Window + HashMap</h3>
+  <p>Many sliding window problems use a hashmap to track window state. The combo is powerful: <strong>HashMap</strong> tells you what's in the window, <strong>sliding window</strong> efficiently adds/removes at the edges.</p>
+
+  <h3>Minimum Window Template</h3>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">min_window_template</span>(s, target_freq):
+    window_freq = {}
+    have, need = <span class="fn">0</span>, <span class="fn">len</span>(target_freq)
+    left = <span class="fn">0</span>
+    result = <span class="str">""</span>
+
+    <span class="kw">for</span> right, char <span class="kw">in</span> <span class="fn">enumerate</span>(s):
+        <span class="cm"># Expand: add char to window</span>
+        window_freq[char] = window_freq.get(char, <span class="fn">0</span>) + <span class="fn">1</span>
+        <span class="kw">if</span> char <span class="kw">in</span> target_freq \
+           <span class="kw">and</span> window_freq[char] == target_freq[char]:
+            have += <span class="fn">1</span>
+
+        <span class="cm"># Shrink: minimize while valid</span>
+        <span class="kw">while</span> have == need:
+            <span class="cm"># Update result (shortest → here!)</span>
+            window_size = right - left + <span class="fn">1</span>
+            <span class="kw">if</span> <span class="kw">not</span> result <span class="kw">or</span> window_size < <span class="fn">len</span>(result):
+                result = s[left:right + <span class="fn">1</span>]
+            <span class="cm"># Remove leftmost</span>
+            left_char = s[left]
+            window_freq[left_char] -= <span class="fn">1</span>
+            <span class="kw">if</span> left_char <span class="kw">in</span> target_freq \
+               <span class="kw">and</span> window_freq[left_char] < target_freq[left_char]:
+                have -= <span class="fn">1</span>
+            left += <span class="fn">1</span>
+    <span class="kw">return</span> result</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 The have/need Optimization</div>
+    <p>Comparing two frequency maps every step would be O(26) or O(|charset|). By tracking <code>have</code> (count of satisfied characters), we reduce each check to O(1). This trick appears in many sliding-window-plus-hashmap problems.</p>
+  </div>
+</section>
+
+<!-- Screen 4: LRU Cache Design -->
+<section class="screen screen-alt" id="s4">
+  <h2>🏗️ LRU Cache <span class="accent">Design</span></h2>
+  <p>The LRU Cache is a <strong>design</strong> problem — it tests data structure composition, O(1) constraints, and clean API thinking. Appears at Google, Meta, Amazon, and Microsoft with high frequency.</p>
+
+  <h3>Why One Data Structure Isn't Enough</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ HashMap Alone</h4>
+      <ul>
+        <li>✅ O(1) lookup by key</li>
+        <li>❌ No access order tracking</li>
+        <li>❌ Can't find "least recently used"</li>
+        <li>❌ No concept of oldest/newest</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Linked List Alone</h4>
+      <ul>
+        <li>✅ Tracks insertion/access order</li>
+        <li>✅ O(1) add/remove at ends</li>
+        <li>❌ Finding a node by key is O(n)</li>
+        <li>❌ Must traverse entire list</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>The Architecture: HashMap + Doubly-Linked List</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🗺️ HashMap</h4>
+      <p><code>key → Node</code> pointer. O(1) lookup to find any node instantly.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔗 Doubly-Linked List</h4>
+      <p>head ↔ node ↔ … ↔ tail. Head = most recent, tail = LRU. O(1) reorder.</p>
+    </div>
+    <div class="card green">
+      <h4>📥 get(key)</h4>
+      <p>Look up node via hashmap (O(1)), move it to head of list (O(1)).</p>
+    </div>
+    <div class="card purple">
+      <h4>📤 put(key, val)</h4>
+      <p>If exists: update + move to head. If new + at capacity: evict tail, then insert at head.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Sentinel Nodes — Eliminate Edge Cases</div>
+    <p>Dummy head and tail nodes mean every real node always has a valid <code>prev</code> and <code>next</code>. No special cases for empty list, single node, or boundary removal. Learn this pattern once, use it everywhere.</p>
+  </div>
+
+  <h3>Full Implementation</h3>
+  <div class="code-block"><span class="kw">class</span> <span class="fn">Node</span>:
+    __slots__ = (<span class="str">"key"</span>, <span class="str">"value"</span>, <span class="str">"prev"</span>, <span class="str">"next"</span>)
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, key=<span class="fn">0</span>, value=<span class="fn">0</span>):
+        self.key, self.value = key, value
+        self.prev = self.next = <span class="fn">None</span>
+
+<span class="kw">class</span> <span class="fn">LRUCache</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, capacity):
+        self.capacity = capacity
+        self.cache = {}          <span class="cm"># key → Node</span>
+        self.head = Node()       <span class="cm"># sentinel (most recent)</span>
+        self.tail = Node()       <span class="cm"># sentinel (least recent)</span>
+        self.head.next = self.tail
+        self.tail.prev = self.head
+
+    <span class="kw">def</span> <span class="fn">_remove</span>(self, node):
+        node.prev.next = node.next
+        node.next.prev = node.prev
+
+    <span class="kw">def</span> <span class="fn">_add_to_front</span>(self, node):
+        node.prev = self.head
+        node.next = self.head.next
+        self.head.next.prev = node
+        self.head.next = node
+
+    <span class="kw">def</span> <span class="fn">get</span>(self, key):
+        <span class="kw">if</span> key <span class="kw">not in</span> self.cache: <span class="kw">return</span> -<span class="fn">1</span>
+        node = self.cache[key]
+        self._remove(node)
+        self._add_to_front(node)
+        <span class="kw">return</span> node.value
+
+    <span class="kw">def</span> <span class="fn">put</span>(self, key, value):
+        <span class="kw">if</span> key <span class="kw">in</span> self.cache:
+            self._remove(self.cache[key])
+            self.cache[key].value = value
+            self._add_to_front(self.cache[key])
+        <span class="kw">else</span>:
+            <span class="kw">if</span> <span class="fn">len</span>(self.cache) >= self.capacity:
+                lru = self.tail.prev
+                self._remove(lru)
+                <span class="kw">del</span> self.cache[lru.key]
+            new_node = Node(key, value)
+            self._add_to_front(new_node)
+            self.cache[key] = new_node</div>
+</section>
+
+<!-- Screen 5: Problem Solutions 1–3 -->
+<section class="screen" id="s5">
+  <h2>🧩 Solutions: <span class="accent">Problems 1–3</span></h2>
+
+  <h3>Problem 1: Two Sum (Unsorted — HashMap)</h3>
+  <p>Given an unsorted array and target, return indices of two numbers summing to target. Each input has exactly one solution.</p>
+  <div class="translate">
+    <div class="translate-code"><span class="kw">def</span> <span class="fn">two_sum</span>(nums, target):
+    seen = {}  <span class="cm"># value → index</span>
+
+    <span class="kw">for</span> i, num <span class="kw">in</span> <span class="fn">enumerate</span>(nums):
+        complement = target - num
+        <span class="kw">if</span> complement <span class="kw">in</span> seen:
+            <span class="kw">return</span> [seen[complement], i]
+        seen[num] = i
+
+    <span class="kw">return</span> []</div>
+    <div class="translate-eng">
+      <div class="line">📌 HashMap: value → its index</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔄 Walk through each number</div>
+      <div class="line">🔍 What number would complete the pair?</div>
+      <div class="line">✅ Seen before! Return both indices</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📝 Store this number for future lookups</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">💨 O(n) time, O(n) space</div>
+    </div>
+  </div>
+
+  <h3>Problem 2: Group Anagrams</h3>
+  <p>Group strings that are anagrams of each other. Use sorted string as canonical key.</p>
+  <div class="translate">
+    <div class="translate-code"><span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+
+<span class="kw">def</span> <span class="fn">group_anagrams</span>(strs):
+    groups = defaultdict(<span class="fn">list</span>)
+
+    <span class="kw">for</span> s <span class="kw">in</span> strs:
+        key = <span class="str">""</span>.join(<span class="fn">sorted</span>(s))
+        groups[key].append(s)
+
+    <span class="kw">return</span> <span class="fn">list</span>(groups.values())
+
+<span class="cm"># Alt: use tuple(freq) as key for O(n·k)</span></div>
+    <div class="translate-eng">
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📌 Bucket: sorted_key → list of originals</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔄 For each string:</div>
+      <div class="line">🔑 Sort it → "eat" becomes "aet"</div>
+      <div class="line">📦 All anagrams land in same bucket</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📤 Return all groups</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⚡ O(n·k log k) — fast enough for interviews</div>
+    </div>
+  </div>
+
+  <h3>Problem 3: Top K Frequent Elements</h3>
+  <p>Find the k most frequent elements. Two approaches: heap O(n log k) or bucket sort O(n).</p>
+  <div class="translate">
+    <div class="translate-code"><span class="kw">from</span> collections <span class="kw">import</span> Counter
+
+<span class="kw">def</span> <span class="fn">top_k_frequent</span>(nums, k):
+    freq = Counter(nums)
+
+    <span class="cm"># Bucket sort: index = frequency</span>
+    buckets = [[] <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(
+                   <span class="fn">len</span>(nums) + <span class="fn">1</span>)]
+    <span class="kw">for</span> num, count <span class="kw">in</span> freq.items():
+        buckets[count].append(num)
+
+    result = []
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(buckets)-<span class="fn">1</span>, <span class="fn">0</span>, -<span class="fn">1</span>):
+        <span class="kw">for</span> num <span class="kw">in</span> buckets[i]:
+            result.append(num)
+            <span class="kw">if</span> <span class="fn">len</span>(result) == k:
+                <span class="kw">return</span> result
+    <span class="kw">return</span> result</div>
+    <div class="translate-eng">
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📊 Count how often each number appears</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🪣 Create buckets indexed by frequency</div>
+      <div class="line">(max freq = n, so n+1 buckets)</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📦 Place each number in its freq bucket</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⬇️ Collect from highest frequency down</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">✅ Stop once we have k elements</div>
+      <div class="line">⚡ O(n) time — beats heap for large n!</div>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 6: Problem Solutions 4–6 -->
+<section class="screen screen-alt" id="s6">
+  <h2>🧩 Solutions: <span class="accent">Problems 4–6</span></h2>
+
+  <h3>Problem 4: Longest Substring Without Repeating Characters</h3>
+  <p>Variable sliding window + hashmap tracking character positions. The bridge between arrays and hashmaps.</p>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">length_of_longest_substring</span>(s):
+    last_seen = {}
+    left = <span class="fn">0</span>
+    max_len = <span class="fn">0</span>
+
+    <span class="kw">for</span> right, char <span class="kw">in</span> <span class="fn">enumerate</span>(s):
+        <span class="kw">if</span> char <span class="kw">in</span> last_seen <span class="kw">and</span> last_seen[char] >= left:
+            left = last_seen[char] + <span class="fn">1</span>   <span class="cm"># jump past duplicate</span>
+        last_seen[char] = right
+        max_len = <span class="fn">max</span>(max_len, right - left + <span class="fn">1</span>)
+    <span class="kw">return</span> max_len
+
+<span class="cm"># Critical: last_seen[char] >= left prevents</span>
+<span class="cm"># moving left BACKWARD to a stale position!</span>
+<span class="cm"># Example: "abba" — without the check, left</span>
+<span class="cm"># would jump back when hitting the second 'a'.</span></div>
+
+  <h3>Problem 5: Minimum Window Substring</h3>
+  <p>Find the smallest substring of <code>s</code> containing all characters of <code>t</code>. <strong>Hard</strong> — one of the most asked hard problems.</p>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">min_window</span>(s, t):
+    target_freq = Counter(t)
+    window_freq = {}
+    have, need = <span class="fn">0</span>, <span class="fn">len</span>(target_freq)
+    result = <span class="str">""</span>
+    result_len = <span class="fn">float</span>(<span class="str">"inf"</span>)
+    left = <span class="fn">0</span>
+
+    <span class="kw">for</span> right, char <span class="kw">in</span> <span class="fn">enumerate</span>(s):
+        window_freq[char] = window_freq.get(char, <span class="fn">0</span>) + <span class="fn">1</span>
+        <span class="kw">if</span> char <span class="kw">in</span> target_freq \
+           <span class="kw">and</span> window_freq[char] == target_freq[char]:
+            have += <span class="fn">1</span>
+
+        <span class="kw">while</span> have == need:
+            window_size = right - left + <span class="fn">1</span>
+            <span class="kw">if</span> window_size < result_len:
+                result_len = window_size
+                result = s[left:right + <span class="fn">1</span>]
+            left_char = s[left]
+            window_freq[left_char] -= <span class="fn">1</span>
+            <span class="kw">if</span> left_char <span class="kw">in</span> target_freq \
+               <span class="kw">and</span> window_freq[left_char] < target_freq[left_char]:
+                have -= <span class="fn">1</span>
+            left += <span class="fn">1</span>
+    <span class="kw">return</span> result
+
+<span class="cm"># "ADOBECODEBANC", "ABC" → "BANC"</span></div>
+
+  <h3>Problem 6: LRU Cache — OrderedDict Shortcut</h3>
+  <p>Know the full implementation (Screen 4), but also know the Pythonic shortcut:</p>
+  <div class="code-block"><span class="kw">from</span> collections <span class="kw">import</span> OrderedDict
+
+<span class="kw">class</span> <span class="fn">LRUCacheSimple</span>(OrderedDict):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, capacity):
+        <span class="fn">super</span>().__init__()
+        self.capacity = capacity
+
+    <span class="kw">def</span> <span class="fn">get</span>(self, key):
+        <span class="kw">if</span> key <span class="kw">not in</span> self: <span class="kw">return</span> -<span class="fn">1</span>
+        self.move_to_end(key)   <span class="cm"># mark as recently used</span>
+        <span class="kw">return</span> self[key]
+
+    <span class="kw">def</span> <span class="fn">put</span>(self, key, value):
+        <span class="kw">if</span> key <span class="kw">in</span> self:
+            self.move_to_end(key)
+        self[key] = value
+        <span class="kw">if</span> <span class="fn">len</span>(self) > self.capacity:
+            self.popitem(last=<span class="fn">False</span>)  <span class="cm"># evict oldest</span></div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Strategy</div>
+    <p>Always implement the full doubly-linked-list version first — it shows you understand the mechanics. Then mention OrderedDict to show Python stdlib knowledge. Many interviewers <em>require</em> the manual implementation.</p>
+  </div>
+</section>
+
+<!-- Screen 7: Quiz + Decision Guide -->
+<section class="screen" id="s7">
+  <h2>🧠 Quiz &amp; <span class="accent">Decision Guide</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: What collision strategy does Python's dict use?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Chaining with linked lists</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) Open addressing with perturbation</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) Perfect hashing (no collisions)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Cuckoo hashing</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: In the Two Sum problem, why does a single-pass approach work?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Because we insert all elements first</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) When we reach the second number of a pair, the first is already in the hashmap</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) Because hash maps are sorted by insertion order</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) It doesn't — you actually need two passes</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: Why does the LRU Cache need both a hashmap AND a linked list?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) The hashmap handles get() and the list handles put()</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) For thread safety</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">C) HashMap gives O(1) key lookup; linked list gives O(1) order tracking and reordering</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Python requires both for the OrderedDict to work</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: For character frequency of lowercase letters, which is more memory-efficient?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Counter (collections module)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) A fixed-size list: [0] * 26</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) Both use the same memory</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) A set of seen characters</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <h3>🗺️ When to Reach for a HashMap</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Use a HashMap When…</h4>
+      <ul>
+        <li>🔍 You need O(1) lookup by key</li>
+        <li>📊 Counting frequencies</li>
+        <li>🔗 Finding complements (Two Sum)</li>
+        <li>📦 Grouping items by property</li>
+        <li>🔄 Detecting duplicates</li>
+        <li>💾 Caching/memoizing results</li>
+        <li>🪟 Tracking sliding window state</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Don't Use When…</h4>
+      <ul>
+        <li>📊 Input is sorted → two pointers</li>
+        <li>📈 Need ordering → sorted array/BST</li>
+        <li>📐 Range queries → segment tree</li>
+        <li>🔤 Keys are 0–26 → fixed array (faster)</li>
+        <li>💾 Memory constrained → bit manipulation</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-01-arrays-strings/index.html">← Arrays &amp; Strings</a>
+  <a href="../module-03-trees-graphs/index.html">Next: Trees &amp; Graphs →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Chat animation
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly the insight interviewers are looking for.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite — think about what makes hash maps unique and why we combine data structures.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

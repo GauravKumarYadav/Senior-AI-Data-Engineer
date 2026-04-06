@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 4: Dynamic Programming | DSA & Coding Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#DC2626;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+.grid-viz{font-family:var(--font-code);font-size:0.82rem;background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0;overflow-x:auto;white-space:pre;line-height:1.7}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎯 DSA &amp; Coding Mastery</a><div class="nav-dots"><a href="../module-01-arrays-strings/" class="nav-dot"></a><a href="../module-02-hashmaps/" class="nav-dot"></a><a href="../module-03-trees-graphs/" class="nav-dot"></a><a href="../module-04-dynamic-programming/" class="nav-dot active"></a><a href="../module-05-sorting-heaps/" class="nav-dot"></a><a href="../module-06-de-coding/" class="nav-dot"></a><a href="../module-07-sql-coding/" class="nav-dot"></a><a href="../module-08-interview-gauntlet/" class="nav-dot" style="background:var(--color-error)"></a></div></div></nav>
+
+<!-- Screen 1: What Is DP? -->
+<section class="screen" id="s1">
+  <h2>🧠 What Is <span class="accent">Dynamic Programming?</span></h2>
+  <p><em>"Those who cannot remember the past are condemned to repeat it."</em> — George Santayana (and every recursive function without memoization)</p>
+  <p>DP is an <strong>optimization technique</strong> that solves complex problems by breaking them into simpler, overlapping subproblems. Two properties must hold:</p>
+
+  <div class="aha">
+    <div class="aha-title">🔄 Overlapping Subproblems</div>
+    <p>The same smaller problem is solved <strong>many times</strong> during recursion. Computing <code>fib(5)</code> naïvely: <code>fib(3)</code> is computed twice, <code>fib(2)</code> three times. DP stores these results so each subproblem is solved <strong>exactly once</strong>.</p>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🏗️ Optimal Substructure</div>
+    <p>An optimal solution can be <strong>constructed from optimal solutions to its subproblems</strong>. If the shortest path A→C goes through B, then A→B must itself be the shortest path from A→B.</p>
+  </div>
+
+  <h3>The Recognition Test</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🧩 Identical Subproblems?</h4>
+      <p>Can you break it into smaller versions of the <strong>same</strong> problem? → DP candidate.</p>
+    </div>
+    <div class="card blue">
+      <h4>📊 Min/Max/Count?</h4>
+      <p>Does the problem ask for minimum, maximum, or count of something? → Strong DP signal.</p>
+    </div>
+    <div class="card green">
+      <h4>🤔 Choices at Each Step?</h4>
+      <p>Take/skip, left/right, use/don't use? → DP with decision at each state.</p>
+    </div>
+    <div class="card purple">
+      <h4>💥 Exponential → Overlap?</h4>
+      <p>Brute-force is exponential but recursion tree has repeated nodes? → DP will optimize.</p>
+    </div>
+    <div class="card">
+      <h4>🔀 Order Doesn't Matter?</h4>
+      <p>Only the end state matters, not how you got there? → DP over greedy.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Cue</div>
+    <p>When an interviewer says <em>"Can you optimize your brute-force solution?"</em> and your recursion tree has repeated nodes — that's your cue to reach for DP.</p>
+  </div>
+</section>
+
+<!-- Screen 2: Memoization vs Tabulation -->
+<section class="screen screen-alt" id="s2">
+  <h2>🔄 Memoization vs <span class="accent">Tabulation</span></h2>
+  <p>Every DP problem can be solved two ways. Master <strong>both</strong> — interviewers may ask you to convert. The underlying recurrence is identical.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>⬇️ Top-Down (Memoization)</h4>
+      <ul>
+        <li>🔄 Write natural recursive solution</li>
+        <li>💾 Add cache for solved subproblems</li>
+        <li>✅ Intuitive, mirrors recurrence</li>
+        <li>✅ Only solves needed subproblems</li>
+        <li>⚠️ Recursion stack overhead</li>
+        <li>⚠️ Stack overflow for large n</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>⬆️ Bottom-Up (Tabulation)</h4>
+      <ul>
+        <li>📊 Build table from base cases up</li>
+        <li>🔄 Fill iteratively, no recursion</li>
+        <li>✅ No stack overhead</li>
+        <li>✅ Cache-friendly memory access</li>
+        <li>✅ Easier to optimize space</li>
+        <li>⚠️ May compute unneeded subproblems</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Fibonacci — Top-Down</h3>
+  <div class="code-block"><span class="kw">from</span> functools <span class="kw">import</span> lru_cache
+
+<span class="kw">@</span>lru_cache(maxsize=<span class="fn">None</span>)
+<span class="kw">def</span> <span class="fn">fib</span>(n: <span class="fn">int</span>) -> <span class="fn">int</span>:
+    <span class="kw">if</span> n <= <span class="fn">1</span>: <span class="kw">return</span> n
+    <span class="kw">return</span> fib(n - <span class="fn">1</span>) + fib(n - <span class="fn">2</span>)</div>
+
+  <h3>Fibonacci — Bottom-Up</h3>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">fib</span>(n: <span class="fn">int</span>) -> <span class="fn">int</span>:
+    <span class="kw">if</span> n <= <span class="fn">1</span>: <span class="kw">return</span> n
+    dp = [<span class="fn">0</span>] * (n + <span class="fn">1</span>)
+    dp[<span class="fn">1</span>] = <span class="fn">1</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">2</span>, n + <span class="fn">1</span>):
+        dp[i] = dp[i - <span class="fn">1</span>] + dp[i - <span class="fn">2</span>]
+    <span class="kw">return</span> dp[n]</div>
+
+  <h3>Space Optimization — O(1)</h3>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">fib</span>(n: <span class="fn">int</span>) -> <span class="fn">int</span>:
+    <span class="kw">if</span> n <= <span class="fn">1</span>: <span class="kw">return</span> n
+    prev2, prev1 = <span class="fn">0</span>, <span class="fn">1</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">2</span>, n + <span class="fn">1</span>):
+        prev2, prev1 = prev1, prev2 + prev1
+    <span class="kw">return</span> prev1
+<span class="cm"># When dp[i] depends only on a fixed window → reduce to O(1)</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Always Mention Space Optimization</div>
+    <p>Present the full table first, then optimize. It shows depth of understanding and interviewers love it. The progression: brute-force → memoization → tabulation → space-optimized.</p>
+  </div>
+</section>
+
+<!-- Screen 3: Climbing Stairs + House Robber -->
+<section class="screen" id="s3">
+  <h2>🧩 Climbing Stairs &amp; <span class="accent">House Robber</span></h2>
+
+  <h3>Problem 1: Climbing Stairs (LeetCode 70)</h3>
+  <p>You climb a staircase with <code>n</code> steps, taking 1 or 2 steps at a time. How many <strong>distinct ways</strong> to reach the top? This is Fibonacci in disguise.</p>
+  <p><strong>State:</strong> <code>dp[i]</code> = distinct ways to reach step <code>i</code><br><strong>Recurrence:</strong> <code>dp[i] = dp[i-1] + dp[i-2]</code></p>
+  <div class="translate">
+    <div class="translate-code"><span class="kw">def</span> <span class="fn">climb_stairs</span>(n: <span class="fn">int</span>) -> <span class="fn">int</span>:
+    <span class="str">"""Distinct ways to climb n stairs."""</span>
+    <span class="kw">if</span> n <= <span class="fn">2</span>: <span class="kw">return</span> n
+
+    prev2, prev1 = <span class="fn">1</span>, <span class="fn">2</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">3</span>, n + <span class="fn">1</span>):
+        prev2, prev1 = prev1, prev2 + prev1
+    <span class="kw">return</span> prev1
+
+<span class="cm"># O(n) time, O(1) space</span></div>
+    <div class="translate-eng">
+      <div class="line">📌 dp[i] = ways to reach step i</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🛑 Base: 1 step = 1 way, 2 steps = 2 ways</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📊 dp[0]=1, dp[1]=2 (space-optimized)</div>
+      <div class="line">🔄 Each step: sum of two previous</div>
+      <div class="line">🏆 Answer is prev1</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">💡 For 1/2/3 steps: add dp[i-3]</div>
+    </div>
+  </div>
+
+  <h3>Problem 2: House Robber (LeetCode 198)</h3>
+  <p>Rob houses along a street — <strong>can't rob adjacent houses</strong>. Maximize total money. At each house: <strong>take</strong> (skip prev) or <strong>skip</strong> (keep prev best).</p>
+  <p><strong>State:</strong> <code>dp[i]</code> = max money from first <code>i</code> houses<br><strong>Recurrence:</strong> <code>dp[i] = max(dp[i-1], dp[i-2] + nums[i])</code></p>
+  <div class="translate">
+    <div class="translate-code"><span class="kw">def</span> <span class="fn">rob</span>(nums: <span class="fn">list</span>[<span class="fn">int</span>]) -> <span class="fn">int</span>:
+    <span class="str">"""Max money without robbing adjacent."""</span>
+    <span class="kw">if not</span> nums: <span class="kw">return</span> <span class="fn">0</span>
+    <span class="kw">if</span> <span class="fn">len</span>(nums) == <span class="fn">1</span>: <span class="kw">return</span> nums[<span class="fn">0</span>]
+
+    prev2, prev1 = nums[<span class="fn">0</span>], <span class="fn">max</span>(nums[<span class="fn">0</span>], nums[<span class="fn">1</span>])
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">2</span>, <span class="fn">len</span>(nums)):
+        prev2, prev1 = prev1, <span class="fn">max</span>(
+            prev1,           <span class="cm"># skip house i</span>
+            prev2 + nums[i]  <span class="cm"># rob house i</span>
+        )
+    <span class="kw">return</span> prev1
+
+<span class="cm"># O(n) time, O(1) space</span></div>
+    <div class="translate-eng">
+      <div class="line">📌 dp[i] = max money from first i houses</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🛑 Edge cases</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📊 Base: dp[0]=nums[0], dp[1]=max(first two)</div>
+      <div class="line">🔄 For each house:</div>
+      <div class="line">🤔 Two choices:</div>
+      <div class="line">⏭️ Skip → keep previous best</div>
+      <div class="line">💰 Rob → prev2 + this house's money</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🏆 Take the maximum</div>
+      <div class="line">💡 House Robber II (circular): run twice</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 The Take/Skip Pattern</div>
+    <p>House Robber is the archetype of <strong>take/skip DP</strong>: at each element, you either include it (with a constraint) or exclude it. This pattern appears in dozens of problems: partition equal subset sum, target sum, and more. Master this one and you've unlocked a whole family.</p>
+  </div>
+</section>
+
+<!-- Screen 4: Coin Change + Unique Paths -->
+<section class="screen screen-alt" id="s4">
+  <h2>🧩 Coin Change &amp; <span class="accent">Unique Paths</span></h2>
+
+  <h3>Problem 3: Coin Change (LeetCode 322)</h3>
+  <p>Fewest coins to make <code>amount</code>. Each denomination can be used unlimited times. Classic <strong>unbounded knapsack</strong> variant.</p>
+  <p><strong>State:</strong> <code>dp[a]</code> = min coins for amount <code>a</code><br><strong>Recurrence:</strong> <code>dp[a] = min(dp[a - coin] + 1)</code> for each coin</p>
+  <div class="translate">
+    <div class="translate-code"><span class="kw">def</span> <span class="fn">coin_change</span>(coins, amount):
+    <span class="str">"""Fewest coins to make amount, or -1."""</span>
+    dp = [<span class="fn">float</span>(<span class="str">"inf"</span>)] * (amount + <span class="fn">1</span>)
+    dp[<span class="fn">0</span>] = <span class="fn">0</span>
+
+    <span class="kw">for</span> a <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">1</span>, amount + <span class="fn">1</span>):
+        <span class="kw">for</span> coin <span class="kw">in</span> coins:
+            <span class="kw">if</span> coin <= a:
+                dp[a] = <span class="fn">min</span>(dp[a],
+                            dp[a - coin] + <span class="fn">1</span>)
+
+    <span class="kw">return</span> dp[amount] <span class="kw">if</span> dp[amount] != <span class="fn">float</span>(<span class="str">"inf"</span>) <span class="kw">else</span> -<span class="fn">1</span>
+
+<span class="cm"># O(amount × coins) time, O(amount) space</span></div>
+    <div class="translate-eng">
+      <div class="line">📌 dp[a] = min coins for amount a</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">♾️ Init all to infinity (not yet achievable)</div>
+      <div class="line">🛑 Base: 0 coins for amount 0</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔄 For each amount from 1 to target:</div>
+      <div class="line">🪙 Try every coin denomination</div>
+      <div class="line">✅ Coin fits? Check if it's better</div>
+      <div class="line">📊 dp[a-coin]+1 = use this coin + best remainder</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🎯 Still infinity? Impossible → -1</div>
+      <div class="line">💡 Coin Change II asks for # of combos</div>
+    </div>
+  </div>
+
+  <h3>Problem 4: Unique Paths (LeetCode 62)</h3>
+  <p>Robot on <code>m × n</code> grid, can only move <strong>right or down</strong>. Count unique paths to bottom-right.</p>
+  <p><strong>State:</strong> <code>dp[r][c]</code> = paths from (0,0) to (r,c)<br><strong>Recurrence:</strong> <code>dp[r][c] = dp[r-1][c] + dp[r][c-1]</code></p>
+
+  <div class="grid-viz">  Grid visualization (3×4):
+
+  Start →  1    1    1    1
+            1    2    3    4
+            1    3    6   <span style="color:#A6E3A1;font-weight:bold">10</span>  ← Answer!
+
+  Each cell = sum of cell above + cell to the left</div>
+
+  <div class="translate">
+    <div class="translate-code"><span class="kw">def</span> <span class="fn">unique_paths</span>(m: <span class="fn">int</span>, n: <span class="fn">int</span>) -> <span class="fn">int</span>:
+    <span class="str">"""Unique paths in m×n grid. Space-optimized."""</span>
+    row = [<span class="fn">1</span>] * n  <span class="cm"># top edge: all 1s</span>
+
+    <span class="kw">for</span> r <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">1</span>, m):
+        <span class="kw">for</span> c <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">1</span>, n):
+            row[c] += row[c - <span class="fn">1</span>]
+
+    <span class="kw">return</span> row[-<span class="fn">1</span>]
+
+<span class="cm"># O(m×n) time, O(n) space</span></div>
+    <div class="translate-eng">
+      <div class="line">📌 dp[r][c] = paths to (r, c)</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📏 Top edge: only one way (keep going right)</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔄 For each remaining row:</div>
+      <div class="line">➕ row[c] += row[c-1] (above + left)</div>
+      <div class="line">🧠 row[c] still holds "above" value!</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🏆 Bottom-right = answer</div>
+      <div class="line">💡 Obstacles? Set dp[r][c]=0 for them</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Grid DP Skeleton</div>
+    <p>Grid DP problems share the <strong>exact same skeleton</strong> — only the combination function changes: <strong>sum</strong> (Unique Paths), <strong>min</strong> (Min Path Sum), <strong>max</strong> (Max Gold). Recognize the skeleton and swap the operator.</p>
+  </div>
+</section>
+
+<!-- Screen 5: Edit Distance -->
+<section class="screen" id="s5">
+  <h2>🧩 Edit Distance — <span class="accent">Full Walkthrough</span></h2>
+  <p><strong>LeetCode 72:</strong> Minimum operations (insert, delete, replace) to convert <code>word1</code> into <code>word2</code>. The quintessential 2-string DP problem.</p>
+
+  <p><strong>State:</strong> <code>dp[i][j]</code> = min edits to convert <code>word1[0..i-1]</code> → <code>word2[0..j-1]</code></p>
+
+  <h3>Grid Walkthrough: "horse" → "ros"</h3>
+  <div class="grid-viz">        ""    r    o    s
+  ""  [ <span style="color:#89B4FA">0</span>    1    2    3 ]
+   h  [ 1    <span style="color:#CBA6F7">1</span>    2    3 ]    Three operations at each cell:
+   o  [ 2    2    <span style="color:#CBA6F7">1</span>    2 ]    • Replace: dp[i-1][j-1] + 1
+   r  [ 3    2    2    <span style="color:#CBA6F7">2</span> ]    • Delete:  dp[i-1][j] + 1
+   s  [ 4    3    3    2 ]    • Insert:  dp[i][j-1] + 1
+   e  [ 5    4    4    <span style="color:#A6E3A1;font-weight:bold">3</span> ]    If chars match: dp[i-1][j-1] (free!)
+
+  Answer: 3 operations (replace h→r, delete r, delete e)</div>
+
+  <div class="translate">
+    <div class="translate-code"><span class="kw">def</span> <span class="fn">min_distance</span>(word1, word2):
+    m, n = <span class="fn">len</span>(word1), <span class="fn">len</span>(word2)
+    dp = [[<span class="fn">0</span>]*(n+<span class="fn">1</span>) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(m+<span class="fn">1</span>)]
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(m+<span class="fn">1</span>): dp[i][<span class="fn">0</span>] = i
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(n+<span class="fn">1</span>): dp[<span class="fn">0</span>][j] = j
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">1</span>, m+<span class="fn">1</span>):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">1</span>, n+<span class="fn">1</span>):
+            <span class="kw">if</span> word1[i-<span class="fn">1</span>] == word2[j-<span class="fn">1</span>]:
+                dp[i][j] = dp[i-<span class="fn">1</span>][j-<span class="fn">1</span>]
+            <span class="kw">else</span>:
+                dp[i][j] = <span class="fn">1</span> + <span class="fn">min</span>(
+                    dp[i-<span class="fn">1</span>][j-<span class="fn">1</span>],  <span class="cm"># replace</span>
+                    dp[i-<span class="fn">1</span>][j],    <span class="cm"># delete</span>
+                    dp[i][j-<span class="fn">1</span>],    <span class="cm"># insert</span>
+                )
+    <span class="kw">return</span> dp[m][n]</div>
+    <div class="translate-eng">
+      <div class="line">📌 dp[i][j] = edits for word1[:i] → word2[:j]</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📊 Create (m+1) × (n+1) table</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🛑 Base: deleting all chars</div>
+      <div class="line">🛑 Base: inserting all chars</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔄 Fill table row by row</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">✅ Characters match → free! No edit needed</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🤔 Characters differ → best of 3 options:</div>
+      <div class="line">🔄 Replace this char</div>
+      <div class="line">❌ Delete from word1</div>
+      <div class="line">➕ Insert into word1</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🏆 Answer at dp[m][n]</div>
+    </div>
+  </div>
+
+  <h3>Space-Optimized Version</h3>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">min_distance_optimized</span>(word1, word2):
+    <span class="str">"""Two-row edit distance — O(min(m, n)) space."""</span>
+    m, n = <span class="fn">len</span>(word1), <span class="fn">len</span>(word2)
+    <span class="kw">if</span> m < n: <span class="kw">return</span> min_distance_optimized(word2, word1)
+
+    prev = <span class="fn">list</span>(<span class="fn">range</span>(n + <span class="fn">1</span>))
+    curr = [<span class="fn">0</span>] * (n + <span class="fn">1</span>)
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">1</span>, m + <span class="fn">1</span>):
+        curr[<span class="fn">0</span>] = i
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">1</span>, n + <span class="fn">1</span>):
+            <span class="kw">if</span> word1[i-<span class="fn">1</span>] == word2[j-<span class="fn">1</span>]:
+                curr[j] = prev[j-<span class="fn">1</span>]
+            <span class="kw">else</span>:
+                curr[j] = <span class="fn">1</span> + <span class="fn">min</span>(prev[j-<span class="fn">1</span>], prev[j], curr[j-<span class="fn">1</span>])
+        prev, curr = curr, prev
+    <span class="kw">return</span> prev[n]
+<span class="cm"># Time: O(m×n)  |  Space: O(min(m, n))</span></div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Strategy</div>
+    <p>Walk through the grid on the whiteboard with a small example. Explain what each operation means physically: "Insert means we still need to match word1[0..i-1] against a shorter prefix of word2." Interviewers want to see you <strong>understand</strong> the recurrence, not just memorize code.</p>
+  </div>
+</section>
+
+<!-- Screen 6: LCS + Knapsack -->
+<section class="screen screen-alt" id="s6">
+  <h2>🔗 LCS &amp; <span class="accent">Knapsack</span> Pattern</h2>
+
+  <h3>Longest Common Subsequence (LeetCode 1143)</h3>
+  <p><strong>State:</strong> <code>dp[i][j]</code> = LCS length of <code>text1[0..i-1]</code> and <code>text2[0..j-1]</code></p>
+
+  <div class="grid-viz">  "abcde" vs "ace" → LCS = "ace" (length 3)
+
+        ""    a    c    e
+  ""  [  0    0    0    0 ]
+   a  [  0    <span style="color:#A6E3A1">1</span>    1    1 ]   Match → dp[i-1][j-1] + 1
+   b  [  0    1    1    1 ]   No match → max(dp[i-1][j], dp[i][j-1])
+   c  [  0    1    <span style="color:#A6E3A1">2</span>    2 ]
+   d  [  0    1    2    2 ]
+   e  [  0    1    2    <span style="color:#A6E3A1;font-weight:bold">3</span> ]   ← Answer!</div>
+
+  <div class="code-block"><span class="kw">def</span> <span class="fn">longest_common_subsequence</span>(text1, text2):
+    m, n = <span class="fn">len</span>(text1), <span class="fn">len</span>(text2)
+    dp = [[<span class="fn">0</span>] * (n + <span class="fn">1</span>) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(m + <span class="fn">1</span>)]
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">1</span>, m + <span class="fn">1</span>):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">1</span>, n + <span class="fn">1</span>):
+            <span class="kw">if</span> text1[i-<span class="fn">1</span>] == text2[j-<span class="fn">1</span>]:
+                dp[i][j] = dp[i-<span class="fn">1</span>][j-<span class="fn">1</span>] + <span class="fn">1</span>
+            <span class="kw">else</span>:
+                dp[i][j] = <span class="fn">max</span>(dp[i-<span class="fn">1</span>][j], dp[i][j-<span class="fn">1</span>])
+    <span class="kw">return</span> dp[m][n]
+<span class="cm"># O(m×n) time, O(m×n) space — can optimize to O(min(m,n))</span></div>
+
+  <h3>Problems That Reduce to Knapsack</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🎒 Subset Sum</h4>
+      <p>Values = weights, target = sum. Can you pick items to reach exactly target?</p>
+    </div>
+    <div class="card blue">
+      <h4>⚖️ Partition Equal Subset</h4>
+      <p>Target = total_sum / 2. Reduces to 0/1 knapsack.</p>
+    </div>
+    <div class="card green">
+      <h4>🪙 Coin Change (Bounded)</h4>
+      <p>Each coin used at most once → 0/1 knapsack. Unlimited → unbounded.</p>
+    </div>
+    <div class="card purple">
+      <h4>✂️ Rod Cutting</h4>
+      <p>Unbounded knapsack. Maximize revenue from cutting a rod.</p>
+    </div>
+  </div>
+
+  <h3>Space-Optimized 0/1 Knapsack</h3>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">knapsack_1d</span>(weights, values, capacity):
+    <span class="str">"""Space-optimized 0/1 knapsack."""</span>
+    dp = [<span class="fn">0</span>] * (capacity + <span class="fn">1</span>)
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(weights)):
+        <span class="kw">for</span> w <span class="kw">in</span> <span class="fn">range</span>(capacity, weights[i] - <span class="fn">1</span>, -<span class="fn">1</span>):  <span class="cm"># Backwards!</span>
+            dp[w] = <span class="fn">max</span>(dp[w], dp[w - weights[i]] + values[i])
+    <span class="kw">return</span> dp[capacity]</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Why Loop Backwards?</div>
+    <p>If we iterate forward, <code>dp[w - weights[i]]</code> may already reflect item <code>i</code> (not the previous row), effectively picking item <code>i</code> multiple times — that's the <strong>unbounded</strong> knapsack. Backwards iteration preserves the "previous row" values. Explaining this shows genuine understanding.</p>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🧠 Palindromic Subsequence Trick</div>
+    <p>Longest Palindromic Subsequence = <strong>LCS of the string and its reverse</strong>. No new DP needed: <code>longest_common_subsequence(s, s[::-1])</code>. This is why mastering core patterns pays off — reductions are free.</p>
+  </div>
+</section>
+
+<!-- Screen 7: Quiz + Cheat Sheet + 5-Step Framework -->
+<section class="screen" id="s7">
+  <h2>🧠 Quiz &amp; <span class="accent">DP Patterns</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: Climbing Stairs is which DP pattern?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) 0/1 Knapsack</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) Linear (Fibonacci-type)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) Grid DP</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Two-String DP</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: In the space-optimized 0/1 knapsack, why do we iterate capacities backwards?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) It's faster</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) Python lists are optimized for reverse iteration</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">C) To avoid using the same item multiple times (preserves "previous row" values)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) It doesn't matter — forward works too</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: How do you find the Longest Palindromic Subsequence?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Expand from center (like palindromic substring)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) LCS of the string and its reverse</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) Sort the string and find longest match</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Use a hash map of character frequencies</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: In Edit Distance, if characters match, what's the cost?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">A) 0 — take dp[i-1][j-1] directly (no operation needed)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) 1 — matching still costs an operation</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) min of the three operations</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) dp[i-1][j-1] + 1</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <h3>📋 DP Pattern Recognition Cheat Sheet</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>📏 Linear (1-D)</h4>
+      <p><strong>Clues:</strong> "steps," "houses," single sequence<br><strong>State:</strong> dp[i]<br><strong>Examples:</strong> Climbing Stairs, House Robber</p>
+    </div>
+    <div class="card blue">
+      <h4>🎯 Target Sum</h4>
+      <p><strong>Clues:</strong> "make amount," "reach target"<br><strong>State:</strong> dp[amount]<br><strong>Examples:</strong> Coin Change, Perfect Squares</p>
+    </div>
+    <div class="card green">
+      <h4>📊 Grid (2-D)</h4>
+      <p><strong>Clues:</strong> "grid," "matrix," "right/down"<br><strong>State:</strong> dp[r][c]<br><strong>Examples:</strong> Unique Paths, Min Path Sum</p>
+    </div>
+    <div class="card purple">
+      <h4>🔤 Two-String</h4>
+      <p><strong>Clues:</strong> Two input strings, compare/transform<br><strong>State:</strong> dp[i][j]<br><strong>Examples:</strong> Edit Distance, LCS</p>
+    </div>
+    <div class="card">
+      <h4>🎒 0/1 Knapsack</h4>
+      <p><strong>Clues:</strong> "pick or skip," capacity constraint<br><strong>State:</strong> dp[i][w]<br><strong>Examples:</strong> Subset Sum, Partition</p>
+    </div>
+    <div class="card blue">
+      <h4>🔄 Unbounded Knapsack</h4>
+      <p><strong>Clues:</strong> "unlimited supply," reuse allowed<br><strong>State:</strong> dp[w]<br><strong>Examples:</strong> Coin Change, Rod Cutting</p>
+    </div>
+  </div>
+
+  <h3>🎯 The 5-Step DP Framework</h3>
+  <p>Write these on the whiteboard <strong>before</strong> coding. It shows structured thinking and buys time to think without awkward silence.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>1️⃣ Define the State</h4>
+      <p>What does dp[i] (or dp[i][j]) represent? This is the hardest step.</p>
+    </div>
+    <div class="card blue">
+      <h4>2️⃣ Find the Recurrence</h4>
+      <p>How does dp[i] relate to smaller subproblems?</p>
+    </div>
+    <div class="card green">
+      <h4>3️⃣ Base Cases</h4>
+      <p>What are the trivial answers? dp[0], dp[0][0], etc.</p>
+    </div>
+    <div class="card purple">
+      <h4>4️⃣ Iteration Order</h4>
+      <p>Which direction fills the table correctly?</p>
+    </div>
+    <div class="card">
+      <h4>5️⃣ Optimize Space</h4>
+      <p>Can you go from 2-D → 1-D, or 1-D → O(1)?</p>
+    </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-03-trees-graphs/index.html">← Trees &amp; Graphs</a>
+  <a href="../module-05-sorting-heaps/index.html">Next: Sorting &amp; Heaps →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! You\'re developing real DP pattern recognition.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite — review the pattern cheat sheet and think about what defines each pattern.';}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 6: Data Engineering Coding | DSA &amp; Coding Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#DC2626;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+.grid-viz{font-family:var(--font-code);font-size:0.82rem;background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0;overflow-x:auto;white-space:pre;line-height:1.7}
+table.algo-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.85rem}
+table.algo-table th,table.algo-table td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+table.algo-table th{font-family:var(--font-heading);font-weight:700;background:rgba(0,0,0,0.03);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.03em}
+table.algo-table tr:hover{background:rgba(0,0,0,0.02)}
+.dual-code{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.dual-code .code-block{margin:0}
+.code-label{font-family:var(--font-heading);font-weight:700;font-size:0.85rem;margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}.dual-code{grid-template-columns:1fr}table.algo-table{font-size:0.75rem}table.algo-table th,table.algo-table td{padding:0.4rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎯 DSA &amp; Coding Mastery</a><div class="nav-dots"><a href="../module-01-arrays-strings/" class="nav-dot"></a><a href="../module-02-hashmaps/" class="nav-dot"></a><a href="../module-03-trees-graphs/" class="nav-dot"></a><a href="../module-04-dynamic-programming/" class="nav-dot"></a><a href="../module-05-sorting-heaps/" class="nav-dot"></a><a href="../module-06-de-coding/" class="nav-dot active"></a><a href="../module-07-sql-coding/" class="nav-dot"></a><a href="../module-08-interview-gauntlet/" class="nav-dot" style="background:var(--color-error)"></a></div></div></nav>
+
+<!-- Screen 1: Why DE Coding Matters -->
+<section class="screen" id="s1">
+  <h2>🔧 Why DE Coding <span class="accent">Matters</span></h2>
+  <p>Data engineering interviews rarely ask you to invert a binary tree. Instead, they hand you messy CSVs, event streams, and log files and say <em>"clean this up."</em> The patterns below cover <strong>90%+</strong> of coding rounds at companies like Walmart, Meta, Airbnb, and Spotify.</p>
+  <p>Every problem is solved <strong>twice</strong> — Pandas and PySpark — so you build muscle memory in both ecosystems. Interviewers will often say <em>"Now how would you do this in PySpark?"</em></p>
+
+  <h3>Pandas vs PySpark: When to Use Which</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🐼 Pandas</h4>
+      <ul>
+        <li>💻 Single-machine, in-memory</li>
+        <li>📊 Ideal for data ≤ ~10 GB</li>
+        <li>⚡ Faster iteration, richer API</li>
+        <li>🐛 Easier debugging (eager eval)</li>
+        <li>🔬 Prototyping &amp; local exploration</li>
+        <li>🧪 Great for notebooks &amp; ad-hoc</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>⚡ PySpark</h4>
+      <ul>
+        <li>🌐 Distributed across a cluster</li>
+        <li>📊 Necessary for terabytes+</li>
+        <li>😴 Lazy evaluation → optimized DAG</li>
+        <li>🏭 Production ETL pipelines</li>
+        <li>☁️ Databricks / EMR / Dataproc</li>
+        <li>📋 Always provide explicit schema!</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Your Competitive Edge</div>
+    <p>Mastering <strong>both translations</strong> is what separates you from other candidates. Most people know one framework well — you'll be fluent in both. Each section follows: <strong>Problem → Pandas → PySpark → Interview Tip</strong>.</p>
+  </div>
+</section>
+
+<!-- Screen 2: Parse Log Files + Deduplicate Events -->
+<section class="screen screen-alt" id="s2">
+  <h2>📜 Parse Logs &amp; <span class="accent">Deduplicate Events</span></h2>
+
+  <h3>1. Parse &amp; Aggregate Log Files</h3>
+  <p>10 GB web-server log → extract level &amp; service → count (level, service) pairs → top 5 errors.</p>
+  <div class="dual-code">
+    <div>
+      <div class="code-label">🐼 Pandas</div>
+      <div class="code-block"><span class="kw">import</span> pandas <span class="kw">as</span> pd, re
+
+pattern = (<span class="str">r"(?P&lt;ts&gt;\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})"</span>
+           <span class="str">r"\s+(?P&lt;level&gt;\w+)\s+\[(?P&lt;service&gt;\w+)\]"</span>
+           <span class="str">r"\s+(?P&lt;msg&gt;.*)"</span>)
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"server.log"</span>) <span class="kw">as</span> f:
+    records = [m.groupdict()
+               <span class="kw">for</span> line <span class="kw">in</span> f
+               <span class="kw">if</span> (m := re.match(pattern, line))]
+
+df = pd.DataFrame(records)
+df[<span class="str">"ts"</span>] = pd.to_datetime(df[<span class="str">"ts"</span>])
+
+top_errors = (
+    df[df[<span class="str">"level"</span>] == <span class="str">"ERROR"</span>]
+      .groupby([<span class="str">"level"</span>, <span class="str">"service"</span>])
+      .size().reset_index(name=<span class="str">"count"</span>)
+      .sort_values(<span class="str">"count"</span>, ascending=<span class="fn">False</span>)
+      .head(<span class="fn">5</span>)
+)</div>
+    </div>
+    <div>
+      <div class="code-label">⚡ PySpark</div>
+      <div class="code-block"><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> (
+    regexp_extract, col, desc)
+
+raw = spark.read.text(<span class="str">"server.log"</span>)
+pat = (<span class="str">r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})"</span>
+       <span class="str">r"\s+(\w+)\s+\[(\w+)\]\s+(.*)"</span>)
+
+parsed = raw.select(
+    regexp_extract(<span class="str">"value"</span>,pat,<span class="fn">1</span>).alias(<span class="str">"ts"</span>),
+    regexp_extract(<span class="str">"value"</span>,pat,<span class="fn">2</span>).alias(<span class="str">"level"</span>),
+    regexp_extract(<span class="str">"value"</span>,pat,<span class="fn">3</span>).alias(<span class="str">"service"</span>),
+).filter(col(<span class="str">"level"</span>) != <span class="str">""</span>)
+
+top_errors = (
+    parsed.filter(col(<span class="str">"level"</span>) == <span class="str">"ERROR"</span>)
+    .groupBy(<span class="str">"level"</span>, <span class="str">"service"</span>)
+    .count()
+    .orderBy(desc(<span class="str">"count"</span>))
+    .limit(<span class="fn">5</span>)
+)</div>
+    </div>
+  </div>
+
+  <h3>2. Deduplicate Events</h3>
+  <p>Event stream with at-least-once delivery → keep only the <strong>latest</strong> event per key.</p>
+  <div class="dual-code">
+    <div>
+      <div class="code-label">🐼 Pandas</div>
+      <div class="code-block"><span class="cm"># Sort + drop_duplicates</span>
+deduped = (
+    df.sort_values(<span class="str">"event_time"</span>, ascending=<span class="fn">False</span>)
+      .drop_duplicates(subset=[<span class="str">"key"</span>], keep=<span class="str">"first"</span>)
+      .sort_values(<span class="str">"key"</span>)
+)
+
+<span class="cm"># Alternative: explicit idxmax</span>
+idx = df.groupby(<span class="str">"key"</span>)[<span class="str">"event_time"</span>].idxmax()
+deduped = df.loc[idx]</div>
+    </div>
+    <div>
+      <div class="code-label">⚡ PySpark</div>
+      <div class="code-block"><span class="kw">from</span> pyspark.sql.window <span class="kw">import</span> Window
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> (
+    row_number, col, desc)
+
+w = (Window.partitionBy(<span class="str">"key"</span>)
+           .orderBy(desc(<span class="str">"event_time"</span>)))
+
+deduped = (
+    df.withColumn(<span class="str">"rn"</span>, row_number().over(w))
+      .filter(col(<span class="str">"rn"</span>) == <span class="fn">1</span>)
+      .drop(<span class="str">"rn"</span>)
+)</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Tip</div>
+    <p>Always clarify tie-breaking: <em>"If two events share the same timestamp, which wins?"</em> In PySpark, <code>dropDuplicates()</code> is <strong>non-deterministic</strong> — it doesn't let you control which row is kept. Always prefer the <code>ROW_NUMBER()</code> window function approach when ordering matters.</p>
+  </div>
+</section>
+
+<!-- Screen 3: Sessionization -->
+<section class="screen" id="s3">
+  <h2>🎯 Sessionization — <span class="accent">The #1 DE Question</span></h2>
+  <p>Given user click events, group them into <strong>sessions</strong>. A new session starts when the gap between consecutive events exceeds <strong>30 minutes</strong>.</p>
+
+  <div class="aha">
+    <div class="aha-title">🧠 THE Pattern: lag → gap → flag → cumsum</div>
+    <p>This is the <strong>#1 most-asked</strong> data engineering coding question. Practice it until you can write it from memory. The four-step pattern works identically in Pandas and PySpark: <strong>1)</strong> Get previous event time with <code>lag/shift</code> → <strong>2)</strong> Compute the gap → <strong>3)</strong> Flag new sessions (gap &gt; threshold or first event) → <strong>4)</strong> Cumulative sum of flags = session ID.</p>
+  </div>
+
+  <div class="dual-code">
+    <div>
+      <div class="code-label">🐼 Pandas</div>
+      <div class="code-block">df = df.sort_values(
+    [<span class="str">"user_id"</span>, <span class="str">"event_time"</span>])
+
+<span class="cm"># 1. lag</span>
+df[<span class="str">"prev_time"</span>] = (
+    df.groupby(<span class="str">"user_id"</span>)[<span class="str">"event_time"</span>]
+      .shift(<span class="fn">1</span>))
+
+<span class="cm"># 2. gap</span>
+df[<span class="str">"gap_min"</span>] = (
+    (df[<span class="str">"event_time"</span>] - df[<span class="str">"prev_time"</span>])
+    .dt.total_seconds() / <span class="fn">60</span>)
+
+<span class="cm"># 3. flag</span>
+df[<span class="str">"new_session"</span>] = (
+    df[<span class="str">"gap_min"</span>].isna()
+    | (df[<span class="str">"gap_min"</span>] > <span class="fn">30</span>))
+
+<span class="cm"># 4. cumsum → session_id</span>
+df[<span class="str">"session_id"</span>] = (
+    df.groupby(<span class="str">"user_id"</span>)[<span class="str">"new_session"</span>]
+      .cumsum().astype(<span class="fn">int</span>))</div>
+    </div>
+    <div>
+      <div class="code-label">⚡ PySpark</div>
+      <div class="code-block"><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> (
+    lag, col, when, unix_timestamp,
+    sum <span class="kw">as</span> spark_sum)
+<span class="kw">from</span> pyspark.sql.window <span class="kw">import</span> Window
+
+w = (Window.partitionBy(<span class="str">"user_id"</span>)
+           .orderBy(<span class="str">"event_time"</span>))
+
+sessionized = (
+    df
+    <span class="cm"># 1. lag</span>
+    .withColumn(<span class="str">"prev_time"</span>,
+        lag(<span class="str">"event_time"</span>).over(w))
+    <span class="cm"># 2. gap</span>
+    .withColumn(<span class="str">"gap_min"</span>,
+        (unix_timestamp(<span class="str">"event_time"</span>)
+         - unix_timestamp(<span class="str">"prev_time"</span>))
+        / <span class="fn">60</span>)
+    <span class="cm"># 3. flag</span>
+    .withColumn(<span class="str">"new_session"</span>,
+        when(col(<span class="str">"gap_min"</span>).isNull()
+             | (col(<span class="str">"gap_min"</span>) > <span class="fn">30</span>),
+             <span class="fn">1</span>).otherwise(<span class="fn">0</span>))
+    <span class="cm"># 4. cumsum → session_id</span>
+    .withColumn(<span class="str">"session_id"</span>,
+        spark_sum(<span class="str">"new_session"</span>).over(w))
+)</div>
+    </div>
+  </div>
+
+  <h3>Common Variations</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>⏱️ Variable Timeout</h4>
+      <p>Threshold depends on user's historical behavior (e.g., median gap × 2). Compute in a separate CTE and join.</p>
+    </div>
+    <div class="card blue">
+      <h4>📊 Session Metrics</h4>
+      <p>After sessionizing: session duration, event count, bounce rate (sessions with only 1 event). Simple groupby on session_id.</p>
+    </div>
+    <div class="card green">
+      <h4>📱 Cross-Device</h4>
+      <p>User on multiple devices? Sessionize per <code>(user_id, device_id)</code> pair instead.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 4: Mini ETL + Data Reconciliation -->
+<section class="screen screen-alt" id="s4">
+  <h2>🏗️ Mini ETL &amp; <span class="accent">Data Reconciliation</span></h2>
+
+  <h3>Mini ETL Pipeline</h3>
+  <p>Read CSV → clean (drop nulls, cast types, normalize strings) → transform (add revenue column) → write to Parquet.</p>
+  <div class="dual-code">
+    <div>
+      <div class="code-label">🐼 Pandas</div>
+      <div class="code-block"><span class="cm"># ---- EXTRACT ----</span>
+df = pd.read_csv(<span class="str">"sales.csv"</span>,
+    dtype={<span class="str">"order_id"</span>: <span class="fn">str</span>,
+           <span class="str">"product"</span>: <span class="fn">str</span>},
+    parse_dates=[<span class="str">"order_date"</span>])
+
+<span class="cm"># ---- CLEAN ----</span>
+critical = [<span class="str">"order_id"</span>,<span class="str">"product"</span>,<span class="str">"qty"</span>,<span class="str">"price"</span>]
+df = df.dropna(subset=critical)
+df[<span class="str">"product"</span>] = (
+    df[<span class="str">"product"</span>].str.strip().str.lower())
+df[<span class="str">"price"</span>] = df[<span class="str">"price"</span>].round(<span class="fn">2</span>)
+
+<span class="cm"># ---- TRANSFORM ----</span>
+df[<span class="str">"revenue"</span>] = df[<span class="str">"qty"</span>] * df[<span class="str">"price"</span>]
+
+<span class="cm"># ---- LOAD ----</span>
+df.to_parquet(<span class="str">"sales_clean.parquet"</span>,
+    compression=<span class="str">"snappy"</span>,
+    index=<span class="fn">False</span>)</div>
+    </div>
+    <div>
+      <div class="code-label">⚡ PySpark</div>
+      <div class="code-block"><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> (
+    col, trim, lower, round <span class="kw">as</span> spark_round)
+
+<span class="cm"># ---- EXTRACT (explicit schema!) ----</span>
+df = (spark.read.option(<span class="str">"header"</span>, <span class="fn">True</span>)
+      .schema(schema)  <span class="cm"># enforce, don't infer</span>
+      .csv(<span class="str">"sales.csv"</span>))
+
+<span class="cm"># ---- CLEAN ----</span>
+df = (df.dropna(subset=
+        [<span class="str">"order_id"</span>,<span class="str">"product"</span>,<span class="str">"qty"</span>,<span class="str">"price"</span>])
+    .withColumn(<span class="str">"product"</span>,
+        lower(trim(col(<span class="str">"product"</span>))))
+    .withColumn(<span class="str">"price"</span>,
+        spark_round(col(<span class="str">"price"</span>), <span class="fn">2</span>)))
+
+<span class="cm"># ---- TRANSFORM ----</span>
+df = df.withColumn(<span class="str">"revenue"</span>,
+    col(<span class="str">"qty"</span>) * col(<span class="str">"price"</span>))
+
+<span class="cm"># ---- LOAD ----</span>
+df.write.mode(<span class="str">"overwrite"</span>).parquet(
+    <span class="str">"sales_clean.parquet"</span>,
+    compression=<span class="str">"snappy"</span>)</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Always Provide Explicit Schema in PySpark</div>
+    <p><code>inferSchema=True</code> triggers an <strong>extra pass</strong> over the data and can guess wrong types. Mentioning this unprompted wins you bonus points. Also: partition Parquet by date (<code>partitionBy("order_date")</code>) for efficient downstream queries.</p>
+  </div>
+
+  <h3>Data Reconciliation (Anti-Joins)</h3>
+  <p>Migrated Oracle → BigQuery. Find: rows missing from target, rows missing from source, value mismatches.</p>
+  <div class="dual-code">
+    <div>
+      <div class="code-label">🐼 Pandas</div>
+      <div class="code-block">key = <span class="str">"order_id"</span>
+<span class="cm"># Missing from target (anti-join)</span>
+missing = source_df[
+    ~source_df[key].isin(target_df[key])]
+
+<span class="cm"># Alt: merge with indicator</span>
+merged = source_df.merge(
+    target_df, on=key,
+    how=<span class="str">"left"</span>, indicator=<span class="fn">True</span>)
+missing = merged[
+    merged[<span class="str">"_merge"</span>] == <span class="str">"left_only"</span>]
+
+<span class="cm"># Value mismatches</span>
+inner = source_df.merge(
+    target_df, on=key,
+    suffixes=(<span class="str">"_src"</span>, <span class="str">"_tgt"</span>))
+<span class="kw">for</span> c <span class="kw">in</span> value_cols:
+    inner[f<span class="str">"{c}_match"</span>] = (
+        inner[f<span class="str">"{c}_src"</span>]
+        == inner[f<span class="str">"{c}_tgt"</span>])</div>
+    </div>
+    <div>
+      <div class="code-label">⚡ PySpark</div>
+      <div class="code-block">key = <span class="str">"order_id"</span>
+<span class="cm"># Anti-join: missing from target</span>
+missing_in_target = source_df.join(
+    target_df, on=key,
+    how=<span class="str">"left_anti"</span>)
+
+<span class="cm"># Anti-join: missing from source</span>
+missing_in_source = target_df.join(
+    source_df, on=key,
+    how=<span class="str">"left_anti"</span>)
+
+<span class="cm"># Value mismatches</span>
+joined = (source_df.alias(<span class="str">"s"</span>)
+    .join(target_df.alias(<span class="str">"t"</span>),
+          on=key, how=<span class="str">"inner"</span>))
+mismatch = <span class="fn">None</span>
+<span class="kw">for</span> c <span class="kw">in</span> value_cols:
+    cond = col(f<span class="str">"s.{c}"</span>) != col(f<span class="str">"t.{c}"</span>)
+    mismatch = cond <span class="kw">if not</span> mismatch \
+        <span class="kw">else</span> (mismatch | cond)</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🔑 Use the Term "Anti-Join"</div>
+    <p>It tells the interviewer you know relational algebra. In PySpark, <code>left_anti</code> is purpose-built for this. In Pandas, simulate it with <code>isin()</code> negation or <code>merge(how='left', indicator=True)</code>. Watch out: <code>NULL != NULL</code> evaluates to <code>NULL</code>, not <code>TRUE</code> — use <code>eqNullSafe()</code> in PySpark.</p>
+  </div>
+</section>
+
+<!-- Screen 5: Stream Processing + GroupBy Aggregations -->
+<section class="screen" id="s5">
+  <h2>🌊 Stream Processing &amp; <span class="accent">GroupBy Aggs</span></h2>
+
+  <h3>Stream Processing (Generator Pattern)</h3>
+  <p>Simulate a stream of events. Maintain running count and running average per category. The generator demonstrates <strong>lazy evaluation with constant memory</strong>.</p>
+  <div class="code-block"><span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+<span class="kw">from</span> typing <span class="kw">import</span> Generator, NamedTuple
+
+<span class="kw">class</span> <span class="fn">Event</span>(NamedTuple):
+    category: <span class="fn">str</span>
+    amount: <span class="fn">float</span>
+
+<span class="kw">def</span> <span class="fn">event_stream</span>() -> Generator[Event, <span class="fn">None</span>, <span class="fn">None</span>]:
+    <span class="str">"""Could read from Kafka, a socket, or a file of arbitrary size."""</span>
+    events = [Event(<span class="str">"electronics"</span>, <span class="fn">299.99</span>), Event(<span class="str">"books"</span>, <span class="fn">12.50</span>),
+              Event(<span class="str">"electronics"</span>, <span class="fn">149.00</span>), Event(<span class="str">"books"</span>, <span class="fn">25.00</span>)]
+    <span class="kw">yield from</span> events
+
+<span class="kw">def</span> <span class="fn">process_stream</span>(stream):
+    counts: <span class="fn">dict</span>[<span class="fn">str</span>, <span class="fn">int</span>] = defaultdict(<span class="fn">int</span>)
+    totals: <span class="fn">dict</span>[<span class="fn">str</span>, <span class="fn">float</span>] = defaultdict(<span class="fn">float</span>)
+    <span class="kw">for</span> event <span class="kw">in</span> stream:
+        counts[event.category] += <span class="fn">1</span>
+        totals[event.category] += event.amount
+        avg = totals[event.category] / counts[event.category]
+        <span class="fn">print</span>(f<span class="str">"[{event.category}] count={counts[event.category]} avg={avg:.2f}"</span>)
+<span class="cm"># O(1) per event, O(k) space where k = unique categories</span></div>
+
+  <h3>GroupBy Aggregations — Named Aggs</h3>
+  <div class="dual-code">
+    <div>
+      <div class="code-label">🐼 Pandas (Named Aggs)</div>
+      <div class="code-block">agg_df = (
+    df.groupby(<span class="str">"product"</span>)
+      .agg(
+        total_rev=(<span class="str">"revenue"</span>, <span class="str">"sum"</span>),
+        avg_order=(<span class="str">"revenue"</span>, <span class="str">"mean"</span>),
+        num_orders=(<span class="str">"revenue"</span>, <span class="str">"count"</span>),
+        max_order=(<span class="str">"revenue"</span>, <span class="str">"max"</span>),
+        std_rev=(<span class="str">"revenue"</span>, <span class="str">"std"</span>),
+      )
+)
+agg_df[<span class="str">"cv"</span>] = (
+    agg_df[<span class="str">"std_rev"</span>] / agg_df[<span class="str">"avg_order"</span>])
+agg_df = agg_df.drop(columns=[<span class="str">"std_rev"</span>])
+
+<span class="cm"># Custom agg example:</span>
+<span class="kw">def</span> <span class="fn">iqr</span>(s): <span class="kw">return</span> s.quantile(.75)-s.quantile(.25)
+df.groupby(<span class="str">"product"</span>).agg(
+    revenue_iqr=(<span class="str">"revenue"</span>, iqr))</div>
+    </div>
+    <div>
+      <div class="code-label">⚡ PySpark</div>
+      <div class="code-block"><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> (
+    sum <span class="kw">as</span> _sum, avg <span class="kw">as</span> _avg,
+    count <span class="kw">as</span> _count, max <span class="kw">as</span> _max,
+    stddev, col)
+
+agg_df = (
+    df.groupBy(<span class="str">"product"</span>)
+      .agg(
+        _sum(<span class="str">"revenue"</span>).alias(<span class="str">"total_rev"</span>),
+        _avg(<span class="str">"revenue"</span>).alias(<span class="str">"avg_order"</span>),
+        _count(<span class="str">"revenue"</span>).alias(<span class="str">"num_orders"</span>),
+        _max(<span class="str">"revenue"</span>).alias(<span class="str">"max_order"</span>),
+        stddev(<span class="str">"revenue"</span>).alias(<span class="str">"std_rev"</span>),
+      )
+      .withColumn(<span class="str">"cv"</span>,
+          col(<span class="str">"std_rev"</span>) / col(<span class="str">"avg_order"</span>))
+      .drop(<span class="str">"std_rev"</span>)
+)
+
+<span class="cm"># Custom aggs need pandas_udf</span>
+<span class="cm"># UDFs are 2-10× slower than builtins!</span></div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Named Aggs > Dict Style</div>
+    <p>In Pandas, prefer <strong>named aggregations</strong> <code>(col=("src", "func"))</code> over the old <code>agg({"col": "func"})</code> dict style — it avoids MultiIndex headaches and reads cleaner. PySpark UDFs involve JVM↔Python serialization — <strong>2-10× slower</strong> than builtins. Use them only when no built-in alternative exists.</p>
+  </div>
+</section>
+
+<!-- Screen 6: Pivot/Unpivot + Time-Series Resampling -->
+<section class="screen screen-alt" id="s6">
+  <h2>🔄 Pivot/Unpivot &amp; <span class="accent">Time-Series</span></h2>
+
+  <h3>Pivot (Long → Wide) &amp; Unpivot (Wide → Long)</h3>
+  <div class="dual-code">
+    <div>
+      <div class="code-label">🐼 Pandas</div>
+      <div class="code-block"><span class="cm"># ---- Pivot ----</span>
+wide = df.pivot_table(
+    index=<span class="str">"product"</span>,
+    columns=<span class="str">"quarter"</span>,
+    values=<span class="str">"revenue"</span>,
+    aggfunc=<span class="str">"sum"</span>,
+    fill_value=<span class="fn">0</span>)
+wide.columns = [f<span class="str">"Q{q}"</span> <span class="kw">for</span> q <span class="kw">in</span> wide.columns]
+wide = wide.reset_index()
+
+<span class="cm"># ---- Unpivot ----</span>
+long = wide.melt(
+    id_vars=[<span class="str">"product"</span>],
+    value_vars=[<span class="str">"Q1"</span>,<span class="str">"Q2"</span>,<span class="str">"Q3"</span>,<span class="str">"Q4"</span>],
+    var_name=<span class="str">"quarter"</span>,
+    value_name=<span class="str">"revenue"</span>)</div>
+    </div>
+    <div>
+      <div class="code-label">⚡ PySpark</div>
+      <div class="code-block"><span class="cm"># ---- Pivot ----</span>
+wide = (
+    df.groupBy(<span class="str">"product"</span>)
+    .pivot(<span class="str">"quarter"</span>,
+           values=[<span class="str">"Q1"</span>,<span class="str">"Q2"</span>,<span class="str">"Q3"</span>,<span class="str">"Q4"</span>])
+    .agg(_sum(<span class="str">"revenue"</span>))
+    .fillna(<span class="fn">0</span>))
+
+<span class="cm"># ---- Unpivot (stack) ----</span>
+unpivot_expr = <span class="str">"""
+    stack(4,
+      'Q1', Q1, 'Q2', Q2,
+      'Q3', Q3, 'Q4', Q4
+    ) as (quarter, revenue)
+"""</span>
+long = (wide
+    .select(<span class="str">"product"</span>, expr(unpivot_expr))
+    .filter(col(<span class="str">"revenue"</span>) != <span class="fn">0</span>))</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Always Pass Pivot Values Explicitly</div>
+    <p>In PySpark, without the <code>values=</code> list, Spark runs an <strong>extra aggregation job</strong> to discover distinct values — a performance killer on large datasets. Long format is better for storage and joins; wide is better for readability and ML features.</p>
+  </div>
+
+  <h3>Time-Series Resampling</h3>
+  <p>Minute-level sensor data → hourly averages → forward-fill gaps → 7-period rolling average.</p>
+  <div class="dual-code">
+    <div>
+      <div class="code-label">🐼 Pandas</div>
+      <div class="code-block">df = df.set_index(<span class="str">"timestamp"</span>)
+
+<span class="cm"># Resample to hourly</span>
+hourly = df[<span class="str">"value"</span>].resample(<span class="str">"1h"</span>).mean()
+
+<span class="cm"># Forward-fill gaps</span>
+hourly = hourly.ffill()
+
+<span class="cm"># Rolling 7-period average</span>
+hourly_df = hourly.to_frame(name=<span class="str">"avg"</span>)
+hourly_df[<span class="str">"rolling_7"</span>] = (
+    hourly_df[<span class="str">"avg"</span>].rolling(<span class="fn">7</span>).mean())</div>
+    </div>
+    <div>
+      <div class="code-label">⚡ PySpark</div>
+      <div class="code-block"><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> (
+    window, avg <span class="kw">as</span> _avg, last)
+
+<span class="cm"># Resample (tumbling window)</span>
+hourly = (df
+    .groupBy(window(<span class="str">"timestamp"</span>, <span class="str">"1 hour"</span>))
+    .agg(_avg(<span class="str">"value"</span>).alias(<span class="str">"avg"</span>))
+    .withColumn(<span class="str">"hour"</span>, col(<span class="str">"window.start"</span>))
+    .drop(<span class="str">"window"</span>).orderBy(<span class="str">"hour"</span>))
+
+<span class="cm"># Forward-fill</span>
+fill_w = Window.orderBy(<span class="str">"hour"</span>).rowsBetween(
+    Window.unboundedPreceding, Window.currentRow)
+hourly = hourly.withColumn(<span class="str">"avg"</span>,
+    last(<span class="str">"avg"</span>, ignorenulls=<span class="fn">True</span>).over(fill_w))
+
+<span class="cm"># Rolling 7-period</span>
+roll_w = Window.orderBy(<span class="str">"hour"</span>).rowsBetween(-<span class="fn">6</span>,<span class="fn">0</span>)
+hourly = hourly.withColumn(<span class="str">"rolling_7"</span>,
+    _avg(<span class="str">"avg"</span>).over(roll_w))</div>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 7: Join Patterns + Window Functions -->
+<section class="screen" id="s7">
+  <h2>🔗 Join Patterns &amp; <span class="accent">Window Functions</span></h2>
+
+  <h3>Join Patterns</h3>
+  <div class="dual-code">
+    <div>
+      <div class="code-label">🐼 Pandas</div>
+      <div class="code-block"><span class="cm"># Left join</span>
+result = orders.merge(
+    customers, on=<span class="str">"customer_id"</span>, how=<span class="str">"left"</span>)
+result[<span class="str">"name"</span>] = result[<span class="str">"name"</span>].fillna(<span class="str">"Unknown"</span>)
+
+<span class="cm"># Self-join: orders within 24h</span>
+sj = orders.merge(
+    orders, on=<span class="str">"customer_id"</span>,
+    suffixes=(<span class="str">"_a"</span>, <span class="str">"_b"</span>))
+sj = sj[
+    (sj[<span class="str">"order_id_a"</span>] < sj[<span class="str">"order_id_b"</span>])
+    & (<span class="fn">abs</span>((sj[<span class="str">"order_time_a"</span>]
+         - sj[<span class="str">"order_time_b"</span>])
+       .dt.total_seconds()) <= <span class="fn">86400</span>)]
+
+<span class="cm"># Broadcast: N/A in Pandas (all local)</span>
+result = orders.merge(
+    regions, on=<span class="str">"region_id"</span>, how=<span class="str">"left"</span>)</div>
+    </div>
+    <div>
+      <div class="code-label">⚡ PySpark</div>
+      <div class="code-block"><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> broadcast
+
+<span class="cm"># Left join</span>
+result = (orders
+    .join(customers, on=<span class="str">"customer_id"</span>,
+          how=<span class="str">"left"</span>)
+    .fillna({<span class="str">"name"</span>: <span class="str">"Unknown"</span>}))
+
+<span class="cm"># Self-join: orders within 24h</span>
+o1, o2 = orders.alias(<span class="str">"a"</span>), orders.alias(<span class="str">"b"</span>)
+sj = (o1.join(o2,
+    (col(<span class="str">"a.customer_id"</span>)
+     == col(<span class="str">"b.customer_id"</span>))
+    & (col(<span class="str">"a.order_id"</span>)
+     < col(<span class="str">"b.order_id"</span>)))
+  .filter(spark_abs(
+    unix_timestamp(<span class="str">"a.order_time"</span>)
+    - unix_timestamp(<span class="str">"b.order_time"</span>))
+    <= <span class="fn">86400</span>))
+
+<span class="cm"># Broadcast join (small dim table)</span>
+result = orders.join(
+    <span class="fn">broadcast</span>(regions),
+    on=<span class="str">"region_id"</span>, how=<span class="str">"left"</span>)</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Always Mention broadcast() for Small Tables</div>
+    <p>In production, Spark's AQE may auto-broadcast, but explicitly marking it shows you understand the physical plan. Check with <code>df.explain(True)</code> — look for <code>BroadcastHashJoin</code> vs <code>SortMergeJoin</code>.</p>
+  </div>
+
+  <h3>Window Functions</h3>
+  <div class="code-block"><span class="cm"># PySpark — rank, lag, lead, running total</span>
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> rank, dense_rank, row_number, lag, lead, sum <span class="kw">as</span> _sum, desc
+
+dept_salary_w = Window.partitionBy(<span class="str">"department"</span>).orderBy(desc(<span class="str">"salary"</span>))
+dept_date_w = Window.partitionBy(<span class="str">"department"</span>).orderBy(<span class="str">"hire_date"</span>)
+
+df = (df
+    .withColumn(<span class="str">"salary_rank"</span>,       rank().over(dept_salary_w))
+    .withColumn(<span class="str">"salary_dense_rank"</span>, dense_rank().over(dept_salary_w))
+    .withColumn(<span class="str">"row_num"</span>,           row_number().over(dept_salary_w))
+    .withColumn(<span class="str">"prev_salary"</span>,       lag(<span class="str">"salary"</span>, <span class="fn">1</span>).over(dept_date_w))
+    .withColumn(<span class="str">"next_salary"</span>,       lead(<span class="str">"salary"</span>, <span class="fn">1</span>).over(dept_date_w))
+    .withColumn(<span class="str">"running_total"</span>,     _sum(<span class="str">"salary"</span>).over(
+        dept_date_w.rowsBetween(Window.unboundedPreceding, Window.currentRow)))
+)</div>
+
+  <div class="aha">
+    <div class="aha-title">🧠 ROWS vs RANGE — The Subtle Difference</div>
+    <p><strong>ROWS BETWEEN</strong> = physical rows. "The 3 rows before me" means exactly 3 rows. <strong>RANGE BETWEEN</strong> = logical values. With ties in <code>ORDER BY salary</code>, RANGE includes <em>all</em> tied rows at once — ROWS treats them separately. For running totals and moving averages, <strong>always use ROWS</strong> for deterministic results. This is one of the most common window-function bugs.</p>
+  </div>
+</section>
+
+<!-- Screen 8: Pandas ↔ PySpark Cheat Sheet -->
+<section class="screen screen-alt" id="s8">
+  <h2>📋 Pandas ↔ PySpark <span class="accent">Cheat Sheet</span></h2>
+  <p>Your one-stop translation reference. Pin this to your wall.</p>
+
+  <table class="algo-table">
+    <thead><tr><th>Operation</th><th>Pandas</th><th>PySpark</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Read CSV</strong></td><td>pd.read_csv("f.csv")</td><td>spark.read.csv("f.csv", header=True)</td></tr>
+      <tr><td><strong>Select cols</strong></td><td>df[["a", "b"]]</td><td>df.select("a", "b")</td></tr>
+      <tr><td><strong>Filter rows</strong></td><td>df[df["x"] > 5]</td><td>df.filter(col("x") > 5)</td></tr>
+      <tr><td><strong>Add column</strong></td><td>df["new"] = df["a"] + 1</td><td>df.withColumn("new", col("a") + 1)</td></tr>
+      <tr><td><strong>Rename col</strong></td><td>df.rename(columns={"a":"b"})</td><td>df.withColumnRenamed("a", "b")</td></tr>
+      <tr><td><strong>Drop col</strong></td><td>df.drop(columns=["a"])</td><td>df.drop("a")</td></tr>
+      <tr><td><strong>Sort</strong></td><td>df.sort_values("a")</td><td>df.orderBy("a")</td></tr>
+      <tr><td><strong>GroupBy</strong></td><td>df.groupby("a").agg(...)</td><td>df.groupBy("a").agg(...)</td></tr>
+      <tr><td><strong>Dedup</strong></td><td>df.drop_duplicates(["a"])</td><td>df.dropDuplicates(["a"])</td></tr>
+      <tr><td><strong>Fill nulls</strong></td><td>df["a"].fillna(0)</td><td>df.fillna({"a": 0})</td></tr>
+      <tr><td><strong>Cast type</strong></td><td>df["a"].astype(int)</td><td>df.withColumn("a", col("a").cast("int"))</td></tr>
+      <tr><td><strong>Join</strong></td><td>df1.merge(df2, on="k", how="left")</td><td>df1.join(df2, on="k", how="left")</td></tr>
+      <tr><td><strong>Anti-join</strong></td><td>df1[~df1["k"].isin(df2["k"])]</td><td>df1.join(df2, on="k", how="left_anti")</td></tr>
+      <tr><td><strong>Pivot</strong></td><td>df.pivot_table(...)</td><td>df.groupBy(...).pivot(...)</td></tr>
+      <tr><td><strong>Unpivot</strong></td><td>df.melt(...)</td><td>selectExpr("stack(...)")</td></tr>
+      <tr><td><strong>Window lag</strong></td><td>df.groupby("g")["c"].shift(1)</td><td>lag("c", 1).over(window)</td></tr>
+      <tr><td><strong>Window cumsum</strong></td><td>df.groupby("g")["c"].cumsum()</td><td>sum("c").over(window_with_rows)</td></tr>
+      <tr><td><strong>Window rank</strong></td><td>df.groupby("g")["c"].rank()</td><td>rank().over(window)</td></tr>
+      <tr><td><strong>Resample</strong></td><td>df.resample("1h").mean()</td><td>groupBy(window("ts","1 hour"))</td></tr>
+      <tr><td><strong>Forward-fill</strong></td><td>df["c"].ffill()</td><td>last("c", True).over(ordered_w)</td></tr>
+      <tr><td><strong>Rolling</strong></td><td>df["c"].rolling(7).mean()</td><td>avg("c").over(w.rowsBetween(-6,0))</td></tr>
+      <tr><td><strong>Write Parquet</strong></td><td>df.to_parquet("out.parquet")</td><td>df.write.parquet("out.parquet")</td></tr>
+      <tr><td><strong>Row count</strong></td><td>len(df)</td><td>df.count()</td></tr>
+      <tr><td><strong>Show data</strong></td><td>df.head()</td><td>df.show()</td></tr>
+      <tr><td><strong>Schema</strong></td><td>df.dtypes</td><td>df.printSchema()</td></tr>
+      <tr><td><strong>Broadcast</strong></td><td><em>(N/A — local)</em></td><td>df1.join(broadcast(df2), ...)</td></tr>
+      <tr><td><strong>Coalesce</strong></td><td><em>(N/A)</em></td><td>df.coalesce(1).write...</td></tr>
+      <tr><td><strong>Repartition</strong></td><td><em>(N/A)</em></td><td>df.repartition(n, "col")</td></tr>
+      <tr><td><strong>Explain plan</strong></td><td><em>(N/A)</em></td><td>df.explain(True)</td></tr>
+      <tr><td><strong>UDF</strong></td><td>df["c"].apply(func)</td><td>udf(func, returnType)</td></tr>
+      <tr><td><strong>Collect</strong></td><td>df["c"].tolist()</td><td>[r.c for r in df.collect()]</td></tr>
+    </tbody>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Study Strategy</div>
+    <p>Pick 3 problems from this module and solve them <strong>from scratch</strong> in both Pandas and PySpark — no peeking. Time yourself: <strong>15–20 minutes</strong> per problem. Talk out loud as you code. Edge cases to always mention: nulls, duplicates, empty DataFrames, schema mismatches, time zones.</p>
+  </div>
+</section>
+
+<!-- Screen 9: Quiz + Common Mistakes -->
+<section class="screen" id="s9">
+  <h2>🧠 Quiz &amp; <span class="accent">Common Mistakes</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: What is the sessionization pattern in order?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) gap → lag → cumsum → flag</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) lag → gap → flag → cumsum</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) cumsum → flag → lag → gap</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) flag → gap → cumsum → lag</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Why should you always provide an explicit schema in PySpark's read.csv()?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) It makes the code look more professional</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) PySpark can't read CSV without a schema</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">C) inferSchema triggers an extra pass over the data and can guess wrong types</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) It's required for Parquet output but optional for CSV</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: In PySpark, what's the difference between ROWS BETWEEN and RANGE BETWEEN for window frames?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) They are identical — just different syntax</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) ROWS counts physical rows; RANGE groups by logical value — ties are treated differently</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) ROWS is for strings, RANGE is for numbers</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) RANGE is faster because it skips duplicates</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: How do you perform an anti-join in PySpark?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) df1.join(df2, how="outer").filter(col("key").isNull())</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) df1.join(df2, on="key", how="left_anti")</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) df1.subtract(df2)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) df1.exceptAll(df2)</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <h3>⚠️ Common Interview Mistakes</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🐢 Using .apply() in Pandas</h4>
+      <p><code>.apply()</code> is a Python-level loop — <strong>10-100× slower</strong> than vectorized alternatives. Always look for a built-in method first.</p>
+    </div>
+    <div class="card blue">
+      <h4>💾 Forgetting .cache()</h4>
+      <p>If you reuse a DataFrame multiple times in PySpark (e.g., join it twice), call <code>.cache()</code> to avoid recomputing the entire DAG.</p>
+    </div>
+    <div class="card green">
+      <h4>🕳️ Not Handling NULLs</h4>
+      <p>In Pandas: <code>NaN != NaN</code> → <code>True</code>. In PySpark: <code>NULL != NULL</code> → <code>NULL</code>. Use <code>.isna()</code> / <code>.isNull()</code>, never <code>==</code>.</p>
+    </div>
+    <div class="card purple">
+      <h4>💥 Collecting Large DFs</h4>
+      <p><code>df.collect()</code> pulls all data to the driver — instant OOM on large datasets. Use <code>.show()</code>, <code>.take(n)</code>, or write to storage.</p>
+    </div>
+    <div class="card">
+      <h4>🔀 Ignoring Sort Order</h4>
+      <p><code>drop_duplicates</code> in Pandas respects the current sort. If you don't sort first, the "kept" row is <strong>arbitrary</strong>.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔄 transform() vs agg()</h4>
+      <p><code>transform</code> returns same-length Series (broadcasts). <code>agg</code> returns reduced DataFrame. Wrong choice = wrong shape.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-05-sorting-heaps/index.html">← Sorting &amp; Heaps</a>
+  <a href="../module-07-sql-coding/index.html">Next: SQL Coding →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! You\'re building real DE coding fluency.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite — review the section above and try to recall the pattern.';}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

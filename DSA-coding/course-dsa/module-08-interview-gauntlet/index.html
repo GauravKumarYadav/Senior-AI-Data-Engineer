@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 8: The Interview Gauntlet 🔥 | DSA &amp; Coding Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#DC2626;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen h4{font-family:var(--font-heading);font-size:1.1rem;font-weight:700;margin:1.2rem 0 0.6rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+table.algo-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.85rem}
+table.algo-table th,table.algo-table td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+table.algo-table th{font-family:var(--font-heading);font-weight:700;background:rgba(0,0,0,0.03);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.03em}
+table.algo-table tr:hover{background:rgba(0,0,0,0.02)}
+.dual-code{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.dual-code .code-block{margin:0}
+.code-label{font-family:var(--font-heading);font-weight:700;font-size:0.85rem;margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem}
+.gauntlet-banner{background:linear-gradient(135deg,#1E1E2E 0%,#2D1B1B 50%,#3D1515 100%);color:#fff;border-radius:16px;padding:2.5rem;margin:1.5rem 0;text-align:center}
+.gauntlet-banner h2{color:#fff;font-size:clamp(2rem,5vw,3rem)}
+.gauntlet-banner .fire-accent{color:#FF6B35}
+.gauntlet-banner p{color:rgba(255,255,255,0.8);max-width:600px;margin:0.8rem auto}
+.qa-item{background:#fff;border-radius:12px;margin:0.8rem 0;box-shadow:0 2px 8px rgba(0,0,0,0.04);overflow:hidden}
+.qa-question{padding:1rem 1.2rem;cursor:pointer;font-weight:600;font-family:var(--font-heading);font-size:0.95rem;display:flex;justify-content:space-between;align-items:center;transition:background 0.2s}
+.qa-question:hover{background:rgba(0,0,0,0.02)}
+.qa-answer{padding:0 1.2rem;max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;font-size:0.92rem;color:var(--color-muted)}
+.qa-answer.open{max-height:200px;padding:0 1.2rem 1rem}
+.qa-chevron{transition:transform 0.3s}
+.qa-chevron.open{transform:rotate(180deg)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}.dual-code{grid-template-columns:1fr}table.algo-table{font-size:0.75rem}table.algo-table th,table.algo-table td{padding:0.4rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎯 DSA &amp; Coding Mastery</a><div class="nav-dots"><a href="../module-01-arrays-strings/" class="nav-dot"></a><a href="../module-02-hashmaps/" class="nav-dot"></a><a href="../module-03-trees-graphs/" class="nav-dot"></a><a href="../module-04-dynamic-programming/" class="nav-dot"></a><a href="../module-05-sorting-heaps/" class="nav-dot"></a><a href="../module-06-de-coding/" class="nav-dot"></a><a href="../module-07-sql-coding/" class="nav-dot"></a><a href="../module-08-interview-gauntlet/" class="nav-dot active" style="background:#EA1100"></a></div></div></nav>
+
+<!-- Screen 1: Intro Banner -->
+<section class="screen" id="s1">
+  <div class="gauntlet-banner">
+    <h2>The Interview <span class="fire-accent">Gauntlet</span> 🔥</h2>
+    <p>6 back-to-back rounds. Algorithms, Data Engineering, SQL, System Design, Rapid Fire, and Strategy. If you can get through this without peeking — <strong>you're ready.</strong></p>
+  </div>
+
+  <h3>The 6 Rounds</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🧮 Round 1: Algorithms</h4>
+      <p>6 medium-difficulty problems covering patterns from Modules 1–5. 15 min each.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔧 Round 2: DE Coding</h4>
+      <p>6 Pandas/PySpark problems. Dual implementations for each.</p>
+    </div>
+    <div class="card green">
+      <h4>🗃️ Round 3: SQL</h4>
+      <p>6 medium-hard SQL problems. 12 minutes each.</p>
+    </div>
+    <div class="card purple">
+      <h4>⚙️ Round 4: System Design</h4>
+      <p>5 design + code problems. Working implementations.</p>
+    </div>
+    <div class="card">
+      <h4>⚡ Round 5: Rapid Fire</h4>
+      <p>20 Q&amp;A in 30 seconds each. No code — crisp explanations.</p>
+    </div>
+    <div class="card blue">
+      <h4>🎯 Round 6: Strategy</h4>
+      <p>Key takeaways, time management, and confidence building.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">⏱️ Simulate Real Pressure</div>
+    <p>Set a timer for each problem. The gauntlet isn't about perfection — it's about performing <strong>under pressure</strong>. Can you produce clean code when the clock is ticking?</p>
+  </div>
+</section>
+
+<!-- Screen 2: Algorithm Challenges Part 1 -->
+<section class="screen screen-alt" id="s2">
+  <h2>🧮 Algorithms: <span class="accent">Part 1</span></h2>
+
+  <h3>Problem 1: Product of Array Except Self</h3>
+  <p>Return an array where <code>result[i]</code> = product of all elements except <code>nums[i]</code>. O(n) time, <strong>no division</strong>.</p>
+
+  <div class="code-block"><span class="kw">def</span> <span class="fn">product_except_self</span>(nums: <span class="fn">list</span>[<span class="fn">int</span>]) -&gt; <span class="fn">list</span>[<span class="fn">int</span>]:
+    n = <span class="fn">len</span>(nums)
+    result = [<span class="fn">1</span>] * n
+
+    <span class="cm"># Left pass: result[i] = product of nums[0..i-1]</span>
+    left = <span class="fn">1</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+        result[i] = left
+        left *= nums[i]
+
+    <span class="cm"># Right pass: multiply by product of nums[i+1..n-1]</span>
+    right = <span class="fn">1</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n - <span class="fn">1</span>, -<span class="fn">1</span>, -<span class="fn">1</span>):
+        result[i] *= right
+        right *= nums[i]
+
+    <span class="kw">return</span> result</div>
+
+  <table class="algo-table">
+    <tr><th>Metric</th><th>Value</th></tr>
+    <tr><td>Time</td><td>O(n) — two linear passes</td></tr>
+    <tr><td>Space</td><td>O(1) extra — output doesn't count</td></tr>
+  </table>
+
+  <h3>Problem 2: Merge Intervals</h3>
+  <p>Sort by start time, then greedily merge overlapping intervals.</p>
+
+  <div class="code-block"><span class="kw">def</span> <span class="fn">merge</span>(intervals: <span class="fn">list</span>[<span class="fn">list</span>[<span class="fn">int</span>]]) -&gt; <span class="fn">list</span>[<span class="fn">list</span>[<span class="fn">int</span>]]:
+    intervals.sort(key=<span class="kw">lambda</span> x: x[<span class="fn">0</span>])
+    merged: <span class="fn">list</span>[<span class="fn">list</span>[<span class="fn">int</span>]] = []
+
+    <span class="kw">for</span> start, end <span class="kw">in</span> intervals:
+        <span class="kw">if</span> merged <span class="kw">and</span> start &lt;= merged[-<span class="fn">1</span>][<span class="fn">1</span>]:
+            merged[-<span class="fn">1</span>][<span class="fn">1</span>] = <span class="fn">max</span>(merged[-<span class="fn">1</span>][<span class="fn">1</span>], end)
+        <span class="kw">else</span>:
+            merged.append([start, end])
+
+    <span class="kw">return</span> merged
+<span class="cm"># Time: O(n log n) | Space: O(n)</span></div>
+
+  <h3>Problem 3: Binary Tree Right Side View</h3>
+  <p>BFS level-order — take the <strong>last node</strong> at each level.</p>
+
+  <div class="code-block"><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">right_side_view</span>(root) -&gt; <span class="fn">list</span>[<span class="fn">int</span>]:
+    <span class="kw">if not</span> root:
+        <span class="kw">return</span> []
+    result: <span class="fn">list</span>[<span class="fn">int</span>] = []
+    queue: deque = deque([root])
+
+    <span class="kw">while</span> queue:
+        level_size = <span class="fn">len</span>(queue)
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(level_size):
+            node = queue.popleft()
+            <span class="kw">if</span> i == level_size - <span class="fn">1</span>:  <span class="cm"># last node in level</span>
+                result.append(node.val)
+            <span class="kw">if</span> node.left:
+                queue.append(node.left)
+            <span class="kw">if</span> node.right:
+                queue.append(node.right)
+
+    <span class="kw">return</span> result
+<span class="cm"># Time: O(n) | Space: O(w) — tree width</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 BFS = Swiss Army Knife for Trees</div>
+    <p>Any question mentioning "level," "depth," or "layer" is almost certainly BFS. Use <code>deque</code> for O(1) popleft — <strong>never</strong> <code>list.pop(0)</code> which is O(n).</p>
+  </div>
+</section>
+
+<!-- Screen 3: Algorithm Challenges Part 2 -->
+<section class="screen" id="s3">
+  <h2>🧮 Algorithms: <span class="accent">Part 2</span></h2>
+
+  <h3>Problem 4: Word Break</h3>
+  <p>1-D DP: <code>dp[i]</code> is True if <code>s[0:i]</code> can be segmented into dictionary words.</p>
+
+  <div class="code-block"><span class="kw">def</span> <span class="fn">word_break</span>(s: <span class="fn">str</span>, word_dict: <span class="fn">list</span>[<span class="fn">str</span>]) -&gt; <span class="fn">bool</span>:
+    word_set = <span class="fn">set</span>(word_dict)  <span class="cm"># O(1) lookup</span>
+    n = <span class="fn">len</span>(s)
+    dp = [<span class="fn">False</span>] * (n + <span class="fn">1</span>)
+    dp[<span class="fn">0</span>] = <span class="fn">True</span>  <span class="cm"># empty string is valid</span>
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">1</span>, n + <span class="fn">1</span>):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(i):
+            <span class="kw">if</span> dp[j] <span class="kw">and</span> s[j:i] <span class="kw">in</span> word_set:
+                dp[i] = <span class="fn">True</span>
+                <span class="kw">break</span>  <span class="cm"># key optimization!</span>
+
+    <span class="kw">return</span> dp[n]
+<span class="cm"># Time: O(n²) avg with break | Space: O(n)</span></div>
+
+  <h3>Problem 5: Clone Graph</h3>
+  <p>BFS with a hashmap that maps original nodes → clones. The hashmap is both "visited" set and clone registry.</p>
+
+  <div class="code-block"><span class="kw">def</span> <span class="fn">clone_graph</span>(node) -&gt; <span class="str">\"Node | None\"</span>:
+    <span class="kw">if not</span> node:
+        <span class="kw">return</span> <span class="fn">None</span>
+
+    clones = {node: Node(node.val)}
+    queue = deque([node])
+
+    <span class="kw">while</span> queue:
+        current = queue.popleft()
+        <span class="kw">for</span> neighbor <span class="kw">in</span> current.neighbors:
+            <span class="kw">if</span> neighbor <span class="kw">not in</span> clones:
+                clones[neighbor] = Node(neighbor.val)
+                queue.append(neighbor)
+            clones[current].neighbors.append(clones[neighbor])
+
+    <span class="kw">return</span> clones[node]
+<span class="cm"># Time: O(V + E) | Space: O(V)</span></div>
+
+  <h3>Problem 6: Decode Ways</h3>
+  <p>Linear DP — <strong>Climbing Stairs in disguise</strong>, but the "zero" handling is the trap.</p>
+
+  <div class="code-block"><span class="kw">def</span> <span class="fn">num_decodings</span>(s: <span class="fn">str</span>) -&gt; <span class="fn">int</span>:
+    <span class="kw">if not</span> s <span class="kw">or</span> s[<span class="fn">0</span>] == <span class="str">"0"</span>:
+        <span class="kw">return</span> <span class="fn">0</span>
+
+    prev2, prev1 = <span class="fn">1</span>, <span class="fn">1</span>  <span class="cm"># dp[i-2], dp[i-1]</span>
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">1</span>, <span class="fn">len</span>(s)):
+        current = <span class="fn">0</span>
+        <span class="kw">if</span> s[i] != <span class="str">"0"</span>:          <span class="cm"># single digit valid</span>
+            current += prev1
+        two_digit = <span class="fn">int</span>(s[i-<span class="fn">1</span>:i+<span class="fn">1</span>])
+        <span class="kw">if</span> <span class="fn">10</span> &lt;= two_digit &lt;= <span class="fn">26</span>:  <span class="cm"># two digits valid</span>
+            current += prev2
+        prev2, prev1 = prev1, current
+
+    <span class="kw">return</span> prev1
+<span class="cm"># Time: O(n) | Space: O(1)</span></div>
+
+  <div class="aha">
+    <div class="aha-title">🚨 The Zero Trap</div>
+    <p>Half of candidates fail on inputs like <code>"10"</code>, <code>"20"</code>, or <code>"30"</code>. Walk through these edge cases <strong>explicitly</strong> before submitting. <code>"30"</code> → 0 ways (invalid). <code>"10"</code> → 1 way.</p>
+  </div>
+</section>
+
+<!-- Screen 4: DE Coding Challenges -->
+<section class="screen screen-alt" id="s4">
+  <h2>🔧 DE Coding: <span class="accent">All 6 Problems</span></h2>
+
+  <h3>Problem 1: Daily Active Users</h3>
+  <div class="dual-code">
+    <div>
+      <div class="code-label">🐼 Pandas</div>
+      <div class="code-block">df[<span class="str">"date"</span>] = df[<span class="str">"event_time"</span>].dt.date
+dau = (df.groupby(<span class="str">"date"</span>)[<span class="str">"user_id"</span>]
+         .nunique()
+         .reset_index(name=<span class="str">"dau"</span>))</div>
+    </div>
+    <div>
+      <div class="code-label">⚡ PySpark</div>
+      <div class="code-block"><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> (
+    to_date, countDistinct)
+
+dau = (df.withColumn(<span class="str">"date"</span>, to_date(<span class="str">"event_time"</span>))
+         .groupBy(<span class="str">"date"</span>)
+         .agg(countDistinct(<span class="str">"user_id"</span>)
+              .alias(<span class="str">"dau"</span>))
+         .orderBy(<span class="str">"date"</span>))</div>
+    </div>
+  </div>
+
+  <h3>Problem 2: Revenue Attribution (First Touch)</h3>
+  <div class="dual-code">
+    <div>
+      <div class="code-label">🐼 Pandas</div>
+      <div class="code-block">first_touch = (
+    events.sort_values(<span class="str">"event_time"</span>)
+          .drop_duplicates(
+              subset=[<span class="str">"user_id"</span>],
+              keep=<span class="str">"first"</span>)
+          [[<span class="str">"user_id"</span>, <span class="str">"channel"</span>]]
+)
+attributed = purchases.merge(
+    first_touch, on=<span class="str">"user_id"</span>, how=<span class="str">"left"</span>)
+revenue = (attributed.groupby(<span class="str">"channel"</span>)
+    [<span class="str">"amount"</span>].sum().reset_index())</div>
+    </div>
+    <div>
+      <div class="code-label">⚡ PySpark</div>
+      <div class="code-block"><span class="kw">from</span> pyspark.sql.window <span class="kw">import</span> Window
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> (
+    row_number, col, sum <span class="kw">as</span> _sum)
+
+w = (Window.partitionBy(<span class="str">"user_id"</span>)
+           .orderBy(<span class="str">"event_time"</span>))
+first_touch = (
+    events.withColumn(<span class="str">"rn"</span>,
+        row_number().over(w))
+    .filter(col(<span class="str">"rn"</span>) == <span class="fn">1</span>)
+    .select(<span class="str">"user_id"</span>, <span class="str">"channel"</span>))
+attributed = purchases.join(
+    first_touch, on=<span class="str">"user_id"</span>, how=<span class="str">"left"</span>)
+revenue = attributed.groupBy(<span class="str">"channel"</span>).agg(
+    _sum(<span class="str">"amount"</span>).alias(<span class="str">"revenue"</span>))</div>
+    </div>
+  </div>
+
+  <h3>Problem 3: Data Quality Report</h3>
+  <div class="dual-code">
+    <div>
+      <div class="code-label">🐼 Pandas</div>
+      <div class="code-block"><span class="kw">def</span> <span class="fn">data_quality_report</span>(df):
+    <span class="kw">return</span> pd.DataFrame({
+        <span class="str">"column"</span>: df.columns,
+        <span class="str">"null_count"</span>: df.isnull().sum().values,
+        <span class="str">"null_pct"</span>: (df.isnull().mean()
+                     * <span class="fn">100</span>).round(<span class="fn">2</span>).values,
+        <span class="str">"distinct"</span>: df.nunique().values,
+        <span class="str">"dtype"</span>: df.dtypes.astype(<span class="fn">str</span>).values,
+    })</div>
+    </div>
+    <div>
+      <div class="code-label">⚡ PySpark</div>
+      <div class="code-block"><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> (
+    col, countDistinct,
+    sum <span class="kw">as</span> _sum)
+
+total = df.count()
+exprs = []
+<span class="kw">for</span> c <span class="kw">in</span> df.columns:
+    exprs.extend([
+        _sum(col(c).isNull().cast(<span class="str">"int"</span>))
+            .alias(f<span class="str">"{c}_nulls"</span>),
+        countDistinct(col(c))
+            .alias(f<span class="str">"{c}_distinct"</span>),
+    ])
+stats = df.agg(*exprs).collect()[<span class="fn">0</span>]</div>
+    </div>
+  </div>
+
+  <h3>Problem 4: SCD Type 2 — Point-in-Time</h3>
+  <div class="dual-code">
+    <div>
+      <div class="code-label">🐼 Pandas</div>
+      <div class="code-block">as_of = pd.Timestamp(<span class="str">"2025-06-15"</span>)
+snapshot = scd_df[
+    (scd_df[<span class="str">"effective_date"</span>] &lt;= as_of) &amp;
+    (scd_df[<span class="str">"end_date"</span>] &gt; as_of)
+]</div>
+    </div>
+    <div>
+      <div class="code-label">⚡ PySpark</div>
+      <div class="code-block"><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> lit
+
+as_of = lit(<span class="str">"2025-06-15"</span>).cast(<span class="str">"date"</span>)
+snapshot = scd_df.filter(
+    (col(<span class="str">"effective_date"</span>) &lt;= as_of) &amp;
+    (col(<span class="str">"end_date"</span>) &gt; as_of)
+)</div>
+    </div>
+  </div>
+
+  <h3>Problem 5: Event Funnel with Drop-Off</h3>
+  <div class="dual-code">
+    <div>
+      <div class="code-label">🐼 Pandas</div>
+      <div class="code-block">order = [<span class="str">"view"</span>,<span class="str">"cart"</span>,<span class="str">"checkout"</span>,<span class="str">"purchase"</span>]
+funnel = (
+    df[df[<span class="str">"step"</span>].isin(order)]
+    .groupby(<span class="str">"step"</span>)[<span class="str">"user_id"</span>]
+    .nunique().reindex(order)
+    .reset_index(name=<span class="str">"users"</span>))
+funnel[<span class="str">"drop_off_pct"</span>] = (
+    (<span class="fn">1</span> - funnel[<span class="str">"users"</span>]
+       / funnel[<span class="str">"users"</span>].shift(<span class="fn">1</span>))
+    * <span class="fn">100</span>).round(<span class="fn">1</span>)</div>
+    </div>
+    <div>
+      <div class="code-label">⚡ PySpark</div>
+      <div class="code-block"><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> (
+    countDistinct, lag, when,
+    coalesce, lit, round <span class="kw">as</span> _round)
+<span class="kw">from</span> pyspark.sql.window <span class="kw">import</span> Window
+
+funnel = (df.filter(col(<span class="str">"step"</span>)
+    .isin(order))
+    .groupBy(<span class="str">"step"</span>)
+    .agg(countDistinct(<span class="str">"user_id"</span>)
+         .alias(<span class="str">"users"</span>)))
+<span class="cm"># Add ordering + lag for drop-off</span></div>
+    </div>
+  </div>
+
+  <h3>Problem 6: Rolling 7-Day Average</h3>
+  <div class="dual-code">
+    <div>
+      <div class="code-label">🐼 Pandas</div>
+      <div class="code-block">df = df.sort_values(<span class="str">"date"</span>).set_index(<span class="str">"date"</span>)
+df[<span class="str">"rolling_7d_avg"</span>] = (
+    df[<span class="str">"value"</span>]
+      .rolling(window=<span class="fn">7</span>, min_periods=<span class="fn">1</span>)
+      .mean()
+)</div>
+    </div>
+    <div>
+      <div class="code-label">⚡ PySpark</div>
+      <div class="code-block"><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> avg <span class="kw">as</span> _avg
+<span class="kw">from</span> pyspark.sql.window <span class="kw">import</span> Window
+
+w = Window.orderBy(<span class="str">"date"</span>).rowsBetween(
+    -<span class="fn">6</span>, <span class="fn">0</span>)  <span class="cm"># NOT -7! That's 8 rows</span>
+result = df.withColumn(
+    <span class="str">"rolling_7d_avg"</span>, _avg(<span class="str">"value"</span>).over(w)
+)</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🚨 Off-by-One Alert</div>
+    <p><code>rowsBetween(-6, 0)</code> = current row + 6 preceding = <strong>7 rows total</strong>. Using <code>-7, 0</code> gives 8 rows. Always count on your fingers!</p>
+  </div>
+</section>
+
+<!-- Screen 5: SQL Challenges -->
+<section class="screen" id="s5">
+  <h2>🗃️ SQL Challenges: <span class="accent">All 6 Problems</span></h2>
+
+  <h3>Problem 1: Consecutive Numbers</h3>
+  <p>Find numbers appearing at least 3 times consecutively. Two approaches:</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>Self-Join (if IDs are contiguous)</h4>
+      <div class="code-block"><span class="kw">SELECT DISTINCT</span> l1.num
+<span class="kw">FROM</span> logs l1
+<span class="kw">JOIN</span> logs l2 <span class="kw">ON</span> l1.id = l2.id - <span class="fn">1</span>
+<span class="kw">JOIN</span> logs l3 <span class="kw">ON</span> l2.id = l3.id - <span class="fn">1</span>
+<span class="kw">WHERE</span> l1.num = l2.num
+  <span class="kw">AND</span> l2.num = l3.num;</div>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>Gap &amp; Island (robust)</h4>
+      <div class="code-block"><span class="kw">WITH</span> grouped <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> num,
+    id - <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (
+      <span class="kw">PARTITION BY</span> num
+      <span class="kw">ORDER BY</span> id) <span class="kw">AS</span> grp
+  <span class="kw">FROM</span> logs
+)
+<span class="kw">SELECT DISTINCT</span> num
+<span class="kw">FROM</span> grouped
+<span class="kw">GROUP BY</span> num, grp
+<span class="kw">HAVING COUNT</span>(*) &gt;= <span class="fn">3</span>;</div>
+    </div>
+  </div>
+
+  <h3>Problem 2: Department Top 3 Salaries</h3>
+  <div class="code-block"><span class="kw">WITH</span> ranked <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> d.name <span class="kw">AS</span> department, e.name <span class="kw">AS</span> employee, e.salary,
+        <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span> (
+            <span class="kw">PARTITION BY</span> e.department_id <span class="kw">ORDER BY</span> e.salary <span class="kw">DESC</span>
+        ) <span class="kw">AS</span> dr
+    <span class="kw">FROM</span> employees e <span class="kw">JOIN</span> departments d <span class="kw">ON</span> e.department_id = d.id
+)
+<span class="kw">SELECT</span> department, employee, salary <span class="kw">FROM</span> ranked <span class="kw">WHERE</span> dr &lt;= <span class="fn">3</span>;</div>
+
+  <h3>Problem 3: Trips &amp; Users Cancellation Rate</h3>
+  <div class="code-block"><span class="kw">SELECT</span> t.request_at <span class="kw">AS</span> day,
+    <span class="fn">ROUND</span>(
+        <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> t.status <span class="kw">LIKE</span> <span class="str">'cancelled%'</span> <span class="kw">THEN</span> <span class="fn">1.0</span> <span class="kw">ELSE</span> <span class="fn">0</span> <span class="kw">END</span>) / <span class="fn">COUNT</span>(*), <span class="fn">2</span>
+    ) <span class="kw">AS</span> cancellation_rate
+<span class="kw">FROM</span> trips t
+<span class="kw">JOIN</span> users c <span class="kw">ON</span> t.client_id = c.users_id <span class="kw">AND</span> c.banned = <span class="str">'No'</span>
+<span class="kw">JOIN</span> users d <span class="kw">ON</span> t.driver_id = d.users_id <span class="kw">AND</span> d.banned = <span class="str">'No'</span>
+<span class="kw">WHERE</span> t.request_at <span class="kw">BETWEEN</span> <span class="str">'2025-10-01'</span> <span class="kw">AND</span> <span class="str">'2025-10-03'</span>
+<span class="kw">GROUP BY</span> t.request_at <span class="kw">ORDER BY</span> t.request_at;</div>
+
+  <h3>Problem 4: Exchange Seats</h3>
+  <div class="code-block"><span class="kw">SELECT</span>
+    <span class="kw">CASE</span>
+        <span class="kw">WHEN</span> id % <span class="fn">2</span> = <span class="fn">1</span> <span class="kw">AND</span> id = (<span class="kw">SELECT</span> <span class="fn">MAX</span>(id) <span class="kw">FROM</span> seat) <span class="kw">THEN</span> id
+        <span class="kw">WHEN</span> id % <span class="fn">2</span> = <span class="fn">1</span> <span class="kw">THEN</span> id + <span class="fn">1</span>
+        <span class="kw">ELSE</span> id - <span class="fn">1</span>
+    <span class="kw">END AS</span> id, student
+<span class="kw">FROM</span> seat <span class="kw">ORDER BY</span> id;</div>
+
+  <h3>Problem 5: Human Traffic of Stadium</h3>
+  <div class="code-block"><span class="kw">WITH</span> filtered <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> *, id - <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> id) <span class="kw">AS</span> grp
+    <span class="kw">FROM</span> stadium <span class="kw">WHERE</span> people &gt;= <span class="fn">100</span>
+),
+streaks <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> grp <span class="kw">FROM</span> filtered <span class="kw">GROUP BY</span> grp <span class="kw">HAVING COUNT</span>(*) &gt;= <span class="fn">3</span>
+)
+<span class="kw">SELECT</span> f.id, f.visit_date, f.people
+<span class="kw">FROM</span> filtered f <span class="kw">JOIN</span> streaks s <span class="kw">ON</span> f.grp = s.grp
+<span class="kw">ORDER BY</span> f.id;</div>
+
+  <h3>Problem 6: Median Employee Salary</h3>
+  <div class="code-block"><span class="kw">WITH</span> counted <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> *,
+        <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> department <span class="kw">ORDER BY</span> salary) <span class="kw">AS</span> rn,
+        <span class="fn">COUNT</span>(*) <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> department) <span class="kw">AS</span> cnt
+    <span class="kw">FROM</span> employees
+)
+<span class="kw">SELECT</span> department, salary <span class="kw">AS</span> median_salary
+<span class="kw">FROM</span> counted
+<span class="kw">WHERE</span> rn <span class="kw">IN</span> (<span class="fn">FLOOR</span>((cnt + <span class="fn">1</span>) / <span class="fn">2.0</span>), <span class="fn">CEIL</span>((cnt + <span class="fn">1</span>) / <span class="fn">2.0</span>));</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Double Join = Key Insight</div>
+    <p>In the Trips problem, joining <code>users</code> <strong>twice</strong> (once for client, once for driver) is the key trick. Both sides must be unbanned. Using <code>LIKE 'cancelled%'</code> handles both <code>cancelled_by_driver</code> and <code>cancelled_by_client</code>.</p>
+  </div>
+</section>
+
+<!-- Screen 6: System Design Coding -->
+<section class="screen screen-alt" id="s6">
+  <h2>⚙️ System Design: <span class="accent">Code It</span></h2>
+
+  <h3>Problem 1: LRU Cache</h3>
+  <p>Doubly linked list + hashmap. O(1) get and put.</p>
+  <div class="code-block"><span class="kw">class</span> <span class="fn">Node</span>:
+    __slots__ = (<span class="str">"key"</span>, <span class="str">"val"</span>, <span class="str">"prev"</span>, <span class="str">"next"</span>)
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, key=<span class="fn">0</span>, val=<span class="fn">0</span>):
+        self.key, self.val = key, val
+        self.prev = self.next = <span class="fn">None</span>
+
+<span class="kw">class</span> <span class="fn">LRUCache</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, capacity: <span class="fn">int</span>):
+        self.capacity = capacity
+        self.cache: <span class="fn">dict</span>[<span class="fn">int</span>, Node] = {}
+        self.head, self.tail = Node(), Node()  <span class="cm"># sentinels!</span>
+        self.head.next = self.tail
+        self.tail.prev = self.head
+
+    <span class="kw">def</span> <span class="fn">_remove</span>(self, node):
+        node.prev.next = node.next
+        node.next.prev = node.prev
+
+    <span class="kw">def</span> <span class="fn">_add_to_front</span>(self, node):
+        node.next = self.head.next
+        node.prev = self.head
+        self.head.next.prev = node
+        self.head.next = node
+
+    <span class="kw">def</span> <span class="fn">get</span>(self, key: <span class="fn">int</span>) -&gt; <span class="fn">int</span>:
+        <span class="kw">if</span> key <span class="kw">not in</span> self.cache: <span class="kw">return</span> -<span class="fn">1</span>
+        node = self.cache[key]
+        self._remove(node)
+        self._add_to_front(node)
+        <span class="kw">return</span> node.val
+
+    <span class="kw">def</span> <span class="fn">put</span>(self, key: <span class="fn">int</span>, value: <span class="fn">int</span>):
+        <span class="kw">if</span> key <span class="kw">in</span> self.cache: self._remove(self.cache[key])
+        node = Node(key, value)
+        self._add_to_front(node)
+        self.cache[key] = node
+        <span class="kw">if</span> <span class="fn">len</span>(self.cache) &gt; self.capacity:
+            lru = self.tail.prev
+            self._remove(lru)
+            <span class="kw">del</span> self.cache[lru.key]</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Sentinel Nodes = Secret Weapon</div>
+    <p>The <code>head</code> and <code>tail</code> sentinel nodes eliminate <strong>four if-statements</strong>. Without them, every <code>_remove</code> and <code>_add</code> needs null checks for empty lists and boundary conditions. Sentinels make the code dramatically cleaner.</p>
+  </div>
+
+  <h3>Problem 2: Rate Limiter (Sliding Window)</h3>
+  <div class="code-block"><span class="kw">import</span> time
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+
+<span class="kw">class</span> <span class="fn">RateLimiter</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, max_requests: <span class="fn">int</span>, window_seconds: <span class="fn">int</span>):
+        self.max_requests = max_requests
+        self.window = window_seconds
+        self.requests: <span class="fn">dict</span>[<span class="fn">str</span>, <span class="fn">list</span>] = defaultdict(<span class="fn">list</span>)
+
+    <span class="kw">def</span> <span class="fn">allow</span>(self, client_id: <span class="fn">str</span>) -&gt; <span class="fn">bool</span>:
+        now = time.time()
+        ts = self.requests[client_id]
+        <span class="kw">while</span> ts <span class="kw">and</span> ts[<span class="fn">0</span>] &lt;= now - self.window:
+            ts.pop(<span class="fn">0</span>)  <span class="cm"># evict expired</span>
+        <span class="kw">if</span> <span class="fn">len</span>(ts) &lt; self.max_requests:
+            ts.append(now)
+            <span class="kw">return</span> <span class="fn">True</span>
+        <span class="kw">return</span> <span class="fn">False</span>
+<span class="cm"># Production: use Redis sorted set (ZADD + ZRANGEBYSCORE)</span></div>
+
+  <h3>Problem 3: Event Processor with Dedup</h3>
+  <div class="code-block"><span class="kw">import</span> heapq
+
+<span class="kw">class</span> <span class="fn">EventProcessor</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, max_lateness: <span class="fn">int</span> = <span class="fn">300</span>):
+        self.seen_ids: <span class="fn">set</span>[<span class="fn">str</span>] = <span class="fn">set</span>()
+        self.buffer: <span class="fn">list</span> = []  <span class="cm"># min-heap by timestamp</span>
+        self.max_lateness = max_lateness
+        self.watermark: <span class="fn">float</span> = <span class="fn">0.0</span>
+
+    <span class="kw">def</span> <span class="fn">ingest</span>(self, event_id, timestamp, payload):
+        <span class="kw">if</span> event_id <span class="kw">in</span> self.seen_ids: <span class="kw">return</span>  <span class="cm"># dedup</span>
+        <span class="kw">if</span> timestamp &lt; self.watermark - self.max_lateness: <span class="kw">return</span>
+        self.seen_ids.add(event_id)
+        heapq.heappush(self.buffer, (timestamp, event_id, payload))
+
+    <span class="kw">def</span> <span class="fn">flush</span>(self, current_time):
+        self.watermark = current_time - self.max_lateness
+        results = []
+        <span class="kw">while</span> self.buffer <span class="kw">and</span> self.buffer[<span class="fn">0</span>][<span class="fn">0</span>] &lt;= self.watermark:
+            ts, eid, payload = heapq.heappop(self.buffer)
+            results.append({<span class="str">"event_id"</span>: eid, <span class="str">"ts"</span>: ts, **payload})
+        <span class="kw">return</span> results</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Watermark = Flink's Core Concept</div>
+    <p>The <strong>watermark</strong> says "I believe all events before this time have arrived." This mirrors how Apache Flink handles late data. Explaining this concept shows system design maturity beyond just writing code.</p>
+  </div>
+
+  <h3>Problem 4: Min Stack — O(1) Everything</h3>
+  <div class="code-block"><span class="kw">class</span> <span class="fn">MinStack</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.stack: <span class="fn">list</span>[<span class="fn">int</span>] = []
+        self.min_stack: <span class="fn">list</span>[<span class="fn">int</span>] = []  <span class="cm"># parallel min tracker</span>
+
+    <span class="kw">def</span> <span class="fn">push</span>(self, val: <span class="fn">int</span>):
+        self.stack.append(val)
+        min_val = <span class="fn">min</span>(val, self.min_stack[-<span class="fn">1</span>]) <span class="kw">if</span> self.min_stack <span class="kw">else</span> val
+        self.min_stack.append(min_val)
+
+    <span class="kw">def</span> <span class="fn">pop</span>(self): self.stack.pop(); self.min_stack.pop()
+    <span class="kw">def</span> <span class="fn">top</span>(self): <span class="kw">return</span> self.stack[-<span class="fn">1</span>]
+    <span class="kw">def</span> <span class="fn">get_min</span>(self): <span class="kw">return</span> self.min_stack[-<span class="fn">1</span>]</div>
+
+  <h3>Problem 5: Hit Counter</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>Simple (deque)</h4>
+      <div class="code-block"><span class="kw">class</span> <span class="fn">HitCounter</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.hits = deque()
+    <span class="kw">def</span> <span class="fn">hit</span>(self, ts):
+        self.hits.append(ts)
+    <span class="kw">def</span> <span class="fn">get_hits</span>(self, ts):
+        <span class="kw">while</span> (self.hits <span class="kw">and</span>
+               self.hits[<span class="fn">0</span>]
+               &lt;= ts - <span class="fn">300</span>):
+            self.hits.popleft()
+        <span class="kw">return</span> <span class="fn">len</span>(self.hits)</div>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>Scalable (circular buffer)</h4>
+      <div class="code-block"><span class="kw">class</span> <span class="fn">HitCounterScalable</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.times = [<span class="fn">0</span>]*<span class="fn">300</span>
+        self.counts = [<span class="fn">0</span>]*<span class="fn">300</span>
+    <span class="kw">def</span> <span class="fn">hit</span>(self, ts):
+        idx = ts % <span class="fn">300</span>
+        <span class="kw">if</span> self.times[idx] != ts:
+            self.times[idx] = ts
+            self.counts[idx] = <span class="fn">1</span>
+        <span class="kw">else</span>:
+            self.counts[idx] += <span class="fn">1</span>
+    <span class="kw">def</span> <span class="fn">get_hits</span>(self, ts):
+        <span class="kw">return</span> <span class="fn">sum</span>(
+            c <span class="kw">for</span> i, c <span class="kw">in</span>
+            <span class="fn">enumerate</span>(self.counts)
+            <span class="kw">if</span> ts - self.times[i]
+               &lt; <span class="fn">300</span>)</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Simple → Scalable Progression</div>
+    <p>Start with the deque (simple, correct), then optimize to the <strong>circular buffer</strong> when asked about scale. This show-then-optimize progression is exactly what interviewers want to see.</p>
+  </div>
+</section>
+
+<!-- Screen 7: Rapid Fire Q&A -->
+<section class="screen" id="s7">
+  <h2>⚡ Rapid Fire: <span class="accent">20 Questions</span></h2>
+  <p>Click each question to reveal the answer. 30 seconds per question — crisp explanations only.</p>
+
+  <h3>🧮 Algorithm Questions</h3>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q1: Time complexity of binary search? <span class="qa-chevron">▼</span></div><div class="qa-answer">O(log n). Each comparison halves the search space.</div></div>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q2: When use a heap over a sorted array? <span class="qa-chevron">▼</span></div><div class="qa-answer">When you need efficient insert + extract-min/max. Heap: O(log n) both. Sorted array: O(n) insert, O(1) extract.</div></div>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q3: O(1) insert, delete, AND random access? <span class="qa-chevron">▼</span></div><div class="qa-answer">Array + hashmap (index lookup). Swap element with last, then pop. This is the RandomizedSet pattern.</div></div>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q4: BFS vs DFS for shortest path? <span class="qa-chevron">▼</span></div><div class="qa-answer">BFS finds shortest path in unweighted graphs (level by level). DFS finds <em>a</em> path but doesn't guarantee shortest.</div></div>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q5: Why is quicksort O(n²) worst-case? <span class="qa-chevron">▼</span></div><div class="qa-answer">Pivot is always smallest/largest element (sorted input + bad pivot). Random pivot makes this astronomically unlikely.</div></div>
+
+  <h3>🐍 Python Questions</h3>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q6: What is the GIL and why does it matter? <span class="qa-chevron">▼</span></div><div class="qa-answer">Global Interpreter Lock prevents parallel thread execution for Python bytecode. CPU-bound → use multiprocessing, not threads.</div></div>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q7: Generator vs list comprehension? <span class="qa-chevron">▼</span></div><div class="qa-answer">Generator: lazy, O(1) memory, for large/infinite sequences. List comprehension: when you need random access or multiple passes.</div></div>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q8: list vs tuple? <span class="qa-chevron">▼</span></div><div class="qa-answer">Lists are mutable, tuples are immutable. Tuples are hashable (dict keys), slightly faster, signal "don't change this."</div></div>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q9: deepcopy() vs copy()? <span class="qa-chevron">▼</span></div><div class="qa-answer">copy() creates new outer object but shares nested references (shallow). deepcopy() recursively copies everything — fully independent.</div></div>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q10: How does dict achieve O(1) lookup? <span class="qa-chevron">▼</span></div><div class="qa-answer">Hash table with open addressing. Keys hashed to buckets; collisions resolved by probing. Resizes when load factor exceeds ~2/3.</div></div>
+
+  <h3>🗃️ SQL Questions</h3>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q11: HAVING vs WHERE? <span class="qa-chevron">▼</span></div><div class="qa-answer">WHERE filters rows <em>before</em> grouping. HAVING filters groups <em>after</em> aggregation. Can't use aggregates in WHERE.</div></div>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q12: UNION vs UNION ALL? <span class="qa-chevron">▼</span></div><div class="qa-answer">UNION deduplicates (slower, requires sort/hash). UNION ALL keeps all rows (faster). Default to UNION ALL unless you need dedup.</div></div>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q13: Types of indexes and when to use each? <span class="qa-chevron">▼</span></div><div class="qa-answer">B-tree (default, range queries), hash (exact lookups), GIN/GiST (full-text, JSON), bitmap (low-cardinality OLAP). Composite indexes follow leftmost-prefix rule.</div></div>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q14: What's a correlated subquery? <span class="qa-chevron">▼</span></div><div class="qa-answer">A subquery referencing the outer query's columns. Re-executes per outer row → O(n × m) unless optimized by the engine.</div></div>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q15: ROWS vs RANGE in window frames? <span class="qa-chevron">▼</span></div><div class="qa-answer">ROWS counts physical rows. RANGE groups by logical value — same ORDER BY value = one unit. Use ROWS for deterministic totals.</div></div>
+
+  <h3>🔧 Data Engineering Questions</h3>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q16: Parquet vs CSV — why Parquet? <span class="qa-chevron">▼</span></div><div class="qa-answer">Columnar storage, built-in compression, schema enforcement, predicate pushdown, splittable for parallel reads. CSV has none.</div></div>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q17: What is exactly-once semantics? <span class="qa-chevron">▼</span></div><div class="qa-answer">Every message processed exactly one time — no dupes, no losses. Hard because retries cause dupes. Achieved via idempotent writes + transactional commits.</div></div>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q18: What does "idempotent" mean in pipelines? <span class="qa-chevron">▼</span></div><div class="qa-answer">Same input → same output, no matter how many runs. Via MERGE/upsert, partition overwrites, or dedup-on-write. Essential for safe re-runs.</div></div>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q19: Backfill strategy? <span class="qa-chevron">▼</span></div><div class="qa-answer">Re-process historical data after pipeline changes. Key: partition-based execution, idempotency, rate limiting upstream, validate counts before/after.</div></div>
+  <div class="qa-item"><div class="qa-question" onclick="toggleQA(this)">Q20: Schema evolution — how to handle? <span class="qa-chevron">▼</span></div><div class="qa-answer">When source schemas change. Handle via: schema registries (Avro/Protobuf), mergeSchema in Spark, backward/forward compatibility, defaults for new fields.</div></div>
+</section>
+
+<!-- Screen 8: Key Takeaways -->
+<section class="screen screen-alt" id="s8">
+  <h2>🎯 Key Takeaways &amp; <span class="accent">Strategy</span></h2>
+
+  <h3>Top 10 Patterns — Know Them Cold</h3>
+  <table class="algo-table">
+    <tr><th>#</th><th>Pattern</th><th>Signal Phrase</th><th>Module</th></tr>
+    <tr><td>1</td><td><strong>Two Pointers</strong></td><td>"Sorted array," "pair sum"</td><td>1</td></tr>
+    <tr><td>2</td><td><strong>Sliding Window</strong></td><td>"Contiguous subarray," "longest"</td><td>1</td></tr>
+    <tr><td>3</td><td><strong>Prefix Sum + HashMap</strong></td><td>"Subarray sum equals K"</td><td>1</td></tr>
+    <tr><td>4</td><td><strong>HashMap / Set Lookup</strong></td><td>"Find complement," "two sum"</td><td>2</td></tr>
+    <tr><td>5</td><td><strong>BFS Level-Order</strong></td><td>"Level," "shortest path"</td><td>3</td></tr>
+    <tr><td>6</td><td><strong>DFS + Backtracking</strong></td><td>"All paths," "permutations"</td><td>3</td></tr>
+    <tr><td>7</td><td><strong>Linear DP</strong></td><td>"Min/max ways," "climbing stairs"</td><td>4</td></tr>
+    <tr><td>8</td><td><strong>Gap and Island</strong></td><td>"Consecutive days," "streaks"</td><td>7</td></tr>
+    <tr><td>9</td><td><strong>Window Functions</strong></td><td>"Rank," "running total"</td><td>7</td></tr>
+    <tr><td>10</td><td><strong>Sessionization</strong></td><td>"Group by time gap"</td><td>6</td></tr>
+  </table>
+
+  <h3>⏱️ Time Management — 45-Minute Round</h3>
+  <table class="algo-table">
+    <tr><th>Phase</th><th>Time</th><th>What to Do</th></tr>
+    <tr><td><strong>Clarify</strong></td><td>3–5 min</td><td>Restate problem, confirm I/O, edge cases</td></tr>
+    <tr><td><strong>Approach</strong></td><td>3–5 min</td><td>Explain strategy, discuss complexity</td></tr>
+    <tr><td><strong>Code</strong></td><td>15–20 min</td><td>Write clean code, narrate as you go</td></tr>
+    <tr><td><strong>Test</strong></td><td>5–7 min</td><td>Walk through 1–2 examples by hand</td></tr>
+    <tr><td><strong>Optimize</strong></td><td>5 min</td><td>Discuss alternatives, trade-offs</td></tr>
+    <tr><td><strong>Questions</strong></td><td>3–5 min</td><td>Ask thoughtful questions about team/role</td></tr>
+  </table>
+
+  <h3>💬 Communication Tips</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>1. Think Out Loud</h4>
+      <p>"I'm using a hashmap because I need O(1) lookups for the complement."</p>
+    </div>
+    <div class="card blue">
+      <h4>2. Name Variables Well</h4>
+      <p><code>left</code>, <code>right</code>, <code>window_sum</code> beat <code>i</code>, <code>j</code>, <code>s</code>. The interviewer reads in real time.</p>
+    </div>
+    <div class="card green">
+      <h4>3. Announce Edge Cases</h4>
+      <p>"I need to handle the empty array case here." Shows defensive thinking.</p>
+    </div>
+    <div class="card purple">
+      <h4>4. Say When You're Stuck</h4>
+      <p>"I'm considering two approaches…" Silence is the enemy.</p>
+    </div>
+  </div>
+
+  <h3>❌ Common Mistakes</h3>
+  <table class="algo-table">
+    <tr><th>Mistake</th><th>Why It Happens</th><th>Fix</th></tr>
+    <tr><td>Jumping into code</td><td>Nervous energy</td><td>"Let me think for 30 seconds"</td></tr>
+    <tr><td>Off-by-one errors</td><td>Unclear boundaries</td><td>Decide: [left, right] or [left, right)?</td></tr>
+    <tr><td>No empty input check</td><td>Assumed valid input</td><td><code>if not nums: return ...</code></td></tr>
+    <tr><td><code>list.pop(0)</code></td><td>Forgot it's O(n)</td><td>Use <code>collections.deque</code></td></tr>
+    <tr><td>String <code>+=</code></td><td>Immutable strings</td><td><code>"".join(parts)</code></td></tr>
+    <tr><td>Missing <code>{0:1}</code></td><td>Prefix sum init</td><td>"Empty prefix = sum 0, seen once"</td></tr>
+    <tr><td>NOT IN with NULLs</td><td>Subtle SQL behavior</td><td>Always use NOT EXISTS</td></tr>
+    <tr><td>Integer division</td><td><code>1/3 = 0</code></td><td>Always cast: <code>1.0 / 3</code></td></tr>
+  </table>
+
+  <h3>🌙 Night Before Checklist</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>✅ Do</h4>
+      <p>Review top 10 patterns (skim, don't re-solve). Re-read your resume. Prepare 3 questions per interviewer. Test IDE/mic/camera. Water + notepad ready. <strong>Sleep 7+ hours.</strong></p>
+    </div>
+    <div class="card" style="border-top-color:var(--color-error)">
+      <h4>❌ Don't</h4>
+      <p>Don't learn new topics. Don't solve hard problems — struggle breeds doubt. Don't read horror stories. Don't have caffeine after 2 PM. <strong>Sleep &gt; cramming.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 9: Confidence Close -->
+<section class="screen" id="s9">
+  <h2>🚀 You're <span class="accent">Ready</span></h2>
+
+  <p style="font-size:1.15rem">You've made it through <strong>8 modules</strong>. Arrays, hashmaps, trees, graphs, dynamic programming, sorting, heaps, data engineering, SQL, and system design. You've seen the patterns, written the code, and practiced the translations.</p>
+
+  <div class="aha" style="background:linear-gradient(135deg,#F0FAF4,#E8F5E9);border-left-color:var(--color-success)">
+    <div class="aha-title" style="color:var(--color-success)">💡 The Bar Is Lower Than You Think</div>
+    <p>Interviewers aren't looking for perfection. They're looking for:</p>
+  </div>
+
+  <div class="card-grid">
+    <div class="card green">
+      <h4>🧩 Structured Thinking</h4>
+      <p>Can you break a problem into smaller pieces?</p>
+    </div>
+    <div class="card blue">
+      <h4>💬 Communication</h4>
+      <p>Can you explain your reasoning while you code?</p>
+    </div>
+    <div class="card purple">
+      <h4>🎯 Pattern Recognition</h4>
+      <p>Do you see that this is a sliding window problem?</p>
+    </div>
+    <div class="card">
+      <h4>🐛 Debugging Ability</h4>
+      <p>When your code doesn't work, can you find the bug?</p>
+    </div>
+    <div class="card green">
+      <h4>🌱 Growth Mindset</h4>
+      <p>When stuck, do you keep pushing or shut down?</p>
+    </div>
+  </div>
+
+  <p style="font-size:1.1rem;margin-top:1.5rem">You don't need to solve every problem optimally. You need to show that you <strong>think like an engineer</strong> — methodically, clearly, and under pressure.</p>
+
+  <p style="font-size:1.1rem">Every "no" gets you closer to the right "yes." Every interview — even the bad ones — makes you sharper. The person who gets the offer isn't the one who knows the most algorithms. It's the one who <strong>communicates the best and stays calm</strong> when the problem gets hard.</p>
+
+  <div class="gauntlet-banner" style="background:linear-gradient(135deg,#0D3B0D 0%,#1A5C1A 50%,#2D8B55 100%)">
+    <h2 style="font-size:clamp(1.8rem,4vw,2.5rem)">You've done the work.<br>Now go show them what you've got. 🚀</h2>
+    <p style="font-size:1.1rem;margin-top:1rem"><em>This concludes the DSA &amp; Coding Interview Preparation Course.<br>Go build something amazing.</em></p>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-07-sql-coding/index.html">← SQL Coding</a>
+  <a href="../index.html">🏠 Course Home</a>
+</footer>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  window.toggleQA=function(el){
+    const answer=el.nextElementSibling;
+    const chevron=el.querySelector('.qa-chevron');
+    answer.classList.toggle('open');
+    chevron.classList.toggle('open');
+  };
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct!';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite — review above.';}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

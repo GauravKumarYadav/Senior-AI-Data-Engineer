@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 7: SQL Coding Problems | DSA &amp; Coding Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#DC2626;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+table.algo-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.85rem}
+table.algo-table th,table.algo-table td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+table.algo-table th{font-family:var(--font-heading);font-weight:700;background:rgba(0,0,0,0.03);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.03em}
+table.algo-table tr:hover{background:rgba(0,0,0,0.02)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}table.algo-table{font-size:0.75rem}table.algo-table th,table.algo-table td{padding:0.4rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎯 DSA &amp; Coding Mastery</a><div class="nav-dots"><a href="../module-01-arrays-strings/" class="nav-dot"></a><a href="../module-02-hashmaps/" class="nav-dot"></a><a href="../module-03-trees-graphs/" class="nav-dot"></a><a href="../module-04-dynamic-programming/" class="nav-dot"></a><a href="../module-05-sorting-heaps/" class="nav-dot"></a><a href="../module-06-de-coding/" class="nav-dot"></a><a href="../module-07-sql-coding/" class="nav-dot active"></a><a href="../module-08-interview-gauntlet/" class="nav-dot" style="background:var(--color-error)"></a></div></div></nav>
+
+<!-- Screen 1: Intro & Framework -->
+<section class="screen" id="s1">
+  <h2>🗃️ SQL Coding <span class="accent">Problems</span></h2>
+  <p>12 progressively harder SQL problems covering every major pattern you'll face in DE and analytics interviews. Each problem includes sample data, a complete solution, line-by-line walkthrough, and an interview tip.</p>
+
+  <h3>How to Use This Module</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>1️⃣ Try First</h4>
+      <p>Read the problem, attempt it yourself for 10–15 minutes before looking at the solution.</p>
+    </div>
+    <div class="card blue">
+      <h4>2️⃣ Learn the Pattern</h4>
+      <p>Each problem maps to a reusable SQL technique — learn the <strong>pattern</strong>, not just the query.</p>
+    </div>
+    <div class="card green">
+      <h4>3️⃣ Practice on a Real Engine</h4>
+      <p>Spin up SQLite, PostgreSQL, or BigQuery and run these queries against actual data.</p>
+    </div>
+    <div class="card purple">
+      <h4>4️⃣ ANSI Standard</h4>
+      <p>All SQL uses ANSI syntax with notes where BigQuery, PostgreSQL, or MySQL differ.</p>
+    </div>
+  </div>
+
+  <h3>The 5-Step Framework for Any SQL Interview</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>Step 1: Clarify</h4>
+      <p>Table schemas? Duplicates? NULLs? What does "top" mean — distinct values or rows?</p>
+    </div>
+    <div class="card blue">
+      <h4>Step 2: Identify the Pattern</h4>
+      <p>Scan the Pattern Recognition Guide. Most problems map to 1–2 patterns.</p>
+    </div>
+    <div class="card green">
+      <h4>Step 3: Sketch the CTE Chain</h4>
+      <p>Break the solution into named CTEs. Each CTE does <strong>one thing</strong>.</p>
+    </div>
+    <div class="card purple">
+      <h4>Step 4: Write &amp; Talk</h4>
+      <p>Narrate your reasoning. Explain <em>why</em> DENSE_RANK over ROW_NUMBER.</p>
+    </div>
+    <div class="card">
+      <h4>Step 5: Verify</h4>
+      <p>Walk through 2–3 rows. Check NULLs in joins and divisions. Edge cases?</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 The Secret</div>
+    <p><em>"Every SQL problem is just a combination of JOINs, GROUP BYs, and window functions arranged in the right order. Learn the patterns, and the syntax writes itself."</em></p>
+  </div>
+</section>
+
+<!-- Screen 2: Problems 1 & 2 -->
+<section class="screen screen-alt" id="s2">
+  <h2>🏆 Top 3 Salaries &amp; <span class="accent">Self-Joins</span></h2>
+
+  <h3>Problem 1: Top 3 Salaries per Department</h3>
+  <p>Find the <strong>top 3 distinct salaries</strong> in each department. Use <code>DENSE_RANK()</code> — not <code>RANK()</code> or <code>ROW_NUMBER()</code> — because the problem asks for distinct salary tiers.</p>
+
+  <div class="code-block"><span class="kw">WITH</span> ranked <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        emp_id, name, department, salary,
+        <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span> (
+            <span class="kw">PARTITION BY</span> department
+            <span class="kw">ORDER BY</span> salary <span class="kw">DESC</span>
+        ) <span class="kw">AS</span> dr
+    <span class="kw">FROM</span> employees
+)
+<span class="kw">SELECT</span> emp_id, name, department, salary
+<span class="kw">FROM</span> ranked
+<span class="kw">WHERE</span> dr &lt;= <span class="fn">3</span>
+<span class="kw">ORDER BY</span> department, salary <span class="kw">DESC</span>;</div>
+
+  <p><strong>How it works:</strong> Alice &amp; Bob (same salary) both get <code>dr = 1</code>. Carol gets <code>dr = 2</code>. Dave gets <code>dr = 3</code>. The filter <code>dr &lt;= 3</code> keeps all three tiers.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 DENSE_RANK vs RANK vs ROW_NUMBER</div>
+    <p>If the interviewer says <strong>"top 3 employees"</strong> (not distinct salaries), use <code>ROW_NUMBER()</code>. If they say <strong>"top 3 salaries allowing ties"</strong>, use <code>RANK()</code>. <strong>Always clarify before you code.</strong></p>
+  </div>
+
+  <h3>Problem 2: Employees Earning More Than Their Manager</h3>
+  <p>Classic <strong>self-join</strong> — join the table to itself on <code>emp.manager_id = mgr.emp_id</code>.</p>
+
+  <div class="code-block"><span class="kw">SELECT</span>
+    e.name  <span class="kw">AS</span> employee,
+    e.salary <span class="kw">AS</span> employee_salary,
+    m.name  <span class="kw">AS</span> manager,
+    m.salary <span class="kw">AS</span> manager_salary
+<span class="kw">FROM</span> employees e
+<span class="kw">JOIN</span> employees m <span class="kw">ON</span> e.manager_id = m.emp_id
+<span class="kw">WHERE</span> e.salary &gt; m.salary;</div>
+
+  <p><strong>Key insight:</strong> <code>INNER JOIN</code> naturally excludes the CEO (NULL manager_id). This is often the <em>first</em> SQL question in a screen — solve it in under 2 minutes to set a strong tone.</p>
+</section>
+
+<!-- Screen 3: Problems 3 & 4 -->
+<section class="screen" id="s3">
+  <h2>🚫 Anti-Joins &amp; <span class="accent">Running Totals</span></h2>
+
+  <h3>Problem 3: Customers Who Never Ordered</h3>
+  <p>Two valid approaches — both are <strong>anti-join patterns</strong>:</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>LEFT JOIN + IS NULL</h4>
+      <div class="code-block"><span class="kw">SELECT</span> c.customer_id, c.name
+<span class="kw">FROM</span> customers c
+<span class="kw">LEFT JOIN</span> orders o
+  <span class="kw">ON</span> c.customer_id = o.customer_id
+<span class="kw">WHERE</span> o.order_id <span class="kw">IS NULL</span>;</div>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>NOT EXISTS (preferred)</h4>
+      <div class="code-block"><span class="kw">SELECT</span> c.customer_id, c.name
+<span class="kw">FROM</span> customers c
+<span class="kw">WHERE NOT EXISTS</span> (
+    <span class="kw">SELECT</span> <span class="fn">1</span> <span class="kw">FROM</span> orders o
+    <span class="kw">WHERE</span> o.customer_id =
+          c.customer_id
+);</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🚨 NEVER Use NOT IN!</div>
+    <p><code>NOT IN</code> breaks <strong>silently</strong> when the subquery contains NULLs — the entire expression returns no rows. <code>NOT EXISTS</code> is always safe. This is one of the top SQL gotchas in interviews. Mention it unprompted to impress.</p>
+  </div>
+
+  <h3>Problem 4: Running Total of Sales</h3>
+  <p>Window function with an explicit frame specification:</p>
+
+  <div class="code-block"><span class="kw">SELECT</span>
+    sale_date, amount,
+    <span class="fn">SUM</span>(amount) <span class="kw">OVER</span> (
+        <span class="kw">ORDER BY</span> sale_date
+        <span class="kw">ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</span>
+    ) <span class="kw">AS</span> running_total
+<span class="kw">FROM</span> daily_sales
+<span class="kw">ORDER BY</span> sale_date;
+<span class="cm">-- Result: 100, 350, 525, 825</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 ROWS vs RANGE — The Subtle Gotcha</div>
+    <p>Without explicit frame, the default with <code>ORDER BY</code> is <code>RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code>, which <strong>groups ties together</strong>. <code>ROWS</code> is deterministic — it counts physical rows. <strong>Always specify the frame explicitly</strong> in interviews to show you understand this difference.</p>
+  </div>
+</section>
+
+<!-- Screen 4: Problems 5 & 6 -->
+<section class="screen screen-alt" id="s4">
+  <h2>📈 MoM Growth &amp; <span class="accent">Pivoting</span></h2>
+
+  <h3>Problem 5: Month-over-Month Revenue Growth</h3>
+  <p><code>LAG()</code> to access previous month + <code>NULLIF</code> to prevent division by zero:</p>
+
+  <div class="code-block"><span class="kw">SELECT</span>
+    month, revenue,
+    <span class="fn">LAG</span>(revenue) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> month) <span class="kw">AS</span> prev_revenue,
+    <span class="fn">ROUND</span>(
+        <span class="fn">100.0</span> * (revenue - <span class="fn">LAG</span>(revenue) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> month))
+        / <span class="fn">NULLIF</span>(<span class="fn">LAG</span>(revenue) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> month), <span class="fn">0</span>),
+        <span class="fn">1</span>
+    ) <span class="kw">AS</span> mom_pct_change
+<span class="kw">FROM</span> monthly_revenue
+<span class="kw">ORDER BY</span> month;
+<span class="cm">-- Jan=NULL, Feb=+20.0%, Mar=−4.2%, Apr=+13.0%</span></div>
+
+  <p><strong>Key details:</strong> <code>NULLIF(..., 0)</code> prevents division-by-zero. <code>ROUND(..., 1)</code> gives clean output. First row is naturally NULL. Mention <code>LEAD()</code> works the same but looks forward.</p>
+
+  <h3>Problem 6: Pivot Sales by Quarter</h3>
+  <p><strong>Conditional aggregation</strong> — the most portable pivot approach (works in every SQL engine):</p>
+
+  <div class="code-block"><span class="kw">SELECT</span>
+    product,
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> quarter = <span class="str">'Q1'</span> <span class="kw">THEN</span> revenue <span class="kw">ELSE</span> <span class="fn">0</span> <span class="kw">END</span>) <span class="kw">AS</span> Q1,
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> quarter = <span class="str">'Q2'</span> <span class="kw">THEN</span> revenue <span class="kw">ELSE</span> <span class="fn">0</span> <span class="kw">END</span>) <span class="kw">AS</span> Q2,
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> quarter = <span class="str">'Q3'</span> <span class="kw">THEN</span> revenue <span class="kw">ELSE</span> <span class="fn">0</span> <span class="kw">END</span>) <span class="kw">AS</span> Q3,
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> quarter = <span class="str">'Q4'</span> <span class="kw">THEN</span> revenue <span class="kw">ELSE</span> <span class="fn">0</span> <span class="kw">END</span>) <span class="kw">AS</span> Q4
+<span class="kw">FROM</span> sales
+<span class="kw">GROUP BY</span> product
+<span class="kw">ORDER BY</span> product;</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Dynamic Pivot?</div>
+    <p>If the interviewer asks <em>"What if we don't know the quarters in advance?"</em> — that's dynamic pivot. PostgreSQL uses <code>crosstab()</code>, BigQuery uses scripting, app code builds the SQL string dynamically. There's <strong>no clean ANSI-standard way.</strong></p>
+  </div>
+</section>
+
+<!-- Screen 5: Problems 7 & 8 -->
+<section class="screen" id="s5">
+  <h2>🧹 Dedup &amp; <span class="accent">Gap-and-Island</span></h2>
+
+  <h3>Problem 7: Dedup Records — Keep Latest</h3>
+  <p>CDC (change data capture) creates duplicates. <code>ROW_NUMBER()</code> partitioned by key, ordered by timestamp DESC. Keep <code>rn = 1</code>.</p>
+
+  <div class="code-block"><span class="kw">WITH</span> numbered <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> *,
+        <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (
+            <span class="kw">PARTITION BY</span> user_id
+            <span class="kw">ORDER BY</span> updated_at <span class="kw">DESC</span>
+        ) <span class="kw">AS</span> rn
+    <span class="kw">FROM</span> user_profiles
+)
+<span class="kw">SELECT</span> user_id, email, updated_at
+<span class="kw">FROM</span> numbered
+<span class="kw">WHERE</span> rn = <span class="fn">1</span>;</div>
+
+  <p>This is strictly better than <code>GROUP BY + MAX(updated_at)</code> because it returns ALL columns. In production, use this inside a <code>MERGE</code> / <code>INSERT OVERWRITE</code> for SCD Type 1.</p>
+
+  <h3>Problem 8: Consecutive Login Days (Gap &amp; Island)</h3>
+  <p>Find users who logged in for <strong>3+ consecutive days</strong>. The insight: subtract <code>ROW_NUMBER()</code> from the date — consecutive dates produce the <strong>same island ID</strong>.</p>
+
+  <div class="code-block"><span class="kw">WITH</span> islands <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        user_id, login_date,
+        login_date - <span class="kw">INTERVAL</span> <span class="str">'1 day'</span> * <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (
+            <span class="kw">PARTITION BY</span> user_id <span class="kw">ORDER BY</span> login_date
+        ) <span class="kw">AS</span> island_id
+    <span class="kw">FROM</span> logins
+)
+<span class="kw">SELECT</span>
+    user_id,
+    <span class="fn">MIN</span>(login_date) <span class="kw">AS</span> streak_start,
+    <span class="fn">MAX</span>(login_date) <span class="kw">AS</span> streak_end,
+    <span class="fn">COUNT</span>(*) <span class="kw">AS</span> streak_length
+<span class="kw">FROM</span> islands
+<span class="kw">GROUP BY</span> user_id, island_id
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) &gt;= <span class="fn">3</span>
+<span class="kw">ORDER BY</span> user_id, streak_start;</div>
+
+  <div class="aha">
+    <div class="aha-title">🧠 Trace It — Why Does This Work?</div>
+    <p>Let's trace User 1 step by step:</p>
+  </div>
+
+  <table class="algo-table">
+    <tr><th>login_date</th><th>rn</th><th>date − rn days</th><th>island_id</th></tr>
+    <tr><td>2025-03-01</td><td>1</td><td>2025-02-28</td><td>2025-02-28</td></tr>
+    <tr><td>2025-03-02</td><td>2</td><td>2025-02-28</td><td>2025-02-28</td></tr>
+    <tr><td>2025-03-03</td><td>3</td><td>2025-02-28</td><td>2025-02-28</td></tr>
+    <tr><td>2025-03-05</td><td>4</td><td>2025-03-01</td><td>2025-03-01</td></tr>
+  </table>
+
+  <p>First three rows produce <strong>the same island_id</strong> → they're consecutive! Mar 5 breaks the streak, getting a different island. Group by island, count ≥ 3, done.</p>
+
+  <div class="aha">
+    <div class="aha-title">🔥 Top-5 SQL Interview Pattern</div>
+    <p>Gap-and-island is a <strong>top-5 pattern</strong>. The insight — "subtract row_number from date to create a group key" — is elegant and non-obvious. If you can explain <em>why</em> it works, you'll impress. <strong>MySQL/BigQuery:</strong> use <code>DATE_SUB(login_date, INTERVAL ROW_NUMBER()... DAY)</code>.</p>
+  </div>
+</section>
+
+<!-- Screen 6: Problems 9 & 10 -->
+<section class="screen screen-alt" id="s6">
+  <h2>🔄 Sessionization &amp; <span class="accent">Recursive CTEs</span></h2>
+
+  <h3>Problem 9: Sessionize User Clicks</h3>
+  <p>A new session starts when there's a <strong>gap &gt; 30 minutes</strong> between clicks. This is the SQL version of the <strong>exact same pattern from Module 6</strong>:</p>
+
+  <div class="translate">
+    <div class="translate-code"><span class="cm">-- The 4-step pipeline:</span>
+<span class="cm">-- 1. LAG → previous timestamp</span>
+<span class="cm">-- 2. GAP → time difference</span>
+<span class="cm">-- 3. FLAG → new session? 1 or 0</span>
+<span class="cm">-- 4. CUMSUM → session ID</span></div>
+    <div class="translate-eng">
+      <div class="line"><strong>Same pattern, three languages:</strong></div>
+      <div class="line">📊 Pandas: <code>shift() → diff() → flag → cumsum()</code></div>
+      <div class="line">⚡ PySpark: <code>lag() → gap → when() → sum().over()</code></div>
+      <div class="line">🗃️ SQL: <code>LAG() → EXTRACT → CASE → SUM() OVER()</code></div>
+      <div class="line"><em>Being fluent in all three = superpower</em></div>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="kw">WITH</span> with_gap <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> *,
+        <span class="fn">LAG</span>(click_time) <span class="kw">OVER</span> (
+            <span class="kw">PARTITION BY</span> user_id <span class="kw">ORDER BY</span> click_time
+        ) <span class="kw">AS</span> prev_click,
+        <span class="fn">EXTRACT</span>(<span class="kw">EPOCH FROM</span> (
+            click_time - <span class="fn">LAG</span>(click_time) <span class="kw">OVER</span> (
+                <span class="kw">PARTITION BY</span> user_id <span class="kw">ORDER BY</span> click_time
+            )
+        )) / <span class="fn">60.0</span> <span class="kw">AS</span> gap_minutes
+    <span class="kw">FROM</span> clicks
+),
+with_flag <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> *,
+        <span class="kw">CASE WHEN</span> gap_minutes <span class="kw">IS NULL OR</span> gap_minutes &gt; <span class="fn">30</span>
+            <span class="kw">THEN</span> <span class="fn">1</span> <span class="kw">ELSE</span> <span class="fn">0</span> <span class="kw">END</span> <span class="kw">AS</span> new_session_flag
+    <span class="kw">FROM</span> with_gap
+)
+<span class="kw">SELECT</span>
+    user_id, click_time, page,
+    <span class="fn">SUM</span>(new_session_flag) <span class="kw">OVER</span> (
+        <span class="kw">PARTITION BY</span> user_id
+        <span class="kw">ORDER BY</span> click_time
+        <span class="kw">ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</span>
+    ) <span class="kw">AS</span> session_id
+<span class="kw">FROM</span> with_flag
+<span class="kw">ORDER BY</span> user_id, click_time;
+<span class="cm">-- BigQuery: use TIMESTAMP_DIFF(click_time, prev_click, MINUTE)</span></div>
+
+  <p><strong>Trace:</strong> Flag values <code>[1, 0, 0, 1, 0]</code> become cumulative sums <code>[1, 1, 1, 2, 2]</code> → two sessions.</p>
+
+  <h3>Problem 10: Org Chart Hierarchy (Recursive CTE)</h3>
+
+  <div class="code-block"><span class="kw">WITH RECURSIVE</span> org_tree <span class="kw">AS</span> (
+    <span class="cm">-- Anchor: start at the root</span>
+    <span class="kw">SELECT</span> emp_id, name, manager_id, <span class="fn">0</span> <span class="kw">AS</span> level
+    <span class="kw">FROM</span> employees
+    <span class="kw">WHERE</span> manager_id <span class="kw">IS NULL</span>
+
+    <span class="kw">UNION ALL</span>
+
+    <span class="cm">-- Recursive: find children of current level</span>
+    <span class="kw">SELECT</span> e.emp_id, e.name, e.manager_id, t.level + <span class="fn">1</span>
+    <span class="kw">FROM</span> employees e
+    <span class="kw">JOIN</span> org_tree t <span class="kw">ON</span> e.manager_id = t.emp_id
+)
+<span class="kw">SELECT</span> emp_id, name, level
+<span class="kw">FROM</span> org_tree
+<span class="kw">ORDER BY</span> level, name;</div>
+
+  <div class="aha">
+    <div class="aha-title">🚨 Cycle Detection — Chef's Kiss Moment</div>
+    <p>Recursive CTEs can <strong>infinite-loop</strong> if there's a cycle (A manages B manages A). In production, add <code>WHERE level &lt; 20</code> as a safety guard, or use <code>CYCLE</code> detection (PostgreSQL 14+). Mentioning this unprompted is a <em>chef's kiss</em> moment in interviews. <strong>Note:</strong> BigQuery doesn't support <code>WITH RECURSIVE</code> — you'd use iterative scripting.</p>
+  </div>
+</section>
+
+<!-- Screen 7: Problems 11 & 12 -->
+<section class="screen" id="s7">
+  <h2>🎯 Funnel Analysis &amp; <span class="accent">Nth Salary</span></h2>
+
+  <h3>Problem 11: Funnel Conversion Rates</h3>
+  <p>Compute conversion rates across: page_view → add_to_cart → checkout → purchase</p>
+
+  <div class="code-block"><span class="kw">WITH</span> funnel <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        <span class="fn">COUNT</span>(<span class="kw">DISTINCT CASE WHEN</span> event_type = <span class="str">'page_view'</span>   <span class="kw">THEN</span> user_id <span class="kw">END</span>) <span class="kw">AS</span> step1_views,
+        <span class="fn">COUNT</span>(<span class="kw">DISTINCT CASE WHEN</span> event_type = <span class="str">'add_to_cart'</span> <span class="kw">THEN</span> user_id <span class="kw">END</span>) <span class="kw">AS</span> step2_cart,
+        <span class="fn">COUNT</span>(<span class="kw">DISTINCT CASE WHEN</span> event_type = <span class="str">'checkout'</span>    <span class="kw">THEN</span> user_id <span class="kw">END</span>) <span class="kw">AS</span> step3_checkout,
+        <span class="fn">COUNT</span>(<span class="kw">DISTINCT CASE WHEN</span> event_type = <span class="str">'purchase'</span>    <span class="kw">THEN</span> user_id <span class="kw">END</span>) <span class="kw">AS</span> step4_purchase
+    <span class="kw">FROM</span> user_events
+)
+<span class="kw">SELECT</span>
+    step1_views, step2_cart, step3_checkout, step4_purchase,
+    <span class="fn">ROUND</span>(<span class="fn">100.0</span> * step2_cart     / <span class="fn">NULLIF</span>(step1_views, <span class="fn">0</span>), <span class="fn">1</span>) <span class="kw">AS</span> view_to_cart_pct,
+    <span class="fn">ROUND</span>(<span class="fn">100.0</span> * step3_checkout / <span class="fn">NULLIF</span>(step1_views, <span class="fn">0</span>), <span class="fn">1</span>) <span class="kw">AS</span> view_to_checkout_pct,
+    <span class="fn">ROUND</span>(<span class="fn">100.0</span> * step4_purchase / <span class="fn">NULLIF</span>(step1_views, <span class="fn">0</span>), <span class="fn">1</span>) <span class="kw">AS</span> view_to_purchase_pct
+<span class="kw">FROM</span> funnel;</div>
+
+  <p><strong>How it works:</strong> <code>COUNT(DISTINCT CASE WHEN ...)</code> counts unique users per step. The <code>CASE</code> returns NULL for non-matching events, and <code>COUNT(DISTINCT)</code> ignores NULLs.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Strict vs Simple Funnel</div>
+    <p>A more rigorous funnel requires <strong>sequential</strong> steps (cart only counts if the user also viewed). Enforce ordering by joining on <code>user_id</code> with timestamp conditions: <code>cart.event_time &gt; view.event_time</code>. Mentioning this distinction shows analytical maturity.</p>
+  </div>
+
+  <h3>Problem 12: Second Highest Salary Without LIMIT</h3>
+  <p>Two approaches — show both for maximum interview points:</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🅰️ Subquery (Classic)</h4>
+      <div class="code-block"><span class="kw">SELECT</span> <span class="fn">MAX</span>(salary)
+    <span class="kw">AS</span> second_highest
+<span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> salary &lt; (
+    <span class="kw">SELECT</span> <span class="fn">MAX</span>(salary)
+    <span class="kw">FROM</span> employees
+);</div>
+      <p style="font-size:0.85rem;margin-top:0.8rem">Fast to write. Only works for "second." Inner query finds max, outer finds max below that.</p>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>🅱️ Window Function (Flexible)</h4>
+      <div class="code-block"><span class="kw">WITH</span> ranked <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> salary,
+        <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span> (
+        <span class="kw">ORDER BY</span> salary <span class="kw">DESC</span>
+        ) <span class="kw">AS</span> dr
+    <span class="kw">FROM</span> employees
+)
+<span class="kw">SELECT DISTINCT</span> salary
+<span class="kw">FROM</span> ranked
+<span class="kw">WHERE</span> dr = <span class="fn">2</span>;</div>
+      <p style="font-size:0.85rem;margin-top:0.8rem">More general — change <code>dr = N</code> for any Nth value. Start with A, offer B to show range.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 8: Pattern Recognition Guide -->
+<section class="screen screen-alt" id="s8">
+  <h2>🧭 SQL Pattern <span class="accent">Recognition Guide</span></h2>
+  <p>When you read a problem statement, look for these <strong>signal phrases</strong> and map them to the right technique:</p>
+
+  <table class="algo-table">
+    <tr><th>Signal Phrase</th><th>SQL Pattern</th><th>Key Syntax</th></tr>
+    <tr><td>"Top N per group"</td><td>Window + filter</td><td><code>DENSE_RANK() OVER (...) &lt;= N</code></td></tr>
+    <tr><td>"Compare to manager/parent"</td><td>Self-join</td><td><code>JOIN t2 ON t1.parent_id = t2.id</code></td></tr>
+    <tr><td>"Never / no matching"</td><td>Anti-join</td><td><code>LEFT JOIN ... IS NULL</code> / <code>NOT EXISTS</code></td></tr>
+    <tr><td>"Running total / cumulative"</td><td>Window frame</td><td><code>SUM() OVER (ROWS UNBOUNDED PRECEDING)</code></td></tr>
+    <tr><td>"Previous / next row"</td><td>LAG / LEAD</td><td><code>LAG(col) OVER (ORDER BY ...)</code></td></tr>
+    <tr><td>"Pivot / crosstab"</td><td>Conditional agg</td><td><code>SUM(CASE WHEN ... THEN ... END)</code></td></tr>
+    <tr><td>"Remove duplicates"</td><td>ROW_NUMBER dedup</td><td><code>ROW_NUMBER() OVER (...) = 1</code></td></tr>
+    <tr><td>"Consecutive days/events"</td><td>Gap and island</td><td><code>date − ROW_NUMBER() → GROUP BY</code></td></tr>
+    <tr><td>"Session / group by time gap"</td><td>Sessionization</td><td><code>LAG → gap → flag → SUM()</code></td></tr>
+    <tr><td>"Hierarchy / tree / org chart"</td><td>Recursive CTE</td><td><code>WITH RECURSIVE ... UNION ALL</code></td></tr>
+    <tr><td>"Funnel / conversion"</td><td>Conditional COUNT</td><td><code>COUNT(DISTINCT CASE WHEN ...)</code></td></tr>
+    <tr><td>"Nth highest without LIMIT"</td><td>Subquery / window</td><td><code>DENSE_RANK() = N</code> or nested MAX</td></tr>
+    <tr><td>"Year-over-year / MoM"</td><td>LAG with offset</td><td><code>LAG(col, 12) OVER (...)</code></td></tr>
+    <tr><td>"Moving average"</td><td>Window frame</td><td><code>AVG() OVER (ROWS 6 PRECEDING)</code></td></tr>
+    <tr><td>"Exists in A but not B"</td><td>Anti-join</td><td><code>LEFT JOIN IS NULL / EXCEPT</code></td></tr>
+    <tr><td>"Median"</td><td>PERCENTILE / subquery</td><td><code>PERCENTILE_CONT(0.5)</code></td></tr>
+    <tr><td>"First/last per group"</td><td>Window + filter</td><td><code>ROW_NUMBER() OVER (...) = 1</code></td></tr>
+    <tr><td>"Date series / fill gaps"</td><td>Recursive CTE + LEFT JOIN</td><td>Generate dates, left join actuals</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">🎯 How to Use This Table</div>
+    <p>Print this. Tape it to your monitor. Before coding, scan the problem statement for signal phrases, match them to a pattern, then write the corresponding syntax. <strong>Pattern recognition is the entire game.</strong></p>
+  </div>
+</section>
+
+<!-- Screen 9: Pitfalls & Study Plan -->
+<section class="screen" id="s9">
+  <h2>⚠️ Common Pitfalls &amp; <span class="accent">Study Plan</span></h2>
+
+  <h3>7 Pitfalls That Trip Up Even Senior Engineers</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>1. NOT IN with NULLs</h4>
+      <p>If the subquery contains ANY NULL, the entire <code>NOT IN</code> returns empty. Use <code>NOT EXISTS</code> instead.</p>
+    </div>
+    <div class="card blue">
+      <h4>2. Missing GROUP BY Cols</h4>
+      <p>Every non-aggregated column in SELECT must appear in GROUP BY. MySQL is lenient; PostgreSQL &amp; BigQuery are strict.</p>
+    </div>
+    <div class="card green">
+      <h4>3. Window Frame Defaults</h4>
+      <p><code>SUM() OVER (ORDER BY x)</code> uses RANGE by default, which groups ties. Use <code>ROWS</code> for deterministic behavior.</p>
+    </div>
+    <div class="card purple">
+      <h4>4. Integer Division</h4>
+      <p><code>SELECT 1 / 3</code> returns <code>0</code> in many engines. Always cast: <code>1.0 / 3</code> or <code>CAST(1 AS DECIMAL) / 3</code>.</p>
+    </div>
+    <div class="card">
+      <h4>5. Forgetting DISTINCT</h4>
+      <p><code>COUNT(user_id)</code> counts all rows. <code>COUNT(DISTINCT user_id)</code> counts unique users. Huge difference in funnels.</p>
+    </div>
+    <div class="card blue">
+      <h4>6. Self-Join Double Counting</h4>
+      <p>When comparing pairs, use <code>e1.id &lt; e2.id</code> to avoid counting (A,B) and (B,A) as separate pairs.</p>
+    </div>
+    <div class="card green">
+      <h4>7. Recursive CTE Infinite Loops</h4>
+      <p>Always add a depth limit (<code>WHERE level &lt; 100</code>) or ensure your data is acyclic. No guard = runaway query.</p>
+    </div>
+  </div>
+
+  <h3>7-Day Study Plan</h3>
+  <table class="algo-table">
+    <tr><th>Day</th><th>Problems</th><th>Focus</th></tr>
+    <tr><td>1</td><td>1, 2, 3</td><td>Window basics, self-join, anti-join</td></tr>
+    <tr><td>2</td><td>4, 5, 6</td><td>Running totals, LAG, conditional agg</td></tr>
+    <tr><td>3</td><td>7, 8</td><td>Dedup pattern, gap &amp; island</td></tr>
+    <tr><td>4</td><td>9, 10</td><td>Sessionization, recursive CTE</td></tr>
+    <tr><td>5</td><td>11, 12</td><td>Funnel analysis, Nth value</td></tr>
+    <tr><td>6</td><td>All</td><td>Timed practice: 12 min per problem</td></tr>
+    <tr><td>7</td><td>Weakest 4</td><td>Review and re-solve from scratch</td></tr>
+  </table>
+</section>
+
+<!-- Screen 10: Quiz -->
+<section class="screen screen-alt" id="s10">
+  <h2>🧪 Knowledge <span class="accent">Check</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: Which window function should you use for "top 3 distinct salary tiers per department"?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) ROW_NUMBER() — it handles ties correctly</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">B) RANK() — it assigns the same rank to ties</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">C) DENSE_RANK() — same rank for ties, no gaps</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) NTILE(3) — it splits into 3 buckets</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Why should you avoid NOT IN when the subquery might contain NULLs?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) It's slower than NOT EXISTS</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) The entire NOT IN returns no rows if any NULL exists</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) It causes a syntax error in BigQuery</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) It skips rows with matching values</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: In the gap-and-island technique, what does "date minus ROW_NUMBER()" produce?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) The number of gaps in the sequence</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) A constant value for consecutive dates (the island ID)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) The total number of consecutive days</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) A unique identifier for each row</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: What is the 4-step sessionization pipeline?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) GROUP BY → HAVING → ORDER BY → LIMIT</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) PARTITION → RANK → FILTER → JOIN</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">C) LAG → gap computation → flag new sessions → cumulative SUM</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) CTE → subquery → window → aggregate</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🚀 What's Next</div>
+    <p>You've mastered the SQL patterns. Now it's time for the <strong>Interview Gauntlet</strong> — 6 back-to-back rounds simulating a real interview day. Deep breath. Let's go. 🔥</p>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-06-de-coding/index.html">← DE Coding</a>
+  <a href="../module-08-interview-gauntlet/index.html">Next: Interview Gauntlet 🔥 →</a>
+</footer>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! You know your SQL patterns cold.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite — review the section above and try again.';}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

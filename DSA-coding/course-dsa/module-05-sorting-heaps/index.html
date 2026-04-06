@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 5: Sorting, Searching &amp; Heaps | DSA &amp; Coding Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#DC2626;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+.grid-viz{font-family:var(--font-code);font-size:0.82rem;background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0;overflow-x:auto;white-space:pre;line-height:1.7}
+table.algo-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.85rem}
+table.algo-table th,table.algo-table td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+table.algo-table th{font-family:var(--font-heading);font-weight:700;background:rgba(0,0,0,0.03);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.03em}
+table.algo-table tr:hover{background:rgba(0,0,0,0.02)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}table.algo-table{font-size:0.75rem}table.algo-table th,table.algo-table td{padding:0.4rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎯 DSA &amp; Coding Mastery</a><div class="nav-dots"><a href="../module-01-arrays-strings/" class="nav-dot"></a><a href="../module-02-hashmaps/" class="nav-dot"></a><a href="../module-03-trees-graphs/" class="nav-dot"></a><a href="../module-04-dynamic-programming/" class="nav-dot"></a><a href="../module-05-sorting-heaps/" class="nav-dot active"></a><a href="../module-06-de-coding/" class="nav-dot"></a><a href="../module-07-sql-coding/" class="nav-dot"></a><a href="../module-08-interview-gauntlet/" class="nav-dot" style="background:var(--color-error)"></a></div></div></nav>
+
+<!-- Screen 1: Binary Search -->
+<section class="screen" id="s1">
+  <h2>🔍 Binary Search — <span class="accent">The Template</span></h2>
+  <p><em>"Give me six hours to chop down a tree and I will spend the first four sharpening the axe."</em> — Abraham Lincoln (on choosing the right algorithm)</p>
+  <p>Binary search is deceptively simple to describe and notoriously tricky to implement without off-by-one errors. Given a <strong>sorted</strong> array, eliminate half the search space each step — O(log n) time. Searching <strong>1 billion</strong> elements takes only ~30 comparisons.</p>
+
+  <h3>The Template (Inclusive Bounds)</h3>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">binary_search</span>(nums: <span class="fn">list</span>[<span class="fn">int</span>], target: <span class="fn">int</span>) -> <span class="fn">int</span>:
+    <span class="str">"""Return index of target, or -1 if not found."""</span>
+    left, right = <span class="fn">0</span>, <span class="fn">len</span>(nums) - <span class="fn">1</span>
+
+    <span class="kw">while</span> left <= right:
+        mid = left + (right - left) // <span class="fn">2</span>  <span class="cm"># Avoids overflow in other languages</span>
+
+        <span class="kw">if</span> nums[mid] == target:
+            <span class="kw">return</span> mid
+        <span class="kw">elif</span> nums[mid] < target:
+            left = mid + <span class="fn">1</span>
+        <span class="kw">else</span>:
+            right = mid - <span class="fn">1</span>
+
+    <span class="kw">return</span> -<span class="fn">1</span></div>
+
+  <h3>Python's bisect Module</h3>
+  <div class="code-block"><span class="kw">from</span> bisect <span class="kw">import</span> bisect_left, bisect_right
+
+nums = [<span class="fn">1</span>, <span class="fn">3</span>, <span class="fn">3</span>, <span class="fn">3</span>, <span class="fn">5</span>, <span class="fn">7</span>]
+
+bisect_left(nums, <span class="fn">3</span>)   <span class="cm"># → 1  (first index where value >= 3)</span>
+bisect_right(nums, <span class="fn">3</span>)  <span class="cm"># → 4  (first index where value > 3)</span>
+
+<span class="cm"># bisect_left  → first occurrence</span>
+<span class="cm"># bisect_right → position after last occurrence</span></div>
+
+  <h3>Search Space Reduction Pattern</h3>
+  <p>Binary search isn't limited to sorted arrays. It works on <strong>any monotonic predicate</strong>: a function that returns <code>False, False, ..., True, True</code>. You're searching for the <strong>boundary</strong>.</p>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">binary_search_on_answer</span>(lo: <span class="fn">int</span>, hi: <span class="fn">int</span>) -> <span class="fn">int</span>:
+    <span class="str">"""Find the smallest value where condition(mid) is True."""</span>
+    <span class="kw">while</span> lo < hi:
+        mid = lo + (hi - lo) // <span class="fn">2</span>
+        <span class="kw">if</span> condition(mid):
+            hi = mid       <span class="cm"># mid might be the answer</span>
+        <span class="kw">else</span>:
+            lo = mid + <span class="fn">1</span>   <span class="cm"># mid is too small</span>
+    <span class="kw">return</span> lo</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 The Monotonic Predicate Insight</div>
+    <p>Whenever you see <em>"minimum capacity to ship in D days,"</em> <em>"sqrt(x),"</em> or <em>"Koko eating bananas"</em> — you're binary searching on the <strong>answer space</strong>, not an array. The predicate is monotonic: if speed=5 works, speed=6 also works. Binary search finds the boundary.</p>
+  </div>
+</section>
+
+<!-- Screen 2: Merge Sort + Quick Sort -->
+<section class="screen screen-alt" id="s2">
+  <h2>⚔️ Merge Sort vs <span class="accent">Quick Sort</span></h2>
+  <p>The two divide-and-conquer sorting titans. Know both cold — interviewers love asking why you'd choose one over the other.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🔀 Merge Sort</h4>
+      <ul>
+        <li>📊 Always O(n log n) — no worst-case degradation</li>
+        <li>✅ Stable sort (preserves relative order)</li>
+        <li>⚠️ O(n) extra space for merging</li>
+        <li>🏗️ Foundation for external sorting (data > RAM)</li>
+        <li>🔗 Merge step reused in "Merge K Sorted Lists"</li>
+        <li>📦 Divide → recurse → merge two sorted halves</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>⚡ Quick Sort</h4>
+      <ul>
+        <li>📊 O(n log n) average, O(n²) worst case</li>
+        <li>❌ Not stable</li>
+        <li>✅ In-place — O(log n) stack space</li>
+        <li>🚀 Faster in practice due to cache locality</li>
+        <li>🔀 Partition step reused in Quick Select</li>
+        <li>📦 Choose pivot → partition → recurse each side</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Merge Sort Code</h3>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">merge_sort</span>(arr: <span class="fn">list</span>[<span class="fn">int</span>]) -> <span class="fn">list</span>[<span class="fn">int</span>]:
+    <span class="kw">if</span> <span class="fn">len</span>(arr) <= <span class="fn">1</span>: <span class="kw">return</span> arr
+    mid = <span class="fn">len</span>(arr) // <span class="fn">2</span>
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    <span class="kw">return</span> _merge(left, right)
+
+<span class="kw">def</span> <span class="fn">_merge</span>(left, right):
+    result, i, j = [], <span class="fn">0</span>, <span class="fn">0</span>
+    <span class="kw">while</span> i < <span class="fn">len</span>(left) <span class="kw">and</span> j < <span class="fn">len</span>(right):
+        <span class="kw">if</span> left[i] <= right[j]:  <span class="cm"># <= ensures stability</span>
+            result.append(left[i]); i += <span class="fn">1</span>
+        <span class="kw">else</span>:
+            result.append(right[j]); j += <span class="fn">1</span>
+    result.extend(left[i:])
+    result.extend(right[j:])
+    <span class="kw">return</span> result</div>
+
+  <h3>Lomuto Partition (Quick Sort)</h3>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">_lomuto_partition</span>(arr, lo, hi):
+    <span class="str">"""Partition using last element as pivot. Return pivot index."""</span>
+    pivot = arr[hi]
+    i = lo - <span class="fn">1</span>
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(lo, hi):
+        <span class="kw">if</span> arr[j] <= pivot:
+            i += <span class="fn">1</span>
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + <span class="fn">1</span>], arr[hi] = arr[hi], arr[i + <span class="fn">1</span>]
+    <span class="kw">return</span> i + <span class="fn">1</span>
+
+<span class="kw">import</span> random
+
+<span class="kw">def</span> <span class="fn">quick_sort</span>(arr, lo=<span class="fn">0</span>, hi=<span class="fn">None</span>):
+    <span class="kw">if</span> hi <span class="kw">is</span> <span class="fn">None</span>: hi = <span class="fn">len</span>(arr) - <span class="fn">1</span>
+    <span class="kw">if</span> lo < hi:
+        rand_idx = random.randint(lo, hi)      <span class="cm"># randomize to avoid worst case</span>
+        arr[rand_idx], arr[hi] = arr[hi], arr[rand_idx]
+        p = _lomuto_partition(arr, lo, hi)
+        quick_sort(arr, lo, p - <span class="fn">1</span>)
+        quick_sort(arr, p + <span class="fn">1</span>, hi)</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Why Not Always Use Merge Sort?</div>
+    <p>The O(n) extra space is a real cost. Quick Sort is <strong>in-place</strong> and faster in practice due to <strong>cache locality</strong> — accessing contiguous memory beats pointer-chasing. Python's built-in <code>sorted()</code> uses <strong>Tim Sort</strong>, a merge sort + insertion sort hybrid that's O(n) on nearly-sorted data.</p>
+  </div>
+</section>
+
+<!-- Screen 3: Heaps -->
+<section class="screen" id="s3">
+  <h2>🏔️ Heaps &amp; the <span class="accent">Top-K Pattern</span></h2>
+  <p>A heap is a <strong>complete binary tree</strong> stored as an array where every parent satisfies the heap property. Python's <code>heapq</code> provides a <strong>min-heap</strong>. For max-heap, negate values.</p>
+
+  <div class="code-block"><span class="kw">import</span> heapq
+
+nums = [<span class="fn">5</span>, <span class="fn">3</span>, <span class="fn">8</span>, <span class="fn">1</span>, <span class="fn">2</span>]
+heapq.heapify(nums)              <span class="cm"># O(n) — in-place</span>
+heapq.heappush(nums, <span class="fn">4</span>)          <span class="cm"># O(log n)</span>
+smallest = heapq.heappop(nums)   <span class="cm"># O(log n) → returns 1</span>
+heapq.heapreplace(nums, <span class="fn">6</span>)       <span class="cm"># Pop smallest, push 6 (one op)</span>
+heapq.nsmallest(<span class="fn">3</span>, nums)          <span class="cm"># O(n log 3) — efficient for small k</span>
+
+<span class="cm"># Max-heap trick: negate on push, negate on pop</span>
+max_heap = []
+heapq.heappush(max_heap, -val)
+largest = -heapq.heappop(max_heap)</div>
+
+  <h3>The Top-K Pattern</h3>
+  <p><strong>Top-K Largest → Min-heap of size K.</strong> The heap's root is the <em>smallest of the K largest</em>. Anything bigger than the root evicts it. Time: O(n log k).</p>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">top_k_largest</span>(nums: <span class="fn">list</span>[<span class="fn">int</span>], k: <span class="fn">int</span>) -> <span class="fn">list</span>[<span class="fn">int</span>]:
+    heap = nums[:k]
+    heapq.heapify(heap)
+    <span class="kw">for</span> num <span class="kw">in</span> nums[k:]:
+        <span class="kw">if</span> num > heap[<span class="fn">0</span>]:
+            heapq.heapreplace(heap, num)
+    <span class="kw">return</span> heap  <span class="cm"># unordered; sort if order matters</span></div>
+
+  <h3>When to Use a Heap</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔄 Dynamic Min/Max</h4>
+      <p>Repeated access to extreme values in a <strong>changing</strong> dataset → heap. Static? Just sort once.</p>
+    </div>
+    <div class="card blue">
+      <h4>🏆 Top-K Elements</h4>
+      <p>K elements from a stream or large collection. Min-heap of size K → O(n log k).</p>
+    </div>
+    <div class="card green">
+      <h4>🔗 Merging K Sorted</h4>
+      <p>Min-heap of K heads. Always pick the smallest → O(N log k) total.</p>
+    </div>
+    <div class="card purple">
+      <h4>📋 Priority Scheduling</h4>
+      <p>Task queues, Dijkstra's algorithm, meeting rooms — anything needing priority order.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🧠 Why Min-Heap for Largest?</div>
+    <p>Counter-intuitive but elegant: the min-heap root is a <strong>gatekeeper</strong>. It's the smallest thing allowed in the "top K club." Anything bigger kicks it out. At the end, everyone in the club is top-K. This is the key insight interviewers test.</p>
+  </div>
+</section>
+
+<!-- Screen 4: Solutions 1-2 -->
+<section class="screen screen-alt" id="s4">
+  <h2>🧩 Binary Search <span class="accent">Classic + Rotated</span></h2>
+
+  <h3>Problem 1: Binary Search (LeetCode 704)</h3>
+  <p>Sorted array + target → return index or -1. The warmup — but mention <code>left + (right - left) // 2</code> to avoid overflow in Java/C++.</p>
+  <div class="translate">
+    <div class="translate-code"><span class="kw">def</span> <span class="fn">search</span>(nums, target):
+    left, right = <span class="fn">0</span>, <span class="fn">len</span>(nums) - <span class="fn">1</span>
+
+    <span class="kw">while</span> left <= right:
+        mid = left + (right - left) // <span class="fn">2</span>
+
+        <span class="kw">if</span> nums[mid] == target:
+            <span class="kw">return</span> mid
+        <span class="kw">elif</span> nums[mid] < target:
+            left = mid + <span class="fn">1</span>
+        <span class="kw">else</span>:
+            right = mid - <span class="fn">1</span>
+
+    <span class="kw">return</span> -<span class="fn">1</span>
+
+<span class="cm"># O(log n) time, O(1) space</span></div>
+    <div class="translate-eng">
+      <div class="line">📌 Classic binary search on sorted array</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📏 Inclusive bounds: left and right both valid</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔄 While search space is non-empty:</div>
+      <div class="line">📊 Calculate midpoint (overflow-safe)</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">✅ Found it → return index</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">➡️ Target is bigger → search right half</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⬅️ Target is smaller → search left half</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">❌ Exhausted → not found</div>
+    </div>
+  </div>
+
+  <h3>Problem 2: Search in Rotated Sorted Array (LeetCode 33)</h3>
+  <p>Array rotated at unknown pivot: <code>[4,5,6,7,0,1,2]</code>. At any mid point, <strong>one half is always sorted</strong>. Determine which, then check if target lies within it.</p>
+  <div class="translate">
+    <div class="translate-code"><span class="kw">def</span> <span class="fn">search_rotated</span>(nums, target):
+    left, right = <span class="fn">0</span>, <span class="fn">len</span>(nums) - <span class="fn">1</span>
+
+    <span class="kw">while</span> left <= right:
+        mid = left + (right - left) // <span class="fn">2</span>
+        <span class="kw">if</span> nums[mid] == target:
+            <span class="kw">return</span> mid
+
+        <span class="cm"># Left half is sorted</span>
+        <span class="kw">if</span> nums[left] <= nums[mid]:
+            <span class="kw">if</span> nums[left] <= target < nums[mid]:
+                right = mid - <span class="fn">1</span>
+            <span class="kw">else</span>:
+                left = mid + <span class="fn">1</span>
+        <span class="cm"># Right half is sorted</span>
+        <span class="kw">else</span>:
+            <span class="kw">if</span> nums[mid] < target <= nums[right]:
+                left = mid + <span class="fn">1</span>
+            <span class="kw">else</span>:
+                right = mid - <span class="fn">1</span>
+
+    <span class="kw">return</span> -<span class="fn">1</span>
+<span class="cm"># O(log n) time, O(1) space</span></div>
+    <div class="translate-eng">
+      <div class="line">📌 Binary search in rotated sorted array</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔄 Standard binary search loop</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">✅ Found → return</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔑 KEY: nums[left] <= nums[mid]?</div>
+      <div class="line">⬅️ Left half is sorted</div>
+      <div class="line">🎯 Target in sorted left? → go left</div>
+      <div class="line">➡️ Otherwise → go right</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">➡️ Right half is sorted</div>
+      <div class="line">🎯 Target in sorted right? → go right</div>
+      <div class="line">⬅️ Otherwise → go left</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">❌ Not found</div>
+      <div class="line">💡 With duplicates (LC 81): worst case O(n)</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 The Critical Insight</div>
+    <p><code>nums[left] <= nums[mid]</code> determines which half is sorted. Walk through <code>[4,5,6,7,0,1,2]</code> with target <code>0</code> on the whiteboard. If duplicates are allowed, you may need <code>left += 1</code> to skip them — worst case degrades to O(n).</p>
+  </div>
+</section>
+
+<!-- Screen 5: Solutions 3-4 -->
+<section class="screen" id="s5">
+  <h2>🧩 Kth Largest &amp; <span class="accent">Top K Frequent</span></h2>
+
+  <h3>Problem 3: Kth Largest Element (LeetCode 215)</h3>
+  <p>Two approaches — present both and ask the interviewer which trade-off they prefer.</p>
+  <div class="translate">
+    <div class="translate-code"><span class="cm"># Approach 1: Min-Heap of Size K</span>
+<span class="kw">import</span> heapq
+
+<span class="kw">def</span> <span class="fn">findKthLargest</span>(nums, k):
+    heap = nums[:k]
+    heapq.heapify(heap)
+    <span class="kw">for</span> num <span class="kw">in</span> nums[k:]:
+        <span class="kw">if</span> num > heap[<span class="fn">0</span>]:
+            heapq.heapreplace(heap, num)
+    <span class="kw">return</span> heap[<span class="fn">0</span>]
+<span class="cm"># O(n log k) time, O(k) space</span>
+
+<span class="cm"># Approach 2: Quick Select</span>
+<span class="kw">def</span> <span class="fn">findKthLargest_qs</span>(nums, k):
+    target = <span class="fn">len</span>(nums) - k
+    lo, hi = <span class="fn">0</span>, <span class="fn">len</span>(nums) - <span class="fn">1</span>
+    <span class="kw">while</span> lo < hi:
+        p = partition(lo, hi)
+        <span class="kw">if</span> p == target: <span class="kw">return</span> nums[p]
+        <span class="kw">elif</span> p < target: lo = p + <span class="fn">1</span>
+        <span class="kw">else</span>: hi = p - <span class="fn">1</span>
+    <span class="kw">return</span> nums[lo]
+<span class="cm"># O(n) avg / O(n²) worst, O(1) space</span></div>
+    <div class="translate-eng">
+      <div class="line">🏔️ <strong>Heap approach:</strong></div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📦 Seed heap with first K elements</div>
+      <div class="line">🔄 For each remaining element:</div>
+      <div class="line">🚪 Bigger than gatekeeper? Swap in</div>
+      <div class="line">🏆 Root = Kth largest</div>
+      <div class="line">⏱️ Consistent O(n log k)</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⚡ <strong>Quick Select approach:</strong></div>
+      <div class="line">🔄 Convert "Kth largest" → index n-k</div>
+      <div class="line">📊 Partition array around random pivot</div>
+      <div class="line">✅ Pivot lands at target? Done!</div>
+      <div class="line">➡️ Pivot too small? Search right</div>
+      <div class="line">⬅️ Pivot too big? Search left</div>
+      <div class="line">⚡ O(n) average but O(n²) worst</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">💡 Pragmatic: heapq.nlargest(k, nums)[-1]</div>
+    </div>
+  </div>
+
+  <h3>Problem 4: Top K Frequent Elements (LeetCode 347)</h3>
+  <div class="translate">
+    <div class="translate-code"><span class="kw">from</span> collections <span class="kw">import</span> Counter
+<span class="kw">import</span> heapq
+
+<span class="kw">def</span> <span class="fn">topKFrequent</span>(nums, k):
+    <span class="str">"""Min-heap approach: O(n log k)"""</span>
+    counts = Counter(nums)
+    heap = []
+    <span class="kw">for</span> num, freq <span class="kw">in</span> counts.items():
+        <span class="kw">if</span> <span class="fn">len</span>(heap) < k:
+            heapq.heappush(heap, (freq, num))
+        <span class="kw">elif</span> freq > heap[<span class="fn">0</span>][<span class="fn">0</span>]:
+            heapq.heapreplace(heap, (freq, num))
+    <span class="kw">return</span> [num <span class="kw">for</span> _, num <span class="kw">in</span> heap]
+
+<span class="kw">def</span> <span class="fn">topKFrequent_bucket</span>(nums, k):
+    <span class="str">"""Bucket sort approach: O(n)"""</span>
+    counts = Counter(nums)
+    buckets = [[] <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(nums)+<span class="fn">1</span>)]
+    <span class="kw">for</span> num, freq <span class="kw">in</span> counts.items():
+        buckets[freq].append(num)
+    result = []
+    <span class="kw">for</span> freq <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(buckets)-<span class="fn">1</span>, <span class="fn">0</span>, -<span class="fn">1</span>):
+        <span class="kw">for</span> num <span class="kw">in</span> buckets[freq]:
+            result.append(num)
+            <span class="kw">if</span> <span class="fn">len</span>(result) == k:
+                <span class="kw">return</span> result
+    <span class="kw">return</span> result</div>
+    <div class="translate-eng">
+      <div class="line">🏔️ <strong>Heap approach:</strong></div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📊 Count frequencies first</div>
+      <div class="line">📦 Min-heap keyed by frequency</div>
+      <div class="line">🔄 Heap &lt; K? Push freely</div>
+      <div class="line">🚪 Higher freq than gatekeeper? Swap in</div>
+      <div class="line">🏆 Heap has top K frequent elements</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🪣 <strong>Bucket sort approach:</strong></div>
+      <div class="line">📊 Count frequencies</div>
+      <div class="line">📦 bucket[freq] = list of nums with that freq</div>
+      <div class="line">🔄 Max freq = len(nums), so finite buckets</div>
+      <div class="line">⬇️ Walk buckets from high freq down</div>
+      <div class="line">🏆 Collect until we have K elements</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">💡 Bucket sort is O(n) — great follow-up!</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 The Bucket Sort Flex</div>
+    <p>The bucket sort approach is O(n) and very elegant. Explain: <em>"The maximum possible frequency is n, so I can use frequency as an array index."</em> This is a great optimization follow-up that impresses interviewers every time.</p>
+  </div>
+</section>
+
+<!-- Screen 6: Solutions 5-6 -->
+<section class="screen screen-alt" id="s6">
+  <h2>🧩 Merge K Lists &amp; <span class="accent">Find Median</span></h2>
+
+  <h3>Problem 5: Merge K Sorted Lists (LeetCode 23)</h3>
+  <p>Use a <strong>min-heap</strong> to always pick the smallest current head among all K lists. Push the next node back into the heap.</p>
+  <div class="code-block"><span class="kw">import</span> heapq
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+
+<span class="cm">@</span><span class="fn">dataclass</span>
+<span class="kw">class</span> <span class="fn">ListNode</span>:
+    val: <span class="fn">int</span> = <span class="fn">0</span>
+    next: <span class="str">'ListNode | None'</span> = <span class="fn">None</span>
+    <span class="kw">def</span> <span class="fn">__lt__</span>(self, other): <span class="kw">return</span> self.val < other.val  <span class="cm"># Required for heap!</span>
+
+<span class="kw">def</span> <span class="fn">mergeKLists</span>(lists):
+    heap = [head <span class="kw">for</span> head <span class="kw">in</span> lists <span class="kw">if</span> head]
+    heapq.heapify(heap)
+    dummy = current = ListNode()
+
+    <span class="kw">while</span> heap:
+        smallest = heapq.heappop(heap)
+        current.next = smallest
+        current = current.next
+        <span class="kw">if</span> smallest.next:
+            heapq.heappush(heap, smallest.next)
+
+    <span class="kw">return</span> dummy.next
+<span class="cm"># O(N log k) time — N = total nodes, k = number of lists</span>
+<span class="cm"># O(k) space — heap holds at most k nodes</span></div>
+
+  <h3>Problem 6: Find Median from Data Stream (LeetCode 295)</h3>
+  <div class="aha">
+    <div class="aha-title">🧠 Two-Heap Diagram</div>
+    <p>Visualize two heaps pointing at each other: <code>▽ max_heap (small half) | min_heap (large half) △</code>. The roots face each other and the <strong>median lives at the boundary</strong>. Max-heap root = largest of small half. Min-heap root = smallest of large half. Median = one root or average of both.</p>
+  </div>
+
+  <div class="code-block"><span class="kw">import</span> heapq
+
+<span class="kw">class</span> <span class="fn">MedianFinder</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.lo = []   <span class="cm"># Max-heap (negated) — small half</span>
+        self.hi = []   <span class="cm"># Min-heap — large half</span>
+
+    <span class="kw">def</span> <span class="fn">addNum</span>(self, num):
+        heapq.heappush(self.lo, -num)
+        <span class="cm"># Ensure max of lo <= min of hi</span>
+        <span class="kw">if</span> self.hi <span class="kw">and</span> -self.lo[<span class="fn">0</span>] > self.hi[<span class="fn">0</span>]:
+            heapq.heappush(self.hi, -heapq.heappop(self.lo))
+        <span class="cm"># Balance sizes: lo can have at most 1 more than hi</span>
+        <span class="kw">if</span> <span class="fn">len</span>(self.lo) > <span class="fn">len</span>(self.hi) + <span class="fn">1</span>:
+            heapq.heappush(self.hi, -heapq.heappop(self.lo))
+        <span class="kw">elif</span> <span class="fn">len</span>(self.hi) > <span class="fn">len</span>(self.lo):
+            heapq.heappush(self.lo, -heapq.heappop(self.hi))
+
+    <span class="kw">def</span> <span class="fn">findMedian</span>(self):
+        <span class="kw">if</span> <span class="fn">len</span>(self.lo) > <span class="fn">len</span>(self.hi):
+            <span class="kw">return</span> -self.lo[<span class="fn">0</span>]
+        <span class="kw">return</span> (-self.lo[<span class="fn">0</span>] + self.hi[<span class="fn">0</span>]) / <span class="fn">2.0</span>
+<span class="cm"># addNum: O(log n) | findMedian: O(1) | Space: O(n)</span></div>
+
+  <h3>Walkthrough: Adding [2, 3, 1, 5, 4]</h3>
+  <div class="grid-viz">  Step │ Add │ lo (max-heap) │ hi (min-heap) │ Median
+  ─────┼─────┼───────────────┼───────────────┼───────
+    1  │  2  │ [2]           │ []            │  2.0
+    2  │  3  │ [2]           │ [3]           │  2.5
+    3  │  1  │ [2, 1]        │ [3]           │  2.0
+    4  │  5  │ [2, 1]        │ [3, 5]        │  2.5
+    5  │  4  │ [3, 2, 1]     │ [4, 5]        │ <span style="color:#A6E3A1;font-weight:bold"> 3.0</span></div>
+</section>
+
+<!-- Screen 7: Comparison Table + Decision Guide -->
+<section class="screen" id="s7">
+  <h2>📊 Sorting Comparison &amp; <span class="accent">Heap Decision Guide</span></h2>
+
+  <h3>Sorting Algorithm Comparison</h3>
+  <table class="algo-table">
+    <thead>
+      <tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Space</th><th>Stable</th><th>When to Use</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Merge Sort</strong></td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td>✅</td><td>Stability / guaranteed perf</td></tr>
+      <tr><td><strong>Quick Sort</strong></td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n)</td><td>❌</td><td>General-purpose, in-place</td></tr>
+      <tr><td><strong>Heap Sort</strong></td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(1)</td><td>❌</td><td>O(n log n) + O(1) space</td></tr>
+      <tr><td><strong>Tim Sort</strong></td><td>O(n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td>✅</td><td>Python's sorted() — use it!</td></tr>
+      <tr><td><strong>Counting Sort</strong></td><td>O(n+k)</td><td>O(n+k)</td><td>O(n+k)</td><td>O(k)</td><td>✅</td><td>Small integer range k</td></tr>
+      <tr><td><strong>Radix Sort</strong></td><td>O(d·n)</td><td>O(d·n)</td><td>O(d·n)</td><td>O(n+k)</td><td>✅</td><td>Fixed-width integers/strings</td></tr>
+      <tr><td><strong>Quick Select</strong></td><td>O(n)</td><td>O(n)</td><td>O(n²)</td><td>O(1)</td><td>—</td><td>Kth element (no full sort)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Heap Decision Flowchart</h3>
+  <div class="grid-viz">  Do you need repeated access to the min OR max?
+  ├── YES → Is the dataset dynamic (elements added/removed)?
+  │   ├── YES → Use a <span style="color:#A6E3A1">HEAP</span>
+  │   │   ├── Need min? → Min-heap (heapq default)
+  │   │   ├── Need max? → Max-heap (negate values)
+  │   │   └── Need both? → <span style="color:#CBA6F7">TWO HEAPS</span> (median pattern)
+  │   └── NO (static) → Just sort once, O(n log n)
+  ├── Need top-K elements?
+  │   ├── K small vs N → Heap of size K, O(n log k)
+  │   ├── K close to N → Just sort, O(n log n)
+  │   └── Exact Kth only → Quick Select, O(n) avg
+  └── Merging K sorted sequences?
+      └── Min-heap of size K → O(N log k) total</div>
+
+  <h3>Common Heap Interview Problems</h3>
+  <table class="algo-table">
+    <thead>
+      <tr><th>Problem</th><th>Heap Type</th><th>Size</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Kth Largest Element</td><td>Min-heap</td><td>K</td></tr>
+      <tr><td>Top K Frequent</td><td>Min-heap</td><td>K</td></tr>
+      <tr><td>Merge K Sorted Lists</td><td>Min-heap</td><td>K</td></tr>
+      <tr><td>Find Median (stream)</td><td>Two heaps</td><td>N/2 each</td></tr>
+      <tr><td>Task Scheduler</td><td>Max-heap</td><td>variable</td></tr>
+      <tr><td>Dijkstra's Shortest Path</td><td>Min-heap</td><td>V</td></tr>
+      <tr><td>Meeting Rooms II</td><td>Min-heap</td><td>variable</td></tr>
+    </tbody>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">🎯 The Three Pillars</div>
+    <p><strong>Binary Search</strong> reduces O(n) to O(log n) — always ask "Is the search space monotonic?" <strong>Divide and Conquer</strong> (Merge/Quick Sort) breaks problems into independent subproblems — the foundation of O(n log n). <strong>Heaps</strong> give O(log n) access to extremes — whenever you hear "top K," "median," or "merge sorted," reach for <code>heapq</code>.</p>
+  </div>
+</section>
+
+<!-- Screen 8: Quiz -->
+<section class="screen screen-alt" id="s8">
+  <h2>🧠 Quiz — <span class="accent">Test Yourself</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: For Top-K Largest elements, which heap type do you use and why?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Max-heap of size K — keeps the K largest directly</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) Min-heap of size K — root is the gatekeeper, anything bigger evicts it</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) Max-heap of size N — pop K times to get K largest</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Min-heap of size N — pop N-K times then remaining is answer</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: In a rotated sorted array [4,5,6,7,0,1,2], how do you determine which half is sorted?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Compare nums[mid] with target</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) Check if nums[left] <= nums[mid] — if true, left half is sorted</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) Compare nums[0] with nums[-1]</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) Find the pivot first, then do normal binary search</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: What's the time complexity of Quick Select for finding the Kth element?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) O(n log n) always</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) O(k log n)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">C) O(n) average, O(n²) worst case</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) O(log n) average</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: The MedianFinder uses two heaps. What are the two invariants it maintains?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Both heaps are the same size, and both are min-heaps</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) Max-heap has all even numbers, min-heap has all odd numbers</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">C) max_heap size ≤ min_heap size + 1, and every element in max_heap ≤ every element in min_heap</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Both heaps are sorted arrays maintained with binary search</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <h3>📋 Module Summary</h3>
+  <table class="algo-table">
+    <thead>
+      <tr><th>Problem</th><th>Technique</th><th>Time</th><th>Space</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Binary Search</td><td>Two pointers on sorted array</td><td>O(log n)</td><td>O(1)</td></tr>
+      <tr><td>Search Rotated Array</td><td>Modified binary search</td><td>O(log n)</td><td>O(1)</td></tr>
+      <tr><td>Kth Largest (heap)</td><td>Min-heap of size K</td><td>O(n log k)</td><td>O(k)</td></tr>
+      <tr><td>Kth Largest (QS)</td><td>Randomized partition</td><td>O(n) avg</td><td>O(1)</td></tr>
+      <tr><td>Top K Frequent</td><td>Counter + min-heap</td><td>O(n log k)</td><td>O(n)</td></tr>
+      <tr><td>Merge K Sorted Lists</td><td>Min-heap of K heads</td><td>O(N log k)</td><td>O(k)</td></tr>
+      <tr><td>Find Median</td><td>Two heaps (max + min)</td><td>O(log n) add</td><td>O(n)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-04-dynamic-programming/index.html">← Dynamic Programming</a>
+  <a href="../module-06-de-coding/index.html">Next: DE Coding →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! You\'ve got this pattern locked in.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite — review the section above and think about the key insight.';}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>
