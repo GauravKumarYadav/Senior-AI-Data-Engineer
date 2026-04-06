@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 3: DE System Design Problems | System Design — DE</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#B45309;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFFBF0,#FFF5E0);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFFBF0}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.styled-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:0.9rem;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.styled-table thead th{background:var(--color-accent);color:#fff;padding:0.8rem 1rem;text-align:left;font-family:var(--font-heading);font-weight:700;font-size:0.85rem}
+.styled-table tbody td{padding:0.7rem 1rem;border-bottom:1px solid #f0ece4;background:#fff}
+.styled-table tbody tr:last-child td{border-bottom:none}
+.styled-table tbody tr:hover td{background:#FFFBF0}
+.screen-alt{background:var(--color-bg-warm)}
+.takeaway-list{list-style:none;counter-reset:takeaway;margin:1.5rem 0}
+.takeaway-list li{counter-increment:takeaway;padding:1rem 1rem 1rem 3.5rem;margin-bottom:0.8rem;background:#fff;border-radius:12px;position:relative;box-shadow:0 2px 8px rgba(0,0,0,0.04);font-size:0.95rem;line-height:1.6}
+.takeaway-list li::before{content:counter(takeaway);position:absolute;left:1rem;top:1rem;width:2rem;height:2rem;background:var(--color-accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:0.85rem}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.styled-table{font-size:0.8rem}.styled-table thead th,.styled-table tbody td{padding:0.5rem 0.6rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🏛️ System Design — DE</a><div class="nav-dots"><a href="../module-01-data-platform/" class="nav-dot"></a><a href="../module-02-realtime-cdc/" class="nav-dot"></a><a href="../module-03-design-problems/" class="nav-dot active"></a><a href="../module-04-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Uber Surge Pricing Pipeline -->
+<section class="screen" id="s1">
+  <h2>🚕 Uber <span class="accent">Surge Pricing</span> Pipeline</h2>
+  <p>Design a real-time data pipeline that powers Uber's surge pricing. The system must continuously calculate price multipliers for every geographic zone based on real-time supply and demand, blended with historical demand patterns.</p>
+
+  <h3>Demand &amp; Supply Signals</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📈 Demand Signals</h4>
+      <ul>
+        <li>🔸 Ride requests per area per minute</li>
+        <li>🔸 Destination hotspots (concerts, airports)</li>
+        <li>🔸 App opens without booking (latent demand)</li>
+        <li>🔸 Scheduled ride requests for upcoming hours</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🚗 Supply Signals</h4>
+      <ul>
+        <li>🔹 Active drivers per area (GPS every 4s)</li>
+        <li>🔹 Driver ETA to zone (adjacent zones)</li>
+        <li>🔹 Driver shift patterns (predicted drop-off)</li>
+        <li>🔹 Ride completions about to free a driver</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Geo-Spatial Partitioning with H3 Hexagons</h3>
+  <p>Uber uses <strong>H3</strong>, a hierarchical hexagonal grid system. <span class="tooltip-term" data-tip="Hexagons tile the earth uniformly (unlike squares which distort near poles). Each hex has 6 equidistant neighbors. A single h3_index integer encodes location — perfect for GROUP BY.">Why hexagons?</span> — 6 equidistant neighbors, hierarchical resolutions, and a single integer index for aggregation.</p>
+  <div class="card-grid">
+    <div class="card"><h4>🔷 Uniform Tiling</h4><p>Hexagons tile the earth's surface without distortion near the poles, unlike square grids.</p></div>
+    <div class="card blue"><h4>🔗 6 Equidistant Neighbors</h4><p>Squares have 4 edge + 4 corner neighbors at different distances. Hexagons have 6 equidistant neighbors — no bias.</p></div>
+    <div class="card green"><h4>📐 Hierarchical</h4><p>Res 7 hexagons (~5.16 km²) nest cleanly inside res 6 (~36.13 km²). Zoom in or out as needed.</p></div>
+  </div>
+  <p>For surge pricing, <strong>resolution 7</strong> (~1.2 km edge) is the sweet spot: granular enough to detect a stadium emptying, broad enough for meaningful supply counts.</p>
+</section>
+
+<!-- Screen 2: Uber Architecture -->
+<section class="screen screen-alt" id="s2">
+  <h2>🏗️ Surge Architecture: <span class="accent">Streaming + Batch Merge</span></h2>
+  <div class="code-block">┌─────────────────── REAL-TIME PATH ───────────────────┐
+│                                                       │
+│  Ride Requests ──►  Kafka  ──► Flink Streaming Job   │
+│  Driver GPS    ──►  Kafka  ──►  (tumbling windows    │
+│  App Events    ──►  Kafka  ──►   60s per H3 hex)     │
+│                                       │               │
+│                                       ▼               │
+│                              Real-Time Features       │
+│                          (demand/supply per hex)      │
+│                                       │               │
+└───────────────────────────────────────┼───────────────┘
+                                        │
+                                        ▼
+                                ┌───────────────┐
+                                │   Pricing     │
+                                │   Service     │◄──── gRPC API
+                                │  (merge +     │      (rider app
+                                │   compute     │       queries)
+                                │   multiplier) │
+                                └───────┬───────┘
+                                        ▲
+                                        │
+┌───────────────────────────────────────┼───────────────┐
+│                                       │               │
+│                              Baseline Pricing +       │
+│                              Demand Predictions       │
+│                                       ▲               │
+│                                       │               │
+│  Historical  ──► Spark Batch ──► ML Model ──► Feature │
+│  Ride Data       (daily)         (Prophet/   Store     │
+│  Weather API                      XGBoost)  (Redis)   │
+│  Events Cal                                           │
+│                                                       │
+└─────────────────── BATCH PATH ────────────────────────┘</div>
+
+  <h3>Flink Streaming Job</h3>
+  <p><strong>Tumbling windows</strong> of 60 seconds, keyed by <code>h3_index</code>. Computes: <code>request_count</code>, <code>active_drivers</code>, <code>supply_demand_ratio</code>. Emits per-hex features to the pricing service.</p>
+
+  <h3>Batch Pipeline</h3>
+  <p>Daily Spark job trains an ML model predicting baseline demand per hex per hour. Incorporates day-of-week seasonality, holidays, weather, local events. Predictions written to a feature store (Redis) for sub-ms lookup.</p>
+
+  <h3>Pricing Service Merge Logic</h3>
+  <div class="code-block"><span class="fn">surge_multiplier</span> = <span class="fn">f</span>(
+    real_time_supply_demand_ratio,   <span class="cm"># from Flink (weight: 0.7)</span>
+    predicted_baseline_demand,        <span class="cm"># from batch ML (weight: 0.2)</span>
+    hard_caps_and_regulatory_rules    <span class="cm"># business rules (weight: 0.1)</span>
+)</div>
+
+  <h3>Key Tradeoffs</h3>
+  <table class="styled-table">
+    <thead><tr><th>Tradeoff</th><th>Option A</th><th>Option B</th><th>Uber's Choice</th></tr></thead>
+    <tbody>
+      <tr><td>Window size</td><td>30s (responsive)</td><td>120s (stable)</td><td>60s (balanced)</td></tr>
+      <tr><td>Geo resolution</td><td>Res 8 (tiny hexes)</td><td>Res 6 (large)</td><td>Res 7 (city-block)</td></tr>
+      <tr><td>Pricing staleness</td><td>Sub-second update</td><td>1-min batched</td><td>1-min (stability)</td></tr>
+      <tr><td>Cold-start areas</td><td>Default multiplier 1.0</td><td>Nearest-neighbor</td><td>Nearest-neighbor avg</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Cold-start problem:</strong> New areas with no historical data use the weighted average surge of the 6 neighboring H3 hexagons, falling back to city-wide baseline.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>This problem tests your ability to combine <strong>streaming + batch + geo-spatial</strong>. Show the interviewer you understand H3 hexagons — mention "hierarchical hexagonal grid, resolution 7, each hex has 6 equidistant neighbors." Then clearly draw the two data paths (real-time Flink, batch Spark/ML) merging at the pricing service. Most candidates only design one path. You design both.</p>
+  </div>
+</section>
+
+<!-- Screen 3: E-Commerce Data Warehouse -->
+<section class="screen" id="s3">
+  <h2>🛒 E-Commerce <span class="accent">Data Warehouse</span></h2>
+  <p>Design a data warehouse for an e-commerce company (think Amazon/Shopify scale). Must support daily business reporting, customer analytics, and real-time inventory visibility.</p>
+
+  <h3>Source Systems</h3>
+  <table class="styled-table">
+    <thead><tr><th>Source System</th><th>Type</th><th>Volume</th><th>Ingestion</th></tr></thead>
+    <tbody>
+      <tr><td>Orders DB (PostgreSQL)</td><td>OLTP</td><td>5M orders/day</td><td>CDC (Debezium)</td></tr>
+      <tr><td>Product Catalog</td><td>Microservice API</td><td>10M SKUs</td><td>Nightly full sync</td></tr>
+      <tr><td>Customer CRM</td><td>SaaS (Salesforce)</td><td>50M customers</td><td>CDC + API pulls</td></tr>
+      <tr><td>Inventory WMS</td><td>Real-time DB</td><td>500K updates/day</td><td>CDC (Debezium)</td></tr>
+      <tr><td>Clickstream</td><td>Event stream</td><td>2B events/day</td><td>Kafka direct</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Star Schema — Define the GRAIN First</h3>
+  <p><code>fct_orders</code> grain: <strong>one row per order line item.</strong> Each row = one product in one order.</p>
+  <div class="code-block">                          ┌──────────────┐
+                          │  dim_date    │
+                          │──────────────│
+                          │ date_key (PK)│
+                          │ full_date    │
+                          │ day_of_week  │
+                          │ month        │
+                          │ quarter      │
+                          │ fiscal_year  │
+                          │ is_holiday   │
+                          └──────┬───────┘
+                                 │
+┌──────────────┐    ┌────────────┴───────────┐    ┌──────────────────┐
+│ dim_customer │    │      fct_orders        │    │   dim_product    │
+│──────────────│    │────────────────────────│    │──────────────────│
+│ customer_key │◄───│ customer_key (FK)      │───►│ product_key (PK) │
+│ customer_id  │    │ product_key  (FK)      │    │ product_id       │
+│ name         │    │ date_key     (FK)      │    │ product_name     │
+│ email        │    │ geo_key      (FK)      │    │ category         │
+│ segment      │    │ order_id               │    │ subcategory      │
+│ city         │    │ order_line_id          │    │ brand            │
+│ state        │    │ quantity               │    │ unit_price       │
+│ valid_from   │    │ unit_price             │    │ valid_from       │
+│ valid_to     │    │ gross_amount           │    │ valid_to         │
+│ is_current   │    │ discount_amount        │    │ is_current       │
+└──────────────┘    │ net_amount             │    └──────────────────┘
+                    │ shipping_cost          │
+                    │ tax_amount             │    ┌──────────────────┐
+                    │ payment_method         │    │  dim_geography   │
+                    │ order_status           │───►│──────────────────│
+                    └────────────────────────┘    │ geo_key (PK)     │
+                                                  │ city             │
+                                                  │ state            │
+                                                  │ country          │
+                                                  │ region           │
+                                                  └──────────────────┘</div>
+</section>
+
+<!-- Screen 4: E-Commerce SCD + Inventory -->
+<section class="screen screen-alt" id="s4">
+  <h2>📦 SCD Type 2 &amp; <span class="accent">Real-Time Inventory</span></h2>
+
+  <h3>SCD Type 2 — Tracking History</h3>
+  <p><strong>Slowly Changing Dimension Type 2</strong> keeps full history with <code>valid_from</code>, <code>valid_to</code>, and <code>is_current</code> columns.</p>
+  <p><strong>Example:</strong> Customer moves from Dallas to Austin:</p>
+  <table class="styled-table">
+    <thead><tr><th>customer_key</th><th>customer_id</th><th>name</th><th>city</th><th>valid_from</th><th>valid_to</th><th>is_current</th></tr></thead>
+    <tbody>
+      <tr><td>1001</td><td>C-555</td><td>Jane Doe</td><td>Dallas</td><td>2023-01-15</td><td>2024-06-30</td><td>false</td></tr>
+      <tr><td>1002</td><td>C-555</td><td>Jane Doe</td><td>Austin</td><td>2024-07-01</td><td>9999-12-31</td><td>true</td></tr>
+    </tbody>
+  </table>
+  <p>The <code>customer_key</code> (surrogate key) is what <code>fct_orders</code> references. An order in March 2024 joins to key 1001 (Dallas). An order in August 2024 joins to key 1002 (Austin). This answers: <em>"What was the customer's city at the time of purchase?"</em></p>
+
+  <h3>Aggregation Marts (dbt)</h3>
+  <div class="card-grid">
+    <div class="card"><h4>📊 mart_daily_revenue</h4><p>date, channel, category → total_revenue, order_count, avg_order_value</p></div>
+    <div class="card blue"><h4>📈 mart_category_performance</h4><p>category, month → revenue, units_sold, return_rate, margin</p></div>
+    <div class="card green"><h4>👥 mart_customer_cohort</h4><p>signup_month, months_since_signup → active_customers, revenue, retention_rate</p></div>
+  </div>
+
+  <h3>Real-Time Inventory Layer</h3>
+  <div class="code-block">Inventory DB ──► Debezium CDC ──► Kafka ──► Flink ──► Materialized View (Redis)
+                                                        │
+                                              "SKU-12345: 47 units in stock"
+                                              (sub-second freshness)</div>
+  <p>The batch warehouse gets daily inventory snapshots for trend analysis. The real-time path powers the <strong>"Only 3 left!"</strong> badge on the product page.</p>
+
+  <h3>Partitioning Strategy</h3>
+  <table class="styled-table">
+    <thead><tr><th>Table</th><th>Partition Key</th><th>Rationale</th></tr></thead>
+    <tbody>
+      <tr><td>fct_orders</td><td>order_date</td><td>Efficient time-range queries</td></tr>
+      <tr><td>Dimension tables</td><td>None</td><td>Small lookup tables, full scan OK</td></tr>
+      <tr><td>mart_daily_revenue</td><td>date</td><td>Time-range reporting</td></tr>
+      <tr><td>Clickstream raw</td><td>event_date + event_hour</td><td>High volume, narrow queries</td></tr>
+    </tbody>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Always define the GRAIN of your fact table first.</strong> This is the most common mistake candidates make — they jump to schema columns without stating the grain. Say it out loud: "The grain of fct_orders is one row per order line item." Then explain why: it lets you aggregate to order-level, customer-level, or product-level. The grain determines everything.</p>
+  </div>
+</section>
+
+<!-- Screen 5: Recommendation System -->
+<section class="screen" id="s5">
+  <h2>🎯 Recommendation System <span class="accent">Data Pipeline</span></h2>
+  <p>Design the end-to-end data pipeline powering a recommendation engine like Netflix's "Top Picks for You." This is about the <strong>data infrastructure</strong> — not the ML model itself.</p>
+
+  <h3>Feature Engineering</h3>
+  <table class="styled-table">
+    <thead><tr><th>Category</th><th>Examples</th><th>Compute</th><th>Freshness</th></tr></thead>
+    <tbody>
+      <tr><td>User behavior</td><td>Total views, purchase history, avg rating</td><td>Batch (daily)</td><td>24h stale OK</td></tr>
+      <tr><td>Item attributes</td><td>Category, price tier, popularity score</td><td>Batch (daily)</td><td>24h stale OK</td></tr>
+      <tr><td>Session/real-time</td><td>Last 5 clicks, current cart, scroll depth</td><td>Streaming</td><td>Must be live</td></tr>
+      <tr><td>Interaction</td><td>Co-purchase matrix, CF embeddings</td><td>Batch (weekly)</td><td>7d stale OK</td></tr>
+    </tbody>
+  </table>
+
+  <h3>The Dual Feature Store Architecture</h3>
+  <div class="code-block">┌──────────────────────── TRAINING PATH ────────────────────────────┐
+│                                                                    │
+│  Raw Events ──► Spark Batch ──► Feature Computation ──► OFFLINE   │
+│  (S3/Delta)     (daily DAG)     (user embeddings,       STORE     │
+│                                  item popularity,      (Delta on  │
+│                                  co-occurrence)         S3/GCS)   │
+│                                                           │       │
+│                                                           ▼       │
+│                                                    Training Job   │
+│                                                    (pull labeled  │
+│                                                     feature sets) │
+└───────────────────────────────────────────────────────────────────┘
+
+┌──────────────────── SERVING PATH ─────────────────────────────────┐
+│                                                                    │
+│  Click Events ──► Kafka ──► Flink ──► Session Features ──► ONLINE │
+│  Cart Events                (real-time                     STORE   │
+│  Page Views                  aggregation)                 (Redis/  │
+│                                                          DynamoDB) │
+│                                         ▲                    │     │
+│            Batch features sync ─────────┘                    ▼     │
+│            (daily: copy user/item features               Model     │
+│             from offline → online store)                 Serving   │
+│                                                         (&lt; 50ms)  │
+└───────────────────────────────────────────────────────────────────┘</div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📦 Offline Store (Training)</h4>
+      <ul>
+        <li>💾 Storage: Parquet/Delta on S3</li>
+        <li>📖 Large batch reads for training</li>
+        <li>⏰ Time-travel: features as of a past date</li>
+        <li>🔒 Prevents label leakage</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>⚡ Online Store (Serving)</h4>
+      <ul>
+        <li>💾 Storage: Redis or DynamoDB</li>
+        <li>🔑 Key-value lookup, &lt;10ms p99</li>
+        <li>🔄 Real-time via Flink + daily batch sync</li>
+        <li>🚀 Sub-5ms feature vector fetch</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 6: Recommendation Train-Serve Skew + Serving Flow -->
+<section class="screen screen-alt" id="s6">
+  <h2>⚠️ Train-Serve Skew &amp; <span class="accent">Serving Flow</span></h2>
+
+  <h3>The Train-Serve Skew Problem</h3>
+  <p>The most insidious bug in ML systems: if features used during <strong>training</strong> differ from those used during <strong>serving</strong>, the model performs poorly in production despite great offline metrics.</p>
+  <div class="card-grid">
+    <div class="card"><h4>🐛 Different Code Paths</h4><p>Spark SQL computes a feature one way; Python serving code computes it differently. Subtle divergence = silent degradation.</p></div>
+    <div class="card blue"><h4>⏰ Different Freshness</h4><p>Training uses T-1 daily data. Serving uses real-time data. The model never saw real-time feature distributions.</p></div>
+    <div class="card green"><h4>✅ The Fix</h4><p>Compute features ONCE in a shared pipeline. Both training and serving read from the SAME store, same code, same definitions.</p></div>
+  </div>
+
+  <h3>End-to-End Serving Flow</h3>
+  <div class="code-block">User opens app
+    → API Gateway
+    → Recommendation Service
+        → Fetch user features from online store (Redis)     <span class="cm">~5ms</span>
+        → Fetch candidate item features from online store    <span class="cm">~5ms</span>
+        → Run model inference (TensorFlow Serving)          <span class="cm">~20ms</span>
+        → Apply business rules (filter out-of-stock, etc.)  <span class="cm">~2ms</span>
+        → Return top 20 recommendations
+    ← Response to client                              Total: <span class="str">~35ms</span></div>
+
+  <h3>Feature Registry (Metadata Layer)</h3>
+  <div class="card-grid">
+    <div class="card"><h4>📋 Schema Definitions</h4><p>Name, type, description, owner for every feature.</p></div>
+    <div class="card blue"><h4>🔄 Versioning</h4><p>Feature v1 vs v2 with backward compatibility.</p></div>
+    <div class="card green"><h4>🔗 Lineage</h4><p>Which raw sources feed which features.</p></div>
+    <div class="card purple"><h4>📊 Monitoring</h4><p>Data quality checks, drift detection, freshness SLAs.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>The key insight is the <strong>DUAL feature store</strong> — offline for training, online for serving. Show you understand the <strong>train-serve skew</strong> problem: "If training and serving compute features differently, model accuracy degrades silently in production. The feature store ensures both paths use identical feature definitions." This separates senior candidates from juniors.</p>
+  </div>
+</section>
+
+<!-- Screen 7: Log Analytics System -->
+<section class="screen" id="s7">
+  <h2>📋 Log Analytics <span class="accent">at Scale</span></h2>
+  <p>Design a log analytics system handling <strong>1M+ events/sec</strong> from thousands of microservices. Engineers need to search logs, dashboards need real-time error rates, and compliance requires long-term retention.</p>
+
+  <h3>Collection Layer</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🪶 Fluent Bit</h4><p>Lightweight, C-based agent on containers and edge nodes. Minimal overhead.</p></div>
+    <div class="card blue"><h4>🔌 Fluentd</h4><p>Ruby, plugin-rich agent on heavier application servers. Extensible with 500+ plugins.</p></div>
+  </div>
+  <p>Structured logging is <strong>non-negotiable</strong> — every log line must be JSON:</p>
+  <div class="code-block">{
+  <span class="str">"timestamp"</span>: <span class="str">"2025-03-15T14:23:01.456Z"</span>,
+  <span class="str">"service"</span>:   <span class="str">"payment-service"</span>,
+  <span class="str">"level"</span>:     <span class="str">"ERROR"</span>,
+  <span class="str">"trace_id"</span>:  <span class="str">"abc-123-def"</span>,
+  <span class="str">"message"</span>:   <span class="str">"Payment gateway timeout"</span>,
+  <span class="str">"duration_ms"</span>: <span class="fn">30012</span>,
+  <span class="str">"error_code"</span>: <span class="str">"PGW_TIMEOUT"</span>
+}</div>
+
+  <h3>Transport — Kafka as Buffer</h3>
+  <p>Kafka sits between collection and processing for three reasons:</p>
+  <div class="card-grid">
+    <div class="card"><h4>🔌 Decoupling</h4><p>Log agents don't need to know about downstream consumers.</p></div>
+    <div class="card blue"><h4>🌊 Spike Absorption</h4><p>A deploy-triggered error storm won't overwhelm Elasticsearch.</p></div>
+    <div class="card green"><h4>🔄 Replay</h4><p>Re-process logs if you discover a parsing bug.</p></div>
+  </div>
+
+  <h3>Processing — Flink Streaming</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🏷️ Enrichment</h4><p>Geo-IP lookup, user-agent parsing, service name resolution from container IDs.</p></div>
+    <div class="card blue"><h4>📊 Aggregation</h4><p>Error rates per service per minute for alerting dashboards.</p></div>
+    <div class="card green"><h4>🚨 Anomaly Detection</h4><p>Current error rate vs 7-day rolling baseline. Alert if &gt; 3 standard deviations.</p></div>
+  </div>
+</section>
+
+<!-- Screen 8: Log Storage Tiers -->
+<section class="screen screen-alt" id="s8">
+  <h2>🗄️ Storage Tiers: <span class="accent">Hot / Warm / Cold</span></h2>
+  <p>Not all logs deserve the same storage tier. This is the most important architectural decision:</p>
+
+  <table class="styled-table">
+    <thead><tr><th>Tier</th><th>Storage</th><th>Retention</th><th>Query Latency</th><th>Use Case</th><th>Cost</th></tr></thead>
+    <tbody>
+      <tr><td><strong>🔥 Hot</strong></td><td>Elasticsearch</td><td>7 days</td><td>Sub-second</td><td>Live debugging</td><td>$$$$</td></tr>
+      <tr><td><strong>🌡️ Warm</strong></td><td>S3 + Parquet</td><td>30–90 days</td><td>5–30 seconds</td><td>Investigation</td><td>$$</td></tr>
+      <tr><td><strong>❄️ Cold</strong></td><td>S3 Glacier</td><td>1–7 years</td><td>Minutes–hours</td><td>Compliance</td><td>$</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Hot Tier — Elasticsearch</h3>
+  <div class="card-grid">
+    <div class="card"><h4>📅 Daily Index Rotation</h4><p><code>logs-payment-2025.03.15</code> — auto-rollover at 50GB or 1 day.</p></div>
+    <div class="card blue"><h4>📦 Shard Sizing</h4><p>Target 30–50 GB per shard. Too small = overhead, too large = slow recovery.</p></div>
+    <div class="card green"><h4>🔄 ILM</h4><p>Index Lifecycle Management: rollover, warm, delete after 7 days automatically.</p></div>
+  </div>
+
+  <h3>Warm Tier — S3 + Parquet</h3>
+  <p>Flink writes Parquet files partitioned by <code>date/service/level</code>. Queryable via <strong>Athena</strong> (serverless SQL) or <strong>Trino</strong>. ~10:1 compression ratio vs raw JSON.</p>
+
+  <h3>Cold Tier — S3 Glacier</h3>
+  <p>Lifecycle rule moves data from S3 Standard to Glacier after 90 days. Bulk retrieval in 5–12 hours. Used only for compliance and legal hold.</p>
+
+  <h3>Scale at 1M events/sec</h3>
+  <table class="styled-table">
+    <thead><tr><th>Component</th><th>Specification</th></tr></thead>
+    <tbody>
+      <tr><td>Kafka</td><td>20 partitions/topic, 3+ brokers, 100MB/s per broker</td></tr>
+      <tr><td>Elasticsearch</td><td>15–20 data nodes, SSDs, r5.xlarge</td></tr>
+      <tr><td>Spike handling</td><td>Kafka buffers hours; ES consumers auto-scale</td></tr>
+      <tr><td>Cost optimization</td><td>Only index searchable fields in ES; full events in S3</td></tr>
+    </tbody>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>Show <strong>tiered storage thinking</strong>: "I'd keep 7 days hot in Elasticsearch for interactive debugging, 90 days warm in Parquet on S3 queryable via Athena, and 7 years cold in Glacier for compliance." Then mention shard sizing (30–50 GB target) and daily index rotation. This shows you've operated Elasticsearch at scale.</p>
+  </div>
+</section>
+
+<!-- Screen 9: Fintech Event-Driven Architecture -->
+<section class="screen" id="s9">
+  <h2>💳 Event-Driven <span class="accent">Fintech Architecture</span></h2>
+  <p>Design a transaction processing platform for a fintech company (Stripe/Square). Financial-grade correctness, real-time fraud detection, and an immutable audit trail.</p>
+
+  <h3>Event Sourcing — The Foundation</h3>
+  <p>In fintech, you <strong>never update or delete</strong> a record. Every state change is an immutable event:</p>
+  <div class="code-block"><span class="cm">Event 1:</span> <span class="fn">TransactionCreated</span>    { txn_id: T-100, amount: $50.00, merchant: <span class="str">"Coffee Shop"</span>, ts: 14:00:01 }
+<span class="cm">Event 2:</span> <span class="fn">TransactionAuthorized</span> { txn_id: T-100, auth_code: <span class="str">"A-999"</span>, ts: 14:00:02 }
+<span class="cm">Event 3:</span> <span class="fn">TransactionSettled</span>    { txn_id: T-100, settled_amount: $50.00, ts: 14:01:30 }
+<span class="cm">---</span>
+<span class="cm">Event 4:</span> <span class="fn">TransactionCreated</span>    { txn_id: T-101, amount: $500.00, merchant: <span class="str">"Electronics"</span>, ts: 14:02:00 }
+<span class="cm">Event 5:</span> <span class="fn">TransactionDeclined</span>   { txn_id: T-101, reason: <span class="str">"FRAUD_SUSPECT"</span>, ts: 14:02:00 }</div>
+  <p>The current account balance is a <strong>derived view</strong> — replay all events from the beginning and you reconstruct it perfectly.</p>
+
+  <h3>CQRS — Separating Reads from Writes</h3>
+  <div class="code-block">            <span class="kw">WRITE SIDE</span>                          <span class="kw">READ SIDE</span>
+
+  API Request ──► Validate ──► Append to    ──►  Projection ──► Materialized
+  (command)       business     Event Store        (Flink/       Views:
+                  rules        (Kafka +           consumer)     • Account Balance
+                               append-only                      • Transaction History
+                               DB)                              • Monthly Statement
+                                                                • Analytics Cube</div>
+</section>
+
+<!-- Screen 10: Fintech Fraud + Compliance -->
+<section class="screen screen-alt" id="s10">
+  <h2>🚨 Fraud Detection &amp; <span class="accent">Compliance</span></h2>
+
+  <h3>Real-Time Fraud Detection</h3>
+  <div class="code-block">Transaction Event ──► Flink Streaming Job ──► Fraud Score ──► Decision
+                      │                                        │
+                      ├─ Velocity: &gt; 5 txns in 1 min?         ├─ <span class="str">ALLOW</span>
+                      ├─ Geo anomaly: NYC → Tokyo in 30 min?   ├─ <span class="fn">REVIEW</span>
+                      ├─ Amount deviation: 10x avg purchase?   └─ <span class="kw">BLOCK</span>
+                      └─ Device fingerprint: new device?
+
+Latency budget: <span class="str">&lt; 100ms</span> from event to decision</div>
+
+  <h3>Fraud Feature Computation</h3>
+  <div class="card-grid">
+    <div class="card"><h4>⏱️ Velocity</h4><p>Count of transactions per account in sliding 1-min, 5-min, 1-hour windows.</p></div>
+    <div class="card blue"><h4>🌍 Geo-Anomaly</h4><p>Distance between current and last transaction location ÷ time elapsed.</p></div>
+    <div class="card green"><h4>💰 Amount Deviation</h4><p>Current amount vs 30-day rolling average for this account.</p></div>
+    <div class="card purple"><h4>📱 Device/IP</h4><p>New device, VPN detected, mismatched billing country.</p></div>
+  </div>
+
+  <h3>Regulatory Compliance</h3>
+  <table class="styled-table">
+    <thead><tr><th>Requirement</th><th>Implementation</th></tr></thead>
+    <tbody>
+      <tr><td>Immutable audit trail</td><td>Event store (append-only, no deletes)</td></tr>
+      <tr><td>Data retention (7 yrs)</td><td>Kafka infinite retention + S3 archival</td></tr>
+      <tr><td>Encryption at rest</td><td>AES-256 on all storage tiers</td></tr>
+      <tr><td>Encryption in transit</td><td>TLS 1.3 for all service communication</td></tr>
+      <tr><td>PII masking in analytics</td><td>Hash/tokenize PII before warehouse</td></tr>
+      <tr><td>Access logging</td><td>Every access logged with user, time, query</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Exactly-Once Processing</h3>
+  <p>Financial systems <strong>cannot</strong> double-charge or lose a transaction. End-to-end exactly-once requires:</p>
+  <div class="card-grid">
+    <div class="card"><h4>🔑 Idempotency Keys</h4><p>Every API request includes a client-generated UUID. Retries return the original result.</p></div>
+    <div class="card blue"><h4>⚛️ Kafka Transactions</h4><p>Producer writes to multiple topics atomically. Consumer commits offsets with the DB write.</p></div>
+    <div class="card green"><h4>🔄 DB Upserts</h4><p><code>INSERT ... ON CONFLICT (txn_id) DO NOTHING</code> — safe to replay.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Event sourcing + CQRS is the gold standard for fintech.</strong> Say: "I'd use event sourcing because financial regulations require an immutable audit trail — every state change is an append-only event. CQRS separates the write path from the read path (materialized views)." Then emphasize <strong>exactly-once processing</strong> with idempotency keys.</p>
+  </div>
+</section>
+
+<!-- Screen 11: Data Mesh -->
+<section class="screen" id="s11">
+  <h2>🕸️ Data Mesh &amp; <span class="accent">SCD at Scale</span></h2>
+  <p>Data Mesh is an <strong>organizational paradigm</strong>, not a technology. It addresses the failure mode of centralized data teams becoming bottlenecks.</p>
+
+  <h3>Four Principles</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>1️⃣ Domain-Oriented Ownership</h4>
+      <p>Each business domain team (Payments, Inventory, Customer) owns their data end-to-end. The Payments team builds the payments data product because they understand payment logic best.</p>
+    </div>
+    <div class="card blue">
+      <h4>2️⃣ Data as a Product</h4>
+      <p>Discoverable, addressable, self-describing, interoperable, trustworthy. Standard URIs, schema registry, published SLAs for freshness and accuracy.</p>
+    </div>
+    <div class="card green">
+      <h4>3️⃣ Self-Serve Platform</h4>
+      <p>Platform team provides Spark, Flink, Airflow, dbt, S3 as managed services. Domain teams build without managing infrastructure.</p>
+    </div>
+    <div class="card purple">
+      <h4>4️⃣ Federated Governance</h4>
+      <p>Global: PII rules, naming, retention, access control. Local: teams choose scheduling, transformation logic, internal models.</p>
+    </div>
+  </div>
+
+  <h3>Challenges (discuss in interviews — shows maturity)</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🔄 Org Change</h4><p>Organizational change management is harder than any technology migration.</p></div>
+    <div class="card blue"><h4>📋 Data Duplication</h4><p>Payments and Customer both store customer data. Cross-domain joins require contract negotiation.</p></div>
+    <div class="card green"><h4>⚖️ Platform Sizing</h4><p>Too small → teams blocked. Too large → becomes the new centralized team.</p></div>
+  </div>
+
+  <h3>SCD Handler at Scale — Spark + Delta Lake MERGE</h3>
+  <p><strong>Requirements:</strong> Track 500M dimension records with daily changes affecting ~2% (10M changes/day).</p>
+  <div class="code-block"><span class="kw">MERGE INTO</span> dim_product_scd2 <span class="kw">AS</span> target
+<span class="kw">USING</span> staged_changes <span class="kw">AS</span> source
+<span class="kw">ON</span> target.product_id = source.product_id <span class="kw">AND</span> target.is_current = <span class="fn">true</span>
+
+<span class="cm">-- Close the old record</span>
+<span class="kw">WHEN MATCHED AND</span> (target.price != source.price <span class="kw">OR</span> target.category != source.category)
+<span class="kw">THEN UPDATE SET</span>
+    valid_to = source.change_date,
+    is_current = <span class="fn">false</span>
+
+<span class="cm">-- Insert the new version</span>
+<span class="kw">WHEN NOT MATCHED</span>
+<span class="kw">THEN INSERT</span> (product_key, product_id, name, price, category, valid_from, valid_to, is_current)
+<span class="kw">VALUES</span> (<span class="fn">generate_surrogate_key()</span>, source.product_id, source.name, source.price, source.category,
+        source.change_date, <span class="str">'9999-12-31'</span>, <span class="fn">true</span>);</div>
+
+  <h3>Optimizations</h3>
+  <div class="card-grid">
+    <div class="card"><h4>#️⃣ Hash Partition</h4><p>Partition by hash of product_id (mod 256) — even distribution, avoids hot partitions from sequential IDs.</p></div>
+    <div class="card blue"><h4>📥 Incremental CDC</h4><p>Only changed records delivered. MERGE only touches affected partitions.</p></div>
+    <div class="card green"><h4>📊 Z-Ordering</h4><p>Co-locates data for the same product across files, making lookups fast.</p></div>
+  </div>
+
+  <h3>Time-Travel Queries</h3>
+  <div class="code-block"><span class="cm">-- What was the product's price on Black Friday 2024?</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> dim_product_scd2
+<span class="kw">WHERE</span> product_id = <span class="str">'SKU-12345'</span>
+  <span class="kw">AND</span> valid_from &lt;= <span class="str">'2024-11-29'</span>
+  <span class="kw">AND</span> valid_to   &gt;  <span class="str">'2024-11-29'</span>;
+
+<span class="cm">-- Or with Delta Lake time travel:</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> dim_product_scd2 <span class="fn">VERSION AS OF</span> <span class="str">'2024-11-29'</span>
+<span class="kw">WHERE</span> product_id = <span class="str">'SKU-12345'</span> <span class="kw">AND</span> is_current = <span class="fn">true</span>;</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Data Mesh is a HOT topic.</strong> Frame it as an organizational pattern: "Data Mesh solves the bottleneck of centralized data teams by giving domain teams ownership of their data products, supported by a self-serve platform and federated governance." Then discuss the real challenge: "The hardest part isn't Spark or dbt — it's convincing the Payments team to treat their data with the same rigor as their APIs." For SCD, always mention <strong>incremental processing</strong> — nobody should full-scan 500M records daily.</p>
+  </div>
+</section>
+
+<!-- Screen 12: Cross-Cutting Concepts -->
+<section class="screen screen-alt" id="s12">
+  <h2>🧩 Cross-Cutting Concepts: <span class="accent">Building Blocks</span></h2>
+  <p>These concepts appear in <strong>every</strong> system design interview. Master them once, apply them everywhere.</p>
+
+  <h3>Exactly-Once Processing</h3>
+  <p>True end-to-end exactly-once requires <strong>all three</strong>:</p>
+  <div class="card-grid">
+    <div class="card"><h4>1️⃣ Idempotent Producers</h4><p>Unique ID per message; the broker deduplicates on retry.</p></div>
+    <div class="card blue"><h4>2️⃣ Transactional Consumers</h4><p>Commit consumer offset AND downstream write in one atomic transaction.</p></div>
+    <div class="card green"><h4>3️⃣ Idempotent Sinks</h4><p>UPSERT/MERGE at the destination so replayed messages don't create duplicates.</p></div>
+  </div>
+  <p><strong>Reality check:</strong> Most systems achieve <em>effectively once</em> through idempotency — it's safe to process a message multiple times because the result is the same.</p>
+
+  <h3>Data Partitioning Strategies</h3>
+  <table class="styled-table">
+    <thead><tr><th>Strategy</th><th>Best For</th><th>Watch Out</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Hash partitioning</strong></td><td>Even distribution</td><td>Hot keys (celebrity accounts)</td></tr>
+      <tr><td><strong>Range partitioning</strong></td><td>Time-series data</td><td>Recent partitions get all writes</td></tr>
+      <tr><td><strong>Composite keys</strong></td><td>Multi-tenant systems</td><td>Complexity in query routing</td></tr>
+      <tr><td><strong>Salting</strong></td><td>Fixing hot partitions</td><td>Complicates reads (must fan-out)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Hot Partition Fix with Salting</h3>
+  <div class="code-block"><span class="cm"># Problem: account "uber_eats" generates 50% of all events</span>
+<span class="cm"># Solution: salt the partition key</span>
+partition_key = <span class="fn">f</span><span class="str">"{account_id}_{random.randint(0, 9)}"</span>
+<span class="cm"># Now "uber_eats" spreads across 10 partitions</span>
+<span class="cm"># Read query must fan out to all 10 and merge results</span></div>
+
+  <h3>Backfill Strategies</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🔄 Full Reprocess</h4><p>Re-run entire pipeline from raw data. Simple but expensive. For schema changes or logic rewrites.</p></div>
+    <div class="card blue"><h4>📦 Incremental Backfill</h4><p>Reprocess only affected partitions. Use <code>airflow dags backfill -s ... -e ...</code>.</p></div>
+    <div class="card green"><h4>⏪ Kafka Replay</h4><p>Reset consumer group offset to a past timestamp. Reprocess without re-ingesting.</p></div>
+    <div class="card purple"><h4>🟢 Blue-Green Tables</h4><p>Write backfilled data to new table, validate, then swap. Zero downtime, easy rollback.</p></div>
+  </div>
+</section>
+
+<!-- Screen 13: More Cross-Cutting Concepts -->
+<section class="screen" id="s13">
+  <h2>🔧 Idempotency, Late Data &amp; <span class="accent">Schema Evolution</span></h2>
+
+  <h3>Idempotent Pipelines</h3>
+  <p><strong>Same input → same output, no matter how many times you run it.</strong></p>
+  <div class="card-grid">
+    <div class="card"><h4>🔄 MERGE/UPSERT</h4><p><code>INSERT ON CONFLICT UPDATE</code> — safe to replay any number of times.</p></div>
+    <div class="card blue"><h4>📦 Partition Overwrite</h4><p><code>INSERT OVERWRITE PARTITION</code> — replaces the entire partition atomically.</p></div>
+    <div class="card green"><h4>🔍 Deduplication</h4><p><code>SELECT DISTINCT</code> on <code>(event_id, timestamp)</code> before writing.</p></div>
+    <div class="card purple"><h4>⚙️ Deterministic</h4><p>Avoid <code>now()</code>, <code>random()</code>, or non-deterministic UDFs in transforms.</p></div>
+  </div>
+
+  <h3>Late-Arriving Data</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🌊 Watermarks</h4><p>Define how long to wait (e.g., 5 min after window end). Events within the watermark are included normally.</p></div>
+    <div class="card blue"><h4>⏰ Allowed Lateness</h4><p>Events after the watermark but within "allowed lateness" are processed and flagged as late.</p></div>
+    <div class="card green"><h4>🔁 Reprocessing</h4><p>Data arriving days late triggers a re-run of the affected partition. Idempotent pipeline overwrites the old result.</p></div>
+  </div>
+
+  <h3>Schema Evolution at Scale</h3>
+  <table class="styled-table">
+    <thead><tr><th>Compatibility</th><th>Rule</th><th>Use Case</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Backward</strong></td><td>New schema reads old data</td><td>Adding optional columns</td></tr>
+      <tr><td><strong>Forward</strong></td><td>Old schema reads new data</td><td>Consumers update slowly</td></tr>
+      <tr><td><strong>Full</strong></td><td>Both directions</td><td>Maximum flexibility</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Best practices:</strong> Schema registry enforces compatibility on every write. New columns always have defaults. Never rename or delete — add new ones, deprecate old ones.</p>
+
+  <h3>The Interview Design Framework</h3>
+  <div class="card-grid">
+    <div class="card"><h4>1️⃣ Clarify</h4><p>Functional, non-functional, constraints (budget, team, infra).</p></div>
+    <div class="card blue"><h4>2️⃣ High-Level Arch</h4><p>Boxes and arrows: data flow from source to serving.</p></div>
+    <div class="card green"><h4>3️⃣ Data Model</h4><p>Schema, grain, partitioning, file format.</p></div>
+    <div class="card purple"><h4>4️⃣ Deep-Dive</h4><p>Pick 2–3 critical components and go deep.</p></div>
+    <div class="card"><h4>5️⃣ Failure Handling</h4><p>What breaks? Recovery? Exactly-once? Alerting?</p></div>
+    <div class="card blue"><h4>6️⃣ Cost &amp; Scale</h4><p>Back-of-envelope math. Cost optimization levers.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>These concepts come up in <strong>EVERY</strong> interview. "What if a message is processed twice?" → "Idempotent pipeline: UPSERT at the sink, dedup on event_id." "What about late data?" → "Watermarks with allowed lateness, plus partition-level reprocessing for very late arrivals." Drill these patterns until they're reflexive.</p>
+  </div>
+</section>
+
+<!-- Screen 14: Quiz -->
+<section class="screen screen-alt" id="s14">
+  <h2>🧠 Quiz: <span class="accent">Test Your Design Thinking</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: In Uber's surge pricing pipeline, why are H3 hexagons preferred over square grid cells?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Hexagons use less storage than squares</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) Hexagons have 6 equidistant neighbors, providing uniform adjacency analysis ✅</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) Hexagons are natively supported by Kafka partitioning</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Hexagons are required by Flink's geo-spatial library</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: When designing an e-commerce data warehouse, what should you define FIRST about the fact table?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) The column data types</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) The partitioning strategy</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">C) The grain (what one row represents) ✅</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) The surrogate key generation method</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: What problem does a dual feature store (offline + online) solve in a recommendation system?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) It reduces storage costs by compressing features</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) It prevents train-serve skew by ensuring consistent feature definitions ✅</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) It eliminates the need for real-time feature computation</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) It replaces the need for a model registry</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: In a fintech event-sourcing architecture, how is the current account balance derived?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Stored as a mutable field in the accounts table, updated on each transaction</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) Computed by replaying all immutable events for that account from the event store ✅</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) Cached in Redis and never recomputed</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Calculated nightly by a batch job from the data warehouse</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: Which combination achieves end-to-end exactly-once processing in a Kafka-based pipeline?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Consumer retries + at-least-once delivery</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) Idempotent producer + transactional consumer + idempotent sink (UPSERT) ✅</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) Increasing Kafka replication factor to 5</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Using a single Kafka partition to avoid ordering issues</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<!-- Screen 15: Key Takeaways -->
+<section class="screen" id="s15">
+  <h2>🎯 Key <span class="accent">Takeaways</span></h2>
+  <ol class="takeaway-list">
+    <li><strong>Streaming + batch merge is the standard pattern</strong> for real-time systems. The streaming path provides low-latency signals; the batch path provides historical context and ML predictions. Design both paths and show how they merge at the serving layer.</li>
+    <li><strong>H3 hexagonal grids</strong> are the industry standard for geo-spatial partitioning. 6 equidistant neighbors, hierarchical resolutions, a single integer index for GROUP BY. Resolution 7 (~5 km²) is the common starting point.</li>
+    <li><strong>Define the grain first, always.</strong> Before drawing any schema, state: "The grain of this fact table is one row per ___." This single sentence drives every downstream decision about dimensions, measures, and aggregations.</li>
+    <li><strong>SCD Type 2 preserves history</strong> through <code>valid_from</code>, <code>valid_to</code>, and <code>is_current</code>. At scale (500M+ records), use Delta Lake MERGE with incremental CDC — never full-scan when only 2% of records change.</li>
+    <li><strong>The dual feature store solves train-serve skew.</strong> Offline store (S3/Delta) for training, online store (Redis/DynamoDB) for serving, both fed by the same feature pipelines. This is the #1 architecture pattern for production ML systems.</li>
+    <li><strong>Tiered storage (hot/warm/cold) optimizes cost vs. query speed.</strong> 7 days hot in Elasticsearch, 90 days warm in Parquet+Athena, years cold in Glacier. Always present this hierarchy in log analytics designs.</li>
+    <li><strong>Event sourcing + CQRS is the gold standard for fintech.</strong> Immutable events provide the audit trail regulators require. CQRS separates append-only writes from query-optimized reads. Exactly-once via idempotency keys + transactional consumers + UPSERT sinks.</li>
+    <li><strong>Data Mesh is an organizational pattern, not a technology.</strong> Domain ownership, data as a product, self-serve platform, federated governance. The hardest challenge is people and culture, not tooling.</li>
+    <li><strong>Idempotent pipelines are non-negotiable.</strong> Same input → same output regardless of how many times it runs. MERGE/UPSERT, partition overwrite, dedup on event_id, deterministic transformations.</li>
+    <li><strong>Use the 6-step design framework</strong> in every interview: Clarify requirements → High-level architecture → Data model → Deep-dive components → Failure handling → Cost and scale.</li>
+  </ol>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-02-realtime-cdc/index.html">← Previous: Real-Time &amp; CDC</a>
+  <a href="../module-04-interview-gauntlet/index.html">Next: Interview Gauntlet 🔥 →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Look at the other options — the answer focuses on the core architectural advantage.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

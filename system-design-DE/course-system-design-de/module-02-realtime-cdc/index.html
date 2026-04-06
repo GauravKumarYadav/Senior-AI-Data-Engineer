@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 2: Real-Time Analytics & CDC Pipelines | System Design — DE</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#B45309;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFFBF0,#FFF5E0);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+table.info-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:0.9rem;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+table.info-table th{background:var(--color-accent);color:#fff;text-align:left;padding:0.7rem 1rem;font-family:var(--font-heading);font-weight:700}
+table.info-table td{padding:0.7rem 1rem;border-bottom:1px solid rgba(0,0,0,0.06)}
+table.info-table tr:last-child td{border-bottom:none}
+table.info-table tr:hover td{background:#FFFBF0}
+.takeaway-list{list-style:none;counter-reset:takeaway;margin:1.5rem 0}
+.takeaway-list li{counter-increment:takeaway;background:#fff;border-radius:14px;padding:1.2rem 1.4rem 1.2rem 3.5rem;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);position:relative;font-size:0.95rem}
+.takeaway-list li::before{content:counter(takeaway);position:absolute;left:1rem;top:1.1rem;width:28px;height:28px;border-radius:50%;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:0.85rem}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}table.info-table{font-size:0.8rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🏛️ System Design — DE</a><div class="nav-dots"><a href="../module-01-data-platform/" class="nav-dot"></a><a href="../module-02-realtime-cdc/" class="nav-dot active"></a><a href="../module-03-design-problems/" class="nav-dot"></a><a href="../module-04-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Real-Time Analytics Pipeline Overview -->
+<section class="screen" id="s1">
+  <h2>Designing a <span class="accent">Real-Time Analytics</span> Pipeline</h2>
+  <p>When an interviewer says <em>"Design a real-time analytics system,"</em> they are testing three things simultaneously: your ability to decompose an ambiguous problem into concrete requirements, your knowledge of modern streaming architectures, and your judgment about tradeoffs. This screen gives you the framework to nail all three.</p>
+
+  <h3>Use Case Examples</h3>
+  <p>Real-time analytics shows up everywhere in industry. Grounding your answer in a concrete scenario immediately signals experience:</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🚗 Real-Time Dashboards (Uber)</h4>
+      <p>Dispatchers and city ops teams watch live ride counts, ETAs, and surge pricing per geo-zone. Data must refresh every 1–5 seconds across millions of concurrent trips.</p>
+    </div>
+    <div class="card blue">
+      <h4>🛡️ Fraud Detection</h4>
+      <p>A payments platform scores every transaction in under 100 ms. The system ingests 50k+ events/sec and must maintain stateful feature aggregations (e.g., "transactions from this card in the last 10 minutes").</p>
+    </div>
+    <div class="card green">
+      <h4>📦 Inventory Tracking</h4>
+      <p>A retailer tracks stock-level changes across 5,000 stores. Each POS scan, receiving dock event, and online order triggers an inventory delta. Buyers need sub-minute visibility.</p>
+    </div>
+  </div>
+
+  <h3>Key Requirements to Clarify</h3>
+  <p>Before drawing a single box on the whiteboard, pin down the requirements:</p>
+  <table class="info-table">
+    <thead><tr><th>Requirement</th><th>Question to Ask</th><th>Typical Range</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Latency</strong></td><td>How fresh must the data be?</td><td>Sub-100 ms → seconds → minutes</td></tr>
+      <tr><td><strong>Throughput</strong></td><td>How many events per second?</td><td>Thousands → millions</td></tr>
+      <tr><td><strong>Query pattern</strong></td><td>Pre-defined aggregations or ad-hoc?</td><td>Dashboards vs. exploratory</td></tr>
+      <tr><td><strong>Retention</strong></td><td>How far back do queries need to reach?</td><td>Hours → years</td></tr>
+      <tr><td><strong>Consistency</strong></td><td>Exactly-once or at-least-once acceptable?</td><td>Depends on use case</td></tr>
+      <tr><td><strong>Concurrency</strong></td><td>How many simultaneous consumers/queries?</td><td>Tens → thousands</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Architecture Overview</h3>
+  <p>Almost every real-time analytics system follows this five-stage spine:</p>
+  <div class="code-block">Sources → Ingestion (Kafka) → Stream Processing (Flink/Spark) → Serving (OLAP DB) → Consumption (Dashboards / APIs)</div>
+  <div class="card-grid">
+    <div class="card"><h4>1. Sources</h4><p>Application databases, clickstream, IoT sensors, mobile SDKs, third-party webhooks.</p></div>
+    <div class="card blue"><h4>2. Ingestion</h4><p>Apache Kafka acts as the durable, replayable event backbone. All events land here first.</p></div>
+    <div class="card green"><h4>3. Stream Processing</h4><p>Flink or Spark Structured Streaming performs filtering, enrichment, windowed aggregations, and joins.</p></div>
+    <div class="card purple"><h4>4. Serving</h4><p>A specialized OLAP database (Druid, Pinot, ClickHouse) stores data optimized for sub-second queries.</p></div>
+    <div class="card"><h4>5. Consumption</h4><p>Dashboards (Grafana, Superset, Tableau), REST/GraphQL APIs, or downstream microservices.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Start by clarifying latency requirements — "real-time" means different things to different people.</strong> Sub-100 ms is <em>operational real-time</em> (fraud scoring, bidding). Seconds is <em>dashboard real-time</em> (Uber city view). Minutes is <em>near-real-time analytics</em> (inventory reconciliation). Naming the tier explicitly shows the interviewer you've lived through production systems where this distinction caused real arguments.</p>
+  </div>
+</section>
+
+<!-- Screen 2: Kafka as the Ingestion Backbone -->
+<section class="screen screen-alt" id="s2">
+  <h2>Kafka as the <span class="accent">Ingestion Backbone</span></h2>
+  <p>Kafka is the gravitational center of every modern streaming architecture. Understanding it deeply — not just "it's a message queue" — separates senior candidates from junior ones.</p>
+
+  <h3>Why Kafka?</h3>
+  <p>Kafka provides five properties that no traditional message broker delivers simultaneously:</p>
+  <div class="card-grid">
+    <div class="card"><h4>💾 Durability</h4><p>Messages are written to disk and replicated across brokers.</p></div>
+    <div class="card blue"><h4>📏 Ordering</h4><p>Messages within a partition are strictly ordered by offset — critical for CDC where UPDATE must follow INSERT.</p></div>
+    <div class="card green"><h4>⏪ Replayability</h4><p>Consumers can seek to any offset and reprocess data, enabling backfills and bug fixes.</p></div>
+    <div class="card purple"><h4>📈 Horizontal Scalability</h4><p>Add partitions and brokers to scale throughput linearly.</p></div>
+    <div class="card"><h4>🔌 Decoupling</h4><p>Producers and consumers are fully independent.</p></div>
+  </div>
+
+  <h3>Kafka Architecture for RT Analytics</h3>
+  <div class="code-block">Producers → Topics (partitioned) → Consumer Groups → Stream Processors</div>
+  <ul style="margin:1rem 0;padding-left:1.2rem;font-size:0.95rem;">
+    <li><strong>Topics</strong> are organized by domain: <code>rides.events</code>, <code>payments.transactions</code>, <code>inventory.updates</code>. One topic per event type keeps schemas clean.</li>
+    <li><strong>Partitions</strong> determine parallelism and ordering. A topic with 64 partitions can have up to 64 consumers in parallel. The <em>partition key</em> determines which partition a message lands on.</li>
+    <li><strong>Consumer Groups</strong> enable independent processing. The <code>fraud-detection</code> group and the <code>analytics-dashboard</code> group both consume at their own pace.</li>
+    <li><strong>Retention</strong> — Hot retention of 7 days is standard. With Kafka's Tiered Storage (KIP-405, GA in Kafka 3.6+), older segments offload to S3/GCS for weeks/months of replay.</li>
+  </ul>
+
+  <h3>Schema Management</h3>
+  <p>Without schema governance, Kafka topics become the Wild West. The Confluent Schema Registry is the industry standard:</p>
+  <div class="card-grid">
+    <div class="card"><h4>📐 Avro / Protobuf</h4><p>Schemas registered per topic (subject = <code>&lt;topic&gt;-value</code>). Schema IDs embedded in message headers for efficient deserialization.</p></div>
+    <div class="card blue"><h4>🔄 Compatibility Modes</h4><p><strong>BACKWARD</strong> — new schema can read old data. <strong>FORWARD</strong> — old schema can read new data. <strong>FULL</strong> — both directions (safest).</p></div>
+    <div class="card green"><h4>📝 Evolution Strategy</h4><p>Add nullable fields with defaults. Never remove or rename fields without a migration plan.</p></div>
+  </div>
+
+  <h3>Kafka Connect</h3>
+  <p>Plug-and-play framework for moving data in and out of Kafka without custom code:</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📥 Source Connectors</h4>
+      <ul>
+        <li>JDBC Source (poll tables)</li>
+        <li>Debezium (CDC from WAL/binlog)</li>
+        <li>S3 Source (file ingestion)</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📤 Sink Connectors</h4>
+      <ul>
+        <li>Elasticsearch Sink (search indexing)</li>
+        <li>S3 Sink (data lake landing)</li>
+        <li>JDBC Sink (write to OLTP/OLAP)</li>
+      </ul>
+    </div>
+  </div>
+  <p><strong>Exactly-once semantics:</strong> Combine idempotent producers (<code>enable.idempotence=true</code>) with transactional consumers (<code>isolation.level=read_committed</code>). Kafka Connect supports this natively with <code>exactly.once.source.support=enabled</code>.</p>
+
+  <h3>Kafka Streams vs. External Processing</h3>
+  <p><strong>Kafka Streams</strong> — Lightweight Java library inside your app process. Perfect for simple transforms: filtering, mapping, repartitioning.</p>
+  <p><strong>External processing (Flink/Spark)</strong> — Required for complex aggregations, multi-stream joins, windowed computations, and ML feature engineering.</p>
+  <p>Rule of thumb: if your logic fits in a <code>KStream.filter().mapValues().to()</code> chain, use Kafka Streams. If you need windowed joins with watermarks, reach for Flink.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Mention partition key design early — it determines ordering guarantees and parallelism.</strong> For a ride-sharing analytics system, partitioning by <code>driver_id</code> guarantees all events for a driver are ordered. But if 5% of drivers generate 50% of rides, you get hot partitions. A composite key like <code>city_id + driver_id</code> can spread load more evenly. Interviewers love hearing you reason through this tradeoff.</p>
+  </div>
+</section>
+
+<!-- Screen 3: Stream Processing — Flink vs Spark -->
+<section class="screen" id="s3">
+  <h2>Stream Processing: <span class="accent">Flink vs Spark</span></h2>
+  <p>The stream processor is the brain of your pipeline. The two dominant frameworks — Apache Flink and Spark Structured Streaming — take fundamentally different approaches.</p>
+
+  <h3>Apache Flink Deep Dive</h3>
+  <p>Flink was built from the ground up as a streaming engine. Batch is a special case of streaming in Flink's worldview.</p>
+  <div class="card-grid">
+    <div class="card"><h4>⏱️ True Event-Time</h4><p>Flink natively distinguishes event time, ingestion time, and processing time. Event-time processing with watermarks is first-class.</p></div>
+    <div class="card blue"><h4>📝 Per-Record Processing</h4><p>Each event is processed individually as it arrives. No micro-batch boundary. True millisecond-level latency.</p></div>
+    <div class="card green"><h4>🪨 RocksDB State Backend</h4><p>Stores operator state in embedded RocksDB on local SSD. Enables terabytes of state without blowing up JVM heap.</p></div>
+    <div class="card purple"><h4>💾 Savepoints for Upgrades</h4><p>Trigger a consistent snapshot before deploying a new job version. Restart from savepoint with zero data loss.</p></div>
+    <div class="card"><h4>✅ Exactly-Once</h4><p>Chandy-Lamport distributed snapshots checkpoint operator state and Kafka offsets atomically. No duplicates on failure recovery.</p></div>
+  </div>
+
+  <h3>Flink Windowing</h3>
+  <p>Flink's windowing is the richest in the streaming ecosystem:</p>
+  <div class="card-grid">
+    <div class="card"><h4>🪟 Tumbling Windows</h4><p>Fixed-size, non-overlapping. Example: count rides per 1-minute window.</p></div>
+    <div class="card blue"><h4>🔄 Sliding Windows</h4><p>Fixed-size, overlapping. Example: count rides in last 5 minutes, updated every 30 seconds.</p></div>
+    <div class="card green"><h4>🕐 Session Windows</h4><p>Dynamic, gap-based. Closes after N minutes of inactivity. Example: group a user's clickstream into sessions.</p></div>
+    <div class="card purple"><h4>⏳ Late Data Handling</h4><p><code>allowedLateness(Duration.ofMinutes(5))</code> keeps windows open. Even later events go to a <em>side output</em> for reconciliation.</p></div>
+  </div>
+
+  <h3>Spark Structured Streaming Deep Dive</h3>
+  <p>Spark Structured Streaming builds streaming on top of the Spark SQL engine. Same DataFrame/Dataset API for both batch and streaming.</p>
+  <div class="card-grid">
+    <div class="card"><h4>📦 Micro-Batch</h4><p>Polls Kafka every 100 ms (configurable), pulls a batch, processes as DataFrame. Simple and leverages Spark's SQL optimizer — but adds at least one trigger-interval of latency.</p></div>
+    <div class="card blue"><h4>⚡ Continuous Mode</h4><p>Experimental since Spark 2.3. Processes records one-at-a-time with ~1 ms latency. Supports only map-like transforms, no aggregations. Most teams stick with micro-batch.</p></div>
+    <div class="card green"><h4>🌊 Watermarks</h4><p><code>withWatermark("event_time", "10 minutes")</code> drops events older than 10 min past the watermark. No side output like Flink — late events are silently dropped.</p></div>
+    <div class="card purple"><h4>🔧 Stateful Processing</h4><p><code>mapGroupsWithState</code> and <code>flatMapGroupsWithState</code> enable arbitrary stateful logic per key group, with timeout support.</p></div>
+  </div>
+
+  <h3>Comparison Table</h3>
+  <table class="info-table">
+    <thead><tr><th>Aspect</th><th>Flink</th><th>Spark Structured Streaming</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Processing Model</strong></td><td>Per-record (true streaming)</td><td>Micro-batch (default)</td></tr>
+      <tr><td><strong>Latency</strong></td><td>Milliseconds</td><td>Seconds (micro-batch trigger)</td></tr>
+      <tr><td><strong>State Management</strong></td><td>RocksDB, incremental checkpoints</td><td>In-memory + HDFS/S3 state store</td></tr>
+      <tr><td><strong>State Size</strong></td><td>Terabytes (disk-backed)</td><td>Gigabytes (memory-bound)</td></tr>
+      <tr><td><strong>Exactly-Once</strong></td><td>Native distributed snapshots</td><td>Micro-batch atomicity + WAL</td></tr>
+      <tr><td><strong>Windowing</strong></td><td>Tumbling, sliding, session, custom</td><td>Tumbling, sliding</td></tr>
+      <tr><td><strong>Late Data</strong></td><td>Allowed lateness + side outputs</td><td>Watermarks only (drop late)</td></tr>
+      <tr><td><strong>Ecosystem</strong></td><td>Growing; strong in pure streaming</td><td>Mature; unified batch + stream</td></tr>
+      <tr><td><strong>Operational Complexity</strong></td><td>Higher (dedicated cluster, savepoints)</td><td>Lower (leverages existing Spark)</td></tr>
+      <tr><td><strong>When to Use</strong></td><td>Ultra-low latency, complex event processing</td><td>Unified batch + streaming workloads</td></tr>
+    </tbody>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Don't just say "Flink is better for streaming" — explain WHY.</strong> Per-record processing eliminates the micro-batch latency floor. RocksDB handles larger state than Spark's in-memory store (critical for high-cardinality aggregations like per-user metrics across millions of users). Flink's side outputs for late data give you more control than Spark's drop-or-keep binary. But also acknowledge Spark's strengths: if the team already runs Spark for batch ETL and latency requirements are seconds (not milliseconds), Structured Streaming avoids operating a second framework.</p>
+  </div>
+</section>
+
+<!-- Screen 4: Serving Layer — OLAP Databases -->
+<section class="screen screen-alt" id="s4">
+  <h2>Serving Layer: <span class="accent">OLAP Databases</span> for Real-Time Queries</h2>
+  <p>Your stream processor produces aggregations. Now they need to be queryable — by dashboards, APIs, and analysts — with sub-second latency at thousands of concurrent queries.</p>
+
+  <h3>Why Not Just Use Snowflake or BigQuery?</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>⏱️ Query Compilation Overhead</h4>
+      <p>Snowflake compiles each query, spins up compute, and executes. This adds 500 ms–2 s of baseline latency even for trivial queries.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔥 Concurrency Limits</h4>
+      <p>A dashboard with 200 panels auto-refreshing every 5 seconds generates 2,400 queries/minute. Warehouses throttle or charge exorbitantly.</p>
+    </div>
+    <div class="card green">
+      <h4>🐌 Ingestion Latency</h4>
+      <p>Loading data via COPY or Snowpipe takes seconds to minutes. For a 1-second dashboard, this is too slow.</p>
+    </div>
+  </div>
+
+  <h3>Apache Druid</h3>
+  <p>Column-oriented, distributed OLAP database designed for sub-second queries on event data.</p>
+  <div class="card-grid">
+    <div class="card"><h4>📊 Pre-Aggregation (Rollup)</h4><p>Roll up raw events at ingest time. 1 billion clicks → manageable counts per (page, country, hour). 100x storage reduction.</p></div>
+    <div class="card blue"><h4>🧱 Segment-Based Storage</h4><p>Immutable segments partitioned by time enable efficient time-based pruning.</p></div>
+    <div class="card green"><h4>⚡ Real-Time + Historical</h4><p>Real-time nodes ingest from Kafka with sub-second latency; historical nodes serve from S3. Queries merge both.</p></div>
+  </div>
+
+  <h3>Apache Pinot</h3>
+  <p>Built at LinkedIn for user-facing analytics at massive scale ("Who viewed your profile" across 900M+ members).</p>
+  <div class="card-grid">
+    <div class="card"><h4>🌟 Star-Tree Index</h4><p>Pre-materialized tree of aggregations across dimension combinations. Queries return in single-digit milliseconds regardless of volume.</p></div>
+    <div class="card blue"><h4>🔄 Upsert Support</h4><p>Unlike Druid (append-only), Pinot supports row-level upserts by primary key. Critical for CDC-fed tables needing latest state.</p></div>
+    <div class="card green"><h4>👤 User-Facing Analytics</h4><p>Optimized for "1000 queries/sec, each touching a different user's data." Low tail latency is a first-class design goal.</p></div>
+  </div>
+
+  <h3>ClickHouse</h3>
+  <p>Column-oriented MPP database originally built at Yandex for web analytics (billions of events daily).</p>
+  <div class="card-grid">
+    <div class="card"><h4>🌲 MergeTree Engine</h4><p>Data stored in sorted "parts" that merge in background (like LSM trees). Fast inserts and efficient range scans.</p></div>
+    <div class="card blue"><h4>🔄 Materialized Views</h4><p>Act as insert triggers: data lands in source → transformation runs → results inserted into target. Real-time pre-aggregation without a separate processor.</p></div>
+    <div class="card green"><h4>📝 Strong SQL Support</h4><p>Rich SQL dialect: window functions, arrays, maps, JSON. Analysts query directly without learning a custom language.</p></div>
+  </div>
+
+  <h3>Comparison Table</h3>
+  <table class="info-table">
+    <thead><tr><th>Aspect</th><th>Druid</th><th>Pinot</th><th>ClickHouse</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Query Latency</strong></td><td>P99 &lt; 500 ms</td><td>Star-tree: &lt; 10 ms</td><td>Sub-second to seconds</td></tr>
+      <tr><td><strong>Ingestion</strong></td><td>Kafka native (RT nodes)</td><td>Kafka native (RT servers)</td><td>Kafka via engine/connector</td></tr>
+      <tr><td><strong>SQL Support</strong></td><td>Druid SQL (limited joins)</td><td>Multi-stage query engine</td><td>Rich SQL dialect</td></tr>
+      <tr><td><strong>Upserts</strong></td><td>Limited (append-only)</td><td>Native upsert support</td><td>ReplacingMergeTree</td></tr>
+      <tr><td><strong>Best For</strong></td><td>Time-series dashboards</td><td>User-facing analytics, CDC</td><td>Log analytics, ad-hoc</td></tr>
+      <tr><td><strong>Managed Options</strong></td><td>Imply Cloud</td><td>StarTree Cloud</td><td>ClickHouse Cloud</td></tr>
+    </tbody>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Pick ONE of these and know it well.</strong> Most interviewers care that you understand <em>why</em> you'd use a specialized OLAP DB over a general-purpose warehouse. A strong answer: "We'd use Pinot here because we need upserts from our CDC pipeline and sub-10 ms P99 for user-facing queries. Snowflake can't deliver that concurrency at that latency." That reasoning is worth more than memorizing ClickHouse MergeTree variants.</p>
+  </div>
+</section>
+
+<!-- Screen 5: Dual-Write Pattern & Lambda -->
+<section class="screen" id="s5">
+  <h2>The <span class="accent">Dual-Write Pattern</span> & Lambda Considerations</h2>
+  <p>Production real-time analytics systems almost never have a single output. They write to at least two destinations — and managing the consistency between them is one of the hardest problems in data engineering.</p>
+
+  <h3>Dual-Write Architecture</h3>
+  <div class="code-block">                        ┌──→ Real-time OLAP (Druid/Pinot) ──→ Live Dashboards
+Kafka → Flink/Spark ────┤
+                        └──→ Data Lake (S3/Delta Lake)    ──→ dbt → Warehouse → BI Tools</div>
+  <p>The same stream processor writes to both a real-time serving layer and a data lake. This is the <strong>dual-write pattern</strong> (sometimes called the "Kappa + batch" hybrid).</p>
+
+  <h3>Why Dual-Write?</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>⚡ Real-Time OLAP</h4>
+      <ul>
+        <li>Serves operational dashboards with sub-second latency</li>
+        <li>Retains 7–30 days of data</li>
+        <li>Optimized for pre-defined queries (known dimensions, known metrics)</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🏔️ Data Lake (S3 + Delta)</h4>
+      <ul>
+        <li>Serves historical analytics, data science, ad-hoc exploration</li>
+        <li>Retains months or years</li>
+        <li>Optimized for full scans, joins, and ML feature engineering</li>
+      </ul>
+    </div>
+  </div>
+  <p>Trying to serve both patterns from a single system always results in painful compromises. The OLAP DB can't handle full table scans across 2 years. The data lake can't serve 1,000 concurrent queries at 200 ms P99.</p>
+
+  <h3>Consistency Challenges</h3>
+  <div class="card-grid">
+    <div class="card"><h4>⏳ Eventual Consistency</h4><p>Real-time path may process at T+1s while the lake path at T+5min. Queries comparing the two during that window will see different numbers.</p></div>
+    <div class="card blue"><h4>💥 Failure Modes</h4><p>Flink might write to Druid but fail on S3 (or vice versa). Without transactional writes across both sinks, you get data in one but not the other.</p></div>
+    <div class="card green"><h4>🔍 Reconciliation</h4><p>Run periodic (hourly/daily) reconciliation comparing counts. The lake is source of truth; the OLAP DB is "fast but approximate."</p></div>
+  </div>
+
+  <h3>Backfill Scenarios</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>⏪ Kafka Replay</h4>
+      <ul>
+        <li>If retention covers the period, reset consumer offsets and replay</li>
+        <li>Simple but slow for large ranges</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📦 Batch Backfill</h4>
+      <ul>
+        <li>Read historical data from the lake, process with same logic (Flink batch or Spark batch)</li>
+        <li>Faster, but must ensure batch logic matches streaming logic exactly</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Cost Considerations</h3>
+  <p>Running two output paths costs more. Justify each by mapping to business value: real-time OLAP prevents stock-outs and catches fraud (revenue impact); the data lake enables quarterly reviews, ML models, and regulatory reporting (analytical value). If the business only needs one path, don't build both.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Mentioning the dual-write pattern shows architectural maturity.</strong> Explain that real-time serves <em>operational</em> needs (decisions in seconds) while the lake serves <em>analytical</em> needs (decisions in days). Then proactively address consistency: "We accept eventual consistency between the two paths and run a daily reconciliation job. For the first 5 minutes, the OLAP DB may show slightly different numbers than the lake, and we document this SLA for stakeholders." That level of pragmatism is exactly what senior interviewers look for.</p>
+  </div>
+</section>
+
+<!-- Screen 6: Designing a CDC Pipeline -->
+<section class="screen screen-alt" id="s6">
+  <h2>Designing a <span class="accent">CDC Pipeline</span> — End to End</h2>
+  <p>Change Data Capture is how you get data out of transactional databases and into your analytics ecosystem without destroying the source database's performance or missing intermediate state changes.</p>
+
+  <h3>What Is CDC?</h3>
+  <p>CDC captures row-level changes — every INSERT, UPDATE, and DELETE — from a source database's <span class="tooltip-term" data-tip="Write-Ahead Log (WAL) in Postgres, binary log (binlog) in MySQL — the database's internal changelog of every committed transaction.">transaction log</span>. Instead of periodically scanning the entire table, CDC reads the database's internal changelog and emits each change as a structured event.</p>
+
+  <h3>Why CDC Over Batch Extraction?</h3>
+  <table class="info-table">
+    <thead><tr><th>Aspect</th><th>Batch Extraction (Query-Based)</th><th>CDC (Log-Based)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Latency</strong></td><td>Minutes to hours (cron schedule)</td><td>Seconds (continuous streaming)</td></tr>
+      <tr><td><strong>Source DB Load</strong></td><td>Heavy (full table scans)</td><td>Minimal (reads transaction log)</td></tr>
+      <tr><td><strong>Missed Changes</strong></td><td>Yes — rapid UPDATE→UPDATE loses intermediate state</td><td>No — every change is captured</td></tr>
+      <tr><td><strong>Deletes</strong></td><td>Hard to detect (row is gone)</td><td>Captured as DELETE event</td></tr>
+      <tr><td><strong>Schema</strong></td><td>Whatever the current table looks like</td><td>Before/after snapshots per change</td></tr>
+    </tbody>
+  </table>
+
+  <h3>End-to-End Architecture</h3>
+  <div class="code-block">OLTP DB (Postgres) → Debezium → Kafka → Stream Processor (Flink/Spark) → Delta Lake (MERGE) → dbt → Warehouse → Dashboards</div>
+
+  <h3>Debezium Deep Dive</h3>
+  <p>Debezium is the de facto open-source CDC platform. It runs as a Kafka Connect source connector:</p>
+  <div class="card-grid">
+    <div class="card"><h4>📸 1. Initial Snapshot</h4><p>On first startup, Debezium snapshots existing table data, bootstrapping the Kafka topic with current state.</p></div>
+    <div class="card blue"><h4>🔄 2. Continuous Streaming</h4><p>After snapshot, reads new changes from the transaction log (logical replication slots in Postgres, binlog in MySQL).</p></div>
+    <div class="card green"><h4>🌐 4. Supported DBs</h4><p>Postgres (logical replication), MySQL (binlog), MongoDB (oplog), SQL Server (CT/CDC), Oracle (LogMiner/XStream).</p></div>
+  </div>
+
+  <h3>3. Change Event Structure</h3>
+  <div class="code-block">{
+  <span class="str">"op"</span>: <span class="str">"u"</span>,
+  <span class="str">"before"</span>: { <span class="str">"id"</span>: <span class="fn">42</span>, <span class="str">"status"</span>: <span class="str">"pending"</span>, <span class="str">"amount"</span>: <span class="fn">99.99</span> },
+  <span class="str">"after"</span>:  { <span class="str">"id"</span>: <span class="fn">42</span>, <span class="str">"status"</span>: <span class="str">"shipped"</span>, <span class="str">"amount"</span>: <span class="fn">99.99</span> },
+  <span class="str">"source"</span>: {
+    <span class="str">"connector"</span>: <span class="str">"postgresql"</span>,
+    <span class="str">"db"</span>: <span class="str">"orders_db"</span>,
+    <span class="str">"table"</span>: <span class="str">"orders"</span>,
+    <span class="str">"lsn"</span>: <span class="fn">234567890</span>,
+    <span class="str">"ts_ms"</span>: <span class="fn">1712345678000</span>
+  },
+  <span class="str">"ts_ms"</span>: <span class="fn">1712345678050</span>
+}</div>
+  <ul style="margin:1rem 0;padding-left:1.2rem;font-size:0.95rem;">
+    <li><code>op</code> — Operation: <code>c</code> (create), <code>u</code> (update), <code>d</code> (delete), <code>r</code> (read/snapshot).</li>
+    <li><code>before</code> — Row state before the change (null for inserts).</li>
+    <li><code>after</code> — Row state after the change (null for deletes).</li>
+    <li><code>source.lsn</code> — Log Sequence Number in Postgres; the exact position in the WAL. Your ordering guarantee.</li>
+  </ul>
+
+  <h3>Kafka Topic Design for CDC</h3>
+  <div class="card-grid">
+    <div class="card"><h4>📁 One Topic Per Table</h4><p><code>cdc.orders_db.public.orders</code>, <code>cdc.orders_db.public.customers</code>. Convention: <code>&lt;prefix&gt;.&lt;db&gt;.&lt;schema&gt;.&lt;table&gt;</code>.</p></div>
+    <div class="card blue"><h4>🔑 Partition by PK</h4><p>Set message key to primary key. Guarantees all changes for a row are processed in order by a single consumer.</p></div>
+    <div class="card green"><h4>🗜️ Log Compaction</h4><p>Retains only the latest message per key — a "snapshot" of every row's current state. New consumers bootstrap from the compacted topic.</p></div>
+  </div>
+
+  <h3>MERGE into Delta Lake</h3>
+  <div class="code-block"><span class="kw">MERGE INTO</span> orders_bronze <span class="kw">AS</span> target
+<span class="kw">USING</span> cdc_changes <span class="kw">AS</span> changes
+<span class="kw">ON</span> target.id = changes.id
+<span class="kw">WHEN MATCHED AND</span> changes.op = <span class="str">'d'</span> <span class="kw">THEN DELETE</span>
+<span class="kw">WHEN MATCHED AND</span> changes.ts_ms > target.ts_ms <span class="kw">THEN UPDATE SET</span> *
+<span class="kw">WHEN NOT MATCHED AND</span> changes.op != <span class="str">'d'</span> <span class="kw">THEN INSERT</span> *</div>
+  <ul style="margin:1rem 0;padding-left:1.2rem;font-size:0.95rem;">
+    <li>The <code>ts_ms > target.ts_ms</code> condition handles out-of-order events (last-writer-wins with timestamp comparison).</li>
+    <li>Deletes are handled explicitly via the <code>op = 'd'</code> condition.</li>
+    <li>The Bronze layer contains a near-replica of the source table with minimal transformation.</li>
+  </ul>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Walk through the FULL pipeline end-to-end.</strong> Interviewers love when you trace a single record: "A customer updates their address → Postgres writes the UPDATE to the WAL → Debezium reads the WAL entry and produces a change event with before/after snapshots → the event lands in Kafka topic <code>cdc.users_db.public.customers</code> partitioned by <code>customer_id</code> → Spark consumes the event → executes MERGE INTO Delta Lake <code>customers_bronze</code> → dbt transforms to <code>customers_gold</code> → the BI dashboard shows the updated address." This end-to-end fluency is the hallmark of a senior data engineer.</p>
+  </div>
+</section>
+
+<!-- Screen 7: CDC Challenges -->
+<section class="screen" id="s7">
+  <h2>CDC Challenges: <span class="accent">Schema Evolution</span>, Deletes & Late Events</h2>
+  <p>Building the initial CDC pipeline is the easy part. Operating it for months and years — as source schemas change, as records are deleted, as events arrive late — is where the real engineering happens.</p>
+
+  <h3>Schema Evolution</h3>
+  <p>Source databases evolve constantly. Product teams add columns, change types, rename fields. Your CDC pipeline must handle this gracefully.</p>
+  <table class="info-table">
+    <thead><tr><th>Change Type</th><th>Impact</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Adding nullable column</strong></td><td>✅ Backward compatible</td><td>Old events deserialize fine; new field defaults to null.</td></tr>
+      <tr><td><strong>Removing a column</strong></td><td>❌ Breaking change</td><td>Downstream consumers that reference the column will fail. Update consumers first.</td></tr>
+      <tr><td><strong>Renaming a column</strong></td><td>❌ Effectively remove + add</td><td>Schema Registry sees a new field. Need a mapping layer during transition.</td></tr>
+      <tr><td><strong>Changing column type</strong></td><td>⚠️ Potentially breaking</td><td>INT→BIGINT is safe (widening). STRING→INT is not (narrowing). Registry rejects under BACKWARD.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Schema Evolution Strategy (Multi-Layer Defense)</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🛡️ 1. Schema Registry</h4><p>Enforce BACKWARD compatibility on all CDC topics. Prevents producers (Debezium) from registering schemas that break consumers.</p></div>
+    <div class="card blue"><h4>🔺 2. Delta Lake</h4><p>Enable <code>mergeSchema = true</code> on writes. Automatically adds new columns when they appear in incoming data.</p></div>
+    <div class="card green"><h4>🔧 3. dbt</h4><p>New columns arrive as nullable. dbt models reference columns explicitly, so a new Bronze column doesn't break Gold until intentionally added.</p></div>
+  </div>
+
+  <h3>Handling Deletes</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>🟢 Soft Deletes (Preferred)</h4>
+      <ul>
+        <li>Set <code>is_deleted = true</code> and <code>deleted_at = timestamp</code></li>
+        <li>Row remains for historical analysis</li>
+        <li>Filter <code>WHERE is_deleted = false</code> in Gold/serving layer</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>🔴 Hard Deletes</h4>
+      <ul>
+        <li>Use MERGE DELETE clause to physically remove</li>
+        <li>Simpler, but lose audit trail</li>
+        <li>Can't answer "what was the address before deletion?"</li>
+      </ul>
+    </div>
+  </div>
+  <p><strong>Tombstone events in Kafka:</strong> Debezium produces a tombstone (null value with the key) after a DELETE. With log compaction, the tombstone eventually removes the key from the compacted topic.</p>
+  <p><strong>Recommendation:</strong> Soft deletes in Bronze/Silver layers, hard deletes only in Gold if business rules require it. This preserves lineage while keeping downstream tables clean.</p>
+
+  <h3>Late-Arriving Events</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🌊 Watermarks</h4><p>Define how long the processor waits before closing a window. 10-min watermark = tolerate up to 10 min delay. Later events are dropped (Spark) or side-output (Flink).</p></div>
+    <div class="card blue"><h4>🔄 Reprocessing</h4><p>For events past the watermark, reprocess affected lake partitions. A nightly "reconciliation" job compares source row counts and patches gaps.</p></div>
+    <div class="card green"><h4>🔒 Idempotent MERGE</h4><p>The MERGE with <code>ts_ms > target.ts_ms</code> is inherently idempotent. Processing the same event twice doesn't corrupt data — the second MERGE is a no-op.</p></div>
+  </div>
+
+  <h3>Ordering Challenges</h3>
+  <p>Two rapid updates (<code>pending</code> → <code>shipped</code> → <code>delivered</code>) may arrive out of order. Solutions:</p>
+  <div class="card-grid">
+    <div class="card"><h4>🔑 Partition by PK</h4><p>All changes for a row go to the same partition and are processed in order.</p></div>
+    <div class="card blue"><h4>⏰ Last-Writer-Wins</h4><p>The MERGE condition <code>changes.ts_ms > target.ts_ms</code> ensures only the latest change is applied, regardless of processing order.</p></div>
+    <div class="card green"><h4>🔢 Version Tracking</h4><p>If the source has a monotonically increasing version column, use it instead of timestamp for stronger ordering guarantees.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Schema evolution is the #1 operational challenge in CDC pipelines.</strong> When discussing CDC, proactively mention: "We enforce BACKWARD compatibility in the Schema Registry to prevent breaking changes from propagating. For additive changes like new nullable columns, Delta Lake's <code>mergeSchema</code> handles it automatically. For breaking changes like column renames, we coordinate a migration: deploy the consumer update first, then the producer change, with a mapping layer in between." This shows you've dealt with real-world CDC operations, not just built a demo.</p>
+  </div>
+</section>
+
+<!-- Screen 8: Data Quality & Observability -->
+<section class="screen screen-alt" id="s8">
+  <h2>Data Quality & <span class="accent">Observability</span> in Streaming</h2>
+  <p>A pipeline that produces wrong data on time is worse than one that produces right data late. Data quality is not an afterthought — it's a design requirement.</p>
+
+  <h3>Quality Checks at Every Layer</h3>
+  <div class="code-block">Ingestion Layer          Transformation Layer         Serving Layer
+├─ Schema validation     ├─ Business rule checks      ├─ Freshness monitoring
+├─ Null / type checks    ├─ Referential integrity     ├─ Completeness checks
+├─ Deduplication         ├─ Range / distribution      ├─ Query latency SLAs
+└─ Volume anomalies      └─ Cross-source consistency  └─ Anomaly detection</div>
+  <p><strong>Shift-left philosophy:</strong> Catch bad data at ingestion before it propagates downstream. A malformed event caught at the Kafka consumer level is a log entry. The same bad data caught in a BI dashboard is a trust-destroying incident.</p>
+
+  <h3>Key Data Quality Metrics</h3>
+  <table class="info-table">
+    <thead><tr><th>Metric</th><th>Definition</th><th>Example SLA</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Completeness</strong></td><td>% of expected records present</td><td>≥ 99.5% of source rows in lake</td></tr>
+      <tr><td><strong>Freshness</strong></td><td>Time since most recent data point</td><td>Dashboard data ≤ 30 seconds old</td></tr>
+      <tr><td><strong>Accuracy</strong></td><td>Validation against source of truth</td><td>Aggregations match within 0.1%</td></tr>
+      <tr><td><strong>Volume</strong></td><td>Row count within expected range</td><td>Daily count within ±2σ of 30-day avg</td></tr>
+      <tr><td><strong>Uniqueness</strong></td><td>No duplicate primary keys</td><td>0 duplicates in Gold tables</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Data Quality Tools</h3>
+  <div class="card-grid">
+    <div class="card"><h4>✅ Great Expectations</h4><p>Define expectations as code (<code>expect_column_values_to_not_be_null("order_id")</code>), run checkpoints at pipeline stages, generate HTML data docs, integrate with Airflow.</p></div>
+    <div class="card blue"><h4>🧪 Soda</h4><p>Data contracts in SodaCL (YAML-based): <code>row_count > 0</code>, <code>freshness(created_at) < 1h</code>. Monitoring dashboard tracks results over time.</p></div>
+    <div class="card green"><h4>🔧 dbt Tests</h4><p>Schema tests (<code>not_null</code>, <code>unique</code>, <code>accepted_values</code>, <code>relationships</code>), custom SQL tests, and freshness tests with warn/error thresholds.</p></div>
+  </div>
+
+  <h3>Data Lineage</h3>
+  <p>When something breaks, you need two answers instantly: <strong>root cause</strong> (trace upstream) and <strong>blast radius</strong> (trace downstream).</p>
+  <div class="card-grid">
+    <div class="card"><h4>🔗 Column-Level Lineage</h4><p>Track which source columns feed which targets through every transformation.</p></div>
+    <div class="card blue"><h4>💥 Impact Analysis</h4><p>Before changing a column, see every downstream dependency. Tools: DataHub, OpenLineage (Marquez standard), dbt's built-in lineage graph.</p></div>
+  </div>
+
+  <h3>Alerting Strategy</h3>
+  <div class="card-grid">
+    <div class="card"><h4>📊 1. Threshold-Based</h4><p>Row count drops below X, freshness exceeds Y. Deterministic, low false-positives. Route to Slack.</p></div>
+    <div class="card blue"><h4>📈 2. Anomaly Detection</h4><p>Statistical deviation from baseline (3σ below 30-day rolling average). Route to Slack with higher urgency.</p></div>
+    <div class="card green"><h4>🚨 3. SLA Breaches</h4><p>Pipeline hasn't completed by deadline. Route to PagerDuty.</p></div>
+    <div class="card purple"><h4>📢 4. Escalation</h4><p>Slack (info) → Slack (warning) → PagerDuty (critical) → Incident channel.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Frame data quality as "shift-left testing" — the same concept from software engineering applied to data.</strong> Mention specific, quantifiable metrics: "We monitor four dimensions — freshness (SLA: &lt; 30 seconds for real-time, &lt; 1 hour for batch), completeness (≥ 99.5% of source rows), volume (within 2σ of the 30-day mean), and uniqueness (zero duplicate PKs in Gold). We use Great Expectations checkpoints at ingestion and dbt tests at transformation, with Slack alerts for warnings and PagerDuty for SLA breaches." Concrete numbers and tool names signal hands-on experience.</p>
+  </div>
+</section>
+
+<!-- Screen 9: Quiz -->
+<section class="screen" id="s9">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: You are designing a Kafka topic for a CDC pipeline from a <code>customers</code> table. Which partition key strategy ensures correct ordering of changes per customer while avoiding hot partitions?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Random partition assignment for even distribution</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) Partition by <code>customer_id</code> (primary key)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) Partition by <code>updated_at</code> timestamp</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Single partition for global ordering</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Your team needs a stream processing engine for fraud detection with &lt; 50 ms latency and 500 GB of stateful feature aggregations. Which is the best choice?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Spark Structured Streaming with default micro-batch mode</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) Apache Flink with RocksDB state backend</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) Kafka Streams embedded in microservices</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) Spark Structured Streaming with continuous processing mode</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: In a Delta Lake MERGE for CDC events, what does <code>changes.ts_ms > target.ts_ms</code> in the WHEN MATCHED clause accomplish?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) It filters out DELETE operations</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) It enables schema evolution on the target table</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">C) It ensures only newer changes overwrite existing rows, handling out-of-order events</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) It triggers compaction of the Delta Lake table</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: Your CDC pipeline uses the Schema Registry with BACKWARD compatibility. A source team wants to add a new required (non-nullable) column. What happens?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) The Schema Registry accepts it, and all consumers immediately see the new column</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) The Schema Registry rejects the schema because adding a required field is not backward compatible</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) Debezium automatically adds a default value for the new column</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) The pipeline continues but silently drops the new column</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: Which data quality metric would BEST detect a scenario where Debezium silently stopped capturing changes from the source database?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Accuracy (validation against source values)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">B) Uniqueness (duplicate primary key detection)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">C) Freshness (time since most recent data point)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Schema conformance (column type validation)</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<!-- Screen 10: Key Takeaways -->
+<section class="screen screen-alt" id="s10">
+  <h2>Key <span class="accent">Takeaways</span></h2>
+  <ol class="takeaway-list">
+    <li><strong>Always clarify latency tiers first.</strong> "Real-time" is ambiguous. Sub-100 ms (operational), seconds (dashboards), and minutes (near-real-time) each imply radically different architectures and cost profiles. Pin this down before drawing a single box.</li>
+    <li><strong>Kafka is the universal ingestion backbone.</strong> Its durability, ordering, replayability, and decoupling properties make it the default choice. Invest in partition key design — it determines both ordering correctness and throughput scalability.</li>
+    <li><strong>Choose Flink for low-latency, stateful streaming; Spark for unified batch + stream.</strong> Flink's per-record model and RocksDB handle use cases that Spark's micro-batch cannot. But Spark's ecosystem maturity reduces operational overhead when seconds-level latency is acceptable.</li>
+    <li><strong>Specialized OLAP databases exist because warehouses can't serve sub-second, high-concurrency queries.</strong> Know one well (Druid, Pinot, ClickHouse) and articulate <em>why</em> it's needed.</li>
+    <li><strong>The dual-write pattern is an architectural necessity, not a hack.</strong> Writing to both a real-time OLAP DB and a data lake serves fundamentally different access patterns. Accept eventual consistency and implement reconciliation.</li>
+    <li><strong>CDC via Debezium reads the transaction log, not the table itself.</strong> Lower latency, lower source load, captures every intermediate change including deletes. Trace a single record end-to-end.</li>
+    <li><strong>Schema evolution is the #1 operational challenge in CDC.</strong> Enforce compatibility modes in the Schema Registry, use Delta Lake's <code>mergeSchema</code> for additive changes, and coordinate migrations for breaking changes.</li>
+    <li><strong>Handle deletes with soft deletes in Bronze/Silver and hard deletes only in Gold.</strong> Preserves audit trail and lineage while keeping downstream consumers clean. Use Kafka tombstones for topic compaction.</li>
+    <li><strong>Data quality is shift-left testing applied to data.</strong> Check at ingestion (schema, volume anomalies), transformation (business rules, referential integrity), and serving (freshness SLAs, completeness). Use concrete metrics: freshness &lt; 30s, completeness ≥ 99.5%, volume within 2σ.</li>
+    <li><strong>End-to-end traceability wins interviews.</strong> Tracing a record from source DB change → WAL → Debezium event → Kafka message → stream processor → Delta Lake MERGE → dbt model → dashboard demonstrates the fluency that distinguishes senior data engineers.</li>
+  </ol>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-01-data-platform/index.html">← Previous: Data Platform</a>
+  <a href="../module-03-design-problems/index.html">Next: Design Problems →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above — the correct answer focuses on the core concept.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

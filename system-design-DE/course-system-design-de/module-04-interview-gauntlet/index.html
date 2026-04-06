@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 4: The Interview Gauntlet 🔥 | System Design — DE</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#B45309;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}.progress-bar{height:3px;background:var(--color-error);width:0%;transition:width 0.2s}.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}.nav-dots{display:flex;gap:6px}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none}.nav-dot.active{background:var(--color-error)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}.screen h2 .accent{color:var(--color-accent)}.screen h3{font-family:var(--font-heading);font-size:1.2rem;font-weight:700;margin:1.5rem 0 0.5rem;color:var(--color-text)}.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.qa-card{background:#fff;border-radius:16px;padding:1.8rem;margin:1rem 0;box-shadow:0 2px 12px rgba(0,0,0,0.04);border-left:4px solid var(--color-accent);cursor:pointer;transition:all 0.2s}.qa-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.08)}.qa-card h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.3rem;display:flex;align-items:flex-start;gap:0.5rem;flex-wrap:wrap}.qa-card .badge{font-size:0.7rem;padding:0.15rem 0.5rem;border-radius:100px;color:#fff;font-weight:600;white-space:nowrap;flex-shrink:0;margin-top:0.15rem}.badge-hot{background:var(--color-error)}.badge-tricky{background:#7B5EA7}.badge-senior{background:var(--color-info)}.badge-basic{background:var(--color-success)}
+.qa-answer{max-height:0;overflow:hidden;transition:max-height 0.6s ease;font-size:0.93rem;color:var(--color-muted);line-height:1.7}.qa-card.open .qa-answer{max-height:3000px}.qa-answer p{margin-top:0.8rem}.qa-answer ul,.qa-answer ol{margin:0.5rem 0 0.5rem 1.2rem}.qa-answer li{margin:0.3rem 0}.qa-answer code{font-family:var(--font-code);background:#f4f0ec;padding:0.1rem 0.4rem;border-radius:4px;font-size:0.85rem}.qa-answer strong{color:var(--color-text)}
+.qa-answer pre{background:var(--color-bg-code);color:#CDD6F4;padding:1rem;border-radius:10px;overflow-x:auto;font-family:var(--font-code);font-size:0.8rem;margin:0.8rem 0;line-height:1.5}
+.qa-answer table{width:100%;border-collapse:collapse;margin:0.8rem 0;font-size:0.85rem}.qa-answer th,.qa-answer td{padding:0.5rem 0.7rem;text-align:left;border-bottom:1px solid #eee}.qa-answer th{font-weight:700;color:var(--color-text);background:#f9f7f4}
+.insight{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.insight-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}.insight p{font-size:0.93rem;margin:0;color:var(--color-muted)}
+.rapid-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin:1.5rem 0}.rapid-card{background:#fff;border-radius:12px;padding:1rem;box-shadow:0 2px 6px rgba(0,0,0,0.04)}.rapid-card .q{font-family:var(--font-heading);font-weight:700;font-size:0.88rem;margin-bottom:0.3rem;color:var(--color-text)}.rapid-card .a{font-size:0.82rem;color:var(--color-muted)}
+.framework-step{background:#fff;border-radius:14px;padding:1.5rem;margin:0.8rem 0;box-shadow:0 2px 10px rgba(0,0,0,0.04);border-left:4px solid var(--color-accent)}.framework-step h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.4rem;color:var(--color-accent)}.framework-step p{font-size:0.93rem;color:var(--color-muted);margin:0}
+.golden-rule{display:flex;gap:1rem;align-items:flex-start;padding:0.8rem 0;border-bottom:1px solid #f0ece6}.golden-rule:last-child{border-bottom:none}.golden-rule .rule-num{font-family:var(--font-heading);font-weight:800;font-size:1.5rem;color:var(--color-accent);min-width:2rem;text-align:center;flex-shrink:0}.golden-rule p{font-size:0.93rem;margin:0;color:var(--color-muted)}.golden-rule strong{color:var(--color-text)}
+.screen-alt{background:var(--color-bg-warm)}
+footer.module-nav{display:flex;justify-content:space-between;padding:2rem 1.5rem;max-width:900px;margin:0 auto}footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem}
+@media(max-width:600px){.rapid-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🏛️ System Design — DE</a><div class="nav-dots"><a href="../module-01-data-platform/" class="nav-dot"></a><a href="../module-02-realtime-cdc/" class="nav-dot"></a><a href="../module-03-design-problems/" class="nav-dot"></a><a href="../module-04-interview-gauntlet/" class="nav-dot active"></a></div></div></nav>
+
+<!-- ============================================================ -->
+<!-- SCREEN 1: Architecture Design — 8 System Design Q&A          -->
+<!-- ============================================================ -->
+<section class="screen" id="s1">
+  <h2>🏗️ Architecture <span class="accent">Design</span></h2>
+  <p>Eight system design questions — the kind you'll face in a 45–60 minute interview. Click each to reveal a structured answer. Study the <em>shape</em>, not just the content.</p>
+
+  <!-- Q1 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">HARD</span> Design a real-time fraud detection system for a payment processor handling 50K txn/sec</h4>
+    <div class="qa-answer">
+      <p><strong>Requirements:</strong> 50K TPS peak (~2B/day). End-to-end latency &lt;200ms. Real-time features (velocity, geo-distance, amount deviation) scored against an ML model. False positive rate &lt;1%. Historical feature lookups needed (30-day user profiles).</p>
+      <pre>Payment Gateway
+  → Kafka (transactions topic, 128 partitions, keyed by card_id)
+    → Flink Stream Processor
+      ├── Feature Computation (velocity, geo, amount z-score)
+      ├── Feature Store Lookup (Redis — 30-day user profile)
+      ├── ML Model Scoring (embedded ONNX model in Flink)
+      └── Decision: approve / decline / review
+          ├── approve → response back (&lt;200ms)
+          ├── decline → response + fraud ops alert
+          └── review → case management queue (Kafka → Postgres)</pre>
+      <p><strong>Data Model:</strong></p>
+      <ul>
+        <li><strong>Transaction Event:</strong> <code>{txn_id, card_id, merchant_id, amount, currency, geo_lat, geo_lon, timestamp, channel, device_fingerprint}</code></li>
+        <li><strong>User Profile (Redis):</strong> <code>card_id → {avg_30d_amount, txn_count_24h, last_5_locations[], typical_merchants[], risk_score_baseline}</code></li>
+        <li><strong>Feature Vector:</strong> <code>{velocity_1h, velocity_24h, geo_distance_from_last, amount_zscore, is_new_merchant, device_trust_score, time_since_last_txn}</code></li>
+      </ul>
+      <p><strong>Deep Dive — Feature Computation in Flink:</strong></p>
+      <ol>
+        <li><strong>Velocity features</strong> — Flink keyed state per <code>card_id</code>. Tumbling windows (1h, 24h). RocksDB-backed state with incremental checkpoints every 30s.</li>
+        <li><strong>Geo-distance</strong> — Haversine distance from last known location. Flag if &gt;500km in &lt;2h ("impossible travel").</li>
+        <li><strong>Amount z-score</strong> — <code>(current - avg_30d) / stddev_30d</code> from Redis. Flag if &gt;3σ.</li>
+        <li><strong>Model scoring</strong> — ONNX Runtime embedded in Flink operator. Inference &lt;5ms.</li>
+      </ol>
+      <table><tr><th>Stage</th><th>Budget</th></tr><tr><td>Kafka produce + consume</td><td>10ms</td></tr><tr><td>Feature computation (Flink)</td><td>20ms</td></tr><tr><td>Redis feature store lookup</td><td>5ms</td></tr><tr><td>ML model inference</td><td>5ms</td></tr><tr><td>Decision + response</td><td>10ms</td></tr><tr><td><strong>Total</strong></td><td><strong>~50ms typical, &lt;200ms p99</strong></td></tr></table>
+      <p><strong>Tradeoffs:</strong> Embedded ONNX model eliminates network hop (&lt;5ms) but couples deployment. Flink keyed state for short-window features avoids Redis round-trip; 30-day profiles stay in Redis. Secondary "review" path prevents hard-blocking borderline cases (~2% volume, &gt;98% automation).</p>
+    </div>
+  </div>
+
+  <div class="insight"><div class="insight-title">💡 Interview Insight</div><p>Always state your latency budget upfront and break it down by component. This shows you understand system design isn't about drawing boxes — it's about making each box fast enough to hit the end-to-end SLA.</p></div>
+
+  <!-- Q2 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Design a data pipeline for a social media feed (Twitter/Instagram scale)</h4>
+    <div class="qa-answer">
+      <p><strong>Requirements:</strong> 500M MAU, 10K new posts/sec, 300K feed reads/sec. Feed shows followed accounts' posts ranked by relevance within 2 seconds.</p>
+      <p><strong>Architecture — Fan-Out Decision (the critical choice):</strong></p>
+      <table><tr><th>Approach</th><th>How</th><th>Pros</th><th>Cons</th></tr>
+      <tr><td>Fan-out-on-write</td><td>Push to every follower's cache</td><td>Read is O(1)</td><td>Celebrity problem: 50M writes/post</td></tr>
+      <tr><td>Fan-out-on-read</td><td>Query all followed users at read</td><td>Write is O(1)</td><td>Read is O(N), slow</td></tr>
+      <tr><td><strong>Hybrid (Twitter)</strong></td><td>Write for &lt;10K followers, read for celebrities</td><td>Balanced</td><td>More complex</td></tr></table>
+      <pre>Post Created → Kafka (posts topic)
+  → Fan-out Service (checks follower count)
+    ├── &lt;10K followers: write to Redis sorted sets
+    └── &gt;10K followers: store in Celebrity Posts table
+  → Analytics Pipeline (Kafka → Flink → Data Lake)
+
+Feed Read → Timeline Service
+  ├── Fetch Redis timeline cache
+  ├── Fetch celebrity posts for followed celebrities
+  ├── Merge + Rank (lightweight ML ranker)
+  └── Return top 50 posts</pre>
+      <p><strong>Data Model:</strong> Post: <code>{post_id, author_id, content, media_urls[], created_at}</code>. Timeline Cache (Redis Sorted Set): key = <code>timeline:{user_id}</code>, score = timestamp, keep last 800 posts. Follow Graph: <code>{follower_id, followee_id}</code> in graph DB or sharded Postgres.</p>
+      <p><strong>Tradeoffs:</strong> Hybrid fan-out adds complexity but is necessary at scale. Redis timeline caches: 500M × 800 × 8 bytes ≈ 3.2 TB. Ranking model must be &lt;50ms at read time; heavy ML features pre-computed offline.</p>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">HARD</span> Design a real-time inventory tracking system for Walmart (4,700 stores, millions of SKUs)</h4>
+    <div class="qa-answer">
+      <p><strong>Requirements:</strong> 4,700 stores, ~15M unique SKUs, ~100K SKUs/store. Events: POS sales, returns, receiving, adjustments, transfers. Real-time count per store/SKU with &lt;30s latency. Auto-replenishment triggers. Handle Black Friday (10x spikes) + network outages.</p>
+      <pre>Store POS / Receiving / Adjustments
+  → Store Edge Gateway (local buffer if network down)
+    → Kafka (inventory-events, partitioned by store_id)
+      → Flink (keyed by store_id + sku_id)
+        ├── Aggregate: running inventory count
+        ├── State Store (RocksDB): current_qty, pending_transfers
+        ├── Replenishment Check: qty &lt; reorder_point → emit event
+        └── Sink: Cassandra (partitioned by store_id)
+          → Serving API + Analytics Pipeline (Kafka → S3 → Spark)</pre>
+      <p><strong>Data Model:</strong> Event: <code>{event_id, store_id, sku_id, event_type, quantity_delta, timestamp, source_system}</code>. State (Cassandra): <code>PK((store_id), sku_id) → {current_qty, reorder_point, reorder_qty, pending_transfer_qty}</code>.</p>
+      <p><strong>Deep Dive — Edge Buffering:</strong> Stores lose connectivity. Edge gateway buffers locally (SQLite/embedded Kafka), replays on reconnect. Events are idempotent (keyed by <code>event_id</code>). Flink deduplicates via keyed state TTL.</p>
+      <p><strong>Tradeoffs:</strong> Cassandra over Postgres for write volume; eventual consistency is acceptable (shrinkage exists). Flink state for speed + Cassandra for durability. Replenishment cooldown (4h per SKU) prevents over-triggering during flash sales.</p>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Design an A/B testing analytics platform</h4>
+    <div class="qa-answer">
+      <p><strong>Requirements:</strong> 50+ concurrent experiments. Deterministic user assignment. Compute conversion, revenue, engagement metrics. Statistical significance detection. Guardrail metrics.</p>
+      <pre>User Request → Assignment Service (hash(user_id + exp_id) % 100)
+  → Feature flags / variant config → client
+  → User interactions → Kafka
+    → Flink: enrich with experiment assignments
+      → Data Lake (Bronze → Silver → Gold)
+        → Metric Computation (Spark / dbt)
+          → Statistical Analysis (scipy, statsmodels)
+            → Results Dashboard (confidence intervals)</pre>
+      <p><strong>Data Model:</strong> Experiment Config: <code>{experiment_id, variants[], traffic_allocation, metrics[], guardrails[], min_sample_size}</code>. Assignment: <code>{user_id, experiment_id, variant}</code> (deterministic hash). Metric Result: <code>{experiment_id, variant, metric_name, mean, stddev, ci_lower, ci_upper, p_value, is_significant}</code>.</p>
+      <p><strong>Statistical Engine:</strong> Welch's t-test for continuous metrics, chi-squared for proportions. 95% CIs, p &lt; 0.05. Sequential testing for safe peeking. Guardrails (p99 latency, error rate, crash rate) auto-alert on degradation. Sample size calculator with baseline rate, MDE, and power (80%).</p>
+      <p><strong>Tradeoffs:</strong> Batch (daily Spark) is cheaper but 24h stale; on-demand is fresher but expensive. Hybrid: batch daily + ad-hoc drill-downs. Frequentist (industry standard) vs Bayesian (more intuitive "92% chance B is better") — choose by team literacy.</p>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-basic">COMMON</span> Design a Customer 360 platform</h4>
+    <div class="qa-answer">
+      <p><strong>Requirements:</strong> Unify data from CRM, orders, clickstream, support tickets, email, social. Build a single customer profile. Serve segmentation, churn prediction, personalization, support context.</p>
+      <pre>Sources (6+)
+  → CDC / API Extraction → Kafka → Bronze (raw per source)
+    → Identity Resolution Engine (Silver)
+      ├── Deterministic: email, phone, loyalty_id
+      ├── Probabilistic: name+address fuzzy (Jaro-Winkler &gt;0.85)
+      └── Output: unified_customer_id mapping
+    → Profile Builder (Silver → Gold)
+      ├── Merge on unified_customer_id
+      ├── Conflict resolution: most-recent-wins / source-priority
+      └── Derived: lifetime_value, churn_risk, preferred_channel
+        → Gold: customer_360 table
+          ├── Warehouse (BI / segmentation)
+          ├── Redis (real-time support lookup)
+          └── Reverse ETL → Salesforce, Marketo</pre>
+      <p><strong>Identity Resolution (the hard part):</strong> Step 1: Deterministic keys (~70% matches). Step 2: Probabilistic — Jaro-Winkler on name+address, threshold &gt;0.85, use blocking by zip to avoid O(n²). Step 3: Graph-based — connected components for transitive matches.</p>
+      <p><strong>Tradeoffs:</strong> Aggressive vs conservative matching (false merge vs split profile — start conservative). Batch vs real-time resolution (batch is simpler for fuzzy matching; real-time appends events to the latest resolved profile).</p>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">HARD</span> Design a data quality platform for a large organization</h4>
+    <div class="qa-answer">
+      <p><strong>Requirements:</strong> 500+ tables, 30+ pipelines. Define/execute/monitor quality rules. Quality scores per table. Lineage-aware alerting. Remediation workflows.</p>
+      <pre>Pipeline Execution (Airflow / dbt / Spark)
+  → OpenLineage events → Metadata Collector
+  → Quality Rule Engine
+    ├── Scheduled checks (Great Expectations / Soda)
+    ├── Inline checks (dbt tests, Spark validation)
+    └── ML anomaly detection (volume, distribution drift)
+  → Quality Score Calculator
+    ├── Per-table: weighted (freshness 30%, completeness 30%, validity 20%, uniqueness 20%)
+    └── Per-pipeline: min(table scores)
+  → Lineage-Aware Alert Router
+    ├── Root cause table → alert owner only
+    ├── Downstream → suppress, show "upstream failure"
+    └── Channels: PagerDuty / Slack / email digest
+  → Incident Management (Jira/ServiceNow)
+  → Quality Dashboard (scorecard, trends, drill-down)</pre>
+      <p><strong>Lineage-Aware Alerting:</strong> Naive = alert every failing table (15 alerts for 1 root cause). Smart = use lineage graph to identify furthest-upstream failure, alert only that owner. Downstream shows "degraded — upstream dependency failure."</p>
+      <p><strong>Tradeoffs:</strong> Centralized platform vs embedded in pipelines — hybrid is best (embed lightweight checks, aggregate to central via API). ML anomaly detection catches unknown-unknowns but has false positives; layer with threshold rules for known invariants.</p>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Design a cost optimization system for cloud data infrastructure</h4>
+    <div class="qa-answer">
+      <p><strong>Requirements:</strong> Track/optimize costs across Spark/Databricks, S3/GCS, Snowflake/BQ, Kafka, Airflow. Attribute to teams/projects/pipelines. Anomaly detection and optimization recommendations.</p>
+      <pre>Cloud Billing APIs (AWS Cost Explorer, GCP Billing, Databricks API)
+  → Cost Collector (daily batch)
+    → Cost Attribution Engine
+      ├── Join billing with resource tags (team, project)
+      ├── Untagged → heuristic attribution (cluster → DAG → team)
+      └── Shared → proportional (Kafka by topic bytes, S3 by prefix)
+    → Anomaly Detector
+      ├── Z-score on daily cost (&gt;3σ alert)
+      ├── Week-over-week (&gt;50% increase alert)
+      └── New resource detection
+    → Recommendation Engine
+      ├── Storage: lifecycle policies (IA 30d, Glacier 90d)
+      ├── Compute: idle clusters, right-sizing
+      ├── Queries: full-table scans → suggest partitioning
+      ├── Spot/preemptible for fault-tolerant workloads
+      └── Zombie resources: unused tables (no reads 90d)
+    → Dashboard + Savings Tracker</pre>
+      <p><strong>Tradeoffs:</strong> Tag-based vs heuristic attribution (mandate tags in IaC, heuristics as fallback). Automated vs recommended optimization — start with recommendations + approval; graduate to automation for well-understood patterns (e.g., auto-hibernate dev clusters at 7pm).</p>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-basic">COMMON</span> Design a data catalog and discovery platform</h4>
+    <div class="qa-answer">
+      <p><strong>Requirements:</strong> 1,000+ tables, 200+ Airflow DAGs, 300+ dbt models. Search by name/column/description/owner/tags. Lineage visualization. Popularity and quality scores.</p>
+      <pre>Metadata Sources
+  ├── Schema Crawler (Hive/Glue/Unity Catalog) → table/column metadata
+  ├── Airflow API → DAG definitions, run history
+  ├── dbt manifest.json → model descriptions, tests, docs
+  ├── Query Logs → usage stats, popularity
+  └── OpenLineage → runtime lineage
+→ Metadata Ingestion Service
+  → Metadata Store
+    ├── Postgres: structured metadata (tables, owners, tags, scores)
+    ├── Elasticsearch: full-text search
+    └── Graph DB (Neo4j): lineage edges
+  → Catalog UI
+    ├── Search: "revenue" → matching tables, models, columns
+    ├── Table detail: schema, owner, freshness, quality, samples
+    ├── Lineage graph: interactive upstream/downstream
+    ├── Popularity: most queried, trending
+    └── Access request → approval workflow → RBAC</pre>
+      <p><strong>Tradeoffs:</strong> Build vs buy — DataHub covers 80% with lower effort; custom gives full control but needs a team. Push vs pull ingestion — push (OpenLineage) for real-time lineage, pull (crawlers) for schema (daily). Most start with DataHub and extend.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SCREEN 2: Trade-off Discussions — 8 Trade-offs               -->
+<!-- ============================================================ -->
+<section class="screen screen-alt" id="s2">
+  <h2>⚖️ Trade-off <span class="accent">Discussions</span></h2>
+  <p>Every senior interview includes trade-offs. They don't want the "right" answer — they want you to <strong>hold two opposing ideas and articulate when each wins</strong>.</p>
+
+  <!-- Tradeoff 1 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">CORE</span> Batch vs Streaming Processing</h4>
+    <div class="qa-answer">
+      <table>
+        <tr><th></th><th>Batch</th><th>Streaming</th></tr>
+        <tr><td><strong>Definition</strong></td><td>Process in discrete chunks on schedule</td><td>Process continuously as data arrives</td></tr>
+        <tr><td><strong>Pros</strong></td><td>Simple to build/debug; cheaper (spot instances); easier exactly-once; mature tooling</td><td>Low latency (seconds); real-time dashboards; event-driven fit</td></tr>
+        <tr><td><strong>Cons</strong></td><td>Stale data until next run; large catch-up on failure</td><td>Complex state management; harder debugging; higher ops cost</td></tr>
+      </table>
+      <p><strong>Choose Batch:</strong> consumers tolerate hourly/daily freshness, large historical transforms, team lacks streaming expertise, cost priority.</p>
+      <p><strong>Choose Streaming:</strong> latency &lt;5 min, event-driven use cases (fraud, alerts, personalization), data naturally streams (clickstream, IoT).</p>
+      <p>💡 <em>Most production systems are hybrid — streaming for time-sensitive paths, batch for historical aggregations and backfills. Say this to show pragmatism.</em></p>
+    </div>
+  </div>
+
+  <!-- Tradeoff 2 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">CORE</span> Data Lake vs Data Warehouse</h4>
+    <div class="qa-answer">
+      <table>
+        <tr><th></th><th>Data Lake</th><th>Data Warehouse</th></tr>
+        <tr><td><strong>Definition</strong></td><td>Raw data in open formats on object storage</td><td>Structured, modeled data in columnar engine</td></tr>
+        <tr><td><strong>Pros</strong></td><td>Cheap (~$0.023/GB/mo); schema flexibility; multi-engine; ML-friendly</td><td>Fast queries; built-in governance; SQL-native; concurrency scaling</td></tr>
+        <tr><td><strong>Cons</strong></td><td>"Data swamp" risk; performance depends on engine</td><td>Expensive ($20–40/TB/mo); vendor lock-in; rigid schema</td></tr>
+      </table>
+      <p><strong>Choose Lake:</strong> diverse data types, multi-engine processing, cost sensitivity.</p>
+      <p><strong>Choose Warehouse:</strong> primary consumers are BI analysts, need strong governance OOTB, want managed performance.</p>
+      <p>💡 <em>The modern answer is "Lakehouse" — lake storage + warehouse-like performance via Iceberg/Delta + engines like Databricks SQL or Trino.</em></p>
+    </div>
+  </div>
+
+  <!-- Tradeoff 3 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Schema-on-Read vs Schema-on-Write</h4>
+    <div class="qa-answer">
+      <table>
+        <tr><th></th><th>Schema-on-Read</th><th>Schema-on-Write</th></tr>
+        <tr><td><strong>Definition</strong></td><td>Store as-is; apply schema when querying</td><td>Validate and enforce schema at write time</td></tr>
+        <tr><td><strong>Pros</strong></td><td>Fast ingestion; preserves raw fidelity; flexible exploration</td><td>Catches errors early; trusted data; better query performance</td></tr>
+        <tr><td><strong>Cons</strong></td><td>Garbage in, garbage out; slow queries on unstructured data</td><td>Ingestion failures on mismatch; rigid; slower ingestion</td></tr>
+      </table>
+      <p><strong>Choose Schema-on-Read:</strong> unreliable/rapidly-changing sources, Bronze layer, exploration.</p>
+      <p><strong>Choose Schema-on-Write:</strong> Silver/Gold layers, downstream consumers need consistency, quality is critical.</p>
+      <p>💡 <em>The medallion architecture naturally blends both: Schema-on-Read for Bronze, Schema-on-Write for Silver/Gold.</em></p>
+    </div>
+  </div>
+
+  <!-- Tradeoff 4 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Denormalized vs Normalized Data Models</h4>
+    <div class="qa-answer">
+      <table>
+        <tr><th></th><th>Denormalized</th><th>Normalized</th></tr>
+        <tr><td><strong>Definition</strong></td><td>Wide tables with redundant data; fewer joins</td><td>Related data split across tables; no redundancy</td></tr>
+        <tr><td><strong>Pros</strong></td><td>Faster reads; simpler queries; great for BI; columnar compression</td><td>No redundancy; easier updates; data integrity; smaller storage</td></tr>
+        <tr><td><strong>Cons</strong></td><td>Data redundancy; update anomalies; larger storage</td><td>Slow reads (joins); complex queries; poor for analytics at scale</td></tr>
+      </table>
+      <p><strong>Choose Denormalized:</strong> Gold-layer analytical tables, BI dashboards, query performance priority.</p>
+      <p><strong>Choose Normalized:</strong> operational/transactional systems, Silver-layer source-of-truth, frequent data changes.</p>
+      <p>💡 <em>"Star schema — fact tables denormalized for speed, dimension tables lightly normalized. The Kimball approach still dominates BI workloads."</em></p>
+    </div>
+  </div>
+
+  <!-- Tradeoff 5 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-basic">COMMON</span> Push vs Pull Ingestion</h4>
+    <div class="qa-answer">
+      <table>
+        <tr><th></th><th>Push (Source → Pipeline)</th><th>Pull (Pipeline → Source)</th></tr>
+        <tr><td><strong>Definition</strong></td><td>Source pushes data (webhooks, Kafka producers)</td><td>Pipeline pulls on schedule (JDBC, API polling)</td></tr>
+        <tr><td><strong>Pros</strong></td><td>Real-time; source controls timing; event-driven</td><td>Pipeline controls rate; simpler for sources; easier backfill</td></tr>
+        <tr><td><strong>Cons</strong></td><td>Variable load; source must build producer; harder backfill</td><td>Stale between pulls; can overload source; misses deletes</td></tr>
+      </table>
+      <p><strong>Choose Push:</strong> natural event sources (logs, clicks, IoT), low latency needed, source team owns producing.</p>
+      <p><strong>Choose Pull:</strong> databases (JDBC), rate-limited APIs, vendor file drops, no producer available.</p>
+      <p>💡 <em>"CDC (Debezium) is best of both worlds — reads the WAL (push from DB's perspective) but the connector pulls from the WAL. Real-time without polling tables."</em></p>
+    </div>
+  </div>
+
+  <!-- Tradeoff 6 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Monolithic vs Microservice Data Pipelines</h4>
+    <div class="qa-answer">
+      <table>
+        <tr><th></th><th>Monolithic (Central Team)</th><th>Domain-Owned (Microservice)</th></tr>
+        <tr><td><strong>Definition</strong></td><td>Central team owns all pipelines</td><td>Each domain team owns and publishes data products</td></tr>
+        <tr><td><strong>Pros</strong></td><td>Consistent standards; single orchestrator; easy cross-domain joins</td><td>Teams move independently; domain expertise; scales with org</td></tr>
+        <tr><td><strong>Cons</strong></td><td>Central bottleneck; doesn't scale past ~10 DEs; monolithic DAG</td><td>Inconsistent quality; duplication; cross-domain queries harder</td></tr>
+      </table>
+      <p><strong>Choose Monolithic:</strong> small team (&lt;10 DEs), early-stage platform, tight control needed.</p>
+      <p><strong>Choose Domain-Owned:</strong> large org (&gt;50 DEs), distinct domain needs, central team is a bottleneck.</p>
+      <p>💡 <em>"Most companies are in between — a central platform team provides infrastructure (Kafka, Spark, Airflow, catalog) and domain teams build on top. Call this 'federated with a platform.'"</em></p>
+    </div>
+  </div>
+
+  <!-- Tradeoff 7 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-basic">COMMON</span> SQL-First (dbt) vs Code-First (Spark/Python)</h4>
+    <div class="qa-answer">
+      <table>
+        <tr><th></th><th>SQL-First (dbt)</th><th>Code-First (Spark/Python)</th></tr>
+        <tr><td><strong>Definition</strong></td><td>Transforms in SQL, managed by dbt</td><td>Transforms in Python/Scala with PySpark</td></tr>
+        <tr><td><strong>Pros</strong></td><td>Accessible to analysts; built-in testing/docs; declarative</td><td>Complex logic (ML, APIs, fuzzy matching); full language flexibility</td></tr>
+        <tr><td><strong>Cons</strong></td><td>Complex SQL is painful; limited to tabular; dialect-dependent</td><td>Higher learning curve; more boilerplate; harder for analysts</td></tr>
+      </table>
+      <p><strong>Choose SQL/dbt:</strong> joins, aggregations, filters; analytics engineers; warehouse with SQL support.</p>
+      <p><strong>Choose Spark/Python:</strong> ML models, API calls, complex parsing, graph algorithms, non-tabular data.</p>
+      <p>💡 <em>"Best teams use both — dbt for Silver→Gold (joins, aggregations, business logic) and Spark for Bronze→Silver (parsing, deduplication, heavy ETL)."</em></p>
+    </div>
+  </div>
+
+  <!-- Tradeoff 8 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Managed Services vs Self-Hosted</h4>
+    <div class="qa-answer">
+      <table>
+        <tr><th></th><th>Managed (Snowflake, BQ, Confluent)</th><th>Self-Hosted (Spark on K8s, Kafka, Trino)</th></tr>
+        <tr><td><strong>Definition</strong></td><td>Vendor operates infrastructure; consume via API/SQL</td><td>You deploy, configure, scale, and maintain</td></tr>
+        <tr><td><strong>Pros</strong></td><td>Zero ops; auto-scaling; built-in security; fast time-to-value</td><td>Full control; no lock-in; cheaper at massive scale; customizable</td></tr>
+        <tr><td><strong>Cons</strong></td><td>Expensive at scale; lock-in; limited customization; egress costs</td><td>Needs platform team; ops burden; slower to start</td></tr>
+      </table>
+      <p><strong>Choose Managed:</strong> small team, speed-to-market, limited ops expertise, variable workloads.</p>
+      <p><strong>Choose Self-Hosted:</strong> massive scale (&gt;PB), dedicated platform team (&gt;5 infra eng), predictable workloads, lock-in unacceptable.</p>
+      <p>💡 <em>"Default to managed unless compelling reason to self-host. TCO of self-managed Kafka (engineering time for upgrades, monitoring, security) almost always exceeds Confluent Cloud for teams under 10 engineers."</em></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SCREEN 3: Failure Scenarios — 8 Q&A                          -->
+<!-- ============================================================ -->
+<section class="screen" id="s3">
+  <h2>💥 Failure <span class="accent">Scenarios</span></h2>
+  <p>Interviewers love these because they reveal <strong>operational maturity</strong>. Anyone designs the happy path. Senior engineers design for failure. For each: blast radius → triage → fix → prevention.</p>
+
+  <!-- F1 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">HARD</span> Kafka broker goes down mid-stream — what happens?</h4>
+    <div class="qa-answer">
+      <p><strong>What Breaks:</strong> Partitions led by that broker become temporarily unavailable. Producers get <code>NotLeaderForPartitionException</code> and retry. Consumers rebalance (~10–30s). If replication factor is 1 — <strong>data is lost</strong>.</p>
+      <p><strong>Triage:</strong> Check broker health. Verify ISR count — if ISR &lt; <code>min.insync.replicas</code>, producers are blocked. Monitor consumer lag (Burrow).</p>
+      <p><strong>Fix:</strong> Hardware failure → replace broker (Kafka auto-reassigns). Software crash → restart, it rejoins and catches up from replicas. Verify consumers resumed and lag is decreasing.</p>
+      <p><strong>Prevention:</strong> Replication factor ≥ 3 with <code>min.insync.replicas=2</code>. Rack-aware replication across AZs. Consumer idempotency (MERGE/upsert on sink). Alert on ISR shrink and consumer lag.</p>
+    </div>
+  </div>
+
+  <!-- F2 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">HARD</span> Spark job fails halfway through a 4-hour batch run — how do you recover?</h4>
+    <div class="qa-answer">
+      <p><strong>What Breaks:</strong> 4 hours of compute wasted. Partial data on S3 (some partitions complete, others corrupt). Downstream DAGs time out or run on stale data.</p>
+      <p><strong>Triage:</strong> Check Spark UI/driver logs — OOM? Data skew? Schema change? Determine which partitions/stages completed.</p>
+      <p><strong>Fix — Design for Restartability:</strong></p>
+      <ol>
+        <li><strong>Partition-level checkpoints:</strong> Track completed partitions in a checkpoint table. On restart, skip completed ones.</li>
+        <li><strong>Delta/Iceberg transactions:</strong> Failed writes are auto-rolled back. Simply re-run.</li>
+        <li><strong>Idempotent writes:</strong> Use <code>MERGE</code> or <code>INSERT OVERWRITE PARTITION</code> — safe to re-run.</li>
+      </ol>
+      <p><strong>Prevention:</strong> Break 4-hour jobs into smaller increments. Dynamic resource allocation (<code>spark.dynamicAllocation.enabled=true</code>). Handle data skew (salted keys, AQE). Airflow retries with idempotent tasks.</p>
+    </div>
+  </div>
+
+  <!-- F3 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Source database schema changes without warning (column renamed)</h4>
+    <div class="qa-answer">
+      <p><strong>What Breaks:</strong> Ingestion fails with column-not-found (strict) or silently produces NULLs (permissive). Downstream Silver/Gold tables fail or produce wrong results. Dashboards break. Trust lost.</p>
+      <p><strong>Triage:</strong> Alert fires from schema change detector or dbt test. Identify which column changed. Check blast radius via lineage.</p>
+      <p><strong>Fix:</strong> Update ingestion to alias new → old column name. Re-run for affected window. Validate downstream with quality checks.</p>
+      <p><strong>Prevention:</strong> Schema Registry (Avro/Protobuf) on Kafka — producers can't change without backward-compatibility checks. Data Contracts — PR-like review with deprecation period. Nightly schema diff detection. Defensive ingestion: Bronze stores raw, schema enforcement in Silver (easier to fix and reprocess).</p>
+    </div>
+  </div>
+
+  <!-- F4 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Pipeline produces duplicate records — how do you detect and fix?</h4>
+    <div class="qa-answer">
+      <p><strong>What Breaks:</strong> Inflated aggregations (revenue doubled). Join fan-outs. Business decisions on wrong numbers.</p>
+      <p><strong>Detection:</strong> dbt <code>unique</code> test on PK. SQL: <code>GROUP BY pk HAVING COUNT(*) > 1</code>. Volume anomaly (row count doubles). Business user reports (worst way).</p>
+      <p><strong>Fix:</strong> Deduplicate in Silver: <code>ROW_NUMBER() OVER (PARTITION BY pk ORDER BY updated_at DESC) = 1</code>. Root cause: Kafka rebalance reprocessing? → idempotent consumer. Pipeline retry? → use <code>MERGE</code>. Source sent duplicates? → dedup in Bronze→Silver. Multiple pipeline instances? → <code>max_active_runs=1</code>.</p>
+      <p><strong>Prevention:</strong> Idempotent writes (MERGE on PK). Exactly-once (Kafka transactions + Flink checkpoints). dbt unique tests on every table. Use dbt tests or Great Expectations as PK enforcement layer.</p>
+    </div>
+  </div>
+
+  <!-- F5 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">HARD</span> Corrupt data in Silver propagated to Gold and served to dashboards</h4>
+    <div class="qa-answer">
+      <p><strong>Blast Radius:</strong> Gold tables wrong. Dashboards showing bad metrics. Business decisions may already be made on bad data.</p>
+      <p><strong>Incident Response:</strong></p>
+      <ol>
+        <li><strong>Detect & Alert:</strong> Quality checks should have caught this. If not, first gap = quality coverage.</li>
+        <li><strong>Triage (15 min):</strong> Identify affected time range/tables. Lineage trace: Gold → Silver → Bronze → source. Is it bad source, transform bug, or infra failure?</li>
+        <li><strong>Contain:</strong> Time travel rollback: <code>RESTORE TABLE gold_daily_revenue TO VERSION AS OF 42</code>. Flag dashboards with banner: "Data under review."</li>
+        <li><strong>Fix:</strong> Fix Silver transform or source issue. Reprocess Silver from Bronze, then Gold from corrected Silver. Validate before re-serving.</li>
+        <li><strong>Post-Incident:</strong> Blameless post-mortem. Add quality checks that would have caught it. Update runbooks.</li>
+      </ol>
+      <p><strong>Prevention:</strong> Quality gates between layers (halt on failure). Time travel retention ≥7 days. ML-based anomaly detection for distribution shifts and volume anomalies.</p>
+    </div>
+  </div>
+
+  <!-- F6 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Kafka consumer lag is growing — consumers can't keep up</h4>
+    <div class="qa-answer">
+      <p><strong>What Breaks:</strong> Processing falls behind. Real-time dashboards stale. If lag exceeds retention → <strong>data loss</strong>.</p>
+      <p><strong>Triage:</strong> Check lag per partition. Is it uniform (consumer is slow) or concentrated (data skew / hot partition)? Are consumers alive or stuck?</p>
+      <p><strong>Fix (by speed):</strong></p>
+      <ol>
+        <li>Scale consumers (up to partition count max).</li>
+        <li>Fix hot partitions — re-key or salt partition key.</li>
+        <li>Optimize processing — batch writes, reduce per-record time, async I/O.</li>
+        <li>Increase Kafka retention (buy time).</li>
+        <li>Backpressure (Flink handles automatically; custom consumers need rate limiting).</li>
+      </ol>
+      <p><strong>Prevention:</strong> K8s HPA based on lag metric. Alert at 5min (warning) / 30min (critical). Load test at 2x peak. Partition count ≥ expected peak consumer count.</p>
+    </div>
+  </div>
+
+  <!-- F7 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-basic">COMMON</span> Airflow DAG fails at 3am — walk me through alerting and recovery</h4>
+    <div class="qa-answer">
+      <p><strong>Alerting Chain:</strong> Task fails → retry (<code>retries=3, delay=5min</code>) → all exhausted → <code>on_failure_callback</code> → PagerDuty (pages on-call) + Slack #data-alerts. Alert includes: DAG, task, execution date, error log, Airflow UI link.</p>
+      <p><strong>On-Call Response:</strong></p>
+      <ol>
+        <li>Acknowledge within 15min SLA.</li>
+        <li>Read logs — OOM? Source unavailable? Permission denied?</li>
+        <li>Assess blast radius via dependencies / lineage.</li>
+        <li>Fix: transient error → clear & re-trigger. Data issue → fix source, re-trigger. Code bug → fix, deploy, re-trigger.</li>
+        <li>Verify downstream completed. Check data quality.</li>
+        <li>Document in on-call handoff.</li>
+      </ol>
+      <p><strong>Prevention:</strong> SLA monitoring (DAG deadline alerts). Idempotent tasks. <code>ExternalTaskSensor</code> for dependencies. Per-DAG runbooks.</p>
+    </div>
+  </div>
+
+  <!-- F8 -->
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">HARD</span> Critical dimension table hasn't updated for 3 days — nobody noticed</h4>
+    <div class="qa-answer">
+      <p><strong>Why Undetected:</strong> Pipeline "succeeded" but processed zero records. No freshness monitoring. Airflow task was "success" (ran without errors) but data is stale. Downstream JOINs used stale dimension values silently.</p>
+      <p><strong>Fix:</strong> Investigate source stoppage (expired creds? dropped table? dead CDC connector?). Backfill 3 days. Reprocess Gold tables that used stale dimension.</p>
+      <p><strong>Prevention — Multi-Layer Freshness:</strong></p>
+      <ol>
+        <li><strong>Table-level freshness SLI:</strong> <code>SELECT MAX(updated_at)</code> — alert if &gt;24h stale.</li>
+        <li><strong>Row count checks:</strong> Alert if pipeline succeeds with 0 rows (silent failure).</li>
+        <li><strong>Freshness SLO:</strong> "dim_product updated within 24h, 99.5% of the time." Track compliance.</li>
+        <li><strong>Quality dashboard:</strong> Red/yellow/green for freshness, completeness, volume.</li>
+        <li><strong>Anomaly detection:</strong> dim_product updates daily ~2 AM. No update by 6 AM → auto-alert.</li>
+      </ol>
+      <p>💡 <em>Silent failures are more dangerous than loud ones. Monitor the <strong>data</strong>, not just the pipeline status. Key phrase: "I monitor data freshness and volume, not just Airflow task status."</em></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SCREEN 4: Rapid Fire — 20 Q&A                                -->
+<!-- ============================================================ -->
+<section class="screen screen-alt" id="s4">
+  <h2>⚡ Rapid Fire <span class="accent">Q&A</span></h2>
+  <p>No preamble. Short questions. Tight answers. This is the speed round.</p>
+  <div class="rapid-grid">
+    <div class="rapid-card"><div class="q">1. What is backpressure in streaming?</div><div class="a">When downstream can't keep up with upstream. Flink handles it automatically by slowing source reads. Without it: OOM or data loss.</div></div>
+    <div class="rapid-card"><div class="q">2. CAP theorem in 15 seconds?</div><div class="a">Distributed systems: pick 2 of 3 — Consistency, Availability, Partition tolerance. Since partitions are inevitable, you choose CP (HBase) or AP (Cassandra).</div></div>
+    <div class="rapid-card"><div class="q">3. ACID vs BASE?</div><div class="a">ACID = strict transactions (relational DBs). BASE = Basically Available, Soft state, Eventually consistent — relaxes consistency for scale (NoSQL).</div></div>
+    <div class="rapid-card"><div class="q">4. SLA vs SLO vs SLI?</div><div class="a">SLI = metric measured (freshness: 2h). SLO = target (freshness &lt;2h, 99%). SLA = contractual commitment with consequences if SLO breached.</div></div>
+    <div class="rapid-card"><div class="q">5. What is a dead letter queue?</div><div class="a">Holding area for failed messages — malformed records, schema violations. Bad records go to DLQ instead of blocking the pipeline.</div></div>
+    <div class="rapid-card"><div class="q">6. Event sourcing in one sentence?</div><div class="a">Store every state change as an immutable event — current state is derived by replaying all events in order.</div></div>
+    <div class="rapid-card"><div class="q">7. What is partition pruning?</div><div class="a">Query engine skips partitions that don't match the filter. WHERE event_date = '2026-04-06' → only that partition is scanned.</div></div>
+    <div class="rapid-card"><div class="q">8. Delta Lake vs Iceberg — one sentence each?</div><div class="a">Delta: Databricks-native, JSON transaction log, best with Spark/Databricks. Iceberg: vendor-neutral, manifest-tree metadata, best for multi-engine (Spark+Trino+Flink).</div></div>
+    <div class="rapid-card"><div class="q">9. What is data skew and how to fix it?</div><div class="a">One partition has disproportionately more data → one task runs 100x longer. Fix: salted keys, Spark AQE skew join, pre-filter hot keys.</div></div>
+    <div class="rapid-card"><div class="q">10. Explain watermarks in stream processing.</div><div class="a">A timestamp declaring "all events before this point have arrived." Tells the processor when to close a window. Late events are dropped or sent to side output.</div></div>
+    <div class="rapid-card"><div class="q">11. What is Z-ordering?</div><div class="a">Multi-dimensional data layout co-locating related data in files. Z-order by (region, product_id) → queries on either column scan fewer files.</div></div>
+    <div class="rapid-card"><div class="q">12. Star schema vs snowflake schema?</div><div class="a">Star: central fact + denormalized dimensions (1 join). Snowflake: normalized sub-dimensions (more joins, less redundancy). Star preferred for BI performance.</div></div>
+    <div class="rapid-card"><div class="q">13. What is a slowly changing dimension?</div><div class="a">Dimension whose attributes change over time. Type 1: overwrite (lose history). Type 2: new row with valid_from/to (preserve history). Type 3: add previous-value column.</div></div>
+    <div class="rapid-card"><div class="q">14. Explain idempotency in pipelines.</div><div class="a">Same result whether you run once or ten times. Use MERGE/upsert, partition overwrite, or dedup on natural key. Critical for safe retries.</div></div>
+    <div class="rapid-card"><div class="q">15. What is predicate pushdown?</div><div class="a">Push filters to the storage layer so only matching data is read. Parquet supports this via min/max stats in row group metadata.</div></div>
+    <div class="rapid-card"><div class="q">16. Hot partition — what and how to fix?</div><div class="a">One partition gets disproportionate reads/writes → bottleneck. Fix: salt/random suffix on partition key, composite keys, or pre-split partitions.</div></div>
+    <div class="rapid-card"><div class="q">17. What is a compacted topic in Kafka?</div><div class="a">Retains only the latest value per key, deleting older records. Used for changelogs/state topics. Key-based retention, not time-based.</div></div>
+    <div class="rapid-card"><div class="q">18. Event-time vs processing-time?</div><div class="a">Event-time: when it actually happened (embedded timestamp). Processing-time: when system processes it. Event-time is correct but needs watermarks. Processing-time is simpler but inaccurate for late data.</div></div>
+    <div class="rapid-card"><div class="q">19. What is a feature store?</div><div class="a">Centralized ML feature management. Offline store (data lake, batch training) + online store (Redis, low-latency inference). Prevents train-serve skew.</div></div>
+    <div class="rapid-card"><div class="q">20. What is data lineage and why does it matter?</div><div class="a">Tracks how data flows source→destination through transforms. Matters for: debugging (root cause), impact analysis, compliance (PII tracking), and trust (provenance).</div></div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SCREEN 5: Key Takeaways & Framework                          -->
+<!-- ============================================================ -->
+<section class="screen" id="s5">
+  <h2>🎯 The 6-Step <span class="accent">Design Framework</span></h2>
+  <p>Memorize this. Internalize it. Use it for every question. The steps should feel as natural as breathing.</p>
+
+  <div class="framework-step">
+    <h4>Step 1: Clarify Requirements (3–5 min)</h4>
+    <p>Never start drawing. Start asking. <strong>Functional:</strong> sources, consumers, queries. <strong>Non-Functional:</strong> latency, volume, SLA, compliance. <strong>Scale:</strong> events/sec, growth rate. Signal: "Before I design anything, let me clarify scale and latency requirements."</p>
+  </div>
+  <div class="framework-step">
+    <h4>Step 2: High-Level Architecture (5–7 min)</h4>
+    <p>Draw: Sources → Ingestion → Storage → Processing → Serving → Consumers. Plus Orchestration and Governance. Name technologies and explain <em>why</em>: "Kafka for ingestion because we need 50K TPS with ordering and durability."</p>
+  </div>
+  <div class="framework-step">
+    <h4>Step 3: Data Model (3–5 min)</h4>
+    <p>Show key schemas. Bronze/Silver/Gold layers. Primary entity, key attributes, partition key, file format choice (Parquet for analytics, Avro for streaming, JSON for flexibility).</p>
+  </div>
+  <div class="framework-step">
+    <h4>Step 4: Deep Dive (10–15 min)</h4>
+    <p>Pick 2–3 critical components. Go deep on internals: CDC vs batch ingestion, Spark optimizations, Flink stateful processing, data quality rules, query performance, caching. This is where you differentiate.</p>
+  </div>
+  <div class="framework-step">
+    <h4>Step 5: Failure Handling (3–5 min)</h4>
+    <p>Proactively address: "Here's what happens when things go wrong." Source down? (Kafka retention, retries). Job fails? (Idempotent writes, checkpoints). Bad data? (Quality gates, DLQ, time travel rollback). Monitoring? (SLIs, SLOs, alerting).</p>
+  </div>
+  <div class="framework-step">
+    <h4>Step 6: Cost & Scale (2–3 min)</h4>
+    <p>How does this scale to 10x? What are cost drivers? Where to optimize first? (Spot instances, storage tiering, query optimization). Growth plan: start managed, graduate to self-hosted at scale.</p>
+  </div>
+
+  <h3 style="margin-top:2.5rem;">🏆 10 Golden Rules</h3>
+
+  <div style="background:#fff;border-radius:16px;padding:1.5rem;margin:1rem 0;box-shadow:0 2px 12px rgba(0,0,0,0.04)">
+    <div class="golden-rule"><div class="rule-num">1</div><p><strong>Ask before you draw.</strong> 3–5 min on requirements = #1 differentiator between mid and senior.</p></div>
+    <div class="golden-rule"><div class="rule-num">2</div><p><strong>Name technologies and justify them.</strong> "Kafka because we need ordered, durable, replayable streaming at 50K TPS" — not just "a message queue."</p></div>
+    <div class="golden-rule"><div class="rule-num">3</div><p><strong>State your latency budget.</strong> Whether 200ms for fraud or 6 AM for a dashboard — make the constraint explicit.</p></div>
+    <div class="golden-rule"><div class="rule-num">4</div><p><strong>Show the data model.</strong> Schemas, partition keys, format choices. A design without a data model lacks substance.</p></div>
+    <div class="golden-rule"><div class="rule-num">5</div><p><strong>Talk about failure before they ask.</strong> "Let me address what happens when this component fails." Signals operational maturity.</p></div>
+    <div class="golden-rule"><div class="rule-num">6</div><p><strong>Quantify everything.</strong> "50K events/sec × 1KB = 50MB/sec → Kafka with 32 partitions handles this easily." Numbers build credibility.</p></div>
+    <div class="golden-rule"><div class="rule-num">7</div><p><strong>Discuss tradeoffs, not just choices.</strong> "Flink over Spark Structured Streaming for sub-second latency. Tradeoff: more operational complexity for state and checkpoints."</p></div>
+    <div class="golden-rule"><div class="rule-num">8</div><p><strong>Layer in governance.</strong> Data quality checks, access control, lineage, monitoring. Separates senior from mid-level.</p></div>
+    <div class="golden-rule"><div class="rule-num">9</div><p><strong>Don't over-engineer.</strong> Daily batch with 10GB/day ≠ Flink with exactly-once. Match complexity to requirements.</p></div>
+    <div class="golden-rule"><div class="rule-num">10</div><p><strong>Practice the whiteboard.</strong> Explain your design out loud while sketching. The framework should take 35–40 min, leaving 5–10 for Q&A.</p></div>
+  </div>
+
+  <div class="insight" style="margin-top:2rem;">
+    <div class="insight-title">🔥 The Final Word</div>
+    <p>You've survived the Gauntlet. No one expects every answer memorized. Interviewers want your <strong>framework</strong> — how you break down ambiguity, reason about tradeoffs, and design for the real world where things fail, data is messy, and budgets are finite. Requirements → Architecture → Data Model → Deep Dive → Failure Handling → Cost & Scale. Make it second nature. Now close this, open a blank whiteboard, and design a system from scratch. <strong>You've got this.</strong></p>
+  </div>
+
+  <div style="text-align:center;margin-top:2rem">
+    <a href="../index.html" style="display:inline-block;background:var(--color-accent);color:#fff;padding:1rem 2.5rem;border-radius:100px;font-family:var(--font-heading);font-weight:700;font-size:1.1rem;text-decoration:none;transition:transform 0.2s">Back to Course Home 🏛️</a>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-03-design-problems/index.html">← Previous: Design Problems</a>
+  <a href="../index.html">Back to Course Home 🏛️</a>
+</footer>
+<script>
+(function(){
+  var pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){var h=document.documentElement;pb.style.width=((h.scrollTop/(h.scrollHeight-h.clientHeight))*100)+'%';},{passive:true});
+  document.querySelectorAll('.qa-card').forEach(function(c){c.setAttribute('role','button');c.setAttribute('tabindex','0');c.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();c.classList.toggle('open');}});});
+})();
+</script>
+</body>
+</html>

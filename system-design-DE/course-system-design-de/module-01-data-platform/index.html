@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 1: Designing a Data Lake / Lakehouse | System Design — DE</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#B45309;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p,.card ul{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.card ul{padding-left:1.2rem;margin-top:0.3rem}
+.card ul li{padding:0.15rem 0}
+.aha{background:linear-gradient(135deg,#FFFBF0,#FFF5E0);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.styled-table{width:100%;border-collapse:collapse;margin:1.2rem 0;font-size:0.9rem;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.styled-table thead{background:var(--color-accent);color:#fff}
+.styled-table th{padding:0.8rem 1rem;text-align:left;font-family:var(--font-heading);font-weight:700;font-size:0.85rem}
+.styled-table td{padding:0.7rem 1rem;border-bottom:1px solid rgba(0,0,0,0.04)}
+.styled-table tbody tr:last-child td{border-bottom:none}
+.styled-table tbody tr:hover{background:rgba(180,83,9,0.03)}
+ol.takeaway-list{counter-reset:takeaway;list-style:none;padding:0;margin:1.5rem 0}
+ol.takeaway-list li{counter-increment:takeaway;position:relative;padding:1rem 1.2rem 1rem 3.5rem;margin-bottom:0.8rem;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.04);font-size:0.95rem;line-height:1.6}
+ol.takeaway-list li::before{content:counter(takeaway);position:absolute;left:1rem;top:1rem;width:2rem;height:2rem;background:var(--color-accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:0.85rem}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.styled-table{font-size:0.8rem}.styled-table th,.styled-table td{padding:0.5rem 0.6rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🏛️ System Design — DE</a><div class="nav-dots"><a href="../module-01-data-platform/" class="nav-dot active"></a><a href="../module-02-realtime-cdc/" class="nav-dot"></a><a href="../module-03-design-problems/" class="nav-dot"></a><a href="../module-04-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Requirements Gathering -->
+<section class="screen" id="s1">
+  <h2>📋 <span class="accent">Requirements Gathering</span> for a Data Platform</h2>
+  <p>Every great system design answer starts the same way: <strong>not drawing boxes</strong>. It starts with questions. When an interviewer says <em>"Design a data lake"</em> or <em>"Design a data platform for an e-commerce company,"</em> the worst thing you can do is jump straight to S3 + Spark + Airflow. The best thing you can do is spend the first 3–5 minutes clarifying scope.</p>
+
+  <h3>The Interview Framework</h3>
+  <p>Use this four-step loop for any data platform design question:</p>
+  <div class="card-grid">
+    <div class="card"><h4>1. Clarify</h4><p>Ask about data sources, consumers, scale, latency, and constraints.</p></div>
+    <div class="card blue"><h4>2. High-Level Design</h4><p>Draw the major subsystems (ingestion, storage, processing, serving, governance).</p></div>
+    <div class="card green"><h4>3. Deep Dive</h4><p>Pick 1–2 areas the interviewer cares about most and go deep.</p></div>
+    <div class="card purple"><h4>4. Tradeoffs</h4><p>Articulate what you chose, what you rejected, and why.</p></div>
+  </div>
+
+  <h3>Functional Requirements</h3>
+  <table class="styled-table">
+    <thead><tr><th>Category</th><th>Examples</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Data Sources</strong></td><td>OLTP databases (Postgres, MySQL), APIs, application logs, clickstream events, flat files (CSV/Excel from vendors)</td></tr>
+      <tr><td><strong>Data Consumers</strong></td><td>BI analysts (dashboards), data scientists (notebooks, ML training), ML engineers (feature serving), operational teams (alerts, reports)</td></tr>
+      <tr><td><strong>Query Patterns</strong></td><td>Ad-hoc SQL exploration, scheduled dashboard refreshes, large-scale ML training reads, low-latency feature lookups</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Non-Functional Requirements</h3>
+  <p>These determine your architecture more than anything else:</p>
+  <table class="styled-table">
+    <thead><tr><th>Dimension</th><th>Clarifying Question</th><th>Impact</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Scale</strong></td><td>How much data per day? Total?</td><td>TB/day → streaming + distributed compute; PB total → object storage</td></tr>
+      <tr><td><strong>Latency</strong></td><td>Batch (hours), NRT (minutes), RT (seconds)?</td><td>Drives Spark batch vs Structured Streaming vs Flink</td></tr>
+      <tr><td><strong>Reliability</strong></td><td>SLA for freshness? Data loss tolerance?</td><td>Exactly-once semantics, replication, dead letter queues</td></tr>
+      <tr><td><strong>Cost</strong></td><td>Fixed budget or elastic cloud?</td><td>Spot instances, storage tiering, auto-scaling clusters</td></tr>
+      <tr><td><strong>Compliance</strong></td><td>PII? GDPR/CCPA? HIPAA?</td><td>Encryption, column masking, audit logging, retention policies</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Example Scoping Conversation</h3>
+  <div class="code-block"><span class="cm">You:</span> "Before I design anything — how many data sources are we talking about,
+     and what's the daily data volume?"
+
+<span class="cm">Interviewer:</span> "About 50 source systems. Mix of Postgres databases, Kafka event
+     streams, and third-party API feeds. Roughly 2 TB/day ingestion,
+     growing 30% YoY. We have about 500 TB of historical data."
+
+<span class="cm">You:</span> "Got it. And who are the primary consumers? BI dashboards, ML models, or both?"
+
+<span class="cm">Interviewer:</span> "Mostly BI today — Tableau dashboards refreshed every 15 minutes.
+     But the ML team is growing and wants a feature store."</div>
+  <p>Now you know: moderate scale, near-real-time BI, batch ML, multi-consumer. That changes everything compared to a pure-batch or pure-streaming design.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Always start by asking about the Four V's — Volume, Velocity, Variety, and access patterns — before drawing any architecture.</strong> Interviewers explicitly watch for this. A candidate who spends 3 minutes asking smart questions before touching the whiteboard signals seniority. A candidate who immediately draws Kafka → Spark → S3 signals they have one memorized architecture.</p>
+  </div>
+</section>
+
+<!-- Screen 2: Storage Layer -->
+<section class="screen screen-alt" id="s2">
+  <h2>🗄️ Storage Layer — <span class="accent">Object Storage + Table Formats</span></h2>
+  <p>The storage layer is the gravitational center of any modern data platform. Every other decision — compute engines, query tools, governance — orbits around how and where you store data.</p>
+
+  <h3>Why Object Storage Is the Foundation</h3>
+  <p>Cloud object storage (S3, GCS, Azure Data Lake Storage) won the storage wars for data lakes:</p>
+  <div class="card-grid">
+    <div class="card"><h4>💎 Durability</h4><p>99.999999999% (11 nines) — you'd lose 1 object per 10 million every 10,000 years</p></div>
+    <div class="card blue"><h4>💰 Cost</h4><p>~$0.023/GB/month (S3 Standard), ~$0.004/GB/month (Glacier)</p></div>
+    <div class="card green"><h4>📈 Scalability</h4><p>Virtually infinite — no capacity planning required</p></div>
+    <div class="card purple"><h4>🔌 Decoupled Compute</h4><p>Any engine (Spark, Trino, Flink, DuckDB) reads from the same data</p></div>
+  </div>
+  <p>The killer feature is <strong>compute-storage separation</strong>. In a traditional data warehouse, compute and storage are bundled — you pay for both even when your cluster is idle. With object storage, you spin up compute only when you need it and tear it down when you're done.</p>
+
+  <h3>The Table Format Revolution</h3>
+  <p>Raw Parquet files on S3 get you 80% of the way there, but they can't give you:</p>
+  <div class="card-grid">
+    <div class="card"><h4>🔒 ACID Transactions</h4><p>What happens when two jobs write to the same table simultaneously?</p></div>
+    <div class="card blue"><h4>⏪ Time Travel</h4><p>Can you query last Tuesday's version of a table?</p></div>
+    <div class="card green"><h4>🔄 Schema Evolution</h4><p>Can you add a column without rewriting every file?</p></div>
+    <div class="card purple"><h4>✏️ Efficient Upserts</h4><p>Can you update 1,000 rows without rewriting a 100 GB partition?</p></div>
+  </div>
+  <p>This is exactly the gap that <strong>Delta Lake</strong>, <strong>Apache Iceberg</strong>, and <strong>Apache Hudi</strong> fill. They add a metadata layer on top of object storage that turns a pile of Parquet files into a proper table.</p>
+
+  <h3>Comparison: Delta Lake vs Iceberg vs Hudi</h3>
+  <table class="styled-table">
+    <thead><tr><th>Feature</th><th>Delta Lake</th><th>Apache Iceberg</th><th>Apache Hudi</th></tr></thead>
+    <tbody>
+      <tr><td><strong>ACID Transactions</strong></td><td>✅ Yes</td><td>✅ Yes</td><td>✅ Yes</td></tr>
+      <tr><td><strong>Time Travel</strong></td><td>✅ Version #</td><td>✅ Snapshot ID/timestamp</td><td>✅ Timeline</td></tr>
+      <tr><td><strong>Schema Evolution</strong></td><td>✅ Add/rename cols</td><td>✅ Full (add, rename, drop, reorder)</td><td>✅ Add/rename cols</td></tr>
+      <tr><td><strong>Partition Evolution</strong></td><td>❌ Requires rewrite</td><td>✅ Hidden partitioning, no rewrite</td><td>❌ Requires rewrite</td></tr>
+      <tr><td><strong>Engine Support</strong></td><td>Spark, Trino, Flink (growing)</td><td>Spark, Trino, Flink, Dremio, Starrocks</td><td>Spark, Trino, Flink</td></tr>
+      <tr><td><strong>Governance</strong></td><td>Databricks Unity Catalog</td><td>Apache Polaris, AWS Glue</td><td>Limited</td></tr>
+      <tr><td><strong>Community</strong></td><td>Databricks (OSS + commercial)</td><td>Netflix/Apple/LinkedIn → ASF</td><td>Uber → ASF</td></tr>
+      <tr><td><strong>Best For</strong></td><td>Databricks-centric shops</td><td>Multi-engine, vendor-neutral</td><td>CDC-heavy, record-level upserts</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Delta Lake Deep Dive</h3>
+  <p>Delta Lake stores a <strong>transaction log</strong> in a <code>_delta_log/</code> directory alongside your Parquet files. Every write creates a new JSON commit file recording which files were added and removed.</p>
+  <div class="card-grid">
+    <div class="card"><h4>⚙️ OPTIMIZE</h4><p>Compacts small files into larger ones (target ~1 GB files for best read performance).</p></div>
+    <div class="card blue"><h4>📐 Z-ORDER</h4><p>Co-locates related data within files for multi-dimensional filtering. Reduces files scanned.</p></div>
+    <div class="card green"><h4>🧹 VACUUM</h4><p>Removes old files no longer referenced by the transaction log. Default retention: 7 days.</p></div>
+  </div>
+
+  <h3>Iceberg Deep Dive</h3>
+  <p>Iceberg uses a tree of <strong>metadata files → manifest lists → manifest files → data files</strong>. This enables:</p>
+  <div class="card-grid">
+    <div class="card"><h4>🙈 Hidden Partitioning</h4><p>Define partition transforms (e.g., <code>month(event_date)</code>) and Iceberg handles the rest. Consumers don't need to know partitioning details.</p></div>
+    <div class="card blue"><h4>🔄 Partition Evolution</h4><p>Change from monthly to daily partitioning <em>without rewriting any data</em>. Iceberg's planning layer handles both seamlessly.</p></div>
+    <div class="card green"><h4>📸 Snapshot Isolation</h4><p>Each query runs against a consistent snapshot, even if writes are happening concurrently.</p></div>
+  </div>
+
+  <h3>When to Choose Which</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🔷 Delta Lake</h4>
+      <ul>
+        <li>✅ Databricks shop or heavily invested in Spark ecosystem</li>
+        <li>✅ Deepest and most mature Spark integration</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🧊 Apache Iceberg</h4>
+      <ul>
+        <li>✅ Multi-engine (Spark + Trino + Flink + Dremio)</li>
+        <li>✅ Vendor-neutral, best partition evolution</li>
+      </ul>
+    </div>
+  </div>
+  <p>Choose <strong>Apache Hudi</strong> if your primary workload is CDC-heavy with frequent record-level upserts and you need Merge-on-Read for fast ingestion.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Mention that table formats solve the "small files problem" and enable ACID on object storage — this shows you understand WHY they exist, not just WHAT they are.</strong> Bonus points: explain that the real innovation is the metadata layer (transaction log or manifest tree) that turns a collection of immutable files into a mutable, queryable table.</p>
+  </div>
+</section>
+
+<!-- Screen 3: Medallion Architecture -->
+<section class="screen" id="s3">
+  <h2>🥉🥈🥇 <span class="accent">Medallion Architecture</span> (Bronze → Silver → Gold)</h2>
+  <p>The medallion architecture is the most common organizational pattern for a modern lakehouse. Think of it as <strong>progressive data refinement</strong> — each layer transforms raw chaos into trusted, business-ready data.</p>
+
+  <h3>Bronze Layer — Raw Ingestion</h3>
+  <p>The Bronze layer is your <strong>system of record</strong>. It stores data exactly as it arrived, warts and all.</p>
+  <table class="styled-table">
+    <thead><tr><th>Property</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Purpose</strong></td><td>Preserve raw data with full fidelity</td></tr>
+      <tr><td><strong>Schema</strong></td><td>Schema-on-read — store as JSON, Avro, or raw Parquet without transformation</td></tr>
+      <tr><td><strong>Write Pattern</strong></td><td>Append-only — never update or delete</td></tr>
+      <tr><td><strong>Partitioning</strong></td><td>By ingestion date (<code>_ingested_date=2026-04-06</code>)</td></tr>
+      <tr><td><strong>Retention</strong></td><td>Long (years) — this is your reprocessing safety net</td></tr>
+      <tr><td><strong>Metadata</strong></td><td>Add <code>_source_system</code>, <code>_ingested_at</code>, <code>_batch_id</code> columns</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Example:</strong> Raw JSON events from Kafka land in <code>s3://datalake/bronze/clickstream/</code> partitioned by hour. Each record keeps the original payload, including malformed records and duplicates.</p>
+
+  <h3>Silver Layer — Cleaned & Conformed</h3>
+  <p>The Silver layer is where data becomes <strong>trustworthy</strong>.</p>
+  <table class="styled-table">
+    <thead><tr><th>Property</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Purpose</strong></td><td>Clean, deduplicate, conform, apply business keys</td></tr>
+      <tr><td><strong>Schema</strong></td><td>Schema-on-write — strong typing, enforced schema evolution</td></tr>
+      <tr><td><strong>Write Pattern</strong></td><td>Upsert/merge — idempotent, handles late-arriving data</td></tr>
+      <tr><td><strong>Partitioning</strong></td><td>By business key or event date</td></tr>
+      <tr><td><strong>Transformations</strong></td><td>Parse nested JSON, cast types, deduplicate, join reference data, handle SCD Type 2</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Example:</strong> Bronze clickstream events are parsed into a structured <code>silver_clickstream</code> table. Duplicates are removed by <code>(event_id, event_timestamp)</code>. User IDs are resolved against a master customer table.</p>
+
+  <h3>Gold Layer — Business-Level Aggregates</h3>
+  <p>The Gold layer is <strong>consumption-ready</strong>. It speaks the language of the business.</p>
+  <table class="styled-table">
+    <thead><tr><th>Property</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Purpose</strong></td><td>Business-level aggregates, dimensional models, feature tables</td></tr>
+      <tr><td><strong>Schema</strong></td><td>Star schema, wide denormalized tables, or pre-aggregated metrics</td></tr>
+      <tr><td><strong>Write Pattern</strong></td><td>Overwrite partition or incremental aggregate</td></tr>
+      <tr><td><strong>Optimized For</strong></td><td>Dashboard queries, ML feature reads, API serving</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Example:</strong> <code>gold_daily_revenue</code> contains <code>date</code>, <code>product_category</code>, <code>region</code>, <code>total_revenue</code>, <code>order_count</code>, <code>avg_order_value</code>. Built from Silver order and product tables. Refreshed daily at 5 AM UTC.</p>
+
+  <h3>Data Flow (End to End)</h3>
+  <div class="code-block">Raw JSON events (Kafka)
+    → <span class="fn">Bronze</span>: append raw events, partition by hour
+        → <span class="str">Silver</span>: parse, deduplicate, resolve user IDs, validate schema
+            → <span class="kw">Gold</span>: aggregate daily revenue by product category and region</div>
+
+  <h3>Why Three Layers?</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🔄 Reprocessability</h4><p>If Silver logic has a bug, reprocess from Bronze. No need to re-ingest from source systems.</p></div>
+    <div class="card blue"><h4>🔍 Debugging</h4><p>Compare Bronze (raw) to Silver (cleaned) to trace data quality issues.</p></div>
+    <div class="card green"><h4>🧩 Separation of Concerns</h4><p>Bronze owners care about ingestion reliability; Gold owners care about business logic correctness.</p></div>
+    <div class="card purple"><h4>⏱️ Different SLAs</h4><p>Bronze can lag by an hour; Gold dashboards must be fresh by 6 AM.</p></div>
+  </div>
+
+  <h3>Anti-Patterns to Avoid</h3>
+  <div class="card-grid">
+    <div class="card" style="border-top-color:var(--color-error)"><h4>❌ Too Many Layers (5+)</h4><p>Platinum, Diamond, Uranium — each extra layer adds latency, complexity, and confusion. Three is the sweet spot.</p></div>
+    <div class="card" style="border-top-color:var(--color-error)"><h4>❌ Skipping Silver</h4><p>Going Bronze → Gold means your Gold tables embed parsing, cleaning, and aggregation logic. When something breaks, you can't isolate the issue.</p></div>
+    <div class="card" style="border-top-color:var(--color-error)"><h4>❌ Gold = Renamed Silver</h4><p>If your Gold is just <code>SELECT * FROM silver_table</code>, you're not adding value. Gold should reshape data for specific consumption patterns.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Explain medallion as "progressive data refinement" — each layer adds value and each can be independently reprocessed from the layer below.</strong> This framing shows you understand the operational benefits (reprocessing, debugging) rather than just the conceptual labels.</p>
+  </div>
+</section>
+
+<!-- Screen 4: Ingestion -->
+<section class="screen screen-alt" id="s4">
+  <h2>📥 Ingestion — <span class="accent">Batch + Streaming</span></h2>
+  <p>Ingestion is how data enters your platform. Getting it wrong creates problems that cascade through every downstream layer.</p>
+
+  <h3>Batch Ingestion Patterns</h3>
+  <table class="styled-table">
+    <thead><tr><th>Pattern</th><th>How It Works</th><th>When to Use</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Full Load</strong></td><td>Extract entire table every run</td><td>Small reference tables (&lt;1 GB), no reliable change tracking</td></tr>
+      <tr><td><strong>Incremental — CDC</strong></td><td>Capture INSERT/UPDATE/DELETE from DB transaction log</td><td>Large transactional tables, need deletes, near-real-time</td></tr>
+      <tr><td><strong>Incremental — Watermark</strong></td><td><code>WHERE updated_at &gt; last_run_timestamp</code></td><td>Source has reliable <code>updated_at</code>, batch is acceptable</td></tr>
+      <tr><td><strong>Incremental — Audit Columns</strong></td><td><code>WHERE batch_id &gt; last_batch_id</code></td><td>Source system provides batch markers</td></tr>
+      <tr><td><strong>File-Based</strong></td><td>Poll S3 landing zone or SFTP for new files</td><td>Third-party vendor data drops, CSV/Excel feeds</td></tr>
+      <tr><td><strong>Database Dump</strong></td><td><code>pg_dump</code>, <code>mysqldump</code> → object storage</td><td>Migration, disaster recovery, dev env seeding</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Streaming Ingestion</h3>
+  <p>For data that can't wait:</p>
+  <div class="card-grid">
+    <div class="card"><h4>📨 Kafka</h4><p>The industry standard. Producers publish events to topics; consumers (Spark, Flink) read from offsets. Retains events for configurable periods (7 days default, infinite with tiered storage).</p></div>
+    <div class="card blue"><h4>🔄 Debezium (CDC)</h4><p>Reads the database's WAL (write-ahead log) and publishes row-level changes to Kafka. No polling, no <code>updated_at</code> column needed, captures deletes.</p></div>
+    <div class="card green"><h4>☁️ Kinesis / Pub/Sub</h4><p>Managed streaming services from AWS/GCP. Less operational burden than self-managed Kafka, but less ecosystem support.</p></div>
+  </div>
+
+  <h3>Lambda vs Kappa Architecture</h3>
+  <p>These are the two canonical architectures for systems that need both batch and streaming.</p>
+
+  <div class="code-block"><span class="cm">Lambda Architecture:</span>
+
+                    ┌─── <span class="fn">Batch Layer</span> (Spark) ──── Batch Views ───┐
+Source ─── Queue ───┤                                            ├─── Serving Layer
+                    └─── <span class="str">Speed Layer</span> (Flink) ──── Real-time Views┘</div>
+
+  <div class="code-block"><span class="cm">Kappa Architecture:</span>
+
+Source ─── <span class="fn">Stream Log</span> (Kafka) ─── <span class="str">Stream Processor</span> (Flink) ─── Serving Layer</div>
+
+  <table class="styled-table">
+    <thead><tr><th>Dimension</th><th>Lambda</th><th>Kappa</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Complexity</strong></td><td>High — two codebases (batch + stream)</td><td>Lower — single codebase</td></tr>
+      <tr><td><strong>Latency</strong></td><td>Speed layer: seconds; Batch: hours</td><td>Seconds to minutes</td></tr>
+      <tr><td><strong>Reprocessing</strong></td><td>Re-run batch job</td><td>Replay from Kafka log</td></tr>
+      <tr><td><strong>Consistency</strong></td><td>Eventual — batch corrects speed layer</td><td>Strong — single source of truth</td></tr>
+      <tr><td><strong>Best For</strong></td><td>Mixed latency needs, team has batch expertise</td><td>Event-driven, team has streaming expertise</td></tr>
+      <tr><td><strong>Risk</strong></td><td>Code drift between batch and speed layers</td><td>Kafka retention cost, complex stateful processing</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Ingestion Best Practices</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🔁 Idempotent Writes</h4><p>Re-running an ingestion job should not create duplicates. Use MERGE/upsert or deduplicate on primary key + timestamp.</p></div>
+    <div class="card blue"><h4>📋 Schema Registry</h4><p>Use Confluent Schema Registry or AWS Glue to enforce Avro/Protobuf schemas on producers. Catch breaking changes before they poison your lake.</p></div>
+    <div class="card green"><h4>💀 Dead Letter Queues</h4><p>Route un-parseable or schema-violating events to a DLQ topic. Don't let one bad record kill your pipeline.</p></div>
+    <div class="card purple"><h4>✅ Exactly-Once Delivery</h4><p>Use Kafka transactions + Flink checkpointing or Spark's idempotent sink for end-to-end exactly-once.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Most companies use a hybrid approach — streaming for time-sensitive data (clickstream, fraud detection), batch for historical backfills and slowly-changing reference data. Don't be dogmatic about Lambda vs Kappa.</strong> In an interview, say: <em>"I'd use Kappa for our event-driven core and layer in batch ingestion for vendor data drops that only arrive daily."</em></p>
+  </div>
+</section>
+
+<!-- Screen 5: Processing -->
+<section class="screen" id="s5">
+  <h2>⚙️ Processing — <span class="accent">Spark, Flink & Transformation</span></h2>
+  <p>Processing is where raw data becomes valuable. This is often the deepest part of a system design interview because it touches performance, correctness, and cost.</p>
+
+  <h3>Batch Processing with Apache Spark</h3>
+  <p>Spark is the workhorse of batch data processing. Key performance levers:</p>
+  <div class="card-grid">
+    <div class="card"><h4>📂 Partitioned Reads</h4><p>Read only the partitions you need. Table formats (Delta/Iceberg) handle this via metadata pruning.</p></div>
+    <div class="card blue"><h4>📡 Broadcast Joins</h4><p>When joining a large fact table (billions of rows) to a small dimension table (&lt;100 MB), broadcast the small table to all executors. Eliminates shuffle.</p></div>
+    <div class="card green"><h4>🧠 AQE</h4><p>Adaptive Query Execution dynamically adjusts shuffle partitions, converts sort-merge joins to broadcast joins, and optimizes skewed joins. <code>spark.sql.adaptive.enabled = true</code></p></div>
+    <div class="card purple"><h4>✂️ Dynamic Partition Pruning</h4><p>In star schema joins, Spark prunes fact table partitions based on dimension filter results. Reduces I/O by 10–100x.</p></div>
+  </div>
+
+  <h3>Spark Structured Streaming vs Apache Flink</h3>
+  <table class="styled-table">
+    <thead><tr><th>Dimension</th><th>Spark Structured Streaming</th><th>Apache Flink</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Processing Model</strong></td><td>Micro-batch (~100ms trigger), continuous (experimental)</td><td>True record-at-a-time, event-driven</td></tr>
+      <tr><td><strong>Latency</strong></td><td>Seconds (micro-batch)</td><td>Milliseconds</td></tr>
+      <tr><td><strong>State Management</strong></td><td>Checkpoint (HDFS/S3); limited queryable state</td><td>RocksDB-backed; queryable state, incremental checkpoints</td></tr>
+      <tr><td><strong>Windowing</strong></td><td>Tumbling, sliding, session (via watermarks)</td><td>Tumbling, sliding, session, custom, processing + event-time</td></tr>
+      <tr><td><strong>Exactly-Once</strong></td><td>✅ With idempotent sinks</td><td>✅ With two-phase commit (Kafka, JDBC)</td></tr>
+      <tr><td><strong>Ecosystem</strong></td><td>Spark SQL, MLlib, Delta Lake</td><td>Flink SQL, CDC connectors, Iceberg sink</td></tr>
+      <tr><td><strong>Best For</strong></td><td>Unified batch + streaming; moderate latency OK</td><td>True low-latency, complex event processing, large stateful workloads</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Transformation with dbt</h3>
+  <p>dbt (data build tool) has become the standard for SQL-based transformations in the Gold layer. It brings <strong>software engineering practices</strong> to data transformation:</p>
+  <div class="card-grid">
+    <div class="card"><h4>🧩 Modularity</h4><p>Composable models: <code>stg_orders.sql → int_orders_joined.sql → fct_daily_revenue.sql</code></p></div>
+    <div class="card blue"><h4>🧪 Testing</h4><p>Built-in tests for <code>not_null</code>, <code>unique</code>, <code>accepted_values</code>, <code>relationships</code>. Custom tests for business rules.</p></div>
+    <div class="card green"><h4>📖 Documentation</h4><p>Auto-generated data docs with column descriptions and lineage graphs.</p></div>
+    <div class="card purple"><h4>📈 Incremental Models</h4><p>Process only new/changed data: <code>WHERE event_date > (SELECT MAX(event_date) FROM {{ this }})</code></p></div>
+    <div class="card"><h4>📸 Snapshots</h4><p>SCD Type 2 tracking with <code>dbt snapshot</code>. Adds <code>dbt_valid_from</code> and <code>dbt_valid_to</code> columns automatically.</p></div>
+  </div>
+  <p>dbt works in the lakehouse via adapters like <code>dbt-spark</code>, <code>dbt-databricks</code>, or <code>dbt-trino</code>.</p>
+
+  <h3>Processing Optimization Checklist</h3>
+  <table class="styled-table">
+    <thead><tr><th>#</th><th>Optimization</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><strong>Partition Pruning</strong></td><td>Ensure queries filter on partition columns; verify via <code>EXPLAIN</code> plans</td></tr>
+      <tr><td>2</td><td><strong>Predicate Pushdown</strong></td><td>Columnar formats push filters into the scan. Don't read everything and filter in memory.</td></tr>
+      <tr><td>3</td><td><strong>Columnar Formats</strong></td><td>Parquet is the default. Use ZSTD compression for best ratio-to-speed balance.</td></tr>
+      <tr><td>4</td><td><strong>File Sizing</strong></td><td>Target 128 MB–1 GB per file. Too small = metadata overhead; too large = poor parallelism.</td></tr>
+      <tr><td>5</td><td><strong>Caching Hot Tables</strong></td><td><code>spark.catalog.cacheTable()</code> or Delta caching for frequently-accessed dimension tables.</td></tr>
+      <tr><td>6</td><td><strong>Skew Handling</strong></td><td>Salted keys, AQE skew join optimization, or pre-aggregation to handle hot keys.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>When discussing processing, mention both the WHAT (Spark/Flink/dbt) and the HOW (partitioning strategy, join optimization, incremental processing).</strong> Saying <em>"I'd use Spark"</em> is a C-level answer. Saying <em>"I'd use Spark with AQE enabled, broadcast the 50 MB dimension table, partition the fact table by day, and run incremental processing with a high watermark"</em> is an A-level answer.</p>
+  </div>
+</section>
+
+<!-- Screen 6: Orchestration & Serving -->
+<section class="screen screen-alt" id="s6">
+  <h2>🎼 Orchestration & <span class="accent">Serving Layer</span></h2>
+  <p>You've built ingestion, storage, and processing. Now: how do you make it all run reliably on schedule, and how do consumers actually access the data?</p>
+
+  <h3>Orchestration with Apache Airflow</h3>
+  <p>Airflow is the most widely-adopted workflow orchestrator. Core concepts:</p>
+  <div class="card-grid">
+    <div class="card"><h4>📊 DAG</h4><p>Directed Acyclic Graph — defines a pipeline as a set of tasks with dependencies.</p></div>
+    <div class="card blue"><h4>🔧 Operators</h4><p>Units of work: <code>SparkSubmitOperator</code>, <code>KubernetesPodOperator</code>, <code>BigQueryInsertJobOperator</code>, <code>PythonOperator</code>.</p></div>
+    <div class="card green"><h4>📡 Sensors</h4><p>Wait for conditions: <code>S3KeySensor</code> (file lands), <code>ExternalTaskSensor</code> (upstream DAG completes).</p></div>
+    <div class="card purple"><h4>🔄 Retries + SLAs</h4><p>Configure <code>retries=3</code>, <code>retry_delay=5min</code>, <code>sla=2h</code>. Pools limit concurrency.</p></div>
+  </div>
+
+  <h3>Airflow Patterns for Data Platforms</h3>
+  <div class="card-grid">
+    <div class="card"><h4>📦 Task Groups</h4><p>Organize related tasks visually (e.g., <code>ingest_postgres_sources</code> group with 20 tasks).</p></div>
+    <div class="card blue"><h4>🔁 Dynamic DAGs</h4><p>Generate one task per source table from a config file. Don't write 50 nearly-identical DAGs.</p></div>
+    <div class="card green"><h4>💬 XComs</h4><p>Pass metadata between tasks: row counts, file paths, partition values. Keep payloads small (&lt;48 KB).</p></div>
+    <div class="card purple"><h4>🔒 Idempotent Tasks</h4><p>Every task safe to re-run. Use MERGE instead of INSERT, overwrite partitions instead of appending.</p></div>
+  </div>
+
+  <h3>Orchestrator Alternatives</h3>
+  <table class="styled-table">
+    <thead><tr><th>Tool</th><th>Philosophy</th><th>Differentiator</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Dagster</strong></td><td>Software-defined assets</td><td>Define what you want to exist (assets), not what to run (tasks). Built-in lineage and type checking.</td></tr>
+      <tr><td><strong>Prefect</strong></td><td>Dynamic, code-first workflows</td><td>No DAG limitations; dynamic task graphs at runtime. Hybrid execution model.</td></tr>
+      <tr><td><strong>Mage</strong></td><td>Modern DE tool</td><td>Notebook-style UI, built-in data quality, easier learning curve than Airflow.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Serving Layer — Where Consumers Meet Data</h3>
+  <p>This is the part most candidates forget. <strong>Match the serving technology to the access pattern:</strong></p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📊 For BI / SQL Analytics</h4>
+      <p>A cloud warehouse (Snowflake, BigQuery, Redshift) or lakehouse query engine (Databricks SQL, Trino). Adds columnar caching, MPP optimization, result caching, and concurrency scaling.</p>
+      <p style="margin-top:0.5rem"><strong>Pattern:</strong> Gold tables synced or queried from warehouse. dbt builds star schemas.</p>
+    </div>
+    <div class="card blue">
+      <h4>🤖 For ML / Feature Serving</h4>
+      <p>A feature store (Feast, Tecton, Databricks Feature Store):</p>
+      <ul>
+        <li><strong>Offline store:</strong> Gold-layer Parquet/Delta for batch training</li>
+        <li><strong>Online store:</strong> Redis/DynamoDB for real-time inference</li>
+        <li><strong>Feature registry:</strong> Central catalog of definitions, owners, SLAs</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h4>🔌 For APIs / Real-Time Lookups</h4>
+      <ul>
+        <li><strong>Materialized views</strong> in Postgres for ~100ms queries</li>
+        <li><strong>Redis / DynamoDB</strong> for &lt;10ms lookups by key</li>
+        <li><strong>Reverse ETL</strong> (Census, Hightouch) to sync Gold data back into SaaS tools</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Don't forget the serving layer — many candidates design beautiful pipelines but forget to explain how downstream consumers actually ACCESS the data.</strong> When you reach this part of the design, say: <em>"Now let me talk about how the three consumer personas — BI analysts, ML engineers, and application developers — would each access this data differently."</em></p>
+  </div>
+</section>
+
+<!-- Screen 7: Governance, Monitoring & Multi-Tenancy -->
+<section class="screen" id="s7">
+  <h2>🛡️ Governance, Monitoring & <span class="accent">Multi-Tenancy</span></h2>
+  <p>This is the section that separates senior candidates from everyone else. A data lake without governance is a data swamp. A data platform without monitoring is a liability.</p>
+
+  <h3>Data Catalog</h3>
+  <p>A catalog makes data discoverable. Without it, analysts waste hours asking <em>"Where is the revenue table?"</em></p>
+  <table class="styled-table">
+    <thead><tr><th>Tool</th><th>Key Feature</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Databricks Unity Catalog</strong></td><td>Unified governance for Delta Lake: access control, lineage, audit logs, data sharing</td></tr>
+      <tr><td><strong>DataHub</strong> (LinkedIn)</td><td>Open-source metadata platform with push/pull ingestion, search, lineage, data quality</td></tr>
+      <tr><td><strong>Apache Amundsen</strong> (Lyft)</td><td>Discovery-focused: search, table/column descriptions, owners, usage stats</td></tr>
+      <tr><td><strong>OpenMetadata</strong></td><td>Open-source, built-in data quality, lineage, policies, glossary</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Data Lineage</h3>
+  <p>Lineage answers: <em>"Where did this data come from, and what downstream tables does it feed?"</em></p>
+  <div class="card-grid">
+    <div class="card"><h4>📐 OpenLineage</h4><p>Open standard for lineage metadata. Emits events from Spark, Airflow, dbt.</p></div>
+    <div class="card blue"><h4>🗺️ Marquez</h4><p>Lineage server that stores OpenLineage events and serves a lineage graph API.</p></div>
+    <div class="card green"><h4>🔍 Use Case</h4><p>A bug in <code>gold_daily_revenue</code> → lineage shows it depends on <code>silver_orders</code> → <code>bronze_orders_raw</code> → Postgres <code>orders</code> table. Trace the bug to a schema change.</p></div>
+  </div>
+
+  <h3>Access Control</h3>
+  <div class="card-grid">
+    <div class="card"><h4>👥 RBAC</h4><p>Roles like <code>data_analyst</code>, <code>data_engineer</code>, <code>data_scientist</code> with different table/schema permissions.</p></div>
+    <div class="card blue"><h4>🔒 Column-Level Security</h4><p>Mask PII columns (<code>email</code>, <code>ssn</code>) for analysts but allow data engineers to see them for debugging.</p></div>
+    <div class="card green"><h4>🌍 Row-Level Filtering</h4><p>Regional managers see only their region's data.</p></div>
+  </div>
+
+  <h3>Data Quality Monitoring</h3>
+  <p>Bad data is worse than no data — because people make decisions on it.</p>
+  <table class="styled-table">
+    <thead><tr><th>Tool</th><th>Approach</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Great Expectations</strong></td><td>Define "expectations" in code: <code>expect_column_values_to_not_be_null("order_id")</code>. Run as pipeline validation step.</td></tr>
+      <tr><td><strong>Soda</strong></td><td>Data contracts as YAML. SodaCL language: <code>checks for orders: row_count > 0</code>, <code>freshness < 2h</code>.</td></tr>
+      <tr><td><strong>dbt tests</strong></td><td>Built into your transformation layer: <code>unique</code>, <code>not_null</code>, <code>accepted_values</code>, plus custom SQL tests.</td></tr>
+      <tr><td><strong>Monte Carlo / Bigeye</strong></td><td>ML-powered anomaly detection: automatically learns normal patterns and alerts on deviation. Commercial.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Pipeline Monitoring: SLIs, SLOs, and Alerting</h3>
+  <div class="card-grid">
+    <div class="card"><h4>⏰ SLI: Freshness</h4><p>When was the table last updated? Measure: <code>MAX(updated_at)</code> vs <code>NOW()</code>.</p></div>
+    <div class="card blue"><h4>📊 SLI: Completeness</h4><p>Is today's partition complete? Today's row count vs 7-day average. Alert if &lt;80%.</p></div>
+    <div class="card green"><h4>📦 SLI: Volume</h4><p>Did we ingest the expected number of records? Actual vs expected (± 2σ).</p></div>
+    <div class="card purple"><h4>🎯 SLO Example</h4><p><em>"The <code>gold_daily_revenue</code> table is refreshed by 6:00 AM UTC, with >99.5% completeness, 99% of the time."</em></p></div>
+  </div>
+  <p><strong>Alerting channels:</strong> PagerDuty for critical SLO breaches, Slack for warnings, email for daily summaries. Use both threshold-based and anomaly-based (3σ deviation) alerts.</p>
+
+  <h3>Multi-Tenant Data Platform</h3>
+  <table class="styled-table">
+    <thead><tr><th>Concern</th><th>Strategy</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Isolation</strong></td><td>Separate schemas per team (light) vs separate cloud accounts per BU (strong). Most start with schemas and graduate to accounts for regulated data.</td></tr>
+      <tr><td><strong>RBAC with Inheritance</strong></td><td>Platform roles → team roles → individual grants. <code>team_marketing.analyst</code> inherits <code>platform.reader</code>.</td></tr>
+      <tr><td><strong>Cost Allocation</strong></td><td>Tag every resource with <code>team</code>, <code>project</code>, <code>cost_center</code>. Build chargeback dashboards per team per month.</td></tr>
+      <tr><td><strong>Self-Service</strong></td><td>Governed data catalog with access request workflows: find table → request access → owner approves → RBAC grant automated.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Governance and monitoring are what separate a senior answer from a mid-level one.</strong> After you finish the core architecture, say: <em>"Now let me layer on governance. I'd deploy a data catalog like DataHub for discovery, OpenLineage for end-to-end lineage tracking, Great Expectations as a quality gate between Bronze and Silver, and dbt tests between Silver and Gold. Each Gold table would have an SLO — for example, daily revenue ready by 6 AM with 99.5% completeness."</em> This signals operational maturity.</p>
+  </div>
+</section>
+
+<!-- Screen 8: Quiz -->
+<section class="screen screen-alt" id="s8">
+  <h2>🧪 Quiz: Test Your <span class="accent">Data Platform Design</span> Knowledge</h2>
+  <p>Test your understanding of the concepts covered in this module.</p>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: In the medallion architecture, which layer should you reprocess from if you discover a bug in your data cleaning logic?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Reprocess Gold from the serving layer</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) Reprocess Silver from Bronze</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) Re-ingest from source systems</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Reprocess Gold from Silver</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Which table format is best for a company using Spark, Trino, and Flink — wanting to avoid vendor lock-in?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Delta Lake</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) Apache Hudi</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">C) Apache Iceberg</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) Raw Parquet files</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: A streaming pipeline produces duplicate records when a Kafka consumer restarts. Which combination best prevents duplicates in Silver?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Increase Kafka retention period and add more partitions</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) Use Kafka transactions, idempotent producers, and MERGE/upsert on the sink</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) Switch from Kafka to a batch ingestion approach</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Add a deduplication step in the Gold layer only</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: Which SLI best detects if a daily batch pipeline silently processed zero records due to an empty source table?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Freshness — time since last table update</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) Latency — how long the pipeline took to run</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">C) Volume — row count compared to expected baseline</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Schema — number of columns in the output table</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: In a multi-tenant data platform, what is the most scalable way to manage data access permissions across 50+ teams?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Create individual user grants for every table</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) Use RBAC with role inheritance: platform roles → team roles → individual grants</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) Give all teams admin access and rely on trust</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Create separate data lakes for each team</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<!-- Screen 9: Key Takeaways -->
+<section class="screen" id="s9">
+  <h2>🎯 Key <span class="accent">Takeaways</span></h2>
+
+  <ol class="takeaway-list">
+    <li><strong>Always start with requirements.</strong> Spend the first 3–5 minutes of any data platform design interview clarifying volume, velocity, variety, consumers, and latency needs. This shapes every architectural decision downstream.</li>
+    <li><strong>Object storage is the foundation.</strong> S3/GCS/ADLS gives you 11-nines durability, infinite scale, and compute-storage separation at ~$0.023/GB/month. Build everything on top of it.</li>
+    <li><strong>Table formats are non-negotiable.</strong> Delta Lake, Iceberg, or Hudi add ACID transactions, time travel, and schema evolution to your lake. Choose Iceberg for multi-engine neutrality, Delta for Databricks shops, Hudi for CDC-heavy workloads.</li>
+    <li><strong>Medallion architecture provides progressive refinement.</strong> Bronze (raw, append-only) → Silver (clean, deduplicated, conformed) → Gold (business aggregates, star schemas, feature tables). Each layer can be independently reprocessed from the one below.</li>
+    <li><strong>Match ingestion to the use case.</strong> Streaming (Kafka + CDC) for time-sensitive data; batch (incremental with watermarks) for historical loads. Most real-world platforms are hybrid — don't be dogmatic about Lambda vs Kappa.</li>
+    <li><strong>Processing is about the HOW, not just the WHAT.</strong> Mention specific optimizations: broadcast joins for small dimensions, AQE for adaptive execution, partition pruning for I/O reduction, and incremental processing with high watermarks.</li>
+    <li><strong>The serving layer must match the access pattern.</strong> Warehouses for BI (concurrency, caching), feature stores for ML (offline + online), Redis/DynamoDB for real-time API lookups. One size does not fit all consumers.</li>
+    <li><strong>Governance is what makes you senior.</strong> Catalog (DataHub / Unity Catalog) for discovery, lineage (OpenLineage) for traceability, access control (RBAC + column masking) for security, and data quality (Great Expectations / dbt tests) for trust.</li>
+    <li><strong>Define SLOs, not just SLIs.</strong> Don't just monitor freshness — commit to <em>"Gold revenue table ready by 6 AM UTC with >99.5% completeness, 99% of the time."</em> This creates accountability and drives alerting thresholds.</li>
+    <li><strong>Design for reprocessability.</strong> Every layer, every pipeline, every table should be safe to reprocess. Idempotent writes, append-only Bronze, MERGE-based Silver, and partition-overwrite Gold make your platform resilient to bugs, late-arriving data, and schema changes.</li>
+  </ol>
+</section>
+
+<footer class="module-nav">
+  <a href="../index.html">← Course Home</a>
+  <a href="../module-02-realtime-cdc/index.html">Next: Real-Time Analytics & CDC →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Quiz
+  const quizAnswers={
+    q1:'Silver contains the cleaning logic. If that logic has a bug, reprocess Silver from Bronze (your system of record). No need to re-ingest from source systems.',
+    q2:'Apache Iceberg has the broadest multi-engine support (Spark, Trino, Flink, Dremio) and is governed by the Apache Foundation — the most vendor-neutral choice.',
+    q3:'End-to-end exactly-once requires: idempotent producers, Kafka transactions, and an idempotent sink (MERGE/upsert). Deduplicating only in Gold leaves Silver dirty.',
+    q4:'A volume check compares today\'s row count against a historical baseline. Freshness would still show "updated" (with zero rows), and latency might be shorter than usual.',
+    q5:'RBAC with inheritance: platform roles define baseline permissions, team roles extend them, and individual grants handle exceptions. Scales to 50+ teams without admin overhead.'
+  };
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! '+quizAnswers[qid];}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. '+quizAnswers[qid];}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>
