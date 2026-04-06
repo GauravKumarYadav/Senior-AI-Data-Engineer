@@ -4,8 +4,8 @@
     "icon": "⚡",
     "color": "#D94F30",
     "href": "./spark/course-spark-interview/",
-    "desc": "9 interactive modules covering RDDs, DataFrames, architecture, performance tuning, Spark UI, optimization, bottleneck detection, streaming, and 170+ real interview questions.",
-    "tags": ["9 Modules", "170+ Questions", "30+ Quizzes"]
+    "desc": "12 interactive modules covering RDDs, DataFrames, architecture, performance tuning, Spark UI, optimization, lakehouse, structured streaming, and 200+ real interview questions.",
+    "tags": ["12 Modules", "200+ Questions", "40+ Quizzes"]
   },
   {
     "title": "Scala Interview Mastery",
@@ -14,54 +14,6 @@
     "href": "./scala-interview/course-scala-interview/",
     "desc": "8 modules from basics to Spark integration — case classes, pattern matching, collections, concurrency, implicits, and a final battle plan.",
     "tags": ["8 Modules", "60+ Questions", "25+ Quizzes"]
-  },
-  {
-    "title": "Data Modeling Interview Mastery",
-    "icon": "🏗️",
-    "color": "#2A7B9B",
-    "href": "./data-modeling/course-data-modeling/",
-    "desc": "Star schemas, SCDs, fact vs dimension tables, bridge tables, grain, surrogate keys — everything interviewers ask about dimensional modeling.",
-    "tags": ["6 Modules", "Interactive", "Scenario Quizzes"]
-  },
-  {
-    "title": "Data Quality Interview Mastery",
-    "icon": "✅",
-    "color": "#2D8B55",
-    "href": "./data-quality/course-data-quality/",
-    "desc": "Quality dimensions, data contracts, anomaly detection, schema drift, quarantine patterns, testing strategies, and real-world failure modes.",
-    "tags": ["6 Modules", "Interactive", "Scenario Quizzes"]
-  },
-  {
-    "title": "Data Governance Interview Mastery",
-    "icon": "🛡️",
-    "color": "#7B6DAA",
-    "href": "./data-governance/course-data-governance/",
-    "desc": "RBAC vs ABAC, PII handling, GDPR compliance, data catalogs, retention policies, masking, tokenization, and audit strategies.",
-    "tags": ["6 Modules", "Interactive", "Scenario Quizzes"]
-  },
-  {
-    "title": "Cost Optimization Interview Mastery",
-    "icon": "💰",
-    "color": "#D4A843",
-    "href": "./cost-optmization/course-cost-optimization/",
-    "desc": "Partitioning, shuffle reduction, small files problem, backfill estimation, FinOps metrics, join optimization, and cluster management.",
-    "tags": ["6 Modules", "Interactive", "Scenario Quizzes"]
-  },
-  {
-    "title": "SQL & Databases Mastery",
-    "icon": "🗄️",
-    "color": "#2A7B9B",
-    "href": "./databases-SQL/course-sql-databases/",
-    "desc": "Window functions, CTEs, recursive queries, query optimization, PostgreSQL internals, NoSQL essentials — from fundamentals to interview-ready.",
-    "tags": ["6 Modules", "80+ Questions", "20+ Quizzes"]
-  },
-  {
-    "title": "dbt Mastery",
-    "icon": "🔨",
-    "color": "#E07B39",
-    "href": "./data-infra-DevOps/course-dbt-mastery/",
-    "desc": "8 modules from core concepts to production — models, materializations, incremental strategies, testing, snapshots, Jinja macros, CI/CD, and interview scenarios.",
-    "tags": ["8 Modules", "100+ Questions", "25+ Quizzes"]
   },
   {
     "title": "Real-Time Streaming Mastery",
@@ -78,5 +30,53 @@
     "href": "./cloud-platform/course-cloud-aws/",
     "desc": "S3, Glue, Athena, EMR, Kinesis, Redshift, Lake Formation, Step Functions — complete AWS data engineering coverage for interviews.",
     "tags": ["6 Modules", "80+ Questions", "20+ Quizzes"]
+  },
+  {
+    "title": "dbt Mastery",
+    "icon": "🔨",
+    "color": "#E07B39",
+    "href": "./data-infra-DevOps/course-dbt-mastery/",
+    "desc": "8 modules from core concepts to production — models, materializations, incremental strategies, testing, snapshots, Jinja macros, CI/CD, and interview scenarios.",
+    "tags": ["8 Modules", "100+ Questions", "25+ Quizzes"]
+  },
+  {
+    "title": "SQL & Databases Mastery",
+    "icon": "🗄️",
+    "color": "#2A7B9B",
+    "href": "./databases-SQL/course-sql-databases/",
+    "desc": "Window functions, CTEs, recursive queries, query optimization, PostgreSQL internals, NoSQL essentials — from fundamentals to interview-ready.",
+    "tags": ["6 Modules", "80+ Questions", "20+ Quizzes"]
+  },
+  {
+    "title": "Data Modeling Interview Mastery",
+    "icon": "🏗️",
+    "color": "#2A7B9B",
+    "href": "./data-modeling/course-data-modeling/",
+    "desc": "Star schemas, SCDs, Data Vault, modern patterns, lakehouse modeling — everything interviewers ask about dimensional modeling.",
+    "tags": ["9 Modules", "120+ Questions", "45+ Quizzes"]
+  },
+  {
+    "title": "Data Quality Interview Mastery",
+    "icon": "✅",
+    "color": "#2D8B55",
+    "href": "./data-quality/course-data-quality/",
+    "desc": "Quality dimensions, data contracts, anomaly detection, schema drift, quarantine patterns, testing strategies, and real-world failure modes.",
+    "tags": ["6 Modules", "Interactive", "Scenario Quizzes"]
+  },
+  {
+    "title": "Cost Optimization Interview Mastery",
+    "icon": "💰",
+    "color": "#D4A843",
+    "href": "./cost-optmization/course-cost-optimization/",
+    "desc": "Partitioning, shuffle reduction, small files problem, backfill estimation, FinOps metrics, join optimization, and cluster management.",
+    "tags": ["6 Modules", "Interactive", "Scenario Quizzes"]
+  },
+  {
+    "title": "Data Governance Interview Mastery",
+    "icon": "🛡️",
+    "color": "#7B6DAA",
+    "href": "./data-governance/course-data-governance/",
+    "desc": "RBAC vs ABAC, PII handling, GDPR compliance, data catalogs, retention policies, masking, tokenization, and audit strategies.",
+    "tags": ["6 Modules", "Interactive", "Scenario Quizzes"]
   }
 ]

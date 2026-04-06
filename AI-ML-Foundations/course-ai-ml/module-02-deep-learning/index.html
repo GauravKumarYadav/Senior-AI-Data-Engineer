@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 2: Deep Learning Foundations | AI/ML Foundations</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.screen-alt{background:var(--color-bg-warm)}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🤖 AI/ML Foundations</a><div class="nav-dots"><a href="../module-01-ml-fundamentals/" class="nav-dot"></a><a href="../module-02-deep-learning/" class="nav-dot active"></a><a href="../module-03-nlp/" class="nav-dot"></a><a href="../module-04-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Neural Network Building Blocks -->
+<section class="screen" id="s1">
+  <h2>Neural Network <span class="accent">Building Blocks</span></h2>
+
+  <h3>The Artificial Neuron</h3>
+  <div class="code-block">Inputs        Weights         Sum + Bias      Activation      Output
+ x₁ ──── w₁ ──┐
+                ├──→ Σ(wᵢxᵢ) + b ──→ f(z) ──→ a
+ x₂ ──── w₂ ──┤
+ x₃ ──── w₃ ──┘
+
+  z = w₁x₁ + w₂x₂ + w₃x₃ + b    (linear combination)
+  a = f(z)                          (non-linear activation)</div>
+
+  <h3>Activation Functions</h3>
+  <div class="card-grid">
+    <div class="card"><h4>⚡ ReLU</h4><p><code>max(0, x)</code> — Default for hidden layers. Cheap, avoids vanishing gradients.</p></div>
+    <div class="card blue"><h4>🧠 GELU</h4><p><code>x · Φ(x)</code> — Used in Transformers. Smoother ReLU, better gradient flow.</p></div>
+    <div class="card green"><h4>📊 Sigmoid</h4><p><code>1/(1+e⁻ˣ)</code> — Binary output, gates. Range: (0, 1).</p></div>
+    <div class="card purple"><h4>🎯 Softmax</h4><p><code>eˣⁱ / Σeˣʲ</code> — Multi-class output. Sums to 1.</p></div>
+  </div>
+
+  <h3>Loss Functions</h3>
+  <div class="code-block"><span class="cm"># Classification</span>
+cross_entropy = nn.CrossEntropyLoss()        <span class="cm"># Multi-class (includes softmax)</span>
+bce_loss = nn.BCEWithLogitsLoss()            <span class="cm"># Binary (includes sigmoid)</span>
+
+<span class="cm"># Regression</span>
+mse_loss = nn.MSELoss()                       <span class="cm"># Mean Squared Error</span>
+huber_loss = nn.HuberLoss(delta=<span class="fn">1.0</span>)          <span class="cm"># Smooth L1 (robust to outliers)</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Why do we need activation functions?"</strong> Without them, stacking layers is pointless — a composition of linear transformations is still linear (<code>W₂(W₁x + b₁) + b₂ = W'x + b'</code>). Activation functions introduce non-linearity, allowing the network to learn complex decision boundaries. The universal approximation theorem says a single hidden layer with non-linear activations can approximate any continuous function.</p>
+  </div>
+</section>
+
+<!-- Screen 2: Backpropagation & Optimizers -->
+<section class="screen screen-alt" id="s2">
+  <h2>Backpropagation &amp; <span class="accent">Optimizers</span></h2>
+
+  <h3>Backpropagation: How Networks Learn</h3>
+  <div class="code-block">Forward Pass (compute predictions):
+  Input → Layer 1 → Layer 2 → ... → Output → Loss
+
+Backward Pass (compute gradients via chain rule):
+  ∂Loss/∂w = ∂Loss/∂output · ∂output/∂hidden · ∂hidden/∂w
+
+Update weights:
+  w_new = w_old - learning_rate × ∂Loss/∂w</div>
+
+  <h3>Optimizers Compared</h3>
+  <div class="card-grid">
+    <div class="card"><h4>SGD + Momentum</h4><p>Basic gradient descent. Fine control, better generalization for CNNs. Needs careful LR tuning.</p></div>
+    <div class="card blue"><h4>Adam</h4><p>Adaptive LR per parameter + momentum. Default choice for most architectures.</p></div>
+    <div class="card green"><h4>AdamW</h4><p>Adam with decoupled weight decay. Gold standard for Transformers and LLM fine-tuning.</p></div>
+  </div>
+
+  <div class="code-block"><span class="cm"># SGD with momentum</span>
+optimizer = optim.SGD(model.parameters(), lr=<span class="fn">0.01</span>, momentum=<span class="fn">0.9</span>)
+
+<span class="cm"># Adam: adaptive learning rates (most popular)</span>
+optimizer = optim.Adam(model.parameters(), lr=<span class="fn">1e-3</span>)
+
+<span class="cm"># AdamW: better weight decay for Transformers</span>
+optimizer = optim.AdamW(model.parameters(), lr=<span class="fn">5e-5</span>, weight_decay=<span class="fn">0.01</span>)</div>
+
+  <h3>Learning Rate Schedules</h3>
+  <div class="code-block"><span class="cm"># Cosine annealing: smooth decay</span>
+scheduler = CosineAnnealingLR(optimizer, T_max=num_epochs, eta_min=<span class="fn">1e-6</span>)
+
+<span class="cm"># OneCycle: warmup → peak → decay (best for training from scratch)</span>
+scheduler = OneCycleLR(optimizer, max_lr=<span class="fn">1e-3</span>, total_steps=total_steps)</div>
+
+  <h3>Batch Norm vs Layer Norm</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>BatchNorm</h4>
+      <ul>
+        <li>Normalizes across the batch dimension</li>
+        <li>Used in CNNs</li>
+        <li>Different behavior train vs eval</li>
+        <li>Depends on batch statistics</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>LayerNorm</h4>
+      <ul>
+        <li>Normalizes across feature dimension</li>
+        <li>Used in Transformers</li>
+        <li>Same behavior train and eval</li>
+        <li>Independent of batch size</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Why is Adam the default for Transformers but SGD for CNNs?"</strong> Adam adapts the learning rate per parameter, ideal for Transformers where different attention heads need different LRs. SGD with momentum requires careful tuning but often generalizes slightly better for CNNs, reaching flatter minima. AdamW (decoupled weight decay) is the gold standard for fine-tuning pre-trained Transformers.</p>
+  </div>
+</section>
+
+<!-- Screen 3: Dropout & Regularization -->
+<section class="screen" id="s3">
+  <h2>Dropout, Weight Init &amp; <span class="accent">Regularization</span></h2>
+
+  <h3>Dropout: The Elegant Regularizer</h3>
+  <div class="code-block">Training (dropout=0.5):              Inference (no dropout):
+
+   ○ ──── ○ ──── ○                    ○ ──── ○ ──── ○
+   ○ ──── ✗      ○    Randomly        ○ ──── ○ ──── ○
+   ○      ○ ──── ✗    drop neurons    ○ ──── ○ ──── ○
+   ○ ──── ✗ ──── ○    each forward    ○ ──── ○ ──── ○
+                       pass
+   Prevents co-adaptation             All neurons active
+   Forces redundancy                  (weights scaled by 1-p)</div>
+
+  <div class="code-block"><span class="kw">class</span> <span class="fn">MyModel</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, input_dim, hidden_dim, output_dim, dropout=<span class="fn">0.3</span>):
+        <span class="kw">super</span>().__init__()
+        self.network = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(dropout),        <span class="cm"># Randomly zero 30% of neurons</span>
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(dropout),
+            nn.Linear(hidden_dim, output_dim)
+        )
+
+<span class="cm"># CRITICAL: Switch modes for train vs eval</span>
+model.train()   <span class="cm"># Dropout ACTIVE</span>
+model.eval()    <span class="cm"># Dropout DISABLED</span></div>
+
+  <h3>Weight Initialization</h3>
+  <div class="card-grid">
+    <div class="card"><h4>Xavier/Glorot</h4><p><code>Var(w) = 2/(fan_in + fan_out)</code> — Best with Sigmoid, Tanh activations.</p></div>
+    <div class="card blue"><h4>He/Kaiming</h4><p><code>Var(w) = 2/fan_in</code> — Best with ReLU, LeakyReLU activations.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Dropout is 0.1 in BERT but 0.5 in older networks. Why?"</strong> BERT is pre-trained on massive data, so it's less prone to overfitting — light dropout suffices. Older, smaller networks trained on less data need aggressive dropout. The right rate depends on model size, data size, and task complexity.</p>
+  </div>
+</section>
+
+<!-- Screen 4: CNNs -->
+<section class="screen screen-alt" id="s4">
+  <h2>CNN Basics — <span class="accent">Convolutions, Pooling &amp; ResNet</span></h2>
+
+  <h3>How Convolutions Work</h3>
+  <div class="code-block">Input Image (5×5)     ★ Filter (3×3)  = Feature Map (3×3)
+
+Slide the filter across the image:
+  Element-wise multiply, then sum → one output value
+
+Key params: kernel_size, stride, padding, in_channels, out_channels</div>
+  <p><strong>Why CNNs?</strong> Parameter sharing (same filter everywhere), translation invariance (detects patterns regardless of position), and spatial hierarchy (edges → textures → objects).</p>
+
+  <h3>Pooling</h3>
+  <p>Max Pooling takes the maximum from each region, reducing spatial dimensions by 2×. Keeps the strongest activation.</p>
+
+  <h3>ResNet: Skip Connections</h3>
+  <div class="code-block">Standard Block:                ResNet Block (Skip Connection):
+
+  Input x                        Input x ─────────────────┐
+    ↓                              ↓                       │
+  Conv + BN + ReLU               Conv + BN + ReLU          │
+    ↓                              ↓                       │
+  Conv + BN                      Conv + BN                 │
+    ↓                              ↓                       │
+  Output                         + ← ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
+                                   ↓
+  Problem: gradients             Output = F(x) + x
+  vanish in deep nets            "Learn the RESIDUAL F(x)"</div>
+
+  <div class="code-block"><span class="kw">import</span> torchvision.models <span class="kw">as</span> models
+
+<span class="cm"># Load pretrained ResNet</span>
+resnet = models.resnet50(weights=<span class="str">'IMAGENET1K_V2'</span>)
+<span class="cm"># Modify for custom task (e.g., 10 classes)</span>
+resnet.fc = nn.Linear(resnet.fc.in_features, <span class="fn">10</span>)</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Why are skip connections so important?"</strong> They solve the degradation problem: gradients flow directly through the shortcut, enabling training of 100+ layer networks. Worst case, extra layers learn identity. This idea directly inspired residual connections in Transformers.</p>
+  </div>
+</section>
+
+<!-- Screen 5: Transformer Architecture -->
+<section class="screen" id="s5">
+  <h2>The <span class="accent">Transformer</span> Architecture</h2>
+
+  <div class="card-grid">
+    <div class="card"><h4>🔍 Encoder-only (BERT)</h4><p>Bidirectional. Classification, embeddings, understanding tasks.</p></div>
+    <div class="card blue"><h4>✍️ Decoder-only (GPT)</h4><p>Autoregressive. Text generation, chatbots, code.</p></div>
+    <div class="card green"><h4>🔄 Encoder-Decoder (T5)</h4><p>Full pipeline. Translation, summarization, QA.</p></div>
+  </div>
+
+  <h3>Self-Attention: The Core Mechanism</h3>
+  <div class="code-block">Step 1: Create Q, K, V from input embeddings
+        Q = X · W_Q    (What am I looking for?)
+        K = X · W_K    (What do I contain?)
+        V = X · W_V    (What information do I provide?)
+
+Step 2: Attention scores = Q · K^T / √d_k  (dot product similarity)
+Step 3: Weights = softmax(Scores)
+Step 4: Output = Weights · V
+
+Formula: Attention(Q, K, V) = softmax(QK^T / √d_k) · V</div>
+  <p><strong>Why scale by √d_k?</strong> Without scaling, dot products grow large for high dimensions, pushing softmax into near-zero gradient regions. Dividing keeps variance at ~1.</p>
+
+  <h3>Multi-Head Attention</h3>
+  <div class="code-block">Head 1: Attention(Q·W₁ᵠ, K·W₁ᵏ, V·W₁ᵛ)  → "Focus on syntax"
+Head 2: Attention(Q·W₂ᵠ, K·W₂ᵏ, V·W₂ᵛ)  → "Focus on semantics"
+Head 3: Attention(Q·W₃ᵠ, K·W₃ᵏ, V·W₃ᵛ)  → "Focus on position"
+
+Concatenate all heads → Linear projection → Output
+d_model=768, h=12 heads → d_k = 768/12 = 64 per head</div>
+
+  <h3>Positional Encoding</h3>
+  <div class="card-grid">
+    <div class="card"><h4>📐 Sinusoidal (Original)</h4><p>Fixed, deterministic. Generalizes to longer sequences.</p></div>
+    <div class="card blue"><h4>📚 Learned (BERT)</h4><p>Trainable embeddings. Limited to max_position_embeddings.</p></div>
+    <div class="card green"><h4>🔄 RoPE (Llama)</h4><p>Rotary position — encodes relative position. Supports extrapolation.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Walk through a single Transformer encoder layer."</strong> Input + positional encoding → (1) Multi-head self-attention → Add &amp; LayerNorm (residual) → (2) Feed-forward network (two linear layers + GELU) → Add &amp; LayerNorm → Output. Pattern: <code>output = LayerNorm(x + Sublayer(x))</code>.</p>
+  </div>
+</section>
+
+<!-- Screen 6: Pre-Training & Transfer Learning -->
+<section class="screen screen-alt" id="s6">
+  <h2>Pre-Training &amp; <span class="accent">Transfer Learning</span></h2>
+
+  <h3>Pre-Training Objectives</h3>
+  <div class="code-block">Masked Language Model (BERT):
+  Input:  "The [MASK] sat on the [MASK]"
+  Target: "The  cat  sat on the  mat"
+  → Bidirectional: sees context on BOTH sides
+
+Causal Language Model (GPT):
+  Input:  "The cat sat"
+  Target: "cat sat on"
+  → Autoregressive: only sees LEFT context
+
+Span Corruption (T5):
+  Input:  "The &lt;X&gt; on the mat"
+  Target: "&lt;X&gt; cat sat &lt;Y&gt;"
+  → Encoder-decoder: flexible input/output</div>
+
+  <h3>Transfer Learning Strategies</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🧊 Feature Extraction</h4>
+      <ul>
+        <li>Pre-trained model: FROZEN</li>
+        <li>Only new head trains</li>
+        <li>Use when: tiny dataset, similar task</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🔥 Fine-Tuning</h4>
+      <ul>
+        <li>Pre-trained model: UNFROZEN (small LR)</li>
+        <li>Everything trains</li>
+        <li>Use when: moderate data, best performance</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Differential learning rates for fine-tuning</span>
+optimizer = optim.AdamW([
+    {<span class="str">'params'</span>: model.bert.parameters(), <span class="str">'lr'</span>: <span class="fn">2e-5</span>},       <span class="cm"># Pre-trained: tiny LR</span>
+    {<span class="str">'params'</span>: model.classifier.parameters(), <span class="str">'lr'</span>: <span class="fn">1e-3</span>}, <span class="cm"># New head: normal LR</span>
+])</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"When would you fine-tune vs use zero-shot/few-shot?"</strong> Fine-tune when you have labeled data (hundreds+), need high accuracy, task is specialized. Zero/few-shot when no labeled data, rapid prototyping. Fine-tuning a small model often beats few-shot with a large model and is cheaper at inference. The trend is toward efficient fine-tuning (LoRA, QLoRA).</p>
+  </div>
+</section>
+
+<!-- Screen 7: PyTorch Essentials -->
+<section class="screen" id="s7">
+  <h2>PyTorch <span class="accent">Essentials</span></h2>
+
+  <h3>Tensors &amp; Autograd</h3>
+  <div class="code-block"><span class="kw">import</span> torch
+
+x = torch.randn(<span class="fn">32</span>, <span class="fn">784</span>)            <span class="cm"># Random normal tensor</span>
+device = torch.device(<span class="str">'cuda'</span> <span class="kw">if</span> torch.cuda.is_available() <span class="kw">else</span> <span class="str">'cpu'</span>)
+x = x.to(device)
+
+<span class="cm"># Autograd tracks operations for gradient computation</span>
+x = torch.tensor([<span class="fn">2.0</span>, <span class="fn">3.0</span>], requires_grad=<span class="fn">True</span>)
+y = x ** <span class="fn">2</span> + <span class="fn">3</span> * x                 <span class="cm"># y = x² + 3x</span>
+y.sum().backward()                    <span class="cm"># Compute gradients</span>
+<span class="kw">print</span>(x.grad)                        <span class="cm"># dy/dx = 2x + 3 → [7.0, 9.0]</span></div>
+
+  <h3>The Training Loop</h3>
+  <div class="code-block"><span class="kw">for</span> epoch <span class="kw">in</span> range(<span class="fn">10</span>):
+    model.train()
+
+    <span class="kw">for</span> batch_X, batch_y <span class="kw">in</span> dataloader:
+        batch_X, batch_y = batch_X.to(device), batch_y.to(device)
+
+        <span class="cm"># Forward pass</span>
+        logits = model(batch_X)
+        loss = criterion(logits, batch_y)
+
+        <span class="cm"># Backward pass</span>
+        optimizer.zero_grad()     <span class="cm"># Clear previous gradients</span>
+        loss.backward()           <span class="cm"># Compute gradients</span>
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=<span class="fn">1.0</span>)
+        optimizer.step()          <span class="cm"># Update weights</span>
+
+    scheduler.step()</div>
+
+  <h3>Saving &amp; Loading</h3>
+  <div class="code-block"><span class="cm"># Save (only state_dict, not entire model)</span>
+torch.save(model.state_dict(), <span class="str">'model.pth'</span>)
+
+<span class="cm"># Load</span>
+model = TextClassifier(<span class="fn">30000</span>, <span class="fn">128</span>, <span class="fn">256</span>, <span class="fn">5</span>)
+model.load_state_dict(torch.load(<span class="str">'model.pth'</span>, map_location=device))
+model.eval()</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Why <code>optimizer.zero_grad()</code> before <code>loss.backward()</code>?"</strong> PyTorch accumulates gradients by default (useful for gradient accumulation with large effective batch sizes). If you don't zero them, gradients from the previous batch add to the current ones. The pattern: zero_grad → forward → loss → backward → step.</p>
+  </div>
+</section>
+
+<!-- Screen 8: Mixed Precision & Distributed Training -->
+<section class="screen screen-alt" id="s8">
+  <h2>Mixed Precision &amp; <span class="accent">Distributed Training</span></h2>
+
+  <h3>Mixed Precision Training</h3>
+  <p>Uses float16 for forward/backward (faster, less memory) and float32 for weight updates (numerical stability). ~2× faster, ~50% less memory.</p>
+  <div class="code-block"><span class="kw">from</span> torch.cuda.amp <span class="kw">import</span> autocast, GradScaler
+
+scaler = GradScaler()
+<span class="kw">for</span> batch_X, batch_y <span class="kw">in</span> dataloader:
+    optimizer.zero_grad()
+    <span class="kw">with</span> autocast():
+        logits = model(batch_X)
+        loss = criterion(logits, batch_y)
+    scaler.scale(loss).backward()
+    scaler.unscale_(optimizer)
+    torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=<span class="fn">1.0</span>)
+    scaler.step(optimizer)
+    scaler.update()</div>
+
+  <h3>Distributed Training</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ DataParallel</h4>
+      <ul>
+        <li>Single-process, GIL bottleneck</li>
+        <li>One GPU gathers all gradients</li>
+        <li>DON'T USE</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ DistributedDataParallel</h4>
+      <ul>
+        <li>Multi-process, scales linearly</li>
+        <li>AllReduce via NCCL</li>
+        <li>USE THIS</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Practical Troubleshooting</h3>
+  <div class="card-grid">
+    <div class="card"><h4>📉 Loss not decreasing</h4><p>Lower LR, check data loading, verify labels.</p></div>
+    <div class="card blue"><h4>💥 NaN loss</h4><p>Check for log(0), div by 0, reduce LR.</p></div>
+    <div class="card green"><h4>📈 Overfitting</h4><p>Dropout, weight decay, more data, early stop.</p></div>
+    <div class="card purple"><h4>💾 OOM</h4><p>Smaller batch, gradient accumulation, mixed precision.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How would you train a model that doesn't fit in GPU memory?"</strong> (1) Gradient accumulation: simulate large batch over N small batches. (2) Mixed precision: cut memory ~50%. (3) Gradient checkpointing: recompute activations during backward pass. (4) Model parallelism: split model across GPUs. (5) DeepSpeed/FSDP: automated model sharding. Start with the simplest solution first.</p>
+  </div>
+</section>
+
+<!-- Screen 9: Quiz -->
+<section class="screen" id="s9">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: Why does GELU replace ReLU in Transformers?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) GELU is faster to compute</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) GELU provides a smooth, differentiable approximation allowing small negative values to pass, improving gradient flow in attention-based architectures</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) GELU outputs are always positive</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: In attention <code>softmax(QK^T / √d_k) · V</code>, what happens without the √d_k scaling?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) The model trains faster</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) Dot products grow large, softmax saturates to near-one-hot vectors, gradients become near-zero</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) The attention weights sum to more than 1</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: You're fine-tuning BERT on only 500 examples. What precautions do you take?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Use a high learning rate (1e-2) for fast convergence</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) Small LR (2e-5), keep/increase dropout, early stopping, freeze most layers, consider gradual unfreezing</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) Increase batch size to 128 for stability</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: What's the difference between model.train() and model.eval() in PyTorch?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">A) train() enables dropout &amp; batch stats; eval() disables dropout &amp; uses running stats. Always eval() before inference + torch.no_grad()</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) train() enables GPU, eval() uses CPU</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) They're interchangeable</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: Explain the purpose of residual connections in Transformers.</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) They reduce the number of parameters</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) They provide gradient highways, preventing vanishing gradients and letting layers learn refinements (residuals) rather than full transformations</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) They replace the attention mechanism</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+
+  <h3>🎯 Key Takeaways</h3>
+  <div class="card-grid">
+    <div class="card"><h4>Activations = Non-linearity</h4><p>Without them, stacking layers is pointless — it's all still linear.</p></div>
+    <div class="card blue"><h4>Adam/AdamW Default</h4><p>For most architectures. SGD still has its place for CNNs.</p></div>
+    <div class="card green"><h4>Self-Attention Core</h4><p>Understand Q, K, V and the scaling factor — it's the heart of Transformers.</p></div>
+    <div class="card purple"><h4>Pre-train + Fine-tune</h4><p>Dominant paradigm: massive unsupervised pretraining, then task-specific adaptation.</p></div>
+    <div class="card"><h4>Training Loop Pattern</h4><p>zero_grad → forward → loss → backward → clip → step. Memorize it.</p></div>
+    <div class="card blue"><h4>Mixed Precision + DDP</h4><p>Essential for efficient training at scale. 2× speed, 50% less memory.</p></div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-01-ml-fundamentals/index.html">← Prev: ML Fundamentals</a>
+  <a href="../module-03-nlp/index.html">Next: NLP →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);if(box.dataset.answered)return;box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above for the key concept.';}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>
