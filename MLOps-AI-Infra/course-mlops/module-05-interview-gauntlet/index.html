@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 5: The Interview Gauntlet 🔥 | MLOps &amp; AI Infra</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#059669;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-error);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-error)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.screen-alt{background:var(--color-bg-warm)}
+.qa-card{background:#fff;border-radius:16px;padding:1.8rem;margin:1rem 0;box-shadow:0 2px 12px rgba(0,0,0,0.04);border-left:4px solid var(--color-accent);cursor:pointer;transition:all 0.2s}
+.qa-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.08)}
+.qa-card h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.3rem;display:flex;align-items:center;gap:0.5rem}
+.qa-card .badge{font-size:0.7rem;padding:0.15rem 0.5rem;border-radius:100px;color:#fff;font-weight:600}
+.badge-hot{background:var(--color-error)}.badge-tricky{background:#7B5EA7}.badge-senior{background:var(--color-info)}.badge-basic{background:var(--color-success)}
+.qa-answer{max-height:0;overflow:hidden;transition:max-height 0.4s ease;font-size:0.93rem;color:var(--color-muted);line-height:1.7}
+.qa-card.open .qa-answer{max-height:2000px}
+.qa-answer p{margin-top:0.8rem}
+.qa-answer ul{margin:0.5rem 0 0.5rem 1.2rem;font-size:0.93rem}
+.qa-answer ul li{margin-bottom:0.3rem}
+.qa-answer code{font-family:var(--font-code);font-size:0.82rem;background:var(--color-bg-warm);padding:0.1rem 0.4rem;border-radius:4px}
+.qa-answer strong{color:var(--color-text)}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.rapid-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin:1.5rem 0}
+.rapid-card{background:#fff;border-radius:12px;padding:1rem;box-shadow:0 2px 6px rgba(0,0,0,0.04)}
+.rapid-card .q{font-family:var(--font-heading);font-weight:700;font-size:0.88rem;margin-bottom:0.3rem;color:var(--color-text)}
+.rapid-card .a{font-size:0.82rem;color:var(--color-muted)}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+@media(max-width:600px){.rapid-grid{grid-template-columns:1fr}.qa-card h4{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">⚙️ MLOps &amp; AI Infra</a><div class="nav-dots"><a href="../module-01-mlops-pipeline/" class="nav-dot"></a><a href="../module-02-model-serving/" class="nav-dot"></a><a href="../module-03-llmops/" class="nav-dot"></a><a href="../module-04-fine-tuning/" class="nav-dot"></a><a href="../module-05-interview-gauntlet/" class="nav-dot active" style="background:var(--color-error)"></a></div></div></nav>
+
+<!-- ============ SCREEN 1: MLOps Pipeline Design ============ -->
+<section class="screen" id="s1">
+  <h2>🔥 MLOps <span class="accent">Pipeline Design</span></h2>
+  <p>You're interviewing for a Senior MLOps Engineer role. The interviewer opens a whiteboard and says, <em>"Let's design some systems."</em> Click each card to reveal the model answer.</p>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">DESIGN</span> Design an end-to-end ML pipeline for a fraud detection system.</h4>
+    <div class="qa-answer">
+      <p><strong>Answer:</strong> I'd break this into six stages, each with its own contract and monitoring.</p>
+      <p><strong>Data Ingestion:</strong> Transaction events land in Kafka from the payments service. A Flink streaming job performs schema validation and writes to both a raw data lake (S3/GCS in Parquet) and a hot path for real-time features. I'd enforce a schema registry (Avro or Protobuf) so upstream changes don't silently break us.</p>
+      <p><strong>Feature Engineering:</strong> Two tiers. <em>Batch features</em> — aggregates like "number of transactions in the last 30 days per merchant category" — are computed nightly via Spark and materialized into the offline feature store (BigQuery or Redshift). <em>Streaming features</em> — "transactions in the last 5 minutes from this card" — are computed in Flink and pushed to the online store (Redis). Both tiers register in Feast so training and serving use identical logic.</p>
+      <p><strong>Training:</strong> A Kubeflow or Vertex AI pipeline runs weekly. It pulls point-in-time–correct features from the offline store, splits by time (never random — fraud patterns are temporal), trains an XGBoost model with hyperparameter tuning via Optuna, and logs everything to MLflow — parameters, metrics, the confusion matrix, and the serialized model artifact.</p>
+      <p><strong>Validation Gate:</strong> Before any model touches production, automated checks run: AUC must exceed the current champion by at least 0.5%, false-positive rate must stay below 2%, latency on a benchmark batch must be under 10ms P99, and a fairness audit (equalized odds across demographic groups) must pass. This gate is code, not a meeting.</p>
+      <p><strong>Deployment:</strong> The validated model is promoted in the MLflow Model Registry to "Production." A CI/CD pipeline (GitHub Actions or Argo CD) builds a new container image, pushes it to the registry, and triggers a canary rollout on Kubernetes — 5% traffic for 30 minutes, watching error rates and latency, then full promotion.</p>
+      <p><strong>Monitoring:</strong> Evidently AI runs hourly drift detection on input features (PSI for categorical, KS-test for numerical). I'd track business metrics — fraud catch rate, false-positive rate — on a Grafana dashboard with PagerDuty alerts. A feedback loop from the fraud investigation team labels predictions so we can compute true model accuracy, not just proxy metrics.</p>
+    </div>
+  </div>
+
+  <div class="aha"><div class="aha-title">💡 Interview Insight</div><p><strong>Always walk through the pipeline linearly, then circle back to cross-cutting concerns</strong> (monitoring, security, cost). This shows you think in systems. Interviewers penalize candidates who jump straight to "I'd use XGBoost" without discussing data quality or deployment.</p></div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> How would you implement experiment tracking for a team of 20 ML engineers?</h4>
+    <div class="qa-answer">
+      <p><strong>Answer:</strong> I'd deploy a centralized MLflow Tracking Server backed by PostgreSQL for metadata and S3 for artifacts. Self-hosted, not local — every engineer's runs land in one place.</p>
+      <p><strong>Naming conventions matter at scale.</strong> I'd enforce: experiment names follow <code>{team}/{project}/{objective}</code> (e.g., <code>search/ranking/click-through-v2</code>), run names include the date and author (<code>2026-04-06-alice-baseline</code>), and all runs must tag <code>dataset_version</code>, <code>git_sha</code>, and <code>environment</code>. I'd write a thin Python wrapper — <code>our_mlflow.start_run()</code> — that auto-populates these tags from the environment so engineers can't forget.</p>
+      <p><strong>Model Registry workflow:</strong> Engineers train and log to "None" stage. A peer reviews the experiment comparison in MLflow UI and promotes to "Staging." An automated validation pipeline runs on Staging models (performance benchmarks, latency checks, bias audits). Only after that pipeline passes does a senior engineer promote to "Production." This creates a natural review gate without heavyweight process.</p>
+      <p><strong>Retention policy:</strong> Artifacts older than 90 days for non-Production models get archived to cold storage. This keeps S3 costs from spiraling as 20 engineers each log dozens of runs per week.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">DESIGN</span> Your feature store is returning stale features in production. How do you debug this?</h4>
+    <div class="qa-answer">
+      <p><strong>Answer:</strong> Stale features mean the online store hasn't been updated with the latest computed values. I'd investigate in this order:</p>
+      <p><strong>Step 1 — Check materialization jobs.</strong> Feast (or Tecton) runs materialization to sync offline→online. I'd look at the job scheduler (Airflow DAG or Tecton pipeline) — did the latest job fail? Did it succeed but take longer than the feature's TTL? A job that ran successfully 6 hours ago is useless if the feature has a 1-hour freshness SLA.</p>
+      <p><strong>Step 2 — Inspect the online store directly.</strong> Query Redis (or DynamoDB) for a known entity and check the <code>event_timestamp</code>. Compare it to the latest value in the offline store. If they match but are both old, the problem is upstream — the batch pipeline producing the features is delayed.</p>
+      <p><strong>Step 3 — Look for schema or key mismatches.</strong> A common silent failure: someone renames a feature or changes the entity key format in the offline store, but the materialization job doesn't error — it just writes to new keys while serving reads old ones.</p>
+      <p><strong>Step 4 — Monitor going forward.</strong> I'd add three alerts: materialization job completion (SLA-based, not just success/fail), feature freshness (max age of any feature in the online store), and feature value distribution (sudden shifts suggest a broken computation, not just staleness).</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Design a CI/CD pipeline for ML models.</h4>
+    <div class="qa-answer">
+      <p><strong>Answer:</strong> ML CI/CD has three layers beyond traditional software CI/CD: data validation, model validation, and serving validation.</p>
+      <p><strong>CI (on every PR):</strong> Lint and unit-test all feature engineering code, training scripts, and serving code. Run a "smoke train" — train on 1% of data for 2 epochs to catch shape mismatches, import errors, and config bugs. Validate the training data schema against a registered contract (Great Expectations or Pandera). Run <code>mypy</code> and <code>ruff</code> because ML code is still code.</p>
+      <p><strong>CD — Model Promotion:</strong> When a full training run completes (triggered by schedule or data-change detection), the pipeline: (1) Compares performance against the current production champion on a held-out golden dataset. (2) Checks for regression on sliced metrics — overall accuracy is meaningless if performance on a critical segment dropped. (3) Validates inference latency by running the model through a load test harness. (4) Packages the model into a versioned container image with pinned dependencies.</p>
+      <p><strong>CD — Deployment:</strong> Argo CD or Flux watches the model registry. When a model is promoted to "Production," it triggers a canary deployment: 5%→25%→100% traffic over 2 hours. At each stage, automated checks compare error rates, latency, and business metrics against the previous version. Any degradation triggers automatic rollback — no human in the loop for rollback.</p>
+    </div>
+  </div>
+
+  <div class="aha"><div class="aha-title">💡 Interview Insight</div><p><strong>Emphasize automated rollback.</strong> Many candidates describe deployment but forget what happens when things go wrong. Interviewers love hearing, "The system heals itself; humans investigate afterward."</p></div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">DESIGN</span> How do you handle data versioning when datasets are 500GB+?</h4>
+    <div class="qa-answer">
+      <p><strong>Answer:</strong> Git can't handle this. I'd evaluate three approaches based on the team's infrastructure:</p>
+      <p><strong>DVC (Data Version Control):</strong> Tracks pointers (<code>.dvc</code> files) in Git while storing actual data in S3/GCS. For 500GB+, I'd configure a remote storage backend with chunked uploads and use <code>dvc push/pull</code> in CI/CD. Pros: simple mental model, integrates with existing Git workflows. Cons: no branching semantics on the data itself — you're versioning snapshots, not diffs.</p>
+      <p><strong>lakeFS:</strong> Provides Git-like branching directly on your data lake. You can create a branch, modify data, run experiments, and merge — all without duplicating the 500GB. Uses copy-on-write, so branches are cheap. Ideal if your workflow involves multiple teams modifying shared datasets concurrently. Cons: another service to operate.</p>
+      <p><strong>Delta Lake / Iceberg:</strong> Table formats with built-in time travel. <code>SELECT * FROM transactions VERSION AS OF 42</code> gives you reproducibility without explicit versioning steps. Works best when your data is already in a lakehouse architecture. Cons: tied to the table format ecosystem.</p>
+      <p><strong>My recommendation for most teams:</strong> DVC for model artifacts and small-to-medium datasets, Delta Lake for large production datasets that feed training pipelines. Tag every training run with the Delta Lake version number and the Git commit hash — that gives you full reproducibility.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Your team is at MLOps maturity level 1. What's your roadmap to level 3?</h4>
+    <div class="qa-answer">
+      <p><strong>Level 1 (current state):</strong> Manual training in notebooks, manual deployment, no monitoring. Data scientists throw models over the wall to engineering.</p>
+      <p><strong>Phase 1 — Foundation (months 1–3, → Level 1.5):</strong> Version control everything — notebooks converted to <code>.py</code> scripts, training configs in YAML, data versioned with DVC. Set up MLflow for experiment tracking. Introduce a basic CI pipeline that runs linting and unit tests on feature engineering code. Containerize model serving with a standard Docker template. <em>Organizational change:</em> Establish a shared on-call rotation where data scientists participate in model incident response.</p>
+      <p><strong>Phase 2 — Automation (months 4–6, → Level 2):</strong> Automate training pipelines with Kubeflow or Vertex AI Pipelines. Implement the model validation gate (performance checks, bias audits). Deploy a feature store (Feast) to eliminate training-serving skew. Add monitoring — data drift detection, prediction distribution tracking, and alerting. <em>Organizational change:</em> Create an MLOps platform team (2–3 engineers) that builds shared tooling rather than every team reinventing the wheel.</p>
+      <p><strong>Phase 3 — Continuous (months 7–12, → Level 3):</strong> Automated retraining triggered by drift detection or data freshness signals. Full CI/CD with canary deployments and automated rollback. A/B testing framework for comparing models on business metrics. Self-service model deployment — data scientists push a config, the platform handles the rest. <em>Organizational change:</em> MLOps platform team publishes internal "golden paths" — opinionated templates that encode best practices so new projects start at Level 2 by default.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">DESIGN</span> Design a feature pipeline that serves both batch and real-time features.</h4>
+    <div class="qa-answer">
+      <p><strong>Answer:</strong> This is the classic dual-compute problem. I'd use a <strong>feature platform architecture</strong> with Feast as the orchestration layer.</p>
+      <p><strong>Batch path:</strong> Spark jobs run on a schedule (Airflow-triggered), compute aggregate features from the data warehouse, and write to the Feast offline store (BigQuery/Redshift). These features are used for training via point-in-time joins and for low-latency serving via materialization to the online store (Redis).</p>
+      <p><strong>Real-time path:</strong> For features that must reflect the last few seconds (e.g., "transactions in the last 5 minutes"), a Flink or Spark Structured Streaming job consumes from Kafka, computes windowed aggregates, and writes directly to the online store. These features are <em>not</em> in the offline store initially — they're backfilled nightly for training consistency.</p>
+      <p><strong>The critical design principle:</strong> Feature computation logic must be defined once, regardless of whether it runs in batch or streaming. I'd use a shared Python module that both the Spark batch job and the Flink streaming job import. If the languages differ (Spark Scala vs. Flink Java), I'd define feature logic in SQL that both engines can execute.</p>
+      <p><strong>Serving:</strong> At inference time, the model server calls <code>feast.get_online_features(entity_keys)</code>, which returns both batch-materialized and streaming-computed features in a single response. The model doesn't know or care which path produced which feature.</p>
+    </div>
+  </div>
+
+  <div class="aha"><div class="aha-title">💡 Interview Insight</div><p><strong>When discussing feature stores, always mention training-serving skew.</strong> It's the #1 silent killer in ML systems. If your training pipeline computes features differently than your serving pipeline, your model is making predictions on data distributions it never saw during training.</p></div>
+</section>
+
+<!-- ============ SCREEN 2: Model Serving Scenarios ============ -->
+<section class="screen screen-alt" id="s2">
+  <h2>⚡ Model Serving <span class="accent">Scenarios</span></h2>
+  <p>The interviewer shifts gears: <em>"Now let's talk about getting models into production and keeping them alive under load."</em> Think in milliseconds, gigabytes, and dollars.</p>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-tricky">INFRA</span> You need to deploy a 70B parameter LLM. What hardware do you need and how do you serve it?</h4>
+    <div class="qa-answer">
+      <p><strong>Memory math first.</strong> A 70B parameter model in FP16 requires <code>70B × 2 bytes = 140GB</code> of GPU memory just for weights. Add KV-cache for a 4K context at batch size 16, and you're looking at another 20–40GB. No single GPU handles this.</p>
+      <p><strong>Hardware:</strong> I'd use 4× A100 80GB GPUs (320GB total) or 2× H100 80GB with NVLink. For cost optimization, 2× A100s with INT8 quantization (GPTQ or AWQ) reduces the model to ~70GB — fits on 2 GPUs with room for KV-cache.</p>
+      <p><strong>Serving stack:</strong> vLLM is my default — it implements PagedAttention for efficient KV-cache management, continuous batching for throughput, and tensor parallelism across GPUs out of the box. I'd configure <code>tensor_parallel_size=4</code> and enable <code>--quantization awq</code> if using quantized weights.</p>
+      <p><strong>Scaling:</strong> Put vLLM behind an nginx or Envoy load balancer. Separate GPU nodes handle different request priorities — interactive queries get dedicated capacity, batch jobs use spot instances. I'd implement request queuing with a priority system so latency-sensitive requests aren't blocked behind large batch generations.</p>
+      <p><strong>Cost optimization:</strong> If latency allows, quantize to INT4 (GGUF format with llama.cpp) and serve on CPU for low-traffic internal use cases — this cuts cost by 10x compared to GPU serving.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">HOT</span> Your model API has P99 latency of 2 seconds but SLO is 500ms. How do you fix it?</h4>
+    <div class="qa-answer">
+      <p><strong>Answer:</strong> I'd attack this in order of effort vs. impact:</p>
+      <p><strong>1. Profile first (day 1).</strong> Instrument the serving path end-to-end: network ingress, preprocessing, inference, postprocessing, network egress. Identify which segment dominates. Common finding: preprocessing (tokenization, feature lookup) takes 800ms because it's making synchronous database calls.</p>
+      <p><strong>2. Caching (day 2–3).</strong> If the same or similar inputs recur, add a Redis cache keyed on input hash. For LLMs, use semantic caching — embed the query and return cached responses for queries within cosine similarity > 0.95. This can eliminate inference entirely for 20–40% of requests.</p>
+      <p><strong>3. Model optimization (week 1).</strong> Quantize from FP32→FP16→INT8 — each step roughly halves inference time. Apply ONNX Runtime or TensorRT optimization. For transformer models, use FlashAttention. These are low-risk, high-reward changes.</p>
+      <p><strong>4. Batching (week 1).</strong> If the model is GPU-bound, enable dynamic batching (Triton Inference Server or vLLM continuous batching). Processing 8 requests in one forward pass is far more efficient than 8 sequential passes.</p>
+      <p><strong>5. Model distillation (week 2–4).</strong> Train a smaller student model that mimics the large model. A distilled model can be 10x faster with only 2–3% accuracy loss — often an acceptable trade-off.</p>
+      <p><strong>6. Architecture (week 4+).</strong> Implement a cascade: a fast, cheap model handles "easy" requests (high confidence), and only routes "hard" requests to the expensive model. This can cut average latency dramatically while maintaining quality on edge cases.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-tricky">TRICKY</span> Design an A/B testing framework for ML models.</h4>
+    <div class="qa-answer">
+      <p><strong>Traffic splitting:</strong> An API gateway (Istio, Envoy, or a custom routing layer) assigns users to variants based on a hash of their user ID — this ensures consistency across sessions. I'd support percentage-based allocation (90/10, 50/50) and segment-based allocation (e.g., "new users only see variant B").</p>
+      <p><strong>Metric collection:</strong> Every prediction is logged with the variant assignment, user ID, timestamp, model version, and the input features. Business outcome events (clicks, purchases, churn) are joined asynchronously via a streaming pipeline (Flink) or batch pipeline (Spark), keyed on user ID and time window.</p>
+      <p><strong>Statistical analysis:</strong> I'd pre-register the primary metric, minimum detectable effect (MDE), and required sample size <em>before</em> starting the test. Use a sequential testing framework (not fixed-horizon t-tests) so we can check results without inflating false-positive rates. For skewed metrics like revenue, use bootstrap confidence intervals instead of parametric tests.</p>
+      <p><strong>Guardrails:</strong> Define "do no harm" metrics — latency, error rate, and critical business metrics — with automatic rollback if any degrade beyond a threshold. The A/B test can explore, but it can't hurt the business.</p>
+      <p><strong>Rollback:</strong> One API call flips traffic 100% to the control. Model versions are immutable and tagged in the registry, so rollback is always safe.</p>
+    </div>
+  </div>
+
+  <div class="aha"><div class="aha-title">💡 Interview Insight</div><p><strong>Mention pre-registration and sample size calculation.</strong> Most candidates describe traffic splitting but skip the statistics. Interviewers at data-mature companies will probe whether you understand why "we ran it for a week and the numbers looked good" is not rigorous.</p></div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">HOT</span> Your Kubernetes model deployment keeps OOM-killing pods. Diagnose and fix.</h4>
+    <div class="qa-answer">
+      <p><strong>Immediate diagnosis:</strong> <code>kubectl describe pod &lt;pod&gt;</code> — check the <code>Last State</code> for <code>OOMKilled</code> and note the memory limit. Compare against actual usage with <code>kubectl top pod</code>. Check if the OOM happens at startup (model loading) or during inference (request processing).</p>
+      <p><strong>Startup OOM:</strong> The model itself doesn't fit in the container's memory limit. Solutions: increase <code>resources.limits.memory</code>, switch to memory-mapped model loading (ONNX Runtime supports this), or quantize the model to reduce its footprint.</p>
+      <p><strong>Inference OOM:</strong> Memory grows with request volume. Common causes: (1) Batch size too large — each request in a batch consumes memory for activations. Fix: set <code>max_batch_size</code> and back-pressure when the queue is full. (2) Memory leaks in preprocessing — Python objects not being garbage collected between requests. Fix: profile with <code>tracemalloc</code>, ensure you're not appending to global lists. (3) KV-cache growth for LLMs — long sequences consume linearly more memory. Fix: set <code>max_model_len</code> in vLLM, implement request length limits.</p>
+      <p><strong>Long-term fix:</strong> Set <code>requests</code> (guaranteed) to the model's base memory footprint and <code>limits</code> to 1.5–2x that to accommodate burst. Add a <code>PodDisruptionBudget</code> so Kubernetes doesn't evict all replicas simultaneously during node scaling. Implement a <code>/health</code> endpoint that checks available memory and returns unhealthy before OOM occurs, letting Kubernetes gracefully restart.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-tricky">TRICKY</span> Compare batch vs real-time inference for a recommendation system.</h4>
+    <div class="qa-answer">
+      <p><strong>Batch inference:</strong> Precompute recommendations for all users nightly. Store results in a key-value store (Redis, DynamoDB). Serving is a simple lookup — sub-millisecond latency, trivially scalable. Works well when the item catalog changes slowly and personalization doesn't need to reflect the user's <em>current</em> session. Cost-efficient: one GPU cluster runs for 2 hours nightly, then shuts down.</p>
+      <p><strong>Real-time inference:</strong> Compute recommendations on every request using the user's latest context (items just viewed, cart contents). Required when recency matters — e.g., "you just looked at running shoes, here are related products." Higher infrastructure cost (always-on GPU serving), more complex architecture (feature store, model server, low-latency pipeline).</p>
+      <p><strong>Hybrid (my recommendation):</strong> Precompute candidate sets in batch (top 500 items per user), then re-rank in real-time using session features. The re-ranking model is small and fast (a lightweight neural network or even logistic regression), while the expensive candidate generation runs offline. This gives you 90% of the personalization benefit at 20% of the infrastructure cost.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">HOT</span> How would you implement model rollback in production?</h4>
+    <div class="qa-answer">
+      <p><strong>Prerequisite:</strong> Every deployed model version is immutable and tagged in the model registry with its artifact, config, dependencies, and the dataset version it was trained on. You cannot roll back if you don't know what you're rolling back <em>to</em>.</p>
+      <p><strong>Mechanism — Blue-Green:</strong> Maintain two identical serving environments. The "green" environment runs the new model; "blue" runs the previous version. Traffic is routed via a load balancer. Rollback is flipping the route back to blue — takes seconds. Cost: you're paying for 2x infrastructure during the rollout window.</p>
+      <p><strong>Mechanism — Canary with automated rollback:</strong> Route 5% of traffic to the new model. Monitor error rate, latency, and a business metric (e.g., click-through rate). If any metric degrades beyond a predefined threshold for more than 5 minutes, automatically route 100% back to the old model and page the on-call engineer. This is cheaper than blue-green and catches issues with real traffic.</p>
+      <p><strong>Data compatibility:</strong> The often-forgotten piece. If the new model requires a new feature that the old model doesn't, rollback breaks unless the feature pipeline continues serving both feature sets. I'd enforce a rule: new features must be available for at least one full rollback window before the old model's features can be deprecated.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-tricky">INFRA</span> Design auto-scaling for a GPU-based model serving cluster.</h4>
+    <div class="qa-answer">
+      <p><strong>Metrics for scaling:</strong> Don't use CPU utilization — it's meaningless for GPU workloads. Instead, use: (1) GPU utilization (<code>DCGM_FI_DEV_GPU_UTIL</code> from DCGM exporter), (2) request queue depth (if the queue grows, you need more replicas), and (3) inference latency P95 (scale up before users feel pain).</p>
+      <p><strong>Horizontal Pod Autoscaler (HPA):</strong> Configure with custom metrics via Prometheus Adapter. Target GPU utilization at 70% — this leaves headroom for burst traffic. Set <code>scaleDown.stabilizationWindowSeconds</code> to 300 (5 minutes) to avoid flapping.</p>
+      <p><strong>Scale-to-zero:</strong> For non-critical or internal models, use KNative or KEDA to scale to zero replicas during idle periods. This saves significant GPU cost. The trade-off is cold start — loading a model from storage into GPU memory takes 30–90 seconds. Mitigate by keeping the model image warm in the node's container cache.</p>
+      <p><strong>Predictive scaling:</strong> For known traffic patterns (e.g., peak hours, Black Friday), use cron-based scaling rules that pre-scale 30 minutes before the expected spike. Reactive auto-scaling is always late — by the time the metric breaches the threshold, users are already experiencing degraded latency.</p>
+      <p><strong>Cost optimization:</strong> Use a mix of on-demand and spot/preemptible GPU instances. Serve latency-critical traffic on on-demand instances; route batch and internal traffic to spot instances with checkpointing so preemption doesn't lose work.</p>
+    </div>
+  </div>
+
+  <div class="aha"><div class="aha-title">💡 Interview Insight</div><p><strong>GPU auto-scaling is fundamentally different from CPU auto-scaling.</strong> Saying "I'd set up HPA on CPU" is a red flag. Show you understand GPU-specific metrics, cold start costs, and the economics of GPU instances.</p></div>
+</section>
+
+<!-- ============ SCREEN 3: LLMOps & Fine-Tuning ============ -->
+<section class="screen" id="s3">
+  <h2>🧠 LLMOps &amp; <span class="accent">Fine-Tuning</span></h2>
+  <p>The interviewer leans forward: <em>"Our team is investing heavily in LLMs. How deep is your experience?"</em> LLMOps is the fastest-evolving area in MLOps — these questions test practical trade-offs, not buzzwords.</p>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> When would you fine-tune vs use RAG vs prompt engineering?</h4>
+    <div class="qa-answer">
+      <p><strong>Prompt engineering (try first, always):</strong> When you need the model to follow a specific format, adopt a persona, or handle a well-defined task. Cost: near-zero. Time: hours. Example: "Summarize this support ticket in 3 bullet points" — a good system prompt with few-shot examples handles this perfectly. No training data needed.</p>
+      <p><strong>RAG (when the model lacks knowledge):</strong> When the model needs access to private, frequently updated, or domain-specific information it wasn't trained on. Example: "Answer questions about our internal HR policies" — embed the policy documents, retrieve relevant chunks, inject into context. Cost: moderate (embedding computation, vector DB). Time: days. RAG doesn't change the model's <em>behavior</em>, only its <em>knowledge</em>.</p>
+      <p><strong>Fine-tuning (when behavior must change):</strong> When the model needs to adopt a fundamentally different style, learn domain-specific reasoning patterns, or achieve performance that prompt engineering can't reach. Example: "Generate radiology reports from medical images in our hospital's specific format" — this requires thousands of examples and LoRA fine-tuning. Cost: significant (GPU compute, data curation). Time: weeks.</p>
+      <p><strong>Decision framework:</strong> Start with prompt engineering. If quality is insufficient and the gap is <em>knowledge</em>, add RAG. If the gap is <em>behavior or style</em>, fine-tune. Often the best solution combines all three: a fine-tuned model with RAG retrieval and a well-crafted system prompt.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-tricky">TRICKY</span> Design an LLM evaluation pipeline for a customer-facing chatbot.</h4>
+    <div class="qa-answer">
+      <p><strong>Offline evaluation (before deployment):</strong> Maintain a golden test set of 500+ query-response pairs rated by domain experts. Run every model candidate against this set and measure: (1) correctness (does the answer match the reference?), (2) relevance (does it address the question?), (3) safety (does it contain harmful content?), (4) format compliance (does it follow the expected structure?). Use an LLM-as-Judge (GPT-4 or Claude) with a rubric to score each dimension on a 1–5 scale. Track regression — if a new model scores lower on any dimension for any category, it's flagged for human review.</p>
+      <p><strong>Online evaluation (in production):</strong> Collect implicit feedback (thumbs up/down, "was this helpful?"), track conversation completion rates (did the user achieve their goal?), and monitor escalation rates (did the user ask to talk to a human?). Log all conversations for periodic human review — sample 100 conversations per week, have two raters score them independently, measure inter-rater agreement.</p>
+      <p><strong>Regression testing:</strong> Every prompt template change, RAG index update, or model swap triggers the offline eval pipeline automatically. This is your CI for LLM behavior — no change ships without passing the test suite.</p>
+      <p><strong>Red teaming:</strong> Monthly adversarial testing where a dedicated team tries to make the chatbot produce harmful, incorrect, or off-brand responses. Findings become new test cases in the golden set.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Your LLM costs are $50K/month. Reduce them by 60%.</h4>
+    <div class="qa-answer">
+      <p><strong>Target: reduce to $20K/month.</strong> I'd stack these optimizations:</p>
+      <p><strong>1. Semantic caching (saves 20–30%).</strong> Embed incoming queries, check a vector store for similar previous queries (cosine similarity > 0.95). Return the cached response. For a customer support bot, 30–40% of queries are near-duplicates. Implementation: Redis + a lightweight embedding model.</p>
+      <p><strong>2. Model routing (saves 20–30%).</strong> Not every query needs GPT-4. Build a classifier (or use a small LLM) that routes simple queries ("What are your store hours?") to a cheap model (GPT-4o-mini at 1/30th the cost) and only sends complex queries to the expensive model. In practice, 60–70% of queries are "easy."</p>
+      <p><strong>3. Prompt compression (saves 10–15%).</strong> Trim system prompts, remove redundant few-shot examples, summarize long RAG context before injecting. Every token costs money. A prompt audit typically finds 30–40% of tokens are unnecessary.</p>
+      <p><strong>4. Batching (saves 5–10%).</strong> For non-interactive use cases (document processing, batch analysis), collect requests and send them in batches. Many API providers offer batch pricing at 50% discount.</p>
+      <p><strong>Combined effect:</strong> 0.75 × 0.70 × 0.87 × 0.93 ≈ 0.43 of original cost — a 57% reduction. Close enough to 60%, and we haven't even considered self-hosting a smaller open-source model for the easy queries, which could push savings further.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-tricky">TRICKY</span> Explain LoRA to a non-technical stakeholder.</h4>
+    <div class="qa-answer">
+      <p><strong>Answer:</strong> "Think of a large language model as a massive library — billions of books representing everything it knows. Fine-tuning the traditional way means rewriting every single book to include your company's knowledge. That's incredibly expensive and time-consuming.</p>
+      <p>LoRA is like adding sticky notes to the existing books. You don't rewrite anything — you just attach small, targeted annotations that change how the library responds to specific types of questions. The sticky notes are tiny compared to the books themselves (often less than 1% of the total), so they're cheap to create and easy to swap out.</p>
+      <p>The best part? You can have different sets of sticky notes for different purposes — one set for customer support, another for legal document analysis — all sharing the same underlying library. And if a set of sticky notes isn't working, you just peel them off. The original library is untouched."</p>
+    </div>
+  </div>
+
+  <div class="aha"><div class="aha-title">💡 Interview Insight</div><p><strong>The ability to explain complex topics simply is tested at every senior-level interview.</strong> Practice your analogies. If you can't explain LoRA to a product manager in 60 seconds, you'll struggle to build cross-functional alignment in the role.</p></div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Design guardrails for a medical AI assistant.</h4>
+    <div class="qa-answer">
+      <p><strong>Input guardrails:</strong> (1) PII detection — scan incoming messages for SSNs, medical record numbers, and patient names using regex + a NER model; redact before processing. (2) Scope detection — classify whether the query is medical (in-scope) vs. unrelated; refuse out-of-scope queries politely. (3) Emergency detection — if the query mentions self-harm, chest pain, or other emergencies, immediately respond with emergency contacts and bypass the LLM entirely.</p>
+      <p><strong>Output guardrails:</strong> (1) Hallucination mitigation — every factual claim must be grounded in a retrieved source document; if the retrieval confidence is below a threshold, the model responds "I'm not sure — please consult your healthcare provider." (2) Disclaimer injection — every response includes "This is not medical advice" in a consistent, non-dismissable format. (3) Prohibited content filter — block responses that include specific drug dosages, diagnoses, or treatment plans unless the user is a verified clinician. (4) Toxicity and bias detection — run output through a safety classifier before returning to the user.</p>
+      <p><strong>Compliance layer:</strong> All interactions logged to an immutable audit trail (HIPAA requirement). Data encrypted at rest and in transit. Model updates require documented clinical review. Regular third-party audits of model behavior on a diverse test population.</p>
+      <p><strong>Feedback loop:</strong> Clinician reviewers sample conversations weekly. Errors become new test cases. The guardrail thresholds are tuned based on false-positive and false-negative rates from these reviews.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-tricky">TRICKY</span> Your fine-tuned model performs worse than the base model on general tasks. What happened?</h4>
+    <div class="qa-answer">
+      <p><strong>Diagnosis: catastrophic forgetting.</strong> During fine-tuning, the model's weights shifted to optimize for your specific task, overwriting the general knowledge encoded in the base model. This is especially common with full fine-tuning on small datasets.</p>
+      <p><strong>Fixes, in order of preference:</strong></p>
+      <p><strong>1. Use LoRA instead of full fine-tuning.</strong> LoRA freezes the base model weights and only trains small adapter matrices. The base model's general knowledge is preserved by design. This is the single most effective fix.</p>
+      <p><strong>2. Reduce LoRA rank if already using LoRA.</strong> A rank that's too high (r=128) gives the adapter too much capacity, allowing it to overfit and drift. Try r=8 or r=16 — often sufficient and much more stable.</p>
+      <p><strong>3. Audit the training data.</strong> If the dataset is noisy, contains contradictions, or is too narrow, the model learns bad patterns. Check for: duplicate examples, mislabeled data, and distribution mismatch between training data and the general tasks you're evaluating on.</p>
+      <p><strong>4. Mix in general-purpose data.</strong> During fine-tuning, include 10–20% of general instruction-following data (from open-source datasets like OpenAssistant or Dolly) alongside your task-specific data. This regularizes the model and prevents forgetting.</p>
+      <p><strong>5. Evaluate properly.</strong> Are you evaluating on the <em>same</em> general benchmarks with the <em>same</em> prompts? Fine-tuned models sometimes need slightly different prompt formats. An apparent performance drop might be a prompt mismatch, not actual forgetting.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Design an LLM Gateway for an enterprise with 50 teams.</h4>
+    <div class="qa-answer">
+      <p><strong>Answer:</strong> An LLM Gateway is a centralized proxy that sits between all teams and all LLM providers. Think of it as an API gateway specifically designed for LLM traffic.</p>
+      <p><strong>Routing layer:</strong> Maps team requests to the appropriate model provider. Team A uses GPT-4 for customer support; Team B uses Claude for document analysis; Team C uses a self-hosted Llama for sensitive data. Routing rules are configured per-team, per-use-case.</p>
+      <p><strong>Authentication &amp; authorization:</strong> Each team gets API keys with scoped permissions — Team A can access GPT-4 and GPT-4o-mini but not Claude. Integrate with the enterprise identity provider (Okta, Azure AD) for SSO.</p>
+      <p><strong>Rate limiting &amp; quotas:</strong> Per-team monthly token budgets. When Team A burns through 80% of their budget, alert the team lead. At 100%, requests are throttled (not blocked — we degrade gracefully to a cheaper model).</p>
+      <p><strong>Cost attribution:</strong> Log every request with team ID, model, token count, and cost. Generate monthly cost reports per team, per model, per use case. Chargeback to team budgets.</p>
+      <p><strong>Caching layer:</strong> Shared semantic cache across all teams (with privacy boundaries — Team A's cache is isolated from Team B's).</p>
+      <p><strong>Observability:</strong> Centralized logging of all prompts and responses (with PII redaction), latency dashboards per model and per team, error rate tracking, and drift monitoring.</p>
+      <p><strong>Guardrails:</strong> Centralized input/output safety filters that apply to all teams. Enterprise-wide PII detection, content policy enforcement, and prompt injection defense. Teams can add additional guardrails on top but cannot bypass the enterprise baseline.</p>
+    </div>
+  </div>
+
+  <div class="aha"><div class="aha-title">💡 Interview Insight</div><p><strong>Enterprise-scale questions test your ability to think about multi-tenancy, cost governance, and organizational dynamics</strong> — not just technology. Mention chargeback, team isolation, and governance alongside the technical architecture.</p></div>
+</section>
+
+<!-- ============ SCREEN 4: Debugging & Operations ============ -->
+<section class="screen screen-alt" id="s4">
+  <h2>🚨 Debugging &amp; <span class="accent">Operations</span></h2>
+  <p>The interviewer pulls up a mock incident channel: <em>"We just got paged. Let's walk through some production scenarios."</em></p>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">INCIDENT</span> Your model's accuracy dropped 15% overnight. Walk me through your investigation.</h4>
+    <div class="qa-answer">
+      <p><strong>Minute 0–5: Confirm the drop is real.</strong> Check whether the monitoring metric itself is broken — did the evaluation pipeline fail? Is the sample size too small for a reliable accuracy estimate? Compare against a holdout set with known labels.</p>
+      <p><strong>Minute 5–15: Check the data pipeline.</strong> 90% of model performance drops are data problems, not model problems. Query the feature store: are features being computed? Are any features suddenly NULL, zero, or out of their expected range? Check upstream data sources — did a schema change in the source database? Did an ETL job fail?</p>
+      <p><strong>Minute 15–30: Check for distribution shift.</strong> Compare today's input feature distributions against the training distribution (PSI, KS-test). If a key feature shifted — say, a new product category was added that the model never saw during training — that explains the drop.</p>
+      <p><strong>Minute 30–45: Check the model artifact.</strong> Was a new model deployed recently? Check the model registry for recent promotions. Compare the serving model's hash against the expected version. I've seen cases where a CI/CD pipeline accidentally deployed a staging model to production.</p>
+      <p><strong>Minute 45–60: Mitigate.</strong> If root cause isn't found in an hour, roll back to the previous model version while the investigation continues. Business impact trumps root cause analysis — stop the bleeding first, then do the autopsy.</p>
+      <p><strong>Post-incident:</strong> Write a blameless post-mortem. Add monitoring for whichever gap allowed this to go undetected. Add the failure mode to your integration test suite.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">INCIDENT</span> A feature pipeline is producing NaN values for 5% of requests. Debug this.</h4>
+    <div class="qa-answer">
+      <p><strong>Step 1 — Identify which features.</strong> Query the feature store or serving logs to find which specific features contain NaN. Is it one feature or many? If many features from the same pipeline are NaN, the issue is likely in the pipeline itself. If it's one feature, the issue is in that feature's computation.</p>
+      <p><strong>Step 2 — Check input data.</strong> Look at the raw data for the affected entity keys. Are the source values NULL? Did a join fail to find matching records (left join producing NULLs)? Are there division-by-zero operations in the feature logic (e.g., <code>revenue / num_transactions</code> where <code>num_transactions</code> is 0)?</p>
+      <p><strong>Step 3 — Check for data type issues.</strong> A common culprit: a column that was integer is now being read as string due to an upstream schema change, causing silent NaN when feature code tries to perform arithmetic on it.</p>
+      <p><strong>Step 4 — Check the 5% population.</strong> Are these NaN requests concentrated in a specific segment (new users with no history, a specific region, a new product category)? If so, the feature logic has an edge case — it works for most entities but fails for a specific population.</p>
+      <p><strong>Fix:</strong> Add explicit NULL handling in the feature logic (<code>COALESCE</code> in SQL, <code>.fillna()</code> in Pandas). Add data quality checks (Great Expectations) that fail the pipeline if NaN rate exceeds 0.1%. Add monitoring that alerts on NaN rate per feature in the online store.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">INCIDENT</span> Your model serving cluster has 3x traffic spike during Black Friday. How do you prepare?</h4>
+    <div class="qa-answer">
+      <p><strong>4 weeks before — Load test.</strong> Replay production traffic at 3x rate against a staging environment. Identify the bottleneck: GPU saturation? Feature store latency? Network bandwidth? Fix each bottleneck.</p>
+      <p><strong>2 weeks before — Pre-scale.</strong> Configure cron-based scaling rules that add capacity 1 hour before expected peak times. Don't rely on reactive auto-scaling alone — GPU nodes take 5–10 minutes to become ready, which is too slow for a traffic spike.</p>
+      <p><strong>1 week before — Cache warming.</strong> Pre-compute recommendations for the top 20% of users (who generate 80% of traffic) and cache them. These cached results handle the bulk of the spike; only novel queries hit the model in real time.</p>
+      <p><strong>Day of — Graceful degradation plan.</strong> Define three tiers: (1) Normal: full model, all features. (2) Degraded: simpler model, fewer features, cached fallbacks. (3) Emergency: return precomputed defaults, log requests for later reprocessing. Auto-switch tiers based on queue depth and latency metrics.</p>
+      <p><strong>Day of — War room.</strong> Dedicated Slack channel, on-call engineers monitoring dashboards, pre-written runbooks for common failures. The time to write a runbook is not during the incident.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">INCIDENT</span> The ML team ships models but ops team can't maintain them. How do you fix the org?</h4>
+    <div class="qa-answer">
+      <p><strong>This is a people problem with a technical solution.</strong></p>
+      <p><strong>Shared ownership model:</strong> Each model has an explicit owner (a data scientist) and an operator (an ops engineer). Both are on-call. The data scientist is paged for model quality issues; the ops engineer is paged for infrastructure issues. Neither can throw work over the wall because both face consequences of poor handoffs.</p>
+      <p><strong>Standard model contract:</strong> Every model must ship with: a Dockerfile, a health check endpoint, a load test script, a monitoring dashboard template, a runbook covering the top 5 failure modes, and documented SLOs (latency, throughput, accuracy). If the model doesn't have these artifacts, it doesn't get deployed. No exceptions.</p>
+      <p><strong>Platform abstraction:</strong> Build a model deployment platform that abstracts Kubernetes, GPU allocation, and monitoring setup. Data scientists fill out a YAML config (model artifact path, resource requirements, scaling rules), and the platform handles the rest. Ops maintains the platform, not individual models.</p>
+      <p><strong>Cross-training:</strong> Monthly "model deep dive" sessions where data scientists explain their model's behavior, failure modes, and business context to the ops team. Quarterly "infrastructure bootcamp" where ops teaches data scientists about containers, Kubernetes, and debugging production systems. Understanding builds empathy.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">INCIDENT</span> Your training pipeline takes 12 hours but data changes hourly. Design a solution.</h4>
+    <div class="qa-answer">
+      <p><strong>Option 1 — Incremental training.</strong> Don't retrain from scratch. Save checkpoints and resume training on only the new data. For tree-based models (XGBoost, LightGBM), use the <code>xgb_model</code> parameter to continue training. For neural networks, warm-start from the latest checkpoint with a reduced learning rate. Reduces training time from 12 hours to 1–2 hours.</p>
+      <p><strong>Option 2 — Online learning.</strong> For models that support it (linear models, some neural networks), update weights with each new mini-batch of data without full retraining. River (formerly creme) is a Python library purpose-built for this. Caveat: online learning is prone to instability — you need robust monitoring to detect when the model drifts into a bad state and trigger a full retrain.</p>
+      <p><strong>Option 3 — Change detection + selective retrain.</strong> Not all hourly data changes are meaningful. Use statistical tests (PSI, KS-test) to detect when the data distribution has actually shifted. Trigger retraining only when drift exceeds a threshold. This might mean retraining every 6 hours instead of every hour, which is achievable with a 2-hour incremental pipeline.</p>
+      <p><strong>Option 4 — Pipeline optimization.</strong> Profile the 12-hour pipeline. Common waste: reading data from slow storage (switch to columnar formats), redundant feature computation (cache intermediate results), unoptimized hyperparameter search (use Bayesian optimization instead of grid search, or fix hyperparameters and only retrain weights). I've seen 12-hour pipelines drop to 3 hours just from optimization.</p>
+      <p><strong>My recommendation:</strong> Combine options 3 and 4. Optimize the pipeline to 3 hours, trigger retraining on drift detection, and use incremental training to further reduce to under 1 hour. Run a full retrain weekly as a safety net.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">INCIDENT</span> Post-mortem: A model served incorrect predictions for 4 hours before anyone noticed.</h4>
+    <div class="qa-answer">
+      <p><strong>What went wrong — root cause analysis:</strong></p>
+      <p><strong>Gap 1: No output monitoring.</strong> We monitored infrastructure (CPU, memory, latency) but not prediction quality. The model returned HTTP 200 with valid JSON — from an infrastructure perspective, everything was "healthy." We need prediction distribution monitoring: track the distribution of predicted scores/classes over time and alert when it deviates from the expected baseline.</p>
+      <p><strong>Gap 2: No ground truth feedback loop.</strong> We couldn't measure accuracy in real time because labels arrive with a delay (days or weeks). We need proxy metrics — prediction confidence distribution, prediction entropy, and business metrics (conversion rate, click-through rate) — that correlate with model quality and are available in real time.</p>
+      <p><strong>Gap 3: No automated quality checks.</strong> The model was deployed without a "canary analysis" step that compares its predictions against the previous model on a shadow traffic sample. If we had run 10 minutes of shadow comparison, the issue would have been caught before any user was affected.</p>
+      <p><strong>Gap 4: No human in the loop for critical decisions.</strong> For a model that affects revenue or safety, high-stakes predictions (top 1% and bottom 1% of confidence scores) should be routed to human review. This acts as a continuous quality audit.</p>
+      <p><strong>Remediation:</strong> (1) Deploy Evidently AI for real-time prediction drift monitoring with PagerDuty integration. (2) Add canary analysis to the deployment pipeline — 10 minutes of shadow traffic comparison before any traffic routing. (3) Create a Grafana dashboard correlating model predictions with business metrics, reviewed daily. (4) Establish a 30-minute SLA for prediction quality alerts.</p>
+    </div>
+  </div>
+
+  <div class="aha"><div class="aha-title">💡 Interview Insight</div><p><strong>Post-mortem questions are testing your judgment, not your debugging skills.</strong> Focus on systemic fixes, not blame. The best answers describe what monitoring, process, or automation would have prevented the incident — and what you'd invest in to ensure it never happens again.</p></div>
+</section>
+
+<!-- ============ SCREEN 5: Rapid Fire ============ -->
+<section class="screen" id="s5">
+  <h2>⚡ Rapid Fire <span class="accent">Q&amp;A</span></h2>
+  <p>"Let's test your breadth. I'm going to ask 20 quick questions. Keep your answers to 1–2 sentences."</p>
+
+  <div class="rapid-grid">
+    <div class="rapid-card"><div class="q">1. What is MLflow autolog?</div><div class="a">Automatically logs parameters, metrics, and model artifacts for supported frameworks (scikit-learn, PyTorch, etc.) — one line of code replaces dozens of manual log_param calls.</div></div>
+    <div class="rapid-card"><div class="q">2. Offline vs online feature store?</div><div class="a">Offline store (data warehouse) serves training with historical data; online store (Redis/DynamoDB) serves real-time inference with low-latency lookups.</div></div>
+    <div class="rapid-card"><div class="q">3. What is a point-in-time join?</div><div class="a">A temporal join that retrieves feature values as they existed at the time of each training example, preventing future data from leaking into the training set.</div></div>
+    <div class="rapid-card"><div class="q">4. DVC vs lakeFS?</div><div class="a">DVC versions individual files/directories with Git-like pointers; lakeFS provides Git-like branching and merging directly on the data lake.</div></div>
+    <div class="rapid-card"><div class="q">5. What does PagedAttention do?</div><div class="a">Manages the KV-cache like virtual memory pages — allocates non-contiguous blocks and eliminates memory waste from pre-allocated but unused cache slots.</div></div>
+    <div class="rapid-card"><div class="q">6. INT4 vs INT8 quantization?</div><div class="a">INT8: 4x compression with minimal accuracy loss (1–2%); INT4: 8x compression but noticeable quality degradation, best with calibration techniques like GPTQ/AWQ.</div></div>
+    <div class="rapid-card"><div class="q">7. What is continuous batching?</div><div class="a">Instead of waiting for a full batch, new requests join the batch as previous requests finish generating — maximizes GPU utilization for variable-length outputs.</div></div>
+    <div class="rapid-card"><div class="q">8. KServe vs Seldon?</div><div class="a">KServe: Kubernetes-native, serverless with scale-to-zero, lighter weight. Seldon: richer ML-specific features like explainability and outlier detection built in.</div></div>
+    <div class="rapid-card"><div class="q">9. Shadow deployment purpose?</div><div class="a">Routes real production traffic to a new model for evaluation without serving its predictions to users — measures quality risk-free before a live rollout.</div></div>
+    <div class="rapid-card"><div class="q">10. What is model drift?</div><div class="a">Model performance degrades over time because the real-world data distribution diverges from the training distribution — the world changes but the model doesn't.</div></div>
+    <div class="rapid-card"><div class="q">11. LLM-as-Judge advantage?</div><div class="a">Scalable, consistent, and fast evaluation of open-ended text outputs without the cost and latency of human reviewers — especially useful for regression testing.</div></div>
+    <div class="rapid-card"><div class="q">12. Semantic caching benefit?</div><div class="a">Reuses LLM responses for queries that are semantically similar (not just identical), cutting redundant API calls and reducing cost by 20–40%.</div></div>
+    <div class="rapid-card"><div class="q">13. NeMo Guardrails vs Guardrails AI?</div><div class="a">NeMo Guardrails: controls conversation flow and topic boundaries via Colang. Guardrails AI: validates and corrects structured output format via RAIL specs.</div></div>
+    <div class="rapid-card"><div class="q">14. LoRA rank tradeoff?</div><div class="a">Higher rank (r=64+): more expressive but uses more memory and risks overfitting. Lower rank (r=4–8): efficient, generalizes better, but may underfit complex tasks.</div></div>
+    <div class="rapid-card"><div class="q">15. QLoRA memory saving?</div><div class="a">Quantizes the base model to 4-bit precision and trains LoRA adapters in FP16 on top — enables fine-tuning a 65B model on a single 48GB GPU.</div></div>
+    <div class="rapid-card"><div class="q">16. DPO vs RLHF?</div><div class="a">DPO: directly optimizes on preference pairs without a separate reward model — simpler, more stable. RLHF: trains a reward model then uses PPO — more flexible but harder to tune.</div></div>
+    <div class="rapid-card"><div class="q">17. What does merge_and_unload do?</div><div class="a">Merges LoRA adapter weights back into the base model's parameters, producing a single standalone model that can be served without the PEFT library.</div></div>
+    <div class="rapid-card"><div class="q">18. GGUF format for?</div><div class="a">Optimized binary format for CPU-based inference with llama.cpp and Ollama — supports variable quantization levels (Q4, Q5, Q8) per layer.</div></div>
+    <div class="rapid-card"><div class="q">19. Canary vs blue-green deployment?</div><div class="a">Canary: gradual traffic shift (5%→25%→100%) with continuous monitoring. Blue-green: instant 100% switch between two identical environments.</div></div>
+    <div class="rapid-card"><div class="q">20. P99 latency meaning?</div><div class="a">The 99th percentile latency — 99% of requests complete faster than this value. It captures worst-case user experience better than averages or medians.</div></div>
+  </div>
+</section>
+
+<!-- ============ SCREEN 6: Key Takeaways ============ -->
+<section class="screen screen-alt" id="s6">
+  <h2>🏆 You Made It <span class="accent">Through the Gauntlet!</span></h2>
+  <p>You've survived. Here are the meta-strategies that separate candidates who get offers from candidates who get "we'll be in touch."</p>
+
+  <div class="aha"><div class="aha-title">🧠 Think in Systems, Not Tools</div><p>When asked "How would you deploy a model?", weak candidates say "I'd use SageMaker." Strong candidates describe the <em>system</em>: how the model gets from training to production, what happens when it fails, how it scales, and how you know it's working. Tools are implementation details — interviewers want to see architectural thinking.</p></div>
+
+  <div class="aha"><div class="aha-title">⚖️ Trade-offs Over "Best" Answers</div><p>There is no best model serving framework, no best feature store, no best deployment strategy. There are only trade-offs. Every interview answer should include: "The trade-off here is…" or "This works well when X, but if Y, I'd choose Z instead." <strong>Red flag:</strong> "Kubernetes is the best way to deploy models." <strong>Green flag:</strong> "Kubernetes gives us scaling and portability, but for a small team with 2 models, it's over-engineered — I'd start with a managed service."</p></div>
+
+  <div class="aha"><div class="aha-title">💰 Show Cost Awareness</div><p>Cloud GPU bills are the #1 surprise in ML projects. Mention cost implications proactively: "This approach uses 4 A100s at ~$12/hour, so we'd want to optimize utilization" or "Semantic caching could cut our inference costs by 30%." <strong>Know these numbers:</strong> A100 80GB: ~$3/hour. H100: ~$4–5/hour. GPT-4 Turbo: ~$10 per million input tokens. A single LoRA fine-tuning run on 7B: ~$5–20.</p></div>
+
+  <div class="aha"><div class="aha-title">📊 Monitoring-First Mindset</div><p>The best MLOps engineers design monitoring <em>before</em> they design the system. <strong>Framework for any ML system:</strong> Monitor (1) data quality in, (2) feature distributions, (3) prediction distributions out, (4) business metrics downstream, and (5) infrastructure health. If any of these five aren't monitored, you have a blind spot.</p></div>
+
+  <div class="aha"><div class="aha-title">🚫 Know When NOT to Use a Technique</div><p>The most impressive interview answers include: "I would <em>not</em> use X here because…" Examples: "I would not fine-tune for this use case — RAG handles it." "I would not use Kubernetes here — the team is 3 people." "I would not use real-time inference — batch precomputation gives us the same UX at 1/10th the cost."</p></div>
+
+  <div class="aha"><div class="aha-title">🗣️ Explain Complex Topics Simply</div><p>Every senior MLOps interview includes at least one "explain this to a non-technical person" question. Practice your analogies. <strong>The test:</strong> If your explanation requires the listener to know what a "tensor" is, it's not simple enough.</p></div>
+
+  <h3 style="text-align:center;margin-top:2rem">🔁 Final Checklist Before Your Interview</h3>
+  <div class="rapid-grid" style="max-width:700px;margin:1rem auto">
+    <div class="rapid-card"><div class="q">✅</div><div class="a">Can you whiteboard an end-to-end ML pipeline in 10 minutes?</div></div>
+    <div class="rapid-card"><div class="q">✅</div><div class="a">Can you calculate GPU memory requirements for any model?</div></div>
+    <div class="rapid-card"><div class="q">✅</div><div class="a">Can you explain trade-offs between 3 model serving approaches?</div></div>
+    <div class="rapid-card"><div class="q">✅</div><div class="a">Can you describe your debugging methodology for a production incident?</div></div>
+    <div class="rapid-card"><div class="q">✅</div><div class="a">Can you discuss cost optimization with specific numbers?</div></div>
+    <div class="rapid-card"><div class="q">✅</div><div class="a">Can you explain fine-tuning vs RAG vs prompt engineering with examples?</div></div>
+    <div class="rapid-card"><div class="q">✅</div><div class="a">Can you design monitoring for an ML system you've never seen before?</div></div>
+    <div class="rapid-card"><div class="q">✅</div><div class="a">Can you explain any concept in this course to a non-technical audience?</div></div>
+  </div>
+
+  <p style="text-align:center;font-size:1.1rem;margin-top:1rem"><strong>If you checked all eight boxes, you're ready. Go get that offer.</strong> 🔥</p>
+
+  <div style="text-align:center;margin-top:2rem">
+    <a href="../index.html" style="display:inline-block;background:var(--color-accent);color:#fff;padding:1rem 2.5rem;border-radius:100px;font-family:var(--font-heading);font-weight:700;font-size:1.1rem;text-decoration:none;transition:transform 0.2s">Back to Course Home ⚙️</a>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-04-fine-tuning/index.html">← Previous: Fine-Tuning LLMs</a>
+  <a href="../index.html">Back to Course Home ⚙️</a>
+</footer>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;pb.style.width=((h.scrollTop/(h.scrollHeight-h.clientHeight))*100)+'%';},{passive:true});
+})();
+</script>
+</body>
+</html>

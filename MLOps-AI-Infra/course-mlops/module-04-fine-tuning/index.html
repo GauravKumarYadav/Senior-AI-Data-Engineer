@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 4: Fine-Tuning LLMs | MLOps &amp; AI Infra</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#059669;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#F0FDF9}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">⚙️ MLOps &amp; AI Infra</a><div class="nav-dots"><a href="../module-01-mlops-pipeline/" class="nav-dot"></a><a href="../module-02-model-serving/" class="nav-dot"></a><a href="../module-03-llmops/" class="nav-dot"></a><a href="../module-04-fine-tuning/" class="nav-dot active"></a><a href="../module-05-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: The Decision Framework -->
+<section class="screen" id="s1">
+  <h2>The Decision Framework — <span class="accent">When (and When NOT)</span> to Fine-Tune</h2>
+  <p>Before you touch a single weight, ask yourself: <strong>do I actually need fine-tuning?</strong> Most interview panels will probe your judgment here before diving into mechanics.</p>
+
+  <h3>The LLM Customization Ladder</h3>
+  <div class="code-block">┌─────────────────────────────────────────────────────────┐
+│            THE LLM CUSTOMIZATION LADDER                 │
+│                                                         │
+│  Cost / Complexity ▲                                    │
+│                    │                                    │
+│              ┌─────┴──────┐                             │
+│         4.   │ Fine-Tune  │  Change behavior/style      │
+│              │ + RAG      │  AND add knowledge          │
+│              └─────┬──────┘                             │
+│              ┌─────┴──────┐                             │
+│         3.   │ Fine-Tune  │  Change behavior, style,    │
+│              │   (LoRA)   │  format, or domain jargon   │
+│              └─────┬──────┘                             │
+│              ┌─────┴──────┐                             │
+│         2.   │    RAG     │  Add external knowledge     │
+│              │            │  or private data             │
+│              └─────┬──────┘                             │
+│              ┌─────┴──────┐                             │
+│         1.   │  Prompt    │  Few-shot, CoT, system      │
+│              │Engineering │  prompts — try this FIRST   │
+│              └────────────┘                             │
+│                                                         │
+│  Start at the bottom. Only climb when you must.         │
+└─────────────────────────────────────────────────────────┘</div>
+
+  <h3>When TO Fine-Tune vs When NOT</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ When TO Fine-Tune</h4>
+      <ul>
+        <li>You need a <strong>specific output style</strong> (legal briefs, medical notes, brand voice)</li>
+        <li>You need <strong>domain jargon</strong> the model doesn't know (internal code names)</li>
+        <li>You need <strong>consistent structured output</strong> (always JSON, specific schema)</li>
+        <li>You want to <strong>distill</strong> a larger model into a smaller, cheaper one</li>
+        <li>You have <strong>latency/cost constraints</strong> and need a smaller model that punches above its weight</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ When NOT to Fine-Tune</h4>
+      <ul>
+        <li>You need <strong>factual knowledge</strong> → use RAG instead</li>
+        <li>You have <strong>&lt; 500 quality examples</strong> → prompt engineering will outperform</li>
+        <li>Your task <strong>changes frequently</strong> → retraining is expensive</li>
+        <li>A <strong>large model + prompting</strong> already solves it at acceptable cost</li>
+      </ul>
+    </div>
+  </div>
+  <p><strong>The best production systems combine both</strong>: fine-tune for style/format + RAG for knowledge.</p>
+
+  <h3>Cost-Benefit Analysis</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🔧 Fine-Tuning</h4>
+      <ul>
+        <li><strong>Upfront cost:</strong> GPU hours ($50–$500+)</li>
+        <li><strong>Per-request:</strong> Self-hosted (~$0.001)</li>
+        <li><strong>Data privacy:</strong> Full control</li>
+        <li><strong>Latency:</strong> Optimizable (vLLM)</li>
+        <li><strong>Customization:</strong> Deep behavioral change</li>
+        <li><strong>Maintenance:</strong> You own the infra</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>☁️ API (GPT-4 etc.)</h4>
+      <ul>
+        <li><strong>Upfront cost:</strong> $0</li>
+        <li><strong>Per-request:</strong> $0.01–$0.06 per 1K tok</li>
+        <li><strong>Data privacy:</strong> Data leaves your infra</li>
+        <li><strong>Latency:</strong> Network-bound</li>
+        <li><strong>Customization:</strong> Prompt-level only</li>
+        <li><strong>Maintenance:</strong> Provider handles it</li>
+      </ul>
+    </div>
+  </div>
+  <p>At scale (millions of requests/month), fine-tuning a smaller model almost always wins on cost.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Walk me through how you'd decide between RAG and fine-tuning."</strong> — Lead with the escalation ladder. Say: "I always start with prompt engineering. If the gap is <strong>knowledge</strong>, I add RAG. If the gap is <strong>behavior or style</strong>, I fine-tune. For many production systems, I combine both — fine-tune a base model for domain tone and structured output, then wire in RAG for up-to-date factual grounding."</p>
+  </div>
+</section>
+
+<!-- Screen 2: LoRA -->
+<section class="screen screen-alt" id="s2">
+  <h2>LoRA — <span class="accent">Low-Rank Adaptation</span></h2>
+  <p>LoRA is the technique that made fine-tuning accessible. Instead of updating all model weights (billions of parameters), you inject <strong>tiny trainable matrices</strong> into specific layers.</p>
+
+  <h3>The Core Math</h3>
+  <p>For a pretrained weight matrix <strong>W</strong> of dimension <strong>(d × d)</strong>:</p>
+  <div class="code-block">Standard fine-tuning:    W' = W + ΔW        (ΔW is d × d — huge!)
+
+LoRA:                    W' = W + B·A        where B is (d × r), A is (r × d)
+                                              r &lt;&lt; d  (rank, typically 8–64)</div>
+
+  <p>The key insight: <strong>ΔW is low-rank</strong>. Most task-specific adaptations live in a low-dimensional subspace. Instead of storing a full (d × d) update, you store two small matrices whose product approximates it.</p>
+
+  <p><strong>Parameter savings</strong>: If d = 4096 and r = 16:</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>Full ΔW</h4>
+      <p>4096 × 4096 = <strong>16.7M</strong> parameters</p>
+    </div>
+    <div class="card green">
+      <h4>LoRA (B + A)</h4>
+      <p>(4096 × 16) + (16 × 4096) = <strong>131K</strong> parameters → <strong>~128× fewer</strong></p>
+    </div>
+  </div>
+
+  <h3>LoRA Injection into a Transformer Layer</h3>
+  <div class="code-block">┌──────────────────────────────────────────────────────┐
+│          LoRA Injection into a Transformer Layer      │
+│                                                      │
+│   Input x                                            │
+│     │                                                │
+│     ├──────────────────────┐                         │
+│     │                      │                         │
+│     ▼                      ▼                         │
+│  ┌──────────┐        ┌──────────┐                    │
+│  │ Frozen W │        │  LoRA    │                    │
+│  │ (d × d)  │        │  Branch  │                    │
+│  │ ■■■■■■■■ │        │          │                    │
+│  │ (no grad)│        │ ┌──────┐ │                    │
+│  └────┬─────┘        │ │ A    │ │  A: (r × d)       │
+│       │              │ │(r×d) │ │  ← trainable      │
+│       │              │ └──┬───┘ │                    │
+│       │              │    │     │                    │
+│       │              │ ┌──▼───┐ │                    │
+│       │              │ │ B    │ │  B: (d × r)       │
+│       │              │ │(d×r) │ │  ← trainable      │
+│       │              │ └──┬───┘ │                    │
+│       │              │    │     │                    │
+│       │              │  × α/r  │  ← scaling factor  │
+│       │              └────┬─────┘                    │
+│       │                   │                          │
+│       └───────┬───────────┘                          │
+│               │ (add)                                │
+│               ▼                                      │
+│          Output: Wx + (α/r)·BAx                      │
+│                                                      │
+│  Total trainable params: ~0.1–1% of model            │
+└──────────────────────────────────────────────────────┘</div>
+
+  <h3>Key Hyperparameters</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>r (rank)</h4>
+      <p>Typical range: <strong>8–64</strong>. Higher = more capacity for adaptation.</p>
+    </div>
+    <div class="card blue">
+      <h4>lora_alpha</h4>
+      <p>Range: <strong>16–128</strong> (often 2×r). Scaling factor; higher = stronger adaptation.</p>
+    </div>
+    <div class="card green">
+      <h4>target_modules</h4>
+      <p>Which layers get LoRA: <strong>q_proj, v_proj</strong> minimum; all linear for stronger adaptation.</p>
+    </div>
+    <div class="card purple">
+      <h4>lora_dropout</h4>
+      <p>Range: <strong>0.0–0.1</strong>. Light regularization to prevent overfitting.</p>
+    </div>
+  </div>
+  <p>The <strong>scaling factor</strong> is α/r. When you double r, double α to keep the effective learning rate stable.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Why does LoRA work? Isn't throwing away most of the update matrix lossy?"</strong> — The hypothesis from the original paper (Hu et al., 2021) is that pretrained LLMs have a <strong>low intrinsic dimensionality</strong> — task-specific adaptations live in a small subspace. Empirically, rank 8–16 recovers 95%+ of full fine-tuning quality on most tasks. The remaining capacity is redundant for the adaptation.</p>
+  </div>
+</section>
+
+<!-- Screen 3: QLoRA and DoRA -->
+<section class="screen" id="s3">
+  <h2>QLoRA and DoRA — <span class="accent">Memory-Efficient</span> Variants</h2>
+
+  <h3>QLoRA: Quantize Then Adapt</h3>
+  <p>QLoRA (Dettmers et al., 2023) combines <strong>4-bit quantization</strong> of the frozen base model with LoRA adapters on top. This lets you fine-tune a <strong>70B model on a single 48GB GPU</strong>.</p>
+
+  <div class="code-block">┌─────────────────────────────────────────────────────┐
+│                QLoRA Memory Breakdown                │
+│                                                     │
+│   Technique          │ 7B Model  │ 70B Model        │
+│   ───────────────────┼───────────┼────────────────   │
+│   Full FP16          │ ~14 GB    │ ~140 GB           │
+│   LoRA (FP16 base)   │ ~14 GB    │ ~140 GB           │
+│   QLoRA (4-bit base) │ ~4 GB     │ ~38 GB    ✅     │
+│   + LoRA adapters    │ +~50 MB   │ +~200 MB          │
+│   + optimizer states │ +~100 MB  │ +~400 MB          │
+│                                                     │
+│   QLoRA total 70B:   ~38.6 GB → fits on 1× A100!   │
+└─────────────────────────────────────────────────────┘</div>
+
+  <h3>Key QLoRA Innovations</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔢 NF4 (4-bit NormalFloat)</h4>
+      <p>Quantization format optimized for normally distributed weights. Better than standard INT4.</p>
+    </div>
+    <div class="card blue">
+      <h4>📦 Double Quantization</h4>
+      <p>Quantize the quantization constants themselves — saves ~0.4 bits/param.</p>
+    </div>
+    <div class="card green">
+      <h4>📄 Paged Optimizers</h4>
+      <p>Offload optimizer states to CPU when GPU memory spikes during training.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="kw">from</span> transformers <span class="kw">import</span> BitsAndBytesConfig
+<span class="kw">import</span> torch
+
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=<span class="fn">True</span>,
+    bnb_4bit_quant_type=<span class="str">"nf4"</span>,            <span class="cm"># NormalFloat4</span>
+    bnb_4bit_compute_dtype=torch.bfloat16, <span class="cm"># Compute in bf16</span>
+    bnb_4bit_use_double_quant=<span class="fn">True</span>,        <span class="cm"># Double quantization</span>
+)</div>
+
+  <h3>DoRA: Weight-Decomposed LoRA</h3>
+  <p>DoRA (Liu et al., 2024) decomposes the weight update into <strong>magnitude</strong> and <strong>direction</strong> components:</p>
+  <div class="code-block">Standard LoRA:   W' = W + BA
+
+DoRA:            W' = m · (W + BA) / ‖W + BA‖
+                 ↑ magnitude    ↑ direction (unit vector)</div>
+  <p>DoRA consistently beats LoRA at the <strong>same rank</strong> across benchmarks, with only ~1-5% extra compute. It's increasingly becoming the default choice.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"When would you choose QLoRA over full-precision LoRA?"</strong> — QLoRA is almost always the right choice for models ≥ 13B, or when GPU budget is limited. The quality gap vs. FP16 LoRA is minimal (~0.5% on most benchmarks). For 7B models where you have abundant GPU memory, FP16 LoRA trains faster due to less quantization overhead. For production fine-tuning of 70B+ models, QLoRA is the only practical single-GPU option.</p>
+  </div>
+</section>
+
+<!-- Screen 4: Dataset Preparation -->
+<section class="screen screen-alt" id="s4">
+  <h2>Dataset Preparation — <span class="accent">Garbage In, Garbage Out</span></h2>
+  <p>Dataset quality is the single biggest lever for fine-tuning success. <strong>1,000 excellent examples beat 100,000 mediocre ones.</strong></p>
+
+  <h3>Common Formats</h3>
+  <p><strong>Alpaca format</strong> (instruction-following):</p>
+  <div class="code-block">dataset = [
+    {
+        <span class="str">"instruction"</span>: <span class="str">"Summarize the key findings."</span>,
+        <span class="str">"input"</span>: <span class="str">"The study found that LoRA achieves 95% of ..."</span>,
+        <span class="str">"output"</span>: <span class="str">"The study demonstrates that LoRA ..."</span>
+    },
+    {
+        <span class="str">"instruction"</span>: <span class="str">"Convert to SQL."</span>,
+        <span class="str">"input"</span>: <span class="str">"Find all users who signed up in 2024."</span>,
+        <span class="str">"output"</span>: <span class="str">"SELECT * FROM users WHERE YEAR(signup_date) = 2024;"</span>
+    }
+]</div>
+
+  <p><strong>Chat/ShareGPT format</strong> (multi-turn):</p>
+  <div class="code-block">dataset = [
+    {
+        <span class="str">"conversations"</span>: [
+            {<span class="str">"role"</span>: <span class="str">"system"</span>, <span class="str">"content"</span>: <span class="str">"You are a helpful coding assistant."</span>},
+            {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"How do I read a CSV in pandas?"</span>},
+            {<span class="str">"role"</span>: <span class="str">"assistant"</span>, <span class="str">"content"</span>: <span class="str">"Use `pd.read_csv('file.csv')` ..."</span>},
+            {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"What if it's tab-separated?"</span>},
+            {<span class="str">"role"</span>: <span class="str">"assistant"</span>, <span class="str">"content"</span>: <span class="str">"Pass `sep='\\t'` ..."</span>}
+        ]
+    }
+]</div>
+
+  <p><strong>ChatML format</strong> (used by many models natively):</p>
+  <div class="code-block">&lt;|im_start|&gt;system
+You are a helpful assistant.&lt;|im_end|&gt;
+&lt;|im_start|&gt;user
+Explain LoRA in one sentence.&lt;|im_end|&gt;
+&lt;|im_start|&gt;assistant
+LoRA injects small trainable matrices into frozen model layers.&lt;|im_end|&gt;</div>
+
+  <h3>Dataset Preparation Pipeline</h3>
+  <div class="code-block"><span class="kw">from</span> datasets <span class="kw">import</span> load_dataset, Dataset
+<span class="kw">import</span> json
+
+<span class="kw">def</span> <span class="fn">prepare_alpaca_dataset</span>(file_path: str) -> Dataset:
+    <span class="str">"""Load and format dataset in Alpaca style for SFTTrainer."""</span>
+
+    <span class="kw">with</span> <span class="fn">open</span>(file_path) <span class="kw">as</span> f:
+        raw_data = json.load(f)
+
+    <span class="kw">def</span> <span class="fn">format_prompt</span>(example: dict) -> dict:
+        <span class="str">"""Convert to the prompt template the model expects."""</span>
+        <span class="kw">if</span> example.get(<span class="str">"input"</span>):
+            text = (
+                <span class="str">f"### Instruction:\n{example['instruction']}\n\n"</span>
+                <span class="str">f"### Input:\n{example['input']}\n\n"</span>
+                <span class="str">f"### Response:\n{example['output']}"</span>
+            )
+        <span class="kw">else</span>:
+            text = (
+                <span class="str">f"### Instruction:\n{example['instruction']}\n\n"</span>
+                <span class="str">f"### Response:\n{example['output']}"</span>
+            )
+        <span class="kw">return</span> {<span class="str">"text"</span>: text}
+
+    dataset = Dataset.from_list(raw_data)
+    dataset = dataset.map(format_prompt)
+
+    <span class="cm"># Quality filters</span>
+    dataset = dataset.filter(
+        <span class="kw">lambda</span> x: <span class="fn">50</span> &lt; <span class="fn">len</span>(x[<span class="str">"text"</span>]) &lt; <span class="fn">4096</span>  <span class="cm"># Length bounds</span>
+    )
+
+    <span class="cm"># Train/eval split</span>
+    split = dataset.train_test_split(test_size=<span class="fn">0.1</span>, seed=<span class="fn">42</span>)
+    <span class="kw">return</span> split[<span class="str">"train"</span>], split[<span class="str">"test"</span>]
+
+train_ds, eval_ds = prepare_alpaca_dataset(<span class="str">"my_data.json"</span>)
+<span class="fn">print</span>(<span class="str">f"Train: {len(train_ds)}, Eval: {len(eval_ds)}"</span>)</div>
+
+  <h3>Dataset Size Guidelines</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>100–500 examples</h4>
+      <p>Style transfer, format change. Works if quality is high.</p>
+    </div>
+    <div class="card blue">
+      <h4>1K–10K examples</h4>
+      <p>Domain adaptation. <strong>Sweet spot</strong> for most tasks.</p>
+    </div>
+    <div class="card green">
+      <h4>10K–100K examples</h4>
+      <p>Complex multi-task fine-tuning. Diminishing returns past 50K.</p>
+    </div>
+    <div class="card purple">
+      <h4>100K+ examples</h4>
+      <p>Pre-training continuation. Rarely needed for fine-tuning.</p>
+    </div>
+  </div>
+
+  <h3>Data Quality Checklist</h3>
+  <div class="code-block">□ Deduplication: remove exact and near-duplicates (MinHash)
+□ Safety filtering: strip PII, toxic content, copyrighted material
+□ Consistency: same format and tone across all examples
+□ Augmentation: use a stronger model (e.g., GPT-4) to generate/refine
+□ Balanced: don't overrepresent one category — model will overfit</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How do you ensure dataset quality for fine-tuning?"</strong> — "I start with deduplication using MinHash, filter for length and quality, then manually review a random 5-10% sample. I use stratified splitting for train/eval. If the dataset is small, I augment with a stronger model — generating variations or using the strong model to score and filter weak examples. Quality over quantity is the mantra — I've seen 2K excellent examples outperform 50K scraped ones."</p>
+  </div>
+</section>
+
+<!-- Screen 5: Full QLoRA Training Script -->
+<section class="screen" id="s5">
+  <h2>Full QLoRA <span class="accent">Training Script</span></h2>
+  <p>This is the script you should be able to write (or explain) in an interview. <strong>Every line matters.</strong></p>
+
+  <div class="code-block"><span class="str">"""
+Full QLoRA fine-tuning script using HuggingFace ecosystem.
+Fine-tunes Llama-3-8B on a custom instruction dataset.
+"""</span>
+<span class="kw">import</span> torch
+<span class="kw">from</span> datasets <span class="kw">import</span> load_dataset
+<span class="kw">from</span> transformers <span class="kw">import</span> (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    BitsAndBytesConfig,
+)
+<span class="kw">from</span> peft <span class="kw">import</span> (
+    LoraConfig,
+    get_peft_model,
+    prepare_model_for_kbit_training,
+    TaskType,
+)
+<span class="kw">from</span> trl <span class="kw">import</span> SFTTrainer, SFTConfig
+
+<span class="cm"># ── 1. Quantization Config ───────────────────────────────</span>
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=<span class="fn">True</span>,
+    bnb_4bit_quant_type=<span class="str">"nf4"</span>,
+    bnb_4bit_compute_dtype=torch.bfloat16,
+    bnb_4bit_use_double_quant=<span class="fn">True</span>,
+)
+
+<span class="cm"># ── 2. Load Model + Tokenizer ────────────────────────────</span>
+model_name = <span class="str">"meta-llama/Meta-Llama-3-8B"</span>
+
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer.pad_token = tokenizer.eos_token
+tokenizer.padding_side = <span class="str">"right"</span>  <span class="cm"># Required for SFTTrainer</span>
+
+model = AutoModelForCausalLM.from_pretrained(
+    model_name,
+    quantization_config=bnb_config,
+    device_map=<span class="str">"auto"</span>,
+    attn_implementation=<span class="str">"flash_attention_2"</span>,  <span class="cm"># Speed + memory</span>
+    torch_dtype=torch.bfloat16,
+)
+
+<span class="cm"># Prepare model for k-bit training</span>
+model = prepare_model_for_kbit_training(model)
+
+<span class="cm"># ── 3. LoRA Config ───────────────────────────────────────</span>
+lora_config = LoraConfig(
+    r=<span class="fn">16</span>,                          <span class="cm"># Rank — start here</span>
+    lora_alpha=<span class="fn">32</span>,                 <span class="cm"># Scaling factor (2× rank)</span>
+    target_modules=[
+        <span class="str">"q_proj"</span>, <span class="str">"k_proj"</span>, <span class="str">"v_proj"</span>, <span class="str">"o_proj"</span>,  <span class="cm"># Attention</span>
+        <span class="str">"gate_proj"</span>, <span class="str">"up_proj"</span>, <span class="str">"down_proj"</span>,      <span class="cm"># MLP (FFN)</span>
+    ],
+    lora_dropout=<span class="fn">0.05</span>,             <span class="cm"># Light regularization</span>
+    bias=<span class="str">"none"</span>,                   <span class="cm"># Don't train biases</span>
+    task_type=TaskType.CAUSAL_LM,
+)
+
+model = get_peft_model(model, lora_config)
+model.print_trainable_parameters()
+<span class="cm"># Output: trainable params: 13,631,488 || all: 8,043,724,800
+#         || trainable%: 0.1695%</span>
+
+<span class="cm"># ── 4. Load Dataset ──────────────────────────────────────</span>
+dataset = load_dataset(<span class="str">"json"</span>, data_files=<span class="str">"train_data.json"</span>, split=<span class="str">"train"</span>)
+
+<span class="kw">def</span> <span class="fn">format_instruction</span>(example):
+    <span class="str">"""Format into the prompt template."""</span>
+    <span class="kw">return</span> {
+        <span class="str">"text"</span>: (
+            <span class="str">f"&lt;|begin_of_text|&gt;&lt;|start_header_id|&gt;user&lt;|end_header_id|&gt;\n\n"</span>
+            <span class="str">f"{example['instruction']}\n"</span>
+            <span class="str">f"{example.get('input', '')}&lt;|eot_id|&gt;"</span>
+            <span class="str">f"&lt;|start_header_id|&gt;assistant&lt;|end_header_id|&gt;\n\n"</span>
+            <span class="str">f"{example['output']}&lt;|eot_id|&gt;"</span>
+        )
+    }
+
+dataset = dataset.map(format_instruction)
+
+<span class="cm"># ── 5. Training Config ───────────────────────────────────</span>
+training_args = SFTConfig(
+    output_dir=<span class="str">"./qlora-llama3-8b"</span>,
+    num_train_epochs=<span class="fn">3</span>,
+    per_device_train_batch_size=<span class="fn">4</span>,
+    gradient_accumulation_steps=<span class="fn">4</span>,       <span class="cm"># Effective batch = 16</span>
+    learning_rate=<span class="fn">2e-4</span>,                  <span class="cm"># LoRA handles higher LR</span>
+    lr_scheduler_type=<span class="str">"cosine"</span>,
+    warmup_ratio=<span class="fn">0.05</span>,
+    weight_decay=<span class="fn">0.01</span>,
+    bf16=<span class="fn">True</span>,
+    logging_steps=<span class="fn">10</span>,
+    eval_strategy=<span class="str">"steps"</span>,
+    eval_steps=<span class="fn">100</span>,
+    save_strategy=<span class="str">"steps"</span>,
+    save_steps=<span class="fn">100</span>,
+    save_total_limit=<span class="fn">3</span>,
+    max_seq_length=<span class="fn">2048</span>,
+    dataset_text_field=<span class="str">"text"</span>,           <span class="cm"># Column name in dataset</span>
+    packing=<span class="fn">True</span>,                        <span class="cm"># Pack short examples</span>
+    gradient_checkpointing=<span class="fn">True</span>,         <span class="cm"># Trade compute for memory</span>
+    gradient_checkpointing_kwargs={<span class="str">"use_reentrant"</span>: <span class="fn">False</span>},
+    report_to=<span class="str">"wandb"</span>,
+    run_name=<span class="str">"qlora-llama3-8b-v1"</span>,
+)
+
+<span class="cm"># ── 6. Train ─────────────────────────────────────────────</span>
+trainer = SFTTrainer(
+    model=model,
+    args=training_args,
+    train_dataset=dataset,
+    eval_dataset=eval_dataset,
+    tokenizer=tokenizer,
+)
+
+trainer.train()
+
+<span class="cm"># ── 7. Save LoRA Adapter ─────────────────────────────────</span>
+trainer.save_model(<span class="str">"./qlora-llama3-8b/final"</span>)
+tokenizer.save_pretrained(<span class="str">"./qlora-llama3-8b/final"</span>)
+<span class="cm"># Saves ONLY the adapter weights (~30MB), not the full model</span></div>
+
+  <h3>Key Training Hyperparameters Explained</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>learning_rate: 2e-4</h4>
+      <p>LoRA tolerates higher LR than full fine-tuning.</p>
+    </div>
+    <div class="card blue">
+      <h4>packing: True</h4>
+      <p>Pack short sequences together → faster training, less padding waste.</p>
+    </div>
+    <div class="card green">
+      <h4>gradient_checkpointing: True</h4>
+      <p>~30% less VRAM usage, ~20% slower training. Essential for large models.</p>
+    </div>
+    <div class="card purple">
+      <h4>gradient_accumulation: 4</h4>
+      <p>Simulate larger batch size without more GPU memory.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Walk me through this training script. What would you change for production?"</strong> — Key things to mention: (1) I'd add <strong>early stopping</strong> based on eval loss. (2) I'd use <strong>packing=True</strong> to avoid wasting compute on padding. (3) I'd integrate <strong>Weights &amp; Biases</strong> for experiment tracking. (4) For larger models, I'd enable <strong>DeepSpeed ZeRO Stage 2</strong>. (5) I'd checkpoint frequently and run eval every N steps to catch divergence early.</p>
+  </div>
+</section>
+
+<!-- Screen 6: Alignment — RLHF, DPO, and Beyond -->
+<section class="screen screen-alt" id="s6">
+  <h2>Alignment — <span class="accent">RLHF, DPO</span>, and Beyond</h2>
+  <p>Fine-tuning teaches a model <em>what</em> to say. Alignment teaches it <em>how</em> to behave — helpful, harmless, and honest.</p>
+
+  <h3>The Alignment Landscape</h3>
+  <div class="code-block">┌──────────────────────────────────────────────────────────┐
+│              ALIGNMENT TECHNIQUES EVOLUTION               │
+│                                                          │
+│   2022          2023           2024          2024+        │
+│                                                          │
+│   RLHF ──────► DPO ────────► ORPO ───────► SimPO        │
+│   (complex)    (simpler)     (unified)     (simplest)    │
+│                                                          │
+│   3 models     2 models      1 model       1 model       │
+│   unstable     stable        stable        stable        │
+│   PPO needed   no RL         no RL         no RL         │
+│   ▼            ▼             ▼             ▼             │
+│   reward +     preferred/    SFT +         reference-    │
+│   policy +     rejected      preference    free DPO      │
+│   reference    pairs         in one step                 │
+└──────────────────────────────────────────────────────────┘</div>
+
+  <h3>Technique Comparison</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔬 RLHF</h4>
+      <p><strong>Very high</strong> complexity. 3 models in memory. Fragile (PPO). Highest quality ceiling. Used by OpenAI, Anthropic.</p>
+    </div>
+    <div class="card blue">
+      <h4>🎯 DPO</h4>
+      <p><strong>Medium</strong> complexity. 2 models (policy+ref). Stable training. Very good quality. <strong>Most common now.</strong></p>
+    </div>
+    <div class="card green">
+      <h4>⚡ ORPO</h4>
+      <p><strong>Low</strong> complexity. 1 model. Combines SFT + alignment in one step. Good quality. Growing adoption.</p>
+    </div>
+    <div class="card purple">
+      <h4>✨ SimPO</h4>
+      <p><strong>Low</strong> complexity. 1 model. Reference-free DPO. Good quality. Emerging technique.</p>
+    </div>
+  </div>
+
+  <h3>DPO (Direct Preference Optimization)</h3>
+  <p>DPO eliminates the reward model entirely. Instead of training a reward model + RL, you <strong>directly optimize</strong> the policy using preference pairs.</p>
+  <div class="code-block">L_DPO = -log σ(β · (log π(y_w|x)/π_ref(y_w|x) - log π(y_l|x)/π_ref(y_l|x)))
+
+where:
+  y_w = preferred (winning) response
+  y_l = rejected (losing) response
+  π    = current policy
+  π_ref = reference (frozen SFT) model
+  β    = temperature (controls deviation from reference)</div>
+
+  <h3>DPO Training Code</h3>
+  <div class="code-block"><span class="str">"""DPO training with TRL — preference alignment."""</span>
+<span class="kw">from</span> datasets <span class="kw">import</span> load_dataset
+<span class="kw">from</span> transformers <span class="kw">import</span> AutoModelForCausalLM, AutoTokenizer
+<span class="kw">from</span> trl <span class="kw">import</span> DPOTrainer, DPOConfig
+<span class="kw">from</span> peft <span class="kw">import</span> LoraConfig
+
+<span class="cm"># Load your SFT-tuned model</span>
+model_name = <span class="str">"./qlora-llama3-8b/merged"</span>
+
+model = AutoModelForCausalLM.from_pretrained(
+    model_name, torch_dtype=<span class="str">"auto"</span>, device_map=<span class="str">"auto"</span>,
+)
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer.pad_token = tokenizer.eos_token
+
+<span class="cm"># DPO dataset: prompt + chosen + rejected</span>
+<span class="cm"># {</span>
+<span class="cm">#   "prompt": "Explain quantum computing.",</span>
+<span class="cm">#   "chosen": "Quantum computing uses qubits...",</span>
+<span class="cm">#   "rejected": "Quantum computing is when..."</span>
+<span class="cm"># }</span>
+dpo_dataset = load_dataset(<span class="str">"json"</span>, data_files=<span class="str">"dpo_pairs.json"</span>, split=<span class="str">"train"</span>)
+
+<span class="cm"># LoRA config for DPO</span>
+peft_config = LoraConfig(
+    r=<span class="fn">16</span>, lora_alpha=<span class="fn">32</span>,
+    target_modules=[<span class="str">"q_proj"</span>, <span class="str">"v_proj"</span>],
+    lora_dropout=<span class="fn">0.05</span>, bias=<span class="str">"none"</span>,
+    task_type=<span class="str">"CAUSAL_LM"</span>,
+)
+
+<span class="cm"># DPO training config</span>
+training_args = DPOConfig(
+    output_dir=<span class="str">"./dpo-llama3-8b"</span>,
+    num_train_epochs=<span class="fn">1</span>,                  <span class="cm"># DPO usually needs 1 epoch</span>
+    per_device_train_batch_size=<span class="fn">2</span>,
+    gradient_accumulation_steps=<span class="fn">8</span>,
+    learning_rate=<span class="fn">5e-5</span>,                  <span class="cm"># Lower LR for alignment</span>
+    beta=<span class="fn">0.1</span>,                            <span class="cm"># DPO temperature</span>
+    max_length=<span class="fn">1024</span>,
+    max_prompt_length=<span class="fn">512</span>,
+    bf16=<span class="fn">True</span>,
+    gradient_checkpointing=<span class="fn">True</span>,
+    report_to=<span class="str">"wandb"</span>,
+)
+
+<span class="cm"># Train</span>
+dpo_trainer = DPOTrainer(
+    model=model, args=training_args,
+    train_dataset=dpo_dataset, tokenizer=tokenizer,
+    peft_config=peft_config,
+)
+
+dpo_trainer.train()
+dpo_trainer.save_model(<span class="str">"./dpo-llama3-8b/final"</span>)</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Compare RLHF vs DPO. When would you still choose RLHF?"</strong> — "DPO is my default for alignment — it's simpler, more stable, and requires fewer resources. I'd only choose RLHF when I need <strong>fine-grained reward shaping</strong> (e.g., separate scores for helpfulness, safety, and conciseness) or when the preference distribution is complex. OpenAI and Anthropic use RLHF because they operate at scale where extra complexity pays off. For most teams, DPO with 5K–20K preference pairs delivers excellent alignment."</p>
+  </div>
+</section>
+
+<!-- Screen 7: Evaluation of Fine-Tuned Models -->
+<section class="screen" id="s7">
+  <h2>Evaluation of <span class="accent">Fine-Tuned Models</span></h2>
+  <p>Training is half the battle. <strong>Rigorous evaluation</strong> determines if your fine-tuned model is production-ready.</p>
+
+  <h3>Evaluation Pyramid</h3>
+  <div class="code-block">┌────────────────────────────────────────────────┐
+│         EVALUATION PYRAMID                      │
+│                                                │
+│              ┌───────┐                         │
+│              │ Human │   Gold standard         │
+│              │ Eval  │   (expensive, slow)      │
+│              └───┬───┘                         │
+│            ┌─────┴─────┐                       │
+│            │ LLM-as-   │   GPT-4 judges        │
+│            │ Judge     │   (scalable, good)     │
+│            └─────┬─────┘                       │
+│          ┌───────┴───────┐                     │
+│          │ Task-Specific │   F1, ROUGE, Acc     │
+│          │ Metrics       │   (automated)        │
+│          └───────┬───────┘                     │
+│       ┌──────────┴──────────┐                  │
+│       │ Perplexity / Loss   │   Quick sanity   │
+│       │ (on held-out data)  │   check          │
+│       └─────────────────────┘                  │
+└────────────────────────────────────────────────┘</div>
+
+  <h3>Metrics Breakdown</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>📉 Eval Loss / Perplexity</h4>
+      <p>Quick sanity check. Always monitor — should be decreasing.</p>
+    </div>
+    <div class="card blue">
+      <h4>📊 ROUGE-L / F1 / BLEU</h4>
+      <p>Task-specific automated metrics. ROUGE for summarization, F1 for classification, BLEU for translation.</p>
+    </div>
+    <div class="card green">
+      <h4>🤖 LLM-as-Judge</h4>
+      <p>Holistic quality rating for open-ended generation. Scalable and consistent.</p>
+    </div>
+    <div class="card purple">
+      <h4>👨‍⚖️ Human Eval</h4>
+      <p>Gold standard for subjective quality. Expensive but essential for final validation.</p>
+    </div>
+  </div>
+
+  <h3>Regression Testing — Don't Break General Capabilities</h3>
+  <p>This is critical and often overlooked: fine-tuning on a narrow domain can cause <strong>catastrophic forgetting</strong> of general capabilities.</p>
+  <div class="code-block"><span class="cm"># Evaluate on standard benchmarks BEFORE and AFTER fine-tuning</span>
+benchmarks = {
+    <span class="str">"mmlu"</span>: <span class="str">"General knowledge (should stay stable)"</span>,
+    <span class="str">"hellaswag"</span>: <span class="str">"Common sense (should stay stable)"</span>,
+    <span class="str">"humaneval"</span>: <span class="str">"Code generation (monitor for regression)"</span>,
+}
+
+<span class="cm"># Compare: base model vs fine-tuned on each benchmark</span>
+<span class="cm"># If MMLU drops > 2-3 points, you may be overfitting or</span>
+<span class="cm"># training too many epochs.</span></div>
+
+  <h3>LLM-as-Judge Pattern</h3>
+  <div class="code-block">judge_prompt = <span class="str">"""
+Rate the following response on a scale of 1-5 for:
+1. Accuracy - Is the information correct?
+2. Helpfulness - Does it address the user's need?
+3. Style - Does it match the expected format/tone?
+
+User Query: {query}
+Model Response: {response}
+
+Provide scores and brief justification for each.
+"""</span>
+
+<span class="cm"># Run on 100+ test examples, compare base vs fine-tuned</span>
+<span class="cm"># Average scores across dimensions</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How do you evaluate a fine-tuned model before deploying it?"</strong> — "I use a four-layer approach: (1) <strong>Eval loss</strong> — must be decreasing and lower than baseline. (2) <strong>Task-specific metrics</strong> — F1, ROUGE, or whatever applies to the domain. (3) <strong>LLM-as-Judge</strong> — GPT-4 compares my fine-tuned model vs. the base on 200+ test prompts for quality, safety, and format compliance. (4) <strong>Regression tests</strong> — I run MMLU and HellaSwag to verify I haven't broken general capabilities. Only after all four layers pass do I promote to staging."</p>
+  </div>
+</section>
+
+<!-- Screen 8: Serving Fine-Tuned Models -->
+<section class="screen screen-alt" id="s8">
+  <h2>Serving Fine-Tuned Models <span class="accent">in Production</span></h2>
+  <p>Training a great model means nothing if you can't serve it efficiently.</p>
+
+  <h3>Step 1: Merge LoRA Weights</h3>
+  <div class="code-block"><span class="str">"""Merge LoRA adapter into base model and export."""</span>
+<span class="kw">from</span> peft <span class="kw">import</span> PeftModel
+<span class="kw">from</span> transformers <span class="kw">import</span> AutoModelForCausalLM, AutoTokenizer
+
+<span class="cm"># Load base model (full precision for merging)</span>
+base_model = AutoModelForCausalLM.from_pretrained(
+    <span class="str">"meta-llama/Meta-Llama-3-8B"</span>,
+    torch_dtype=<span class="str">"auto"</span>, device_map=<span class="str">"auto"</span>,
+)
+
+<span class="cm"># Load LoRA adapter on top</span>
+model = PeftModel.from_pretrained(base_model, <span class="str">"./qlora-llama3-8b/final"</span>)
+
+<span class="cm"># Merge: folds LoRA weights into the base weights</span>
+model = model.merge_and_unload()
+
+<span class="cm"># Save the merged model</span>
+model.save_pretrained(<span class="str">"./llama3-8b-merged"</span>, safe_serialization=<span class="fn">True</span>)
+
+tokenizer = AutoTokenizer.from_pretrained(<span class="str">"./qlora-llama3-8b/final"</span>)
+tokenizer.save_pretrained(<span class="str">"./llama3-8b-merged"</span>)</div>
+
+  <h3>Step 2: Serve with vLLM</h3>
+  <p><strong>Option A: Serve the merged model</strong> (simpler):</p>
+  <div class="code-block"><span class="cm"># Serve merged model directly</span>
+python -m vllm.entrypoints.openai.api_server \
+    --model ./llama3-8b-merged \
+    --dtype bfloat16 \
+    --max-model-len <span class="fn">4096</span> \
+    --port <span class="fn">8000</span></div>
+
+  <p><strong>Option B: Serve base + swappable LoRA adapters</strong> (multi-tenant):</p>
+  <div class="code-block"><span class="cm"># Serve base model with dynamically loadable LoRA adapters</span>
+python -m vllm.entrypoints.openai.api_server \
+    --model meta-llama/Meta-Llama-3-8B \
+    --enable-lora \
+    --lora-modules \
+        legal-lora=./adapters/legal \
+        medical-lora=./adapters/medical \
+        code-lora=./adapters/code \
+    --max-loras <span class="fn">3</span> \
+    --max-lora-rank <span class="fn">64</span> \
+    --port <span class="fn">8000</span></div>
+
+  <div class="code-block"><span class="str">"""Call different LoRA adapters via the OpenAI-compatible API."""</span>
+<span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+
+client = OpenAI(base_url=<span class="str">"http://localhost:8000/v1"</span>, api_key=<span class="str">"dummy"</span>)
+
+<span class="cm"># Use the legal adapter</span>
+response = client.chat.completions.create(
+    model=<span class="str">"legal-lora"</span>,  <span class="cm"># Adapter name from --lora-modules</span>
+    messages=[
+        {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Draft a liability clause."</span>}
+    ],
+)
+
+<span class="cm"># Use the medical adapter — same base model, different behavior</span>
+response = client.chat.completions.create(
+    model=<span class="str">"medical-lora"</span>,
+    messages=[
+        {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Summarize this patient note."</span>}
+    ],
+)</div>
+  <p>This is incredibly powerful: <strong>one base model in GPU memory, multiple specialized behaviors</strong> via tiny adapter swaps. Each LoRA adapter is ~30MB vs. 16GB for the base model.</p>
+
+  <h3>Step 3: Export to GGUF for Ollama / llama.cpp</h3>
+  <div class="code-block"><span class="cm"># Convert merged model to GGUF format</span>
+python llama.cpp/convert_hf_to_gguf.py \
+    ./llama3-8b-merged \
+    --outfile llama3-8b-finetuned.gguf \
+    --outtype q4_K_M  <span class="cm"># 4-bit quantization</span>
+
+<span class="cm"># Create Ollama Modelfile</span>
+cat > Modelfile &lt;&lt;<span class="str">'EOF'</span>
+FROM ./llama3-8b-finetuned.gguf
+PARAMETER temperature <span class="fn">0.7</span>
+PARAMETER top_p <span class="fn">0.9</span>
+PARAMETER num_ctx <span class="fn">4096</span>
+PARAMETER stop <span class="str">"&lt;|eot_id|&gt;"</span>
+SYSTEM <span class="str">"""You are a specialized assistant fine-tuned for
+legal document analysis."""</span>
+<span class="str">EOF</span>
+
+<span class="cm"># Build and run</span>
+ollama create my-legal-llm -f Modelfile
+ollama run my-legal-llm <span class="str">"Summarize this NDA clause..."</span></div>
+
+  <h3>Serving Architecture Decision</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>⚡ vLLM (merged)</h4>
+      <p>High-throughput APIs. Low latency (~50ms). Very high throughput.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔀 vLLM (multi-LoRA)</h4>
+      <p>Multi-tenant / multi-domain. Low latency (~55ms). One base model, N adapters.</p>
+    </div>
+    <div class="card green">
+      <h4>🏠 Ollama / llama.cpp</h4>
+      <p>Local dev, edge deployment. No GPU required with GGUF. Single-user throughput.</p>
+    </div>
+    <div class="card purple">
+      <h4>🤗 TGI</h4>
+      <p>HuggingFace ecosystem users. Low latency, high throughput. Good integration.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How would you serve multiple fine-tuned variants of the same base model?"</strong> — "I'd use vLLM's multi-LoRA serving. You load the base model once into GPU memory and register multiple LoRA adapters. At request time, the client specifies which adapter via the <code>model</code> parameter. This is dramatically more memory-efficient — you're sharing ~16GB of base weights and swapping ~30MB adapters. For production, I'd put this behind an API gateway that routes to the correct adapter based on tenant or use-case."</p>
+  </div>
+</section>
+
+<!-- Screen 9: Quiz -->
+<section class="screen" id="s9">
+  <h2>Quiz — Test Your <span class="accent">Fine-Tuning Knowledge</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: What is the primary advantage of LoRA over full fine-tuning?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) LoRA achieves higher quality than full fine-tuning</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) LoRA trains only a small number of injected low-rank matrices, drastically reducing memory and storage</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) LoRA doesn't require a GPU</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) LoRA works only with encoder models</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: In QLoRA, what quantization format is used for the frozen base model?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) INT8</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) FP8</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">C) NF4 (4-bit NormalFloat)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) BF16</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: What does DPO eliminate compared to RLHF?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) The need for training data</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) The reward model and PPO optimization loop</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) The need for a base model</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) The SFT pre-training step</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: When using vLLM's multi-LoRA serving, what is shared across all adapters?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) The LoRA weights</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) The optimizer states</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">C) The base model weights in GPU memory</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) The training dataset</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: Your fine-tuned model scores well on your domain task but MMLU scores dropped 5 points. What's the most likely cause?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) The base model was too small</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">B) The learning rate was too low</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">C) Catastrophic forgetting from overfitting on domain data</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) The LoRA rank was too high</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+
+  <h3>📋 Fine-Tuning Cheat Sheet</h3>
+  <div class="code-block">┌──────────────────────────────────────────────────────────┐
+│               FINE-TUNING CHEAT SHEET                    │
+│                                                          │
+│  1. DECIDE WISELY                                        │
+│     Prompt eng → RAG → Fine-tune → Fine-tune + RAG      │
+│     Fine-tune for STYLE/BEHAVIOR, RAG for KNOWLEDGE      │
+│                                                          │
+│  2. USE QLoRA                                            │
+│     4-bit base + LoRA adapters = fine-tune 70B on 1 GPU  │
+│     Start: r=16, alpha=32, target all linear layers      │
+│                                                          │
+│  3. DATA IS KING                                         │
+│     1K excellent examples > 100K mediocre ones           │
+│     Dedup, filter, manually review, augment with GPT-4   │
+│                                                          │
+│  4. ALIGN WITH DPO                                       │
+│     Simpler than RLHF, no reward model needed            │
+│     5K–20K preference pairs is a solid starting point    │
+│                                                          │
+│  5. EVALUATE RIGOROUSLY                                  │
+│     Eval loss + task metrics + LLM-as-judge + regression │
+│     Always check MMLU/HellaSwag for catastrophic forget  │
+│                                                          │
+│  6. SERVE EFFICIENTLY                                    │
+│     vLLM multi-LoRA: 1 base model, N adapters            │
+│     merge_and_unload() for simpler single-model deploy   │
+│     GGUF + Ollama for local/edge deployment              │
+│                                                          │
+│  7. TRACK EVERYTHING                                     │
+│     W&amp;B or MLflow for experiments                        │
+│     Version adapters like code — they're only ~30MB      │
+│     Git-tag every adapter with training config + metrics │
+└──────────────────────────────────────────────────────────┘</div>
+
+  <h3>Production Fine-Tuning Workflow</h3>
+  <div class="code-block">┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
+│  Curate  │───►│  Train   │───►│ Evaluate │───►│  Serve   │
+│  Dataset │    │  QLoRA   │    │  4-Layer │    │  vLLM    │
+└──────────┘    └──────────┘    └──────────┘    └──────────┘
+     │               │               │               │
+  Dedup,          r=16,          Eval loss,       Merged or
+  filter,        alpha=32,      Task metrics,    Multi-LoRA,
+  augment,       3 epochs,      LLM judge,       GGUF for
+  format         track w/ W&amp;B   regression       edge</div>
+
+  <h3>Interview Power Phrases</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🪜 Escalation Ladder</h4>
+      <p>"I follow the escalation ladder — prompting first, RAG for knowledge, fine-tuning for behavior."</p>
+    </div>
+    <div class="card blue">
+      <h4>📐 Low-Rank Insight</h4>
+      <p>"LoRA exploits the low intrinsic dimensionality of task-specific adaptations."</p>
+    </div>
+    <div class="card green">
+      <h4>🔧 QLoRA Power</h4>
+      <p>"QLoRA lets me fine-tune 70B models on a single A100 by quantizing the base to NF4."</p>
+    </div>
+    <div class="card purple">
+      <h4>🔀 Multi-LoRA</h4>
+      <p>"For multi-tenant serving, vLLM's multi-LoRA is the architecture — one base model, swappable 30MB adapters."</p>
+    </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-03-llmops/index.html">← Previous: LLMOps</a>
+  <a href="../module-05-interview-gauntlet/index.html">Next: Interview Gauntlet 🔥 →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Chat animation
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above — the answer focuses on a core fine-tuning concept.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+
+  // Keyboard navigation
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')window.location.href='../module-05-interview-gauntlet/index.html';if(e.key==='ArrowLeft')window.location.href='../module-03-llmops/index.html';});
+})();
+</script>
+</body>
+</html>

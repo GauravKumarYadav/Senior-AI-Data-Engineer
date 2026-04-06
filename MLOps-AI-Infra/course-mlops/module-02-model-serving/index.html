@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 2: Model Serving &amp; Deployment | MLOps &amp; AI Infra</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#059669;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#F0FDF9}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">⚙️ MLOps &amp; AI Infra</a><div class="nav-dots"><a href="../module-01-mlops-pipeline/" class="nav-dot"></a><a href="../module-02-model-serving/" class="nav-dot active"></a><a href="../module-03-llmops/" class="nav-dot"></a><a href="../module-04-fine-tuning/" class="nav-dot"></a><a href="../module-05-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Serving Patterns -->
+<section class="screen" id="s1">
+  <h2>Serving Patterns — How Your Model <span class="accent">Meets the World</span></h2>
+  <p>The way you serve a model is as important as the model itself. A brilliant model behind the wrong serving pattern is like a Ferrari on a dirt road. Let's break down the four fundamental patterns.</p>
+
+  <h3>The Four Serving Patterns</h3>
+  <div class="code-block">┌──────────────────────────────────────────────────────────────┐
+│                  MODEL SERVING PATTERNS                      │
+│                                                              │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
+│  │   BATCH     │  │  REAL-TIME  │  │     STREAMING       │  │
+│  │             │  │    API      │  │                     │  │
+│  │ ┌───┐ ┌───┐│  │  Request ──▶│  │  Event ──▶ Model    │  │
+│  │ │DB │→│Job││  │  ◀── Reply  │  │           ──▶ Sink   │  │
+│  │ └───┘ └───┘│  │  (ms-level) │  │  (sub-second)       │  │
+│  │ (hours)    │  └─────────────┘  └─────────────────────┘  │
+│  └─────────────┘                                            │
+│                                                              │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │              EMBEDDED / EDGE                          │  │
+│  │   ┌────────┐     ┌──────────┐     ┌───────────┐      │  │
+│  │   │ Mobile │     │  Browser │     │ IoT / Edge│      │  │
+│  │   │  App   │     │  (WASM)  │     │  Device   │      │  │
+│  │   └────────┘     └──────────┘     └───────────┘      │  │
+│  │         Model runs ON the device — zero latency       │  │
+│  └───────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────┘</div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📦 Batch Inference</h4>
+      <p>Process large volumes on a schedule — hourly, daily, weekly. Predictions are precomputed and stored. Use for: recommendation engines, credit scoring, churn prediction.</p>
+    </div>
+    <div class="card blue">
+      <h4>⚡ Real-Time API</h4>
+      <p>REST or gRPC endpoint. Each request gets an immediate prediction (ms-level). Use for: fraud detection, search ranking, dynamic pricing, chatbots.</p>
+    </div>
+    <div class="card green">
+      <h4>🌊 Streaming Inference</h4>
+      <p>Process events as they arrive via Kafka/Kinesis. Model sits in the stream pipeline. Use for: real-time fraud alerts, IoT anomaly detection.</p>
+    </div>
+    <div class="card purple">
+      <h4>📱 Embedded / Edge</h4>
+      <p>Model compiled and shipped inside the client — mobile, browser (ONNX.js), IoT. Use for: offline apps, ultra-low latency (&lt;1ms), privacy-sensitive scenarios.</p>
+    </div>
+  </div>
+
+  <h3>Batch Inference Example (Spark)</h3>
+  <div class="code-block"><span class="cm"># batch_inference.py — Spark-based batch scoring</span>
+<span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> col, udf
+<span class="kw">from</span> pyspark.sql.types <span class="kw">import</span> FloatType
+<span class="kw">import</span> mlflow.pyfunc
+
+spark = SparkSession.builder \
+    .appName(<span class="str">"batch-inference"</span>) \
+    .config(<span class="str">"spark.executor.memory"</span>, <span class="str">"8g"</span>) \
+    .getOrCreate()
+
+<span class="cm"># Load model from registry</span>
+model = mlflow.pyfunc.spark_udf(
+    spark,
+    model_uri=<span class="str">"models:/churn-classifier/Production"</span>,
+    result_type=FloatType(),
+)
+
+<span class="cm"># Score entire customer table</span>
+customers = spark.read.parquet(<span class="str">"s3://data-lake/customers/"</span>)
+predictions = customers.withColumn(
+    <span class="str">"churn_probability"</span>, model(*[col(f) <span class="kw">for</span> f <span class="kw">in</span> feature_columns])
+)
+
+<span class="cm"># Write predictions for downstream consumption</span>
+predictions.write \
+    .mode(<span class="str">"overwrite"</span>) \
+    .partitionBy(<span class="str">"region"</span>) \
+    .parquet(<span class="str">"s3://data-lake/predictions/churn/"</span>)</div>
+
+  <h3>REST vs gRPC Trade-offs</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🌐 REST (HTTP/JSON)</h4>
+      <ul>
+        <li>✅ Native browser support</li>
+        <li>✅ Easy debugging (curl, Postman)</li>
+        <li>⚠️ Higher latency (text serialization)</li>
+        <li>⚠️ Limited streaming (SSE, WebSockets)</li>
+        <li>Best for: External APIs, simple cases</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>⚡ gRPC (HTTP/2 + Protobuf)</h4>
+      <ul>
+        <li>✅ Lower latency (binary serialization)</li>
+        <li>✅ Native bidirectional streaming</li>
+        <li>⚠️ Requires grpc-web proxy for browsers</li>
+        <li>⚠️ Harder debugging (need grpcurl)</li>
+        <li>Best for: Internal microservices, perf</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Streaming Inference Example</h3>
+  <div class="code-block"><span class="cm"># streaming_inference.py — Spark Structured Streaming + ML</span>
+<span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark.ml <span class="kw">import</span> PipelineModel
+
+spark = SparkSession.builder \
+    .appName(<span class="str">"streaming-fraud-detection"</span>) \
+    .getOrCreate()
+
+model = PipelineModel.load(<span class="str">"s3://models/fraud-detector-v3/"</span>)
+
+<span class="cm"># Read from Kafka</span>
+transactions = spark.readStream \
+    .format(<span class="str">"kafka"</span>) \
+    .option(<span class="str">"kafka.bootstrap.servers"</span>, <span class="str">"kafka:9092"</span>) \
+    .option(<span class="str">"subscribe"</span>, <span class="str">"transactions"</span>) \
+    .load()
+
+<span class="cm"># Parse and score</span>
+parsed = parse_transaction_schema(transactions)
+scored = model.transform(parsed)
+
+<span class="cm"># Write flagged transactions to alert topic</span>
+scored.filter(<span class="str">"prediction = 1"</span>) \
+    .writeStream \
+    .format(<span class="str">"kafka"</span>) \
+    .option(<span class="str">"kafka.bootstrap.servers"</span>, <span class="str">"kafka:9092"</span>) \
+    .option(<span class="str">"topic"</span>, <span class="str">"fraud-alerts"</span>) \
+    .option(<span class="str">"checkpointLocation"</span>, <span class="str">"/checkpoints/fraud/"</span>) \
+    .start()</div>
+
+  <h3>The Decision Framework</h3>
+  <div class="code-block">                    ┌─────────────────────┐
+                    │  What latency does   │
+                    │  the use case need?  │
+                    └──────────┬──────────┘
+                               │
+               ┌───────────────┼───────────────┐
+               ▼               ▼               ▼
+          Hours/Days      Milliseconds     Sub-second
+               │               │               │
+               ▼               ▼               ▼
+        ┌──────────┐    ┌──────────┐    ┌──────────────┐
+        │  BATCH   │    │ REAL-TIME│    │  STREAMING   │
+        └──────────┘    └──────────┘    └──────────────┘
+                               │
+                    ┌──────────┴──────────┐
+                    │  Network available? │
+                    └──────────┬──────────┘
+                           No │
+                              ▼
+                       ┌──────────┐
+                       │ EMBEDDED │
+                       └──────────┘</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Q: "Your team has a recommendation system. When would you choose batch vs. real-time serving?"</strong><br><br>Use <strong>batch</strong> for the homepage "top picks" — precompute nightly for all users, store in Redis/DynamoDB, serve with sub-ms lookup. Use <strong>real-time</strong> for "similar items" on the product page — the context (which product the user is viewing) isn't known until request time. A hybrid approach is common: batch for personalization features, real-time for contextual re-ranking.</p>
+  </div>
+</section>
+
+<!-- Screen 2: Model Serving Frameworks -->
+<section class="screen screen-alt" id="s2">
+  <h2>Model Serving <span class="accent">Frameworks</span> — The Runtime Layer</h2>
+  <p>Once you've chosen a serving pattern, you need a runtime. Serving frameworks handle model loading, request batching, health checks, metrics, and multi-model management.</p>
+
+  <h3>Framework Landscape</h3>
+  <div class="code-block">┌─────────────────────────────────────────────────────────────┐
+│              MODEL SERVING FRAMEWORKS                       │
+│                                                             │
+│  Traditional ML / DL:                                       │
+│  ┌────────────┐ ┌──────────────┐ ┌───────────────────────┐ │
+│  │ TorchServe │ │  TF Serving  │ │  Triton Inference     │ │
+│  │ (PyTorch)  │ │ (TensorFlow) │ │  Server (NVIDIA)      │ │
+│  └────────────┘ └──────────────┘ └───────────────────────┘ │
+│                                                             │
+│  LLM-Specific:                                              │
+│  ┌────────────┐ ┌──────────────┐                           │
+│  │   vLLM     │ │     TGI      │                           │
+│  │ (fastest   │ │ (HuggingFace │                           │
+│  │  OSS LLM)  │ │  optimized)  │                           │
+│  └────────────┘ └──────────────┘                           │
+│                                                             │
+│  Higher-Level Orchestration:                                │
+│  ┌────────────┐ ┌──────────────┐                           │
+│  │  BentoML   │ │  Ray Serve   │                           │
+│  │ (packaging)│ │ (distributed)│                           │
+│  └────────────┘ └──────────────┘                           │
+└─────────────────────────────────────────────────────────────┘</div>
+
+  <h3>TorchServe (PyTorch Native)</h3>
+  <p>TorchServe is the official serving solution for PyTorch models. It uses a <strong>handler-based</strong> architecture.</p>
+  <div class="code-block"><span class="cm"># custom_handler.py — TorchServe custom handler</span>
+<span class="kw">import</span> torch
+<span class="kw">from</span> ts.torch_handler.base_handler <span class="kw">import</span> BaseHandler
+<span class="kw">from</span> torchvision <span class="kw">import</span> transforms
+
+
+<span class="kw">class</span> <span class="fn">ImageClassifierHandler</span>(BaseHandler):
+    <span class="str">"""Custom handler for image classification."""</span>
+
+    <span class="kw">def</span> <span class="fn">initialize</span>(self, context):
+        <span class="str">"""Load model and set up transforms."""</span>
+        super().initialize(context)
+        self.transform = transforms.Compose([
+            transforms.Resize(<span class="fn">256</span>),
+            transforms.CenterCrop(<span class="fn">224</span>),
+            transforms.ToTensor(),
+            transforms.Normalize(
+                mean=[<span class="fn">0.485</span>, <span class="fn">0.456</span>, <span class="fn">0.406</span>],
+                std=[<span class="fn">0.229</span>, <span class="fn">0.224</span>, <span class="fn">0.225</span>],
+            ),
+        ])
+
+    <span class="kw">def</span> <span class="fn">preprocess</span>(self, data):
+        <span class="str">"""Convert raw input to tensor batch."""</span>
+        images = []
+        <span class="kw">for</span> row <span class="kw">in</span> data:
+            image = Image.open(io.BytesIO(row[<span class="str">"body"</span>]))
+            images.append(self.transform(image))
+        <span class="kw">return</span> torch.stack(images)
+
+    <span class="kw">def</span> <span class="fn">inference</span>(self, data):
+        <span class="str">"""Run forward pass with no_grad."""</span>
+        <span class="kw">with</span> torch.no_grad():
+            <span class="kw">return</span> self.model(data)
+
+    <span class="kw">def</span> <span class="fn">postprocess</span>(self, inference_output):
+        <span class="str">"""Convert logits to class probabilities."""</span>
+        probs = torch.softmax(inference_output, dim=<span class="fn">1</span>)
+        top5 = torch.topk(probs, <span class="fn">5</span>, dim=<span class="fn">1</span>)
+        <span class="kw">return</span> [
+            {
+                <span class="str">"classes"</span>: top5.indices[i].tolist(),
+                <span class="str">"probabilities"</span>: top5.values[i].tolist(),
+            }
+            <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(probs))
+        ]</div>
+
+  <div class="code-block"><span class="cm"># Package and serve</span>
+torch-model-archiver \
+    --model-name resnet50 \
+    --version <span class="fn">1.0</span> \
+    --serialized-file model.pt \
+    --handler custom_handler.py \
+    --export-path model_store/
+
+torchserve --start \
+    --model-store model_store \
+    --models resnet50=resnet50.mar \
+    --ts-config config.properties</div>
+
+  <h3>NVIDIA Triton Inference Server</h3>
+  <p>Triton is the <strong>Swiss Army knife</strong> of model serving. It supports multiple frameworks (PyTorch, TensorFlow, ONNX, TensorRT, Python) simultaneously and is heavily optimized for GPU utilization.</p>
+  <div class="code-block"><span class="cm"># config.pbtxt — Triton model configuration</span>
+name: <span class="str">"text_encoder"</span>
+platform: <span class="str">"onnxruntime_onnx"</span>
+max_batch_size: <span class="fn">64</span>
+
+input [
+  {
+    name: <span class="str">"input_ids"</span>
+    data_type: TYPE_INT64
+    dims: [ <span class="fn">-1</span> ]              <span class="cm"># Dynamic sequence length</span>
+  },
+  {
+    name: <span class="str">"attention_mask"</span>
+    data_type: TYPE_INT64
+    dims: [ <span class="fn">-1</span> ]
+  }
+]
+
+output [
+  {
+    name: <span class="str">"embeddings"</span>
+    data_type: TYPE_FP32
+    dims: [ <span class="fn">768</span> ]
+  }
+]
+
+<span class="cm"># Dynamic batching — Triton's superpower</span>
+dynamic_batching {
+  preferred_batch_size: [ <span class="fn">8</span>, <span class="fn">16</span>, <span class="fn">32</span> ]
+  max_queue_delay_microseconds: <span class="fn">100</span>
+}
+
+<span class="cm"># Instance groups — how many model copies</span>
+instance_group [
+  {
+    count: <span class="fn">2</span>
+    kind: KIND_GPU
+    gpus: [ <span class="fn">0</span> ]
+  }
+]</div>
+
+  <h3>vLLM — The LLM Serving King</h3>
+  <p>vLLM introduced <strong>PagedAttention</strong>, which manages KV-cache memory like an OS manages virtual memory — in non-contiguous pages. This eliminates memory fragmentation and achieves 2-4x higher throughput than naive implementations.</p>
+  <div class="code-block"><span class="cm"># Serve Llama-3-8B with AWQ quantization</span>
+python -m vllm.entrypoints.openai.api_server \
+    --model meta-llama/Meta-Llama-3-8B-Instruct \
+    --quantization awq \
+    --dtype half \
+    --max-model-len <span class="fn">8192</span> \
+    --gpu-memory-utilization <span class="fn">0.90</span> \
+    --tensor-parallel-size <span class="fn">2</span> \
+    --enable-chunked-prefill \
+    --max-num-seqs <span class="fn">256</span> \
+    --port <span class="fn">8000</span>
+
+<span class="cm"># Test with OpenAI-compatible API</span>
+curl http://localhost:<span class="fn">8000</span>/v1/completions \
+    -H <span class="str">"Content-Type: application/json"</span> \
+    -d <span class="str">'{
+        "model": "meta-llama/Meta-Llama-3-8B-Instruct",
+        "prompt": "Explain MLOps in one paragraph:",
+        "max_tokens": 200,
+        "temperature": 0.7
+    }'</span></div>
+  <p><strong>Why vLLM wins</strong>: PagedAttention (near-zero KV-cache waste), continuous batching, speculative decoding, OpenAI-compatible API, prefix caching for shared system prompts.</p>
+
+  <h3>Framework Comparison</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔥 TorchServe</h4>
+      <p>PyTorch models · Good GPU optimization · Dynamic batching · Multi-model · Medium setup complexity</p>
+    </div>
+    <div class="card blue">
+      <h4>🟢 Triton</h4>
+      <p>Multi-framework · Excellent GPU optimization · Advanced dynamic batching · Native multi-model · Complex setup</p>
+    </div>
+    <div class="card green">
+      <h4>🚀 vLLM</h4>
+      <p>LLM serving · Excellent GPU optimization · Continuous batching · AWQ/GPTQ/FP8 quantization · Simple setup</p>
+    </div>
+    <div class="card purple">
+      <h4>🤗 TGI</h4>
+      <p>HF transformers · Very good GPU · Continuous batching · GPTQ/AWQ/EETQ quantization · Simple Docker setup</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Q: "You need to serve a 70B parameter LLM with low latency. What framework and hardware?"</strong><br><br>I'd use <strong>vLLM</strong> with AWQ INT4 quantization. A 70B model in FP16 needs ~140GB VRAM. With INT4: ~35GB + overhead ≈ 40GB. I'd use <strong>2× A100 80GB</strong> GPUs with tensor parallelism (<code>--tensor-parallel-size 2</code>). vLLM's PagedAttention and continuous batching maximize throughput. For production, front it with KServe on Kubernetes for autoscaling and canary deployments.</p>
+  </div>
+</section>
+
+<!-- Screen 3: Containerization & Kubernetes -->
+<section class="screen" id="s3">
+  <h2>Containerization &amp; <span class="accent">Kubernetes</span> for ML</h2>
+  <p>Models don't ship as Python scripts in production. They ship as <strong>containers</strong> running on <strong>Kubernetes</strong>. This screen covers the packaging and orchestration layer.</p>
+
+  <h3>Docker for Model Serving</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📦 Model Baked In</h4>
+      <ul>
+        <li>✅ Self-contained, reproducible</li>
+        <li>✅ No runtime downloads</li>
+        <li>❌ Huge images (multi-GB for LLMs)</li>
+        <li>❌ Slow CI/CD, rebuild per version</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🌐 Model Fetched at Startup</h4>
+      <ul>
+        <li>✅ Smaller images</li>
+        <li>✅ Same image for multiple versions</li>
+        <li>❌ Cold start penalty</li>
+        <li>❌ Requires network access</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Dockerfile — Multi-stage build for model serving</span>
+<span class="cm"># Stage 1: Build dependencies</span>
+<span class="kw">FROM</span> python:<span class="fn">3.11</span>-slim <span class="kw">AS</span> builder
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir --prefix=/install \
+    -r requirements.txt
+
+<span class="cm"># Stage 2: Runtime image</span>
+<span class="kw">FROM</span> python:<span class="fn">3.11</span>-slim <span class="kw">AS</span> runtime
+
+<span class="cm"># Security: non-root user</span>
+RUN groupadd -r mlserve &amp;&amp; \
+    useradd -r -g mlserve -d /app -s /sbin/nologin mlserve
+
+WORKDIR /app
+COPY --from=builder /install /usr/local
+COPY src/ ./src/
+COPY configs/ ./configs/
+
+<span class="cm"># Health check for K8s liveness probe</span>
+HEALTHCHECK --interval=<span class="fn">30</span>s --timeout=<span class="fn">5</span>s --retries=<span class="fn">3</span> \
+    CMD curl -f http://localhost:<span class="fn">8080</span>/health || exit <span class="fn">1</span>
+
+EXPOSE <span class="fn">8080</span> <span class="fn">8081</span>
+USER mlserve
+ENTRYPOINT [<span class="str">"python"</span>, <span class="str">"-m"</span>, <span class="str">"src.server"</span>]
+CMD [<span class="str">"--config"</span>, <span class="str">"configs/production.yaml"</span>]</div>
+
+  <h3>FastAPI Model Server</h3>
+  <div class="code-block"><span class="cm"># src/server.py — FastAPI model server</span>
+<span class="kw">from</span> contextlib <span class="kw">import</span> asynccontextmanager
+<span class="kw">from</span> typing <span class="kw">import</span> Any
+
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> onnxruntime <span class="kw">as</span> ort
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+
+
+<span class="kw">class</span> <span class="fn">PredictRequest</span>(BaseModel):
+    features: list[float]
+
+<span class="kw">class</span> <span class="fn">PredictResponse</span>(BaseModel):
+    prediction: float
+    confidence: float
+    model_version: str
+
+
+model_session: ort.InferenceSession | <span class="fn">None</span> = <span class="fn">None</span>
+
+@asynccontextmanager
+async <span class="kw">def</span> <span class="fn">lifespan</span>(app: FastAPI):
+    <span class="str">"""Load model on startup, cleanup on shutdown."""</span>
+    <span class="kw">global</span> model_session
+    model_session = ort.InferenceSession(
+        <span class="str">"models/classifier_v3.onnx"</span>,
+        providers=[<span class="str">"CUDAExecutionProvider"</span>, <span class="str">"CPUExecutionProvider"</span>],
+    )
+    <span class="cm"># Warmup inference to avoid cold-start latency</span>
+    dummy = np.zeros((<span class="fn">1</span>, <span class="fn">128</span>), dtype=np.float32)
+    model_session.run(<span class="fn">None</span>, {<span class="str">"input"</span>: dummy})
+    <span class="kw">yield</span>
+    model_session = <span class="fn">None</span>
+
+app = FastAPI(lifespan=lifespan)
+
+@app.get(<span class="str">"/health"</span>)
+async <span class="kw">def</span> <span class="fn">health</span>() -> dict[str, str]:
+    <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"healthy"</span>}
+
+@app.post(<span class="str">"/predict"</span>, response_model=PredictResponse)
+async <span class="kw">def</span> <span class="fn">predict</span>(req: PredictRequest) -> PredictResponse:
+    inputs = np.array([req.features], dtype=np.float32)
+    outputs = model_session.run(<span class="fn">None</span>, {<span class="str">"input"</span>: inputs})
+    prob = <span class="fn">float</span>(outputs[<span class="fn">0</span>][<span class="fn">0</span>][<span class="fn">1</span>])
+    <span class="kw">return</span> PredictResponse(
+        prediction=<span class="fn">round</span>(prob),
+        confidence=prob,
+        model_version=<span class="str">"v3.1.0"</span>,
+    )</div>
+
+  <h3>KServe — Kubernetes-Native Model Serving</h3>
+  <div class="code-block">┌─────────────────────────────────────────────────────┐
+│                 KServe Architecture                  │
+│                                                     │
+│   Ingress (Istio / Knative)                         │
+│        │                                            │
+│        ▼                                            │
+│   ┌──────────┐    ┌──────────┐    ┌──────────┐     │
+│   │  Router  │───▶│Predictor │    │Transform-│     │
+│   │ (traffic │    │ (model   │◀──▶│  er      │     │
+│   │  split)  │    │  runtime)│    │ (pre/    │     │
+│   └──────────┘    └──────────┘    │  post)   │     │
+│        │                          └──────────┘     │
+│        │                                            │
+│        └───▶ ┌──────────┐    ┌──────────┐          │
+│              │Predictor │    │Explainer │          │
+│              │ (canary) │    │ (SHAP /  │          │
+│              └──────────┘    │  LIME)   │          │
+│                              └──────────┘          │
+└─────────────────────────────────────────────────────┘</div>
+
+  <div class="code-block"><span class="cm"># kserve-inference-service.yaml</span>
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: fraud-detector
+  namespace: ml-serving
+spec:
+  predictor:
+    minReplicas: <span class="fn">2</span>              <span class="cm"># Avoid cold starts</span>
+    maxReplicas: <span class="fn">20</span>
+    scaleTarget: <span class="fn">10</span>             <span class="cm"># Target concurrency per pod</span>
+    scaleMetric: concurrency
+    containers:
+      - name: kserve-container
+        image: registry.example.com/fraud-detector:v3.1
+        resources:
+          requests:
+            cpu: <span class="str">"2"</span>
+            memory: <span class="str">"4Gi"</span>
+            nvidia.com/gpu: <span class="str">"1"</span>
+          limits:
+            cpu: <span class="str">"4"</span>
+            memory: <span class="str">"8Gi"</span>
+            nvidia.com/gpu: <span class="str">"1"</span>
+        env:
+          - name: MODEL_NAME
+            value: fraud-detector
+          - name: STORAGE_URI
+            value: <span class="str">s3://models/fraud-detector/v3.1/</span>
+    canaryTrafficPercent: <span class="fn">10</span></div>
+
+  <h3>Cold Start Mitigation</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔥 minReplicas: 2</h4>
+      <p>Always keep warm pods running — never scale to zero for latency-sensitive services.</p>
+    </div>
+    <div class="card blue">
+      <h4>⚡ Model Warmup</h4>
+      <p>Run dummy inference during container startup to warm up GPU kernels and memory allocation.</p>
+    </div>
+    <div class="card green">
+      <h4>💾 Model Caching</h4>
+      <p>Use init containers to pre-download models to shared volumes before the main container starts.</p>
+    </div>
+    <div class="card purple">
+      <h4>🏥 Readiness Probes</h4>
+      <p>Don't route traffic until model is loaded and warm — K8s readiness probes gate traffic correctly.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Q: "How would you handle GPU autoscaling for a model serving endpoint?"</strong><br><br>Standard HPA scales on CPU/memory, which doesn't reflect GPU load. Use <strong>custom metrics</strong> from NVIDIA DCGM exported to Prometheus — specifically <code>DCGM_FI_DEV_GPU_UTIL</code> (GPU utilization) and <code>DCGM_FI_DEV_FB_USED</code> (GPU memory). Configure HPA to scale when GPU utilization exceeds 70%. Combine with KServe's concurrency-based scaling (<code>scaleTarget: 10</code>) so pods scale based on in-flight requests. Always set <code>minReplicas ≥ 1</code> for latency-sensitive services.</p>
+  </div>
+</section>
+
+<!-- Screen 4: A/B Testing, Canary, and Safe Rollouts -->
+<section class="screen screen-alt" id="s4">
+  <h2>A/B Testing, Canary &amp; <span class="accent">Safe Rollouts</span></h2>
+  <p>Deploying a model is not a "ship it and pray" activity. Production ML systems need <strong>progressive delivery</strong> — the ability to test new models on real traffic without risking the entire user base.</p>
+
+  <h3>Deployment Strategies Compared</h3>
+  <div class="code-block">┌────────────────────────────────────────────────────────────┐
+│              DEPLOYMENT STRATEGIES                          │
+│                                                            │
+│  BLUE-GREEN                  CANARY                        │
+│  ┌──────┐  ┌──────┐         ┌──────────────────────────┐  │
+│  │Blue  │  │Green │         │  1% ──▶ 5% ──▶ 25% ──▶  │  │
+│  │(v1)  │  │(v2)  │         │      100% rollout        │  │
+│  └──┬───┘  └──┬───┘         └──────────────────────────┘  │
+│     │         │                                            │
+│  100% ──switch──▶ 100%      Gradual traffic shift          │
+│  Instant cutover                                           │
+│                                                            │
+│  SHADOW                      A/B TEST                      │
+│  ┌──────────────────┐       ┌──────────────────────────┐  │
+│  │ Request ──▶ v1 ──▶ User │ │ Traffic ──▶ v1 (50%)    │  │
+│  │    └────▶ v2 ──▶ /dev/  │ │        └──▶ v2 (50%)    │  │
+│  │           null   │       │ │ Measure business metric │  │
+│  └──────────────────┘       └──────────────────────────┘  │
+│  v2 gets real traffic                                      │
+│  but results are discarded   Statistical significance      │
+└────────────────────────────────────────────────────────────┘</div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔵🟢 Blue-Green</h4>
+      <p>Medium risk. 100% traffic switch. Instant rollback. Best for simple models, low risk changes.</p>
+    </div>
+    <div class="card blue">
+      <h4>🐤 Canary</h4>
+      <p>Low risk. 1% → 100% gradual shift. Fast rollback. Best for most ML deployments.</p>
+    </div>
+    <div class="card green">
+      <h4>👻 Shadow</h4>
+      <p>Minimal risk. 100% traffic silently mirrored. N/A rollback. Best for validating before any exposure.</p>
+    </div>
+    <div class="card purple">
+      <h4>🧪 A/B Test</h4>
+      <p>Medium risk. 50/50 split. Fast rollback. Best for measuring business impact with statistical significance.</p>
+    </div>
+  </div>
+
+  <h3>Canary Release with Istio</h3>
+  <div class="code-block"><span class="cm"># Istio VirtualService for canary routing</span>
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: fraud-detector-vs
+spec:
+  hosts:
+    - fraud-detector.ml-serving.svc.cluster.local
+  http:
+    - route:
+        <span class="cm"># Stable version: 95% traffic</span>
+        - destination:
+            host: fraud-detector-v2
+            port:
+              number: <span class="fn">8080</span>
+          weight: <span class="fn">95</span>
+        <span class="cm"># Canary version: 5% traffic</span>
+        - destination:
+            host: fraud-detector-v3
+            port:
+              number: <span class="fn">8080</span>
+          weight: <span class="fn">5</span>
+      retries:
+        attempts: <span class="fn">3</span>
+        retryOn: <span class="str">5xx</span></div>
+
+  <h3>Shadow Deployment Pattern</h3>
+  <p>Shadow deployments are the <strong>safest</strong> way to test a new model in production. The new model receives real traffic but its responses are discarded — only logged for offline comparison.</p>
+  <div class="code-block"><span class="cm"># shadow_proxy.py — Shadow deployment router</span>
+<span class="kw">import</span> asyncio
+<span class="kw">import</span> time
+<span class="kw">from</span> typing <span class="kw">import</span> Any
+
+<span class="kw">import</span> httpx
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, Request
+
+app = FastAPI()
+
+PRIMARY_URL = <span class="str">"http://model-v2:8080/predict"</span>
+SHADOW_URL = <span class="str">"http://model-v3:8080/predict"</span>
+
+
+@app.post(<span class="str">"/predict"</span>)
+async <span class="kw">def</span> <span class="fn">predict</span>(request: Request) -> dict[str, Any]:
+    body = await request.json()
+
+    async <span class="kw">with</span> httpx.AsyncClient(timeout=<span class="fn">5.0</span>) <span class="kw">as</span> client:
+        <span class="cm"># Fire both requests concurrently</span>
+        primary_task = client.post(PRIMARY_URL, json=body)
+        shadow_task = client.post(SHADOW_URL, json=body)
+
+        primary_resp, shadow_resp = await asyncio.gather(
+            primary_task,
+            shadow_task,
+            return_exceptions=<span class="fn">True</span>,
+        )
+
+    <span class="cm"># Log shadow results for offline analysis</span>
+    <span class="kw">if</span> not <span class="fn">isinstance</span>(shadow_resp, Exception):
+        log_shadow_comparison(
+            request_id=body.get(<span class="str">"request_id"</span>),
+            primary=primary_resp.json(),
+            shadow=shadow_resp.json(),
+        )
+
+    <span class="cm"># ONLY return primary model's response</span>
+    <span class="kw">return</span> primary_resp.json()</div>
+
+  <h3>Rollback Strategies</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>📌 Version Pinning</h4>
+      <p>KServe InferenceService points to a specific model version; rollback = update the version tag.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔄 Traffic Shifting</h4>
+      <p>Shift canary weight back to 0% — instant rollback via Istio VirtualService update.</p>
+    </div>
+    <div class="card green">
+      <h4>🤖 Automated Rollback</h4>
+      <p>Monitor error rate / latency P99; if threshold breached, auto-revert via Argo Rollouts or Flagger.</p>
+    </div>
+    <div class="card purple">
+      <h4>📋 Registry Status</h4>
+      <p>Mark model as "Archived" in MLflow registry, which triggers serving layer to reload previous "Production" model.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Q: "How do you decide between A/B testing and canary deployment?"</strong><br><br>They serve different purposes. <strong>Canary</strong> is a <em>risk mitigation</em> strategy — validating a model won't break things (latency, errors, crashes). <strong>A/B testing</strong> is a <em>measurement</em> strategy — running a controlled experiment to measure business impact (CTR, conversion, revenue). In practice: canary first (validate safety at 5%), then A/B test (50/50 for statistical power), then full rollout. Shadow deployment comes before both.</p>
+  </div>
+</section>
+
+<!-- Screen 5: Model Optimization -->
+<section class="screen" id="s5">
+  <h2>Model Optimization for <span class="accent">Production</span></h2>
+  <p>Training a model and serving a model are two different disciplines. A model that takes 500ms per inference in research is useless in a 50ms latency budget. This screen covers the optimization toolkit.</p>
+
+  <h3>GPU Memory Planning — The Math You Must Know</h3>
+  <div class="code-block"><span class="cm"># gpu_memory_calculator.py — Know your numbers</span>
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+<span class="kw">from</span> enum <span class="kw">import</span> Enum
+
+
+<span class="kw">class</span> <span class="fn">DType</span>(Enum):
+    FP32 = <span class="fn">4</span>       <span class="cm"># 4 bytes per parameter</span>
+    FP16 = <span class="fn">2</span>       <span class="cm"># 2 bytes (half precision)</span>
+    BF16 = <span class="fn">2</span>       <span class="cm"># 2 bytes (bfloat16)</span>
+    INT8 = <span class="fn">1</span>       <span class="cm"># 1 byte</span>
+    INT4 = <span class="fn">0.5</span>     <span class="cm"># 0.5 bytes</span>
+
+
+@dataclass
+<span class="kw">class</span> <span class="fn">GPUMemoryEstimate</span>:
+    model_name: str
+    params_billions: float
+    dtype: DType
+    context_length: int = <span class="fn">4096</span>
+    batch_size: int = <span class="fn">1</span>
+    num_layers: int = <span class="fn">32</span>
+    hidden_dim: int = <span class="fn">4096</span>
+    num_kv_heads: int = <span class="fn">32</span>
+
+    @property
+    <span class="kw">def</span> <span class="fn">model_memory_gb</span>(self) -> float:
+        <span class="str">"""Model weights memory."""</span>
+        <span class="kw">return</span> (
+            self.params_billions * <span class="fn">1e9</span> * self.dtype.value
+        ) / (<span class="fn">1024</span> ** <span class="fn">3</span>)
+
+    @property
+    <span class="kw">def</span> <span class="fn">kv_cache_per_token_bytes</span>(self) -> float:
+        <span class="str">"""KV-cache memory per token per layer."""</span>
+        head_dim = self.hidden_dim // self.num_kv_heads
+        <span class="kw">return</span> (
+            <span class="fn">2</span> * self.num_kv_heads * head_dim * self.dtype.value
+        )
+
+    @property
+    <span class="kw">def</span> <span class="fn">total_memory_gb</span>(self) -> float:
+        <span class="str">"""Total = model + KV-cache + ~10% overhead."""</span>
+        base = self.model_memory_gb + self.kv_cache_memory_gb
+        <span class="kw">return</span> base * <span class="fn">1.1</span>  <span class="cm"># 10% CUDA overhead</span>
+
+    <span class="kw">def</span> <span class="fn">recommend_gpus</span>(self) -> str:
+        <span class="str">"""Recommend GPU configuration."""</span>
+        total = self.total_memory_gb
+        <span class="kw">if</span> total &lt;= <span class="fn">24</span>:
+            <span class="kw">return</span> <span class="str">"1× RTX 4090 (24GB) or 1× A10G"</span>
+        elif total &lt;= <span class="fn">40</span>:
+            <span class="kw">return</span> <span class="str">"1× A100 40GB"</span>
+        elif total &lt;= <span class="fn">80</span>:
+            <span class="kw">return</span> <span class="str">"1× A100 80GB or 1× H100 80GB"</span>
+        elif total &lt;= <span class="fn">160</span>:
+            <span class="kw">return</span> <span class="str">"2× A100 80GB (tensor parallel)"</span>
+        <span class="kw">else</span>:
+            n_gpus = <span class="fn">int</span>(total // <span class="fn">80</span>) + <span class="fn">1</span>
+            <span class="kw">return</span> <span class="str">f"{n_gpus}× A100 80GB (tensor parallel)"</span></div>
+
+  <h3>Memory Estimates (Know These Cold)</h3>
+  <div class="code-block">Llama-3-8B           | FP16 | Model:    14.9GB | Total:   ~18.6GB | → 1× RTX 4090
+Llama-3-8B           | INT4 | Model:     3.7GB | Total:    ~5.2GB | → 1× RTX 4090
+Llama-3-70B          | FP16 | Model:   130.4GB | Total: ~145.6GB | → 2× A100 80GB
+Llama-3-70B          | INT4 | Model:    32.6GB | Total:   ~37.0GB | → 1× A100 40GB
+GPT-4 (est)          | FP16 | Model:  3355.0GB | Total: ~3692.7GB | → 47× A100 80GB</div>
+
+  <h3>Quantization Deep Dive</h3>
+  <div class="code-block">FP32 (32 bits) ──▶ FP16/BF16 (16 bits) ──▶ INT8 (8 bits) ──▶ INT4 (4 bits)
+   Full              Half precision          4× smaller         8× smaller
+   precision         ~0% quality loss        ~1% quality loss   ~2-5% loss</div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔵 FP16/BF16</h4>
+      <p>16-bit, 2× reduction, negligible quality loss. Default for training.</p>
+    </div>
+    <div class="card blue">
+      <h4>🟢 GPTQ</h4>
+      <p>INT4/INT8, 4-8× reduction, small quality impact. Great for LLM inference.</p>
+    </div>
+    <div class="card green">
+      <h4>⭐ AWQ</h4>
+      <p>INT4, 8× reduction, very small quality impact. Best for LLM inference — current king.</p>
+    </div>
+    <div class="card purple">
+      <h4>📦 GGUF</h4>
+      <p>INT4-INT8, 4-8× reduction. Best for CPU/edge/llama.cpp deployments.</p>
+    </div>
+  </div>
+
+  <h3>Other Optimization Techniques</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>✂️ Pruning</h4>
+      <p>Remove weights close to zero. Unstructured pruning removes individual weights (sparse matrices). Structured pruning removes entire neurons/heads.</p>
+    </div>
+    <div class="card blue">
+      <h4>🎓 Knowledge Distillation</h4>
+      <p>Train a small "student" model to mimic a large "teacher". Student learns from soft probability distributions, which contain more information than hard labels.</p>
+    </div>
+    <div class="card green">
+      <h4>🔄 ONNX</h4>
+      <p>Convert models from any framework (PyTorch, TF, JAX) to framework-agnostic format. ONNX Runtime provides optimized inference across CPUs, GPUs, and edge.</p>
+    </div>
+  </div>
+
+  <h3>Multi-GPU Strategies</h3>
+  <div class="code-block">TENSOR PARALLELISM                PIPELINE PARALLELISM
+(split layers across GPUs)       (split model stages across GPUs)
+
+  GPU 0        GPU 1               GPU 0      GPU 1      GPU 2
+┌────────┐  ┌────────┐          ┌────────┐ ┌────────┐ ┌────────┐
+│Layer 1 │  │Layer 1 │          │Layers  │ │Layers  │ │Layers  │
+│(left   │  │(right  │          │ 1-10   │ │ 11-20  │ │ 21-32  │
+│ half)  │  │ half)  │          │        │ │        │ │        │
+│Layer 2 │  │Layer 2 │          └───┬────┘ └───┬────┘ └───┬────┘
+│(left)  │  │(right) │              │          │          │
+│  ...   │  │  ...   │              ▼          ▼          ▼
+└────────┘  └────────┘          Micro-batches flow through pipeline
+
+Best for: latency              Best for: throughput
+(all layers computed in         (pipeline keeps all GPUs busy
+ parallel per token)             with different micro-batches)</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Q: "A 7B parameter model in FP16 — how much GPU memory? Can you run it on a single RTX 4090?"</strong><br><br>Model weights: 7B × 2 bytes (FP16) = 14GB. Add KV-cache (~1-2GB at 4K context), CUDA overhead (~10%), total ≈ <strong>17-18GB</strong>. An RTX 4090 has 24GB VRAM, so yes — it fits comfortably. For batch inference with larger batches, KV-cache grows linearly, so limits hit at batch size 8+. INT4 quantization drops weights to ~3.5GB, leaving 20GB for KV-cache and large batches.</p>
+  </div>
+</section>
+
+<!-- Screen 6: Scaling & Production Monitoring -->
+<section class="screen screen-alt" id="s6">
+  <h2>Scaling &amp; Production <span class="accent">Monitoring</span></h2>
+  <p>A model in production without monitoring is a car without a dashboard — you're driving blind. This screen covers how to scale serving infrastructure and keep it healthy.</p>
+
+  <h3>Scaling Strategies</h3>
+  <div class="code-block">┌──────────────────────────────────────────────────────┐
+│             SCALING MODEL SERVING                    │
+│                                                      │
+│  HORIZONTAL SCALING          VERTICAL SCALING        │
+│  ┌─────┐┌─────┐┌─────┐     ┌────────────────┐      │
+│  │Pod 1││Pod 2││Pod 3│     │  Bigger GPU    │      │
+│  │(GPU)││(GPU)││(GPU)│     │  A10G → A100   │      │
+│  └─────┘└─────┘└─────┘     │  → H100        │      │
+│  Load balancer distributes  └────────────────┘      │
+│                                                      │
+│  REQUEST BATCHING            GPU SHARING             │
+│  ┌─────────────────┐        ┌────────────────┐      │
+│  │ req1 ┐          │        │ Model A  50%   │      │
+│  │ req2 ├─▶ batch  │        │ Model B  30%   │      │
+│  │ req3 ┘   infer  │        │ Model C  20%   │      │
+│  │ (amortize GPU   │        │ (MIG / MPS /   │      │
+│  │  kernel launch) │        │  time-sharing) │      │
+│  └─────────────────┘        └────────────────┘      │
+└──────────────────────────────────────────────────────┘</div>
+
+  <h3>Key Monitoring Metrics</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>⏱️ Latency Metrics</h4>
+      <p><strong>P50</strong> (median): typical experience. <strong>P95</strong>: what 95% see. <strong>P99</strong>: worst-case tail latency (critical for SLOs). <strong>TTFT</strong>: LLM time-to-first-token.</p>
+    </div>
+    <div class="card blue">
+      <h4>📊 Throughput Metrics</h4>
+      <p><strong>RPS/QPS</strong>: requests/sec. <strong>Tokens/sec</strong>: LLM throughput. <strong>GPU utilization</strong>: should be 60-80% (headroom for spikes).</p>
+    </div>
+    <div class="card green">
+      <h4>🔒 Reliability Metrics</h4>
+      <p><strong>Error rate</strong>: 5xx / total. <strong>Availability</strong>: 99.9% = 8.7 hours downtime/year. <strong>Queue depth</strong>: signals under-provisioning.</p>
+    </div>
+  </div>
+
+  <h3>Prometheus Metrics for Model Serving</h3>
+  <div class="code-block"><span class="cm"># monitoring.py — Prometheus metrics for model serving</span>
+<span class="kw">from</span> prometheus_client <span class="kw">import</span> (
+    Counter, Histogram, Gauge, start_http_server,
+)
+
+<span class="cm"># Latency histogram with custom buckets for ML</span>
+INFERENCE_LATENCY = Histogram(
+    <span class="str">"model_inference_duration_seconds"</span>,
+    <span class="str">"Time spent on model inference"</span>,
+    labelnames=[<span class="str">"model_name"</span>, <span class="str">"model_version"</span>],
+    buckets=[
+        <span class="fn">0.005</span>, <span class="fn">0.01</span>, <span class="fn">0.025</span>, <span class="fn">0.05</span>, <span class="fn">0.075</span>,
+        <span class="fn">0.1</span>, <span class="fn">0.25</span>, <span class="fn">0.5</span>, <span class="fn">0.75</span>, <span class="fn">1.0</span>, <span class="fn">2.5</span>,
+    ],
+)
+
+PREDICTION_COUNTER = Counter(
+    <span class="str">"model_predictions_total"</span>,
+    <span class="str">"Total predictions made"</span>,
+    labelnames=[<span class="str">"model_name"</span>, <span class="str">"model_version"</span>, <span class="str">"status"</span>],
+)
+
+GPU_MEMORY_USED = Gauge(
+    <span class="str">"gpu_memory_used_bytes"</span>,
+    <span class="str">"GPU memory currently in use"</span>,
+    labelnames=[<span class="str">"gpu_id"</span>],
+)
+
+PREDICTION_VALUE = Histogram(
+    <span class="str">"model_prediction_value"</span>,
+    <span class="str">"Distribution of prediction values (drift detection)"</span>,
+    labelnames=[<span class="str">"model_name"</span>],
+    buckets=[<span class="fn">0.0</span>, <span class="fn">0.1</span>, <span class="fn">0.2</span>, <span class="fn">0.3</span>, <span class="fn">0.4</span>, <span class="fn">0.5</span>, <span class="fn">0.6</span>, <span class="fn">0.7</span>, <span class="fn">0.8</span>, <span class="fn">0.9</span>, <span class="fn">1.0</span>],
+)
+
+
+<span class="cm"># Usage in serving code</span>
+<span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">serve_prediction</span>(model, request):
+    start = time.perf_counter()
+    <span class="kw">try</span>:
+        result = model.predict(request.features)
+        PREDICTION_COUNTER.labels(
+            model_name=<span class="str">"fraud-v3"</span>,
+            model_version=<span class="str">"3.1.0"</span>,
+            status=<span class="str">"success"</span>,
+        ).inc()
+        <span class="kw">return</span> result
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:
+        PREDICTION_COUNTER.labels(
+            model_name=<span class="str">"fraud-v3"</span>,
+            model_version=<span class="str">"3.1.0"</span>,
+            status=<span class="str">"error"</span>,
+        ).inc()
+        <span class="kw">raise</span>
+    <span class="kw">finally</span>:
+        duration = time.perf_counter() - start
+        INFERENCE_LATENCY.labels(
+            model_name=<span class="str">"fraud-v3"</span>,
+            model_version=<span class="str">"3.1.0"</span>,
+        ).observe(duration)</div>
+
+  <h3>Model Drift Detection</h3>
+  <div class="code-block">┌──────────────────────────────────────────────────────┐
+│               TYPES OF DRIFT                         │
+│                                                      │
+│  DATA DRIFT              CONCEPT DRIFT               │
+│  Input distribution      Relationship between        │
+│  changes                 input → output changes      │
+│                                                      │
+│  Example: User age       Example: COVID changed      │
+│  distribution shifted    buying patterns, but age    │
+│  (new market segment)    distributions stayed same   │
+│                                                      │
+│  Detection: Compare      Detection: Monitor model    │
+│  feature distributions   performance on labeled      │
+│  (KS test, PSI, JS      samples (accuracy, F1       │
+│  divergence)             over time)                  │
+│                                                      │
+│  PREDICTION DRIFT                                    │
+│  Model output            Proxy when you don't have   │
+│  distribution changes    ground truth labels yet     │
+│                                                      │
+│  Detection: Track        Often the first signal      │
+│  prediction histograms   that something is wrong     │
+│  over time windows                                   │
+└──────────────────────────────────────────────────────┘</div>
+
+  <h3>SLOs for ML Services</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🟢 Availability: 99.9%</h4>
+      <p>Alert if &lt;99.5% over 5 min. That's 8.7 hours downtime per year max.</p>
+    </div>
+    <div class="card blue">
+      <h4>⚡ P50 Latency: &lt;50ms</h4>
+      <p>Alert if &gt;100ms over 5 min. P99: &lt;200ms, alert if &gt;500ms over 1 min.</p>
+    </div>
+    <div class="card green">
+      <h4>❌ Error Rate: &lt;0.1%</h4>
+      <p>Alert if &gt;1% over 5 min. Track 5xx responses vs total requests.</p>
+    </div>
+    <div class="card purple">
+      <h4>📈 Prediction Drift: PSI &lt; 0.1</h4>
+      <p>Alert if PSI &gt; 0.2. GPU utilization alert if &gt;90% sustained 10 min.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Q: "Your model's accuracy dropped 5% over the past month, but no code changes were made. What's your debugging process?"</strong><br><br>Systematic approach: (1) <strong>Check data drift first</strong> — compare recent input distributions vs training set using PSI. If PSI &gt; 0.2, data drift is likely. (2) <strong>Inspect prediction distribution</strong> — plot recent vs historical histograms. (3) <strong>Check upstream data issues</strong> — broken pipeline? Null features? Feature store staleness? (4) <strong>Evaluate on recent labeled data</strong> — compute per-segment metrics. (5) <strong>Remediation</strong> — data drift: retrain. Concept drift: may need new features or architecture. Set up automated monitoring.</p>
+  </div>
+</section>
+
+<!-- Screen 7: End-to-End Architecture -->
+<section class="screen" id="s7">
+  <h2>End-to-End Architecture &amp; <span class="accent">Interview Scenarios</span></h2>
+  <p>Let's tie everything together. In system design interviews, you need to draw the full serving architecture and defend your choices.</p>
+
+  <h3>Production Model Serving Architecture</h3>
+  <div class="code-block">┌─────────────────────────────────────────────────────────────────────┐
+│                 PRODUCTION ML SERVING SYSTEM                        │
+│                                                                     │
+│  ┌─────────┐    ┌──────────┐    ┌────────────────────────────────┐ │
+│  │ Client  │───▶│ API      │───▶│      Kubernetes Cluster       │ │
+│  │ (App /  │    │ Gateway  │    │                                │ │
+│  │  Web)   │    │ (Kong /  │    │  ┌──────────┐  ┌───────────┐  │ │
+│  └─────────┘    │ Envoy)   │    │  │ KServe   │  │ Feature   │  │ │
+│                 └──────────┘    │  │ Router   │  │ Store     │  │ │
+│                                 │  │ (Istio)  │  │ (Feast)   │  │ │
+│                                 │  └────┬─────┘  └─────┬─────┘  │ │
+│                                 │       │              │         │ │
+│                                 │  ┌────▼──────────────▼──────┐  │ │
+│                                 │  │   Transformer Pod        │  │ │
+│                                 │  │   (feature enrichment)   │  │ │
+│                                 │  └────────────┬─────────────┘  │ │
+│                                 │               │                │ │
+│                                 │    ┌──────────▼──────────┐     │ │
+│                                 │    │  Predictor Pods      │     │ │
+│                                 │    │  ┌──────┐ ┌──────┐  │     │ │
+│                                 │    │  │ v3   │ │ v4   │  │     │ │
+│                                 │    │  │(95%) │ │(5%)  │  │     │ │
+│                                 │    │  │      │ │canary│  │     │ │
+│                                 │    │  └──────┘ └──────┘  │     │ │
+│                                 │    └─────────────────────┘     │ │
+│                                 └────────────────────────────────┘ │
+│                                                                     │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  OBSERVABILITY: Prometheus → Grafana + Drift Detector       │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  LIFECYCLE: MLflow → CI/CD → Model Registry → Deploy        │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────┘</div>
+
+  <h3>Interview Scenario: Fraud Detection System</h3>
+  <p><strong>Q: "Design a real-time fraud detection system that scores credit card transactions with &lt;100ms latency at 10,000 TPS."</strong></p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>1️⃣ Serving Pattern</h4>
+      <p>Real-time API. Cannot be batch (need instant decision). Cannot be embedded (model updates frequently, needs centralized features).</p>
+    </div>
+    <div class="card blue">
+      <h4>2️⃣ Architecture</h4>
+      <p>API Gateway → Feature enrichment from Feature Store (user patterns, merchant risk) → ONNX Runtime on GPU with dynamic batching → fraud score + decision.</p>
+    </div>
+    <div class="card green">
+      <h4>3️⃣ Scaling</h4>
+      <p>10K TPS with batch-32 = ~312 calls/sec. Budget: 30ms features, 50ms inference, 20ms overhead. Need ~4 GPU pods with HPA on queue depth.</p>
+    </div>
+    <div class="card purple">
+      <h4>4️⃣ Deployment</h4>
+      <p>Shadow first, then canary (5% → 25% → 100%). Auto-rollback if error rate &gt;0.5% or P99 &gt;200ms. Monitor prediction distribution and false positive rate.</p>
+    </div>
+  </div>
+
+  <h3>Interview Scenario: LLM Chat Application</h3>
+  <p><strong>Q: "Design the serving infrastructure for an internal chatbot powered by a 70B parameter LLM."</strong></p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🧮 Model Optimization</h4>
+      <p>70B FP16 = 140GB → INT4 AWQ → ~35GB. Use 2× A100 80GB with tensor parallelism for headroom and fast generation.</p>
+    </div>
+    <div class="card blue">
+      <h4>🚀 Framework</h4>
+      <p>vLLM with continuous batching, PagedAttention, prefix caching for shared system prompts. OpenAI-compatible API.</p>
+    </div>
+    <div class="card green">
+      <h4>📈 Scaling</h4>
+      <p>Each pod handles ~20-30 concurrent requests. For 200 concurrent users → 7-10 pods. Redis semantic cache for common questions.</p>
+    </div>
+    <div class="card purple">
+      <h4>🛡️ Guardrails</h4>
+      <p>Input: PII detection, prompt injection filtering. Output: toxicity detection, hallucination checks. Rate limiting per user.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Q: "What's the difference between tensor parallelism and pipeline parallelism?"</strong><br><br><strong>Tensor parallelism</strong> splits individual layers across GPUs — each GPU computes a slice of every layer. This reduces per-token latency (all GPUs work on same token simultaneously). Best for <em>latency-sensitive serving</em>. <strong>Pipeline parallelism</strong> assigns different layers to different GPUs and processes micro-batches in pipeline fashion. Maximizes throughput but adds latency. For LLM serving: tensor parallelism. For training: pipeline parallelism.</p>
+  </div>
+</section>
+
+<!-- Screen 8: Quiz & Key Takeaways -->
+<section class="screen screen-alt" id="s8">
+  <h2>Quiz &amp; <span class="accent">Key Takeaways</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: A model needs to score 50 million customer records nightly for a recommendation email. Which serving pattern?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Real-time API with auto-scaling</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">B) Streaming inference via Kafka</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">C) Batch inference with Spark</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Embedded model in the email client</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: A 13B parameter model in INT4 quantization requires approximately how much GPU memory for weights alone?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) ~3.25 GB</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) ~6.5 GB</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) ~13 GB</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) ~26 GB</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: Which deployment strategy runs the new model on production traffic but discards its responses?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Canary deployment</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) Blue-green deployment</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">C) Shadow deployment</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) A/B testing</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: What is the primary advantage of vLLM's PagedAttention over traditional KV-cache management?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) It uses less GPU compute for attention</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) It eliminates the need for KV-cache entirely</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">C) It reduces memory fragmentation/waste</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) It enables larger model sizes on the same GPU</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: Your model's P99 latency suddenly spikes from 100ms to 800ms, but P50 remains at 40ms. Most likely cause?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) The model weights are corrupted</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">B) GPU thermal throttling under load</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">C) A few requests hitting cold cache or GC pauses</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) The model has experienced concept drift</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+
+  <h3>Model Serving — What You Must Remember</h3>
+  <div class="code-block">┌──────────────────────────────────────────────────────────┐
+│          MODEL SERVING — WHAT YOU MUST REMEMBER          │
+│                                                          │
+│  1. PATTERN SELECTION is architecture — batch vs         │
+│     real-time vs streaming vs embedded. Wrong choice     │
+│     = wrong system. Most production systems are hybrid.  │
+│                                                          │
+│  2. MEMORY MATH is non-negotiable:                       │
+│     GPU memory ≈ params × dtype_bytes + KV-cache         │
+│     7B × 2 bytes = 14GB FP16. Know this cold.           │
+│                                                          │
+│  3. vLLM + PagedAttention is the current standard for   │
+│     LLM serving. Continuous batching &gt; static batching.  │
+│                                                          │
+│  4. QUANTIZATION is your best friend:                    │
+│     AWQ INT4 gives 8× size reduction with minimal       │
+│     quality loss. Always quantize for inference.         │
+│                                                          │
+│  5. KUBERNETES + KSERVE is the production deployment     │
+│     stack. InferenceService CRD, autoscaling, canary.    │
+│                                                          │
+│  6. CANARY BEFORE A/B — Validate safety (5%), then      │
+│     measure impact (50/50), then roll out.               │
+│                                                          │
+│  7. MONITOR EVERYTHING — P50/P95/P99 latency,           │
+│     throughput, errors, prediction drift, feature drift. │
+│                                                          │
+│  8. COLD STARTS KILL LATENCY — minReplicas ≥ 1,         │
+│     model warmup, readiness probes.                      │
+│                                                          │
+│  9. MULTI-GPU STRATEGY matters:                          │
+│     Tensor parallel = lower latency (serving)            │
+│     Pipeline parallel = higher throughput (training)     │
+│                                                          │
+│  10. SHADOW → CANARY → A/B → FULL ROLLOUT               │
+│      is the safest deployment progression.               │
+└──────────────────────────────────────────────────────────┘</div>
+
+  <h3>Quick Reference Card</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔢 Key Numbers</h4>
+      <p>FP16 = params × 2 bytes. INT4 = params × 0.5 bytes. A100 = 40/80GB. H100 = 80GB. 99.9% = 8.7hr downtime/year.</p>
+    </div>
+    <div class="card blue">
+      <h4>🚀 Key Tools</h4>
+      <p>vLLM: PagedAttention + continuous batching. Triton: multi-framework + GPU-optimized. KServe: K8s-native autoscaling.</p>
+    </div>
+    <div class="card green">
+      <h4>📏 Key Thresholds</h4>
+      <p>Canary start: 1-5% traffic. PSI drift: &gt;0.2 = significant. GPU util target: 60-80%. Error rate: &lt;0.1%.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight (Final)</div>
+    <p><strong>Parting wisdom</strong>: In ML system design interviews, <strong>don't jump to the model</strong>. Start with requirements (latency, throughput, availability), choose the serving pattern, design the infrastructure, then discuss the model. Interviewers care more about your ability to design a reliable, scalable serving system than your knowledge of transformer architectures. Always mention monitoring, rollback strategies, and cost trade-offs — these separate senior candidates from juniors.</p>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-01-mlops-pipeline/index.html">← Previous: MLOps Pipeline</a>
+  <a href="../module-03-llmops/index.html">Next: LLMOps →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Chat animation
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above — the answer focuses on a core serving concept.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+
+  // Keyboard navigation
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')window.location.href='../module-03-llmops/index.html';if(e.key==='ArrowLeft')window.location.href='../module-01-mlops-pipeline/index.html';});
+})();
+</script>
+</body>
+</html>

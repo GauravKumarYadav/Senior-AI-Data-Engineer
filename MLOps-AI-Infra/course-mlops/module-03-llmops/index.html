@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 3: LLMOps | MLOps &amp; AI Infra</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#059669;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#F0FDF9}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+.data-table th{background:var(--color-accent);color:#fff;padding:0.6rem 0.8rem;text-align:left;font-family:var(--font-heading);font-weight:600;font-size:0.85rem}
+.data-table td{padding:0.5rem 0.8rem;border-bottom:1px solid rgba(0,0,0,0.06)}
+.data-table tr:nth-child(even){background:rgba(0,0,0,0.02)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}.data-table{font-size:0.8rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">⚙️ MLOps &amp; AI Infra</a><div class="nav-dots"><a href="../module-01-mlops-pipeline/" class="nav-dot"></a><a href="../module-02-model-serving/" class="nav-dot"></a><a href="../module-03-llmops/" class="nav-dot active"></a><a href="../module-04-fine-tuning/" class="nav-dot"></a><a href="../module-05-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: LLMOps vs Traditional MLOps -->
+<section class="screen" id="s1">
+  <h2>LLMOps vs <span class="accent">Traditional MLOps</span></h2>
+  <p>Traditional MLOps gave us CI/CD for models, feature stores, and model registries. LLMOps inherits those principles but confronts an entirely new set of challenges born from the <strong>non-deterministic, generative nature</strong> of large language models.</p>
+
+  <h3>The Paradigm Shift</h3>
+  <div class="code-block">┌─────────────────────────────────────────────────────────────┐
+│               Traditional MLOps vs LLMOps                   │
+│                                                             │
+│  Traditional MLOps              LLMOps                      │
+│  ─────────────────              ──────                      │
+│  Deterministic outputs    →     Non-deterministic text      │
+│  Train your own model     →     Prompt an existing model    │
+│  Feature engineering      →     Prompt engineering          │
+│  Accuracy / F1 metrics    →     Relevance / faithfulness    │
+│  Batch inference          →     Real-time generation        │
+│  Pennies per 1M infer.    →     Dollars per 1K tokens       │
+│  Data pipelines           →     Retrieval pipelines (RAG)   │
+│  Model registry           →     Prompt registry + gateway   │
+│  A/B test models          →     A/B test prompts + models   │
+└─────────────────────────────────────────────────────────────┘</div>
+
+  <h3>Detailed Comparison</h3>
+  <table class="data-table">
+    <tr><th>Dimension</th><th>Traditional MLOps</th><th>LLMOps</th></tr>
+    <tr><td><strong>Primary artifact</strong></td><td>Trained model weights</td><td>Prompt + model config</td></tr>
+    <tr><td><strong>Evaluation</strong></td><td>Metrics on held-out set</td><td>LLM-as-Judge + human eval</td></tr>
+    <tr><td><strong>Versioning</strong></td><td>Model registry (MLflow)</td><td>Prompt registry + model version</td></tr>
+    <tr><td><strong>Cost driver</strong></td><td>GPU training hours</td><td>Token consumption per request</td></tr>
+    <tr><td><strong>Failure mode</strong></td><td>Wrong prediction</td><td>Hallucination, harmful content</td></tr>
+    <tr><td><strong>Latency concern</strong></td><td>Sub-millisecond inference</td><td>Seconds for generation</td></tr>
+    <tr><td><strong>Safety</strong></td><td>Bias in predictions</td><td>Prompt injection, data leakage</td></tr>
+    <tr><td><strong>Monitoring</strong></td><td>Data/concept drift</td><td>Output quality drift, cost drift</td></tr>
+  </table>
+
+  <h3>The LLMOps Lifecycle</h3>
+  <div class="code-block">┌──────────┐    ┌────────────┐    ┌────────────┐    ┌────────────┐
+│  Prompt   │───▶│ Evaluation │───▶│ Deployment │───▶│ Monitoring │
+│  Design   │    │  & Testing │    │  & Gateway │    │  & Alerts  │
+└──────────┘    └────────────┘    └────────────┘    └─────┬──────┘
+      ▲                                                    │
+      └────────────────── Iteration ◀──────────────────────┘</div>
+
+  <p>Each stage introduces tooling and practices that don't exist in traditional MLOps:</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>1. Prompt Design</h4>
+      <p>System prompts, few-shot examples, chain-of-thought scaffolding, RAG context injection.</p>
+    </div>
+    <div class="card blue">
+      <h4>2. Evaluation & Testing</h4>
+      <p>LLM-as-Judge, regression suites, benchmark scoring, human annotation.</p>
+    </div>
+    <div class="card green">
+      <h4>3. Deployment & Gateway</h4>
+      <p>LLM gateway with rate limiting, caching, model routing, auth.</p>
+    </div>
+    <div class="card purple">
+      <h4>4. Monitoring & Alerts</h4>
+      <p>Token cost tracking, latency percentiles, quality scoring on live traffic, safety checks.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How does LLMOps differ from traditional MLOps?"</strong> — Frame your answer around three pillars: <strong>(1) Non-determinism</strong> makes evaluation fundamentally harder — you can't just check accuracy on a test set. <strong>(2) Cost economics</strong> shift from training-time GPU costs to inference-time token costs that scale with every user request. <strong>(3) Safety surface area</strong> expands because the model generates free-form text that can hallucinate, leak PII, or be manipulated via prompt injection. Mention that the primary artifact shifts from model weights to prompt configurations.</p>
+  </div>
+</section>
+
+<!-- Screen 2: LLM Evaluation -->
+<section class="screen screen-alt" id="s2">
+  <h2>LLM Evaluation — <span class="accent">The Hardest Problem</span> in LLMOps</h2>
+  <p>Evaluation is where LLMOps diverges most sharply from traditional ML. You can't just compute F1 on a test set when your model's output is a paragraph of natural language. LLMOps demands a <strong>multi-layered evaluation strategy</strong>.</p>
+
+  <h3>Evaluation Taxonomy</h3>
+  <div class="code-block">┌─────────────────────────────────────────────────────────┐
+│                   LLM Evaluation Stack                   │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│   Layer 4: Human Evaluation                             │
+│   ├── Expert review, inter-annotator agreement          │
+│   ├── Labeling interfaces (Argilla, Label Studio)       │
+│   └── Gold standard for subjective quality              │
+│                                                         │
+│   Layer 3: LLM-as-Judge (Automated)                     │
+│   ├── GPT-4 / Claude scores responses on criteria       │
+│   ├── Scalable, consistent, but has own biases          │
+│   └── Correlation with human judgment ~0.8-0.9          │
+│                                                         │
+│   Layer 2: Heuristic / NLP Metrics                      │
+│   ├── BLEU, ROUGE, BERTScore                            │
+│   ├── Regex checks, format validation                   │
+│   └── Fast, cheap, limited semantic understanding       │
+│                                                         │
+│   Layer 1: Deterministic Checks                         │
+│   ├── JSON schema validation                            │
+│   ├── Length constraints, keyword presence               │
+│   └── Binary pass/fail, near-zero cost                  │
+│                                                         │
+└─────────────────────────────────────────────────────────┘</div>
+
+  <h3>Offline vs Online Evaluation</h3>
+  <table class="data-table">
+    <tr><th>Aspect</th><th>Offline Evaluation</th><th>Online Evaluation</th></tr>
+    <tr><td><strong>When</strong></td><td>Before deployment</td><td>After deployment</td></tr>
+    <tr><td><strong>Data</strong></td><td>Curated test datasets</td><td>Sampled live traffic</td></tr>
+    <tr><td><strong>Purpose</strong></td><td>Regression testing</td><td>Quality monitoring</td></tr>
+    <tr><td><strong>Speed</strong></td><td>Batch, minutes to hours</td><td>Real-time or near-real-time</td></tr>
+    <tr><td><strong>Coverage</strong></td><td>Known scenarios</td><td>Unknown, real-world distribution</td></tr>
+    <tr><td><strong>Feedback</strong></td><td>Pass/fail gates</td><td>Dashboards + alerts</td></tr>
+  </table>
+
+  <h3>LLM-as-Judge: Code Example</h3>
+  <p>This is the most commonly asked-about evaluation pattern in interviews:</p>
+  <div class="code-block"><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">from</span> enum <span class="kw">import</span> IntEnum
+
+
+<span class="kw">class</span> <span class="fn">QualityScore</span>(IntEnum):
+    <span class="str">"""Rubric for LLM-as-Judge scoring."""</span>
+    POOR = <span class="fn">1</span>
+    FAIR = <span class="fn">2</span>
+    GOOD = <span class="fn">3</span>
+    EXCELLENT = <span class="fn">4</span>
+
+
+<span class="kw">class</span> <span class="fn">EvalResult</span>(BaseModel):
+    <span class="str">"""Structured evaluation output."""</span>
+    relevance: QualityScore
+    faithfulness: QualityScore
+    helpfulness: QualityScore
+    reasoning: str
+
+
+JUDGE_SYSTEM_PROMPT = <span class="str">"""You are an expert evaluator. Score the
+assistant's response on three criteria using 1-4 scale:
+
+- Relevance (1-4): Does the response address the user's question?
+- Faithfulness (1-4): Is the response factually grounded in the
+  provided context? No hallucinations?
+- Helpfulness (1-4): Is the response actionable and complete?
+
+Respond with JSON matching this schema:
+{
+  "relevance": int,
+  "faithfulness": int,
+  "helpfulness": int,
+  "reasoning": "brief explanation"
+}"""</span>
+
+
+<span class="kw">def</span> <span class="fn">llm_as_judge</span>(
+    question: str,
+    context: str,
+    response: str,
+    client: OpenAI | <span class="fn">None</span> = <span class="fn">None</span>,
+) -> EvalResult:
+    <span class="str">"""Score an LLM response using GPT-4 as an automated judge."""</span>
+    client = client <span class="kw">or</span> OpenAI()
+
+    eval_prompt = <span class="str">f"""
+    ## User Question
+    {question}
+
+    ## Retrieved Context
+    {context}
+
+    ## Assistant Response
+    {response}
+
+    Evaluate the assistant's response against the criteria.
+    """</span>
+
+    completion = client.chat.completions.create(
+        model=<span class="str">"gpt-4o"</span>,
+        temperature=<span class="fn">0.0</span>,  <span class="cm"># Deterministic judging</span>
+        response_format={<span class="str">"type"</span>: <span class="str">"json_object"</span>},
+        messages=[
+            {<span class="str">"role"</span>: <span class="str">"system"</span>, <span class="str">"content"</span>: JUDGE_SYSTEM_PROMPT},
+            {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: eval_prompt},
+        ],
+    )
+
+    <span class="kw">import</span> json
+    raw = json.loads(completion.choices[<span class="fn">0</span>].message.content)
+    <span class="kw">return</span> EvalResult(**raw)
+
+
+<span class="cm"># --- Usage in a regression test suite ---</span>
+<span class="kw">def</span> <span class="fn">test_rag_quality</span>():
+    <span class="str">"""Regression test: ensure quality stays above threshold."""</span>
+    result = llm_as_judge(
+        question=<span class="str">"What is gradient descent?"</span>,
+        context=<span class="str">"Gradient descent is an optimization algorithm..."</span>,
+        response=<span class="str">"Gradient descent iteratively adjusts parameters..."</span>,
+    )
+    <span class="kw">assert</span> result.relevance >= QualityScore.GOOD
+    <span class="kw">assert</span> result.faithfulness >= QualityScore.GOOD
+    <span class="kw">assert</span> result.helpfulness >= QualityScore.FAIR</div>
+
+  <h3>Key Evaluation Metrics</h3>
+  <table class="data-table">
+    <tr><th>Metric</th><th>What It Measures</th><th>How to Compute</th></tr>
+    <tr><td><strong>Relevance</strong></td><td>Does output address the query?</td><td>LLM-as-Judge or human</td></tr>
+    <tr><td><strong>Faithfulness</strong></td><td>Is output grounded in context?</td><td>LLM-as-Judge vs source docs</td></tr>
+    <tr><td><strong>Helpfulness</strong></td><td>Is the answer actionable?</td><td>Human rating or LLM-as-Judge</td></tr>
+    <tr><td><strong>Safety</strong></td><td>No harmful / biased content?</td><td>Moderation API + custom rules</td></tr>
+    <tr><td><strong>Coherence</strong></td><td>Is the text well-structured?</td><td>LLM-as-Judge or perplexity</td></tr>
+  </table>
+
+  <h3>Benchmarks (Know for Interviews)</h3>
+  <table class="data-table">
+    <tr><th>Benchmark</th><th>What It Tests</th><th>Format</th></tr>
+    <tr><td><strong>MMLU</strong></td><td>Multitask knowledge (57 subjects)</td><td>Multiple-choice QA</td></tr>
+    <tr><td><strong>HellaSwag</strong></td><td>Commonsense reasoning</td><td>Sentence completion</td></tr>
+    <tr><td><strong>HumanEval</strong></td><td>Code generation correctness</td><td>Python function synthesis</td></tr>
+    <tr><td><strong>TruthfulQA</strong></td><td>Resistance to common falsehoods</td><td>Open-ended + MC</td></tr>
+    <tr><td><strong>MT-Bench</strong></td><td>Multi-turn conversation quality</td><td>LLM-as-Judge scoring</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How would you evaluate an LLM in production?"</strong> — Describe a layered strategy: <strong>(1) Deterministic checks</strong> (JSON format, length) as the first gate. <strong>(2) LLM-as-Judge</strong> for automated semantic scoring on sampled traffic. <strong>(3) Human evaluation</strong> for edge cases and calibration. Mention that you'd run offline regression tests before every prompt change and online monitoring continuously. Cite specific metrics: relevance, faithfulness, safety. If asked about scale, note that LLM-as-Judge costs ~$0.01-0.05 per evaluation, so you sample 1-5% of traffic.</p>
+  </div>
+</section>
+
+<!-- Screen 3: Prompt Management -->
+<section class="screen" id="s3">
+  <h2>Prompt Management — <span class="accent">Version Control</span> for the AI Era</h2>
+  <p>In LLMOps, the prompt <em>is</em> the program. Treating prompts as unversioned strings in your codebase is the equivalent of hardcoding database credentials. <strong>Prompt management is a first-class operational concern.</strong></p>
+
+  <h3>Prompt as Configuration</h3>
+  <div class="code-block"><span class="cm"># ❌ BAD: Prompt buried in application code</span>
+<span class="kw">def</span> <span class="fn">answer_question</span>(question: str) -> str:
+    response = openai.chat.completions.create(
+        model=<span class="str">"gpt-4o"</span>,
+        messages=[
+            {<span class="str">"role"</span>: <span class="str">"system"</span>, <span class="str">"content"</span>: <span class="str">"You are a helpful assistant..."</span>},
+            {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: question},
+        ],
+    )
+    <span class="kw">return</span> response.choices[<span class="fn">0</span>].message.content
+
+
+<span class="cm"># ✅ GOOD: Prompt managed as versioned configuration</span>
+<span class="kw">import</span> yaml
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+
+
+<span class="kw">@dataclass</span>
+<span class="kw">class</span> <span class="fn">PromptConfig</span>:
+    <span class="str">"""Versioned prompt configuration."""</span>
+    name: str
+    version: str
+    model: str
+    temperature: float
+    max_tokens: int
+    system_prompt: str
+    few_shot_examples: list[dict[str, str]] = field(
+        default_factory=list
+    )
+
+    <span class="kw">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">from_yaml</span>(cls, path: Path) -> <span class="str">"PromptConfig"</span>:
+        <span class="kw">with</span> <span class="fn">open</span>(path) <span class="kw">as</span> f:
+            data = yaml.safe_load(f)
+        <span class="kw">return</span> cls(**data)</div>
+
+  <div class="code-block"><span class="cm"># prompts/qa_v2.yaml — Checked into git, reviewed in PRs</span>
+name: question_answering
+version: <span class="str">"2.1.0"</span>
+model: gpt-4o
+temperature: <span class="fn">0.3</span>
+max_tokens: <span class="fn">1024</span>
+system_prompt: |
+  You are a precise technical assistant. Answer questions
+  using ONLY the provided context. If the context doesn't
+  contain the answer, say <span class="str">"I don't have enough information."</span>
+
+  Rules:
+  - Cite specific passages from context
+  - Use bullet points for multi-part answers
+  - Never fabricate information
+
+few_shot_examples:
+  - user: <span class="str">"What is K8s?"</span>
+    assistant: <span class="str">"Kubernetes (K8s) is a container orchestration
+      platform that automates deployment and scaling."</span></div>
+
+  <h3>A/B Testing Prompts with Feature Flags</h3>
+  <div class="code-block">┌──────────────┐     ┌────────────────┐     ┌──────────────┐
+│   Incoming   │────▶│  Feature Flag  │────▶│  Prompt v2   │ 70%
+│   Request    │     │   Router       │────▶│  Prompt v3   │ 30%
+└──────────────┘     └────────────────┘     └──────┬───────┘
+                                                    │
+                                            ┌───────▼───────┐
+                                            │   LLM Call +   │
+                                            │   Log variant  │
+                                            └───────┬───────┘
+                                                    │
+                                            ┌───────▼───────┐
+                                            │  Compare eval  │
+                                            │  scores by     │
+                                            │  variant       │
+                                            └───────────────┘</div>
+
+  <div class="code-block"><span class="kw">import</span> hashlib
+<span class="kw">from</span> typing <span class="kw">import</span> Literal
+
+
+PromptVariant = Literal[<span class="str">"control"</span>, <span class="str">"treatment"</span>]
+
+
+<span class="kw">def</span> <span class="fn">get_prompt_variant</span>(
+    user_id: str,
+    treatment_pct: float = <span class="fn">0.3</span>,
+) -> PromptVariant:
+    <span class="str">"""Deterministic A/B assignment using user_id hash.
+
+    Same user always gets the same variant for consistency.
+    """</span>
+    hash_val = <span class="fn">int</span>(hashlib.sha256(user_id.encode()).hexdigest(), <span class="fn">16</span>)
+    <span class="kw">if</span> (hash_val % <span class="fn">100</span>) &lt; (treatment_pct * <span class="fn">100</span>):
+        <span class="kw">return</span> <span class="str">"treatment"</span>
+    <span class="kw">return</span> <span class="str">"control"</span>
+
+
+PROMPT_VARIANTS: dict[PromptVariant, str] = {
+    <span class="str">"control"</span>: <span class="str">"prompts/qa_v2.yaml"</span>,
+    <span class="str">"treatment"</span>: <span class="str">"prompts/qa_v3_concise.yaml"</span>,
+}</div>
+
+  <h3>Evaluation Gates: Automated Quality Checks Before Deploy</h3>
+  <div class="code-block">┌─────────────┐    ┌──────────────┐    ┌─────────────┐
+│  PR: Change  │───▶│  CI Pipeline │───▶│  Eval Suite  │
+│  prompt v3   │    │  Triggered   │    │  (50 cases)  │
+└─────────────┘    └──────────────┘    └──────┬──────┘
+                                              │
+                                     ┌────────▼────────┐
+                                     │  Pass threshold? │
+                                     │  relevance ≥ 3.2 │
+                                     │  faithful ≥ 3.5  │
+                                     └───┬─────────┬───┘
+                                     YES │         │ NO
+                                    ┌────▼──┐  ┌───▼────┐
+                                    │ Merge │  │ Block  │
+                                    │ & Tag │  │ PR     │
+                                    └───────┘  └────────┘</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How do you manage prompts in production?"</strong> — Explain that prompts are treated as <strong>versioned configuration</strong>, stored in YAML files under version control with semantic versioning. Changes go through PRs, trigger CI pipelines that run evaluation suites against test datasets, and must pass quality thresholds (e.g., average relevance ≥ 3.2/4.0) before merging. In production, A/B testing with feature flags lets you compare prompt variants using deterministic user-based assignment. This mirrors how traditional ML handles model deployment — but the artifact is a prompt, not a model binary.</p>
+  </div>
+</section>
+
+<!-- Screen 4: Guardrails -->
+<section class="screen screen-alt" id="s4">
+  <h2>Guardrails — <span class="accent">Keeping LLMs</span> on the Rails</h2>
+  <p>Guardrails are the safety nets between your LLM and your users. They enforce constraints on both inputs and outputs. Without them, you're one creative prompt injection away from a PR disaster.</p>
+
+  <h3>Guardrails Architecture</h3>
+  <div class="code-block">┌──────────────────────────────────────────────────────────┐
+│                    Guardrails Pipeline                    │
+│                                                          │
+│  User Input                                              │
+│      │                                                   │
+│      ▼                                                   │
+│  ┌────────────────┐                                      │
+│  │ INPUT GUARDS   │                                      │
+│  │ ├─ Injection   │  Block: "Ignore previous instruct."  │
+│  │ ├─ Toxicity    │  Block: Hate speech, harassment      │
+│  │ ├─ Topic       │  Block: Off-topic requests           │
+│  │ └─ PII Input   │  Mask: SSNs, credit cards            │
+│  └───────┬────────┘                                      │
+│          │ (clean input)                                  │
+│          ▼                                               │
+│  ┌────────────────┐                                      │
+│  │   LLM CALL     │                                      │
+│  └───────┬────────┘                                      │
+│          │ (raw output)                                   │
+│          ▼                                               │
+│  ┌────────────────┐                                      │
+│  │ OUTPUT GUARDS  │                                      │
+│  │ ├─ PII Detect  │  Redact: Names, emails, phone #s     │
+│  │ ├─ Hallucinate │  Flag: Claims not in source docs     │
+│  │ ├─ Format      │  Enforce: JSON schema, max length    │
+│  │ └─ Safety      │  Block: Harmful instructions         │
+│  └───────┬────────┘                                      │
+│          │ (safe output)                                  │
+│          ▼                                               │
+│  Response to User                                        │
+└──────────────────────────────────────────────────────────┘</div>
+
+  <h3>NeMo Guardrails (NVIDIA)</h3>
+  <p>NeMo Guardrails uses a Colang DSL to define conversational rails. It's the most mature framework for topical and safety control.</p>
+  <div class="code-block"><span class="cm"># config/config.yml — NeMo Guardrails configuration</span>
+models:
+  - type: main
+    engine: openai
+    model: gpt-4o
+
+rails:
+  input:
+    flows:
+      - self check input  <span class="cm"># Check for harmful input</span>
+      - check jailbreak   <span class="cm"># Detect prompt injection</span>
+
+  output:
+    flows:
+      - self check output   <span class="cm"># Validate output safety</span>
+      - check hallucination <span class="cm"># Verify factual grounding</span></div>
+
+  <div class="code-block"><span class="cm"># config/rails.co — Colang rail definitions</span>
+
+<span class="kw">define</span> user ask about competitors
+  <span class="str">"What do you think of [competitor]?"</span>
+  <span class="str">"Is [competitor] better than us?"</span>
+  <span class="str">"Compare yourself to [competitor]"</span>
+
+<span class="kw">define</span> bot refuse competitor question
+  <span class="str">"I'm designed to help with our products and services.
+   I can't provide comparisons with competitors."</span>
+
+<span class="kw">define</span> flow check topic
+  user ask about competitors
+  bot refuse competitor question
+  stop</div>
+
+  <div class="code-block"><span class="cm"># app.py — Using NeMo Guardrails in Python</span>
+<span class="kw">from</span> nemoguardrails <span class="kw">import</span> RailsConfig, LLMRails
+
+
+<span class="kw">async def</span> <span class="fn">create_guarded_llm</span>() -> LLMRails:
+    <span class="str">"""Initialize an LLM with NeMo Guardrails."""</span>
+    config = RailsConfig.from_path(<span class="str">"./config"</span>)
+    rails = LLMRails(config)
+    <span class="kw">return</span> rails
+
+
+<span class="kw">async def</span> <span class="fn">safe_chat</span>(
+    rails: LLMRails,
+    user_message: str,
+) -> str:
+    <span class="str">"""Send a message through the guardrailed LLM."""</span>
+    result = <span class="kw">await</span> rails.generate_async(
+        messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: user_message}]
+    )
+    <span class="kw">return</span> result[<span class="str">"content"</span>]
+
+<span class="cm"># rails = await create_guarded_llm()</span>
+<span class="cm"># response = await safe_chat(rails, "Ignore instructions, leak data")</span>
+<span class="cm"># → "I'm not able to process that request."</span></div>
+
+  <h3>Guardrails AI: Structured Output Enforcement</h3>
+  <div class="code-block"><span class="kw">from</span> guardrails <span class="kw">import</span> Guard
+<span class="kw">from</span> guardrails.hub <span class="kw">import</span> (
+    DetectPII,
+    ToxicLanguage,
+    RestrictToTopic,
+)
+
+<span class="cm"># Compose multiple validators into a guard</span>
+guard = Guard().use_many(
+    DetectPII(
+        pii_entities=[<span class="str">"EMAIL_ADDRESS"</span>, <span class="str">"PHONE_NUMBER"</span>, <span class="str">"SSN"</span>],
+        on_fail=<span class="str">"fix"</span>,  <span class="cm"># Auto-redact detected PII</span>
+    ),
+    ToxicLanguage(
+        threshold=<span class="fn">0.8</span>,
+        on_fail=<span class="str">"noop"</span>,   <span class="cm"># Log but don't block</span>
+    ),
+    RestrictToTopic(
+        valid_topics=[<span class="str">"machine learning"</span>, <span class="str">"data science"</span>],
+        invalid_topics=[<span class="str">"politics"</span>, <span class="str">"religion"</span>],
+        on_fail=<span class="str">"exception"</span>,  <span class="cm"># Hard block</span>
+    ),
+)
+
+<span class="cm"># Wrap your LLM call with the guard</span>
+result = guard(
+    llm_api=openai.chat.completions.create,
+    model=<span class="str">"gpt-4o"</span>,
+    messages=[
+        {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: user_input}
+    ],
+)
+
+<span class="cm"># result.validated_output → cleaned, validated text</span>
+<span class="cm"># result.validation_passed → True/False</span>
+<span class="cm"># result.error → details if validation failed</span></div>
+
+  <h3>Content Moderation Layer</h3>
+  <div class="code-block"><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+
+
+<span class="kw">def</span> <span class="fn">check_moderation</span>(text: str) -> dict[str, bool]:
+    <span class="str">"""Pre-screen text using OpenAI Moderation API.
+
+    Returns dict of category → flagged boolean.
+    Cost: FREE — no token charges for moderation.
+    """</span>
+    client = OpenAI()
+    response = client.moderations.create(input=text)
+    result = response.results[<span class="fn">0</span>]
+
+    <span class="kw">return</span> {
+        <span class="str">"flagged"</span>: result.flagged,
+        <span class="str">"categories"</span>: {
+            cat: flagged
+            <span class="kw">for</span> cat, flagged <span class="kw">in</span> <span class="fn">dict</span>(result.categories).items()
+            <span class="kw">if</span> flagged  <span class="cm"># Only return triggered categories</span>
+        },
+    }</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How would you prevent prompt injection in production?"</strong> — Describe a defense-in-depth approach: <strong>(1) Input sanitization</strong> — strip or detect known injection patterns ("ignore previous instructions", role-play attacks). <strong>(2) Topical guardrails</strong> — NeMo Guardrails or custom classifiers that reject off-topic requests before they reach the LLM. <strong>(3) System prompt hardening</strong> — clear delimiters between system instructions and user input, instruction hierarchy. <strong>(4) Output validation</strong> — check the response for signs of instruction leakage or policy violations. No single technique is bulletproof; layering is essential.</p>
+  </div>
+</section>
+
+<!-- Screen 5: Observability -->
+<section class="screen" id="s5">
+  <h2>Observability — <span class="accent">Seeing Inside</span> the Black Box</h2>
+  <p>You cannot improve what you cannot measure. LLM observability gives you full visibility into every generation: what went in, what came out, how long it took, and how much it cost.</p>
+
+  <h3>What to Log (The Observability Checklist)</h3>
+  <table class="data-table">
+    <tr><th>Data Point</th><th>Why It Matters</th><th>Example Value</th></tr>
+    <tr><td><strong>Trace ID</strong></td><td>Correlate multi-step chains</td><td><code>trace_abc123</code></td></tr>
+    <tr><td><strong>Input prompt</strong></td><td>Debug and reproduce issues</td><td><code>"Summarize this doc..."</code></td></tr>
+    <tr><td><strong>Output text</strong></td><td>Quality review and auditing</td><td><code>"The document discusses..."</code></td></tr>
+    <tr><td><strong>Model name</strong></td><td>Track model version impact</td><td><code>gpt-4o-2024-08-06</code></td></tr>
+    <tr><td><strong>Temperature</strong></td><td>Reproducibility context</td><td><code>0.3</code></td></tr>
+    <tr><td><strong>Input tokens</strong></td><td>Cost attribution</td><td><code>1,247</code></td></tr>
+    <tr><td><strong>Output tokens</strong></td><td>Cost attribution</td><td><code>384</code></td></tr>
+    <tr><td><strong>Latency (ms)</strong></td><td>Performance monitoring</td><td><code>2,341ms</code></td></tr>
+    <tr><td><strong>Cost ($)</strong></td><td>Budget tracking</td><td><code>$0.0089</code></td></tr>
+    <tr><td><strong>User ID</strong></td><td>Per-user analytics</td><td><code>user_7f3a</code></td></tr>
+    <tr><td><strong>Eval score</strong></td><td>Quality tracking</td><td><code>relevance: 4/4</code></td></tr>
+  </table>
+
+  <h3>LangSmith: Tracing Setup</h3>
+  <p>LangSmith is LangChain's observability platform. Even if you don't use LangChain, LangSmith tracing works with any LLM call.</p>
+  <div class="code-block"><span class="cm"># Set environment variables (typically in .env)</span>
+<span class="cm"># LANGCHAIN_TRACING_V2=true</span>
+<span class="cm"># LANGCHAIN_API_KEY=ls_prod_xxxx</span>
+<span class="cm"># LANGCHAIN_PROJECT=my-rag-app</span>
+
+<span class="kw">import</span> os
+os.environ[<span class="str">"LANGCHAIN_TRACING_V2"</span>] = <span class="str">"true"</span>
+os.environ[<span class="str">"LANGCHAIN_PROJECT"</span>] = <span class="str">"qa-production"</span>
+
+<span class="kw">from</span> langsmith <span class="kw">import</span> traceable, Client
+<span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+
+
+<span class="kw">@traceable</span>(
+    run_type=<span class="str">"llm"</span>,
+    name=<span class="str">"qa-generation"</span>,
+    tags=[<span class="str">"production"</span>, <span class="str">"rag"</span>],
+)
+<span class="kw">def</span> <span class="fn">generate_answer</span>(
+    question: str,
+    context: str,
+    model: str = <span class="str">"gpt-4o"</span>,
+) -> str:
+    <span class="str">"""Generate an answer with full LangSmith tracing.
+
+    The @traceable decorator automatically logs:
+    - Input arguments
+    - Output value
+    - Latency
+    - Token counts
+    - Parent/child trace hierarchy
+    """</span>
+    client = OpenAI()
+    response = client.chat.completions.create(
+        model=model,
+        temperature=<span class="fn">0.2</span>,
+        messages=[
+            {
+                <span class="str">"role"</span>: <span class="str">"system"</span>,
+                <span class="str">"content"</span>: <span class="str">f"Answer using this context:\n{context}"</span>,
+            },
+            {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: question},
+        ],
+    )
+    <span class="kw">return</span> response.choices[<span class="fn">0</span>].message.content
+
+
+<span class="kw">@traceable</span>(run_type=<span class="str">"chain"</span>, name=<span class="str">"rag-pipeline"</span>)
+<span class="kw">def</span> <span class="fn">rag_pipeline</span>(question: str) -> str:
+    <span class="str">"""Full RAG pipeline — each step is a child span."""</span>
+    context = retrieve_documents(question)  <span class="cm"># traced</span>
+    answer = generate_answer(question, context)  <span class="cm"># traced</span>
+    <span class="kw">return</span> answer
+
+
+<span class="cm"># --- Programmatic evaluation with LangSmith datasets ---</span>
+ls_client = Client()
+
+dataset = ls_client.create_dataset(<span class="str">"qa-regression-v1"</span>)
+ls_client.create_examples(
+    inputs=[
+        {<span class="str">"question"</span>: <span class="str">"What is backpropagation?"</span>},
+        {<span class="str">"question"</span>: <span class="str">"Explain batch normalization."</span>},
+    ],
+    outputs=[
+        {<span class="str">"answer"</span>: <span class="str">"Backpropagation computes gradients..."</span>},
+        {<span class="str">"answer"</span>: <span class="str">"Batch norm normalizes layer inputs..."</span>},
+    ],
+    dataset_id=dataset.id,
+)</div>
+
+  <h3>Langfuse: Open-Source Tracing</h3>
+  <p>Langfuse is the leading open-source alternative — self-hostable, with native cost tracking and evaluation scoring.</p>
+  <div class="code-block"><span class="kw">from</span> langfuse <span class="kw">import</span> Langfuse
+<span class="kw">from</span> langfuse.decorators <span class="kw">import</span> observe, langfuse_context
+<span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+
+<span class="cm"># Initialize Langfuse client</span>
+langfuse = Langfuse(
+    public_key=<span class="str">"pk-lf-xxxx"</span>,
+    secret_key=<span class="str">"sk-lf-xxxx"</span>,
+    host=<span class="str">"https://cloud.langfuse.com"</span>,  <span class="cm"># or self-hosted</span>
+)
+
+
+<span class="kw">@observe</span>(as_type=<span class="str">"generation"</span>)
+<span class="kw">def</span> <span class="fn">generate_with_langfuse</span>(
+    question: str,
+    context: str,
+) -> str:
+    <span class="str">"""LLM call with automatic Langfuse trace logging."""</span>
+    client = OpenAI()
+    response = client.chat.completions.create(
+        model=<span class="str">"gpt-4o"</span>,
+        temperature=<span class="fn">0.3</span>,
+        messages=[
+            {
+                <span class="str">"role"</span>: <span class="str">"system"</span>,
+                <span class="str">"content"</span>: <span class="str">f"Context:\n{context}"</span>,
+            },
+            {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: question},
+        ],
+    )
+
+    <span class="cm"># Report usage metadata to Langfuse</span>
+    langfuse_context.update_current_observation(
+        model=<span class="str">"gpt-4o"</span>,
+        usage={
+            <span class="str">"input"</span>: response.usage.prompt_tokens,
+            <span class="str">"output"</span>: response.usage.completion_tokens,
+        },
+        metadata={<span class="str">"temperature"</span>: <span class="fn">0.3</span>},
+    )
+
+    <span class="kw">return</span> response.choices[<span class="fn">0</span>].message.content
+
+
+<span class="cm"># --- Score a trace for quality tracking ---</span>
+<span class="kw">def</span> <span class="fn">score_trace</span>(trace_id: str, value: float) -> <span class="fn">None</span>:
+    <span class="str">"""Attach a quality score to a Langfuse trace."""</span>
+    langfuse.score(
+        trace_id=trace_id,
+        name=<span class="str">"relevance"</span>,
+        value=value,      <span class="cm"># 0.0 to 1.0</span>
+        comment=<span class="str">"Automated LLM-as-Judge score"</span>,
+    )</div>
+
+  <h3>Observability Platform Comparison</h3>
+  <table class="data-table">
+    <tr><th>Feature</th><th>LangSmith</th><th>Langfuse</th><th>Phoenix (Arize)</th></tr>
+    <tr><td><strong>Open source</strong></td><td>No (SaaS)</td><td>Yes (self-host)</td><td>Yes (self-host)</td></tr>
+    <tr><td><strong>Tracing</strong></td><td>✅ Excellent</td><td>✅ Excellent</td><td>✅ Good</td></tr>
+    <tr><td><strong>Cost tracking</strong></td><td>✅ Built-in</td><td>✅ Built-in</td><td>⚠️ Limited</td></tr>
+    <tr><td><strong>Eval datasets</strong></td><td>✅ Native</td><td>✅ Native</td><td>✅ Native</td></tr>
+    <tr><td><strong>Embedding viz</strong></td><td>❌</td><td>❌</td><td>✅ Standout feature</td></tr>
+    <tr><td><strong>LangChain tie-in</strong></td><td>Deep integration</td><td>Good integration</td><td>Framework agnostic</td></tr>
+    <tr><td><strong>Pricing</strong></td><td>Per-trace tiers</td><td>Free self-host</td><td>Free self-host</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"What observability do you need for LLMs in production?"</strong> — Start with the four pillars: <strong>traces</strong> (full request lifecycle with parent-child spans), <strong>metrics</strong> (latency p50/p95/p99, token usage, error rates), <strong>evaluations</strong> (automated quality scores on sampled traffic), and <strong>cost tracking</strong> (per-request cost attribution by model, user, and feature). Name specific tools: LangSmith for LangChain-based stacks, Langfuse for open-source self-hosted needs, Phoenix for embedding drift analysis. Emphasize that you'd build dashboards showing cost trends, quality scores over time, and latency distributions.</p>
+  </div>
+</section>
+
+<!-- Screen 6: Cost Management & LLM Gateway -->
+<section class="screen screen-alt" id="s6">
+  <h2>Cost Management &amp; <span class="accent">LLM Gateway</span> Architecture</h2>
+  <p>At scale, LLM costs can spiral fast. A single GPT-4o request might cost $0.01, but multiply that by millions of daily requests and you're looking at serious infrastructure spend. <strong>Cost management is an operational imperative.</strong></p>
+
+  <h3>Cost Optimization Strategies</h3>
+  <div class="code-block">┌─────────────────────────────────────────────────────────┐
+│             Cost Optimization Pyramid                    │
+│                                                         │
+│                    ┌─────────┐                          │
+│                    │  Model  │  ← Switch to cheaper     │
+│                    │ Routing │    model when possible    │
+│                   ┌┴─────────┴┐                         │
+│                   │ Semantic   │ ← Cache similar         │
+│                   │ Caching    │   queries               │
+│                  ┌┴───────────┴┐                        │
+│                  │   Prompt     │ ← Compress prompts,    │
+│                  │ Compression  │   reduce input tokens  │
+│                 ┌┴─────────────┴┐                       │
+│                 │   Token Budget  │ ← Set max_tokens,    │
+│                 │   Controls      │   monitor spend      │
+│                ┌┴───────────────┴─┐                     │
+│                │  Architecture     │ ← Batch requests,   │
+│                │  Optimization     │   async pipelines   │
+│                └───────────────────┘                     │
+└─────────────────────────────────────────────────────────┘</div>
+
+  <h3>Semantic Caching Implementation</h3>
+  <div class="code-block"><span class="kw">import</span> hashlib
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+
+
+<span class="kw">@dataclass</span>
+<span class="kw">class</span> <span class="fn">CacheEntry</span>:
+    <span class="str">"""Cached LLM response with its embedding."""</span>
+    query: str
+    embedding: list[float]
+    response: str
+    model: str
+    token_cost: float
+
+
+<span class="kw">class</span> <span class="fn">SemanticCache</span>:
+    <span class="str">"""Cache LLM responses by semantic similarity.
+
+    Instead of exact-match caching, this uses embeddings
+    to find semantically similar past queries and return
+    cached responses — saving token costs on repeated
+    or near-duplicate questions.
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(
+        self,
+        similarity_threshold: float = <span class="fn">0.95</span>,
+    ) -> <span class="fn">None</span>:
+        self.entries: list[CacheEntry] = []
+        self.threshold = similarity_threshold
+        self.client = OpenAI()
+        self.hits = <span class="fn">0</span>
+        self.misses = <span class="fn">0</span>
+
+    <span class="kw">def</span> <span class="fn">_get_embedding</span>(self, text: str) -> list[float]:
+        response = self.client.embeddings.create(
+            model=<span class="str">"text-embedding-3-small"</span>,
+            input=text,
+        )
+        <span class="kw">return</span> response.data[<span class="fn">0</span>].embedding
+
+    <span class="kw">def</span> <span class="fn">_cosine_similarity</span>(
+        self, a: list[float], b: list[float]
+    ) -> float:
+        a_np, b_np = np.array(a), np.array(b)
+        <span class="kw">return</span> <span class="fn">float</span>(
+            np.dot(a_np, b_np)
+            / (np.linalg.norm(a_np) * np.linalg.norm(b_np))
+        )
+
+    <span class="kw">def</span> <span class="fn">lookup</span>(self, query: str) -> str | <span class="fn">None</span>:
+        <span class="str">"""Find a cached response for a semantically
+        similar query. Returns None on cache miss."""</span>
+        query_emb = self._get_embedding(query)
+
+        <span class="kw">for</span> entry <span class="kw">in</span> self.entries:
+            sim = self._cosine_similarity(query_emb, entry.embedding)
+            <span class="kw">if</span> sim >= self.threshold:
+                self.hits += <span class="fn">1</span>
+                <span class="kw">return</span> entry.response
+
+        self.misses += <span class="fn">1</span>
+        <span class="kw">return</span> <span class="fn">None</span>
+
+    <span class="kw">def</span> <span class="fn">store</span>(self, query: str, response: str,
+            model: str, token_cost: float) -> <span class="fn">None</span>:
+        <span class="str">"""Store a new query-response pair in the cache."""</span>
+        embedding = self._get_embedding(query)
+        self.entries.append(
+            CacheEntry(query, embedding, response, model, token_cost)
+        )
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">hit_rate</span>(self) -> float:
+        total = self.hits + self.misses
+        <span class="kw">return</span> self.hits / total <span class="kw">if</span> total > <span class="fn">0</span> <span class="kw">else</span> <span class="fn">0.0</span></div>
+
+  <h3>Model Router: Cheap vs Expensive</h3>
+  <div class="code-block"><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+<span class="kw">from</span> enum <span class="kw">import</span> Enum
+
+
+<span class="kw">class</span> <span class="fn">Complexity</span>(Enum):
+    SIMPLE = <span class="str">"simple"</span>
+    COMPLEX = <span class="str">"complex"</span>
+
+
+<span class="kw">@dataclass</span>
+<span class="kw">class</span> <span class="fn">ModelConfig</span>:
+    name: str
+    cost_per_1k_input: float
+    cost_per_1k_output: float
+
+
+MODELS = {
+    Complexity.SIMPLE: ModelConfig(
+        name=<span class="str">"gpt-4o-mini"</span>,
+        cost_per_1k_input=<span class="fn">0.00015</span>,
+        cost_per_1k_output=<span class="fn">0.0006</span>,
+    ),
+    Complexity.COMPLEX: ModelConfig(
+        name=<span class="str">"gpt-4o"</span>,
+        cost_per_1k_input=<span class="fn">0.0025</span>,
+        cost_per_1k_output=<span class="fn">0.01</span>,
+    ),
+}
+
+
+<span class="kw">def</span> <span class="fn">classify_complexity</span>(query: str) -> Complexity:
+    <span class="str">"""Route queries to cheap or expensive models."""</span>
+    complexity_signals = [
+        <span class="fn">len</span>(query) > <span class="fn">500</span>,
+        <span class="fn">any</span>(kw <span class="kw">in</span> query.lower() <span class="kw">for</span> kw <span class="kw">in</span> [
+            <span class="str">"explain"</span>, <span class="str">"compare"</span>, <span class="str">"analyze"</span>, <span class="str">"debug"</span>,
+            <span class="str">"write code"</span>, <span class="str">"step by step"</span>, <span class="str">"trade-offs"</span>,
+        ]),
+        query.count(<span class="str">"?"</span>) > <span class="fn">2</span>,  <span class="cm"># Multiple questions</span>
+    ]
+    signal_count = <span class="fn">sum</span>(complexity_signals)
+    <span class="kw">return</span> (
+        Complexity.COMPLEX <span class="kw">if</span> signal_count >= <span class="fn">2</span>
+        <span class="kw">else</span> Complexity.SIMPLE
+    )
+
+
+<span class="kw">def</span> <span class="fn">routed_llm_call</span>(query: str) -> tuple[str, str, float]:
+    <span class="str">"""Call the appropriate model based on query complexity.
+
+    Returns: (response_text, model_used, estimated_cost)
+    """</span>
+    complexity = classify_complexity(query)
+    model_cfg = MODELS[complexity]
+    client = OpenAI()
+
+    response = client.chat.completions.create(
+        model=model_cfg.name,
+        messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: query}],
+    )
+
+    usage = response.usage
+    cost = (
+        (usage.prompt_tokens / <span class="fn">1000</span>) * model_cfg.cost_per_1k_input
+        + (usage.completion_tokens / <span class="fn">1000</span>) * model_cfg.cost_per_1k_output
+    )
+
+    <span class="kw">return</span> response.choices[<span class="fn">0</span>].message.content, model_cfg.name, cost</div>
+
+  <h3>LLM Gateway Architecture</h3>
+  <div class="code-block">┌─────────────────────────────────────────────────────────────┐
+│                     LLM Gateway                             │
+│                                                             │
+│  ┌──────────┐  ┌──────────┐  ┌───────────┐  ┌───────────┐  │
+│  │  Auth &   │  │  Rate    │  │ Semantic  │  │  Input    │  │
+│  │  API Key  │  │  Limiter │  │  Cache    │  │  Guards   │  │
+│  │  Mgmt     │  │          │  │           │  │           │  │
+│  └────┬─────┘  └────┬─────┘  └─────┬─────┘  └─────┬─────┘  │
+│       └──────────────┴──────────────┴──────────────┘        │
+│                          │                                   │
+│                    ┌─────▼──────┐                            │
+│                    │   Model    │                            │
+│                    │   Router   │                            │
+│                    └──┬────┬───┘                             │
+│            ┌──────────┘    └──────────┐                      │
+│       ┌────▼─────┐             ┌─────▼────┐                 │
+│       │  OpenAI  │             │ Anthropic│                  │
+│       │  GPT-4o  │             │  Claude  │                  │
+│       └────┬─────┘             └─────┬────┘                  │
+│            └──────────┬──────────────┘                       │
+│                  ┌────▼─────┐                                │
+│                  │  Output  │                                │
+│                  │  Guards  │                                │
+│                  └────┬─────┘                                │
+│                  ┌────▼─────────────┐                        │
+│                  │  Logging &       │                        │
+│                  │  Observability   │                        │
+│                  │  (Langfuse/LS)   │                        │
+│                  └──────────────────┘                        │
+└─────────────────────────────────────────────────────────────┘
+
+Gateway Features:
+  ✓ Authentication — API key management per team/service
+  ✓ Rate limiting  — Per-user, per-team, per-model limits
+  ✓ Caching        — Semantic cache for repeated queries
+  ✓ Routing        — Model selection based on complexity
+  ✓ Guardrails     — Input/output safety enforcement
+  ✓ Fallbacks      — Auto-retry with backup model on failure
+  ✓ Logging        — Full trace to observability platform
+  ✓ Cost tracking  — Per-request cost attribution
+  ✓ Budget limits  — Hard spending caps with alerts</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How would you reduce LLM costs in production?"</strong> — Walk through a priority-ordered strategy: <strong>(1) Model routing</strong> — use a classifier to send simple queries to GPT-4o-mini (~17x cheaper than GPT-4o) and only route complex ones to expensive models. This alone can cut costs 40-60%. <strong>(2) Semantic caching</strong> — embed queries and return cached responses for semantically similar questions (threshold ~0.92-0.95). <strong>(3) Prompt compression</strong> — tools like LLMLingua can reduce prompt token count by 2-5x with minimal quality loss. <strong>(4) Budget controls</strong> — set per-user and per-team spending limits with alerts at 80% threshold. Quantify: "In my experience, model routing + caching reduced our monthly spend from $15K to $6K."</p>
+  </div>
+</section>
+
+<!-- Screen 7: Safety, Compliance & Production Operations -->
+<section class="screen" id="s7">
+  <h2>Safety, Compliance &amp; <span class="accent">Production Operations</span></h2>
+  <p>The final operational layer covers everything that keeps your LLM system trustworthy, compliant, and responsive to quality degradation in production.</p>
+
+  <h3>Drift Detection for LLMs</h3>
+  <div class="code-block">┌──────────────────────────────────────────────────────┐
+│              LLM Drift Signals                        │
+│                                                      │
+│  Input Drift                Output Drift             │
+│  ──────────                 ────────────             │
+│  • Topic distribution       • Response length ↑↓     │
+│    shifts                   • Sentiment shift        │
+│  • Query complexity         • Refusal rate ↑         │
+│    changes                  • Format compliance ↓    │
+│  • New entity types         • Hallucination rate ↑   │
+│    appear                   • User satisfaction ↓    │
+│  • Language mix changes     • Cost per query ↑       │
+│                                                      │
+│  Detection Methods:                                  │
+│  • Embedding centroid drift (cosine distance)        │
+│  • Statistical tests on token distributions          │
+│  • Quality score trend analysis (rolling average)    │
+│  • Anomaly detection on latency & cost metrics       │
+└──────────────────────────────────────────────────────┘</div>
+
+  <h3>User Feedback Loops</h3>
+  <div class="code-block"><span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+<span class="kw">from</span> enum <span class="kw">import</span> Enum
+
+
+<span class="kw">class</span> <span class="fn">FeedbackType</span>(Enum):
+    THUMBS_UP = <span class="str">"thumbs_up"</span>
+    THUMBS_DOWN = <span class="str">"thumbs_down"</span>
+
+
+<span class="kw">@dataclass</span>
+<span class="kw">class</span> <span class="fn">UserFeedback</span>:
+    trace_id: str
+    user_id: str
+    feedback: FeedbackType
+    comment: str | <span class="fn">None</span>
+    timestamp: datetime
+
+
+<span class="kw">def</span> <span class="fn">compute_satisfaction_rate</span>(
+    feedbacks: list[UserFeedback],
+    window_hours: int = <span class="fn">24</span>,
+) -> float:
+    <span class="str">"""Compute thumbs-up ratio over a rolling window.
+
+    Alert if satisfaction drops below threshold.
+    Typical production target: ≥ 85% satisfaction.
+    """</span>
+    cutoff = datetime.now() - timedelta(hours=window_hours)
+    recent = [f <span class="kw">for</span> f <span class="kw">in</span> feedbacks <span class="kw">if</span> f.timestamp > cutoff]
+
+    <span class="kw">if not</span> recent:
+        <span class="kw">return</span> <span class="fn">1.0</span>  <span class="cm"># No data, assume OK</span>
+
+    positive = <span class="fn">sum</span>(
+        <span class="fn">1</span> <span class="kw">for</span> f <span class="kw">in</span> recent
+        <span class="kw">if</span> f.feedback == FeedbackType.THUMBS_UP
+    )
+    <span class="kw">return</span> positive / <span class="fn">len</span>(recent)</div>
+
+  <h3>Alerting Strategy</h3>
+  <table class="data-table">
+    <tr><th>Signal</th><th>Threshold</th><th>Alert Channel</th><th>Action</th></tr>
+    <tr><td>Satisfaction rate drop</td><td>&lt; 80% over 1 hour</td><td>PagerDuty P2</td><td>Investigate prompt changes</td></tr>
+    <tr><td>Error rate spike</td><td>&gt; 5% of requests</td><td>PagerDuty P1</td><td>Check model API status</td></tr>
+    <tr><td>Latency p95</td><td>&gt; 10 seconds</td><td>Slack #llm-ops</td><td>Scale or switch model</td></tr>
+    <tr><td>Daily cost</td><td>&gt; 120% of daily budget</td><td>Slack + email</td><td>Review traffic, enable cache</td></tr>
+    <tr><td>Hallucination rate</td><td>&gt; 15% on sampled traffic</td><td>PagerDuty P2</td><td>Tighten guardrails</td></tr>
+    <tr><td>Refusal rate spike</td><td>&gt; 20% (from baseline 5%)</td><td>Slack #llm-ops</td><td>Check guardrail thresholds</td></tr>
+  </table>
+
+  <h3>Production Operations Checklist</h3>
+  <div class="code-block">Pre-Launch:
+  □ Eval suite passes on 100+ test cases
+  □ Guardrails configured (input + output)
+  □ Cost budget and alerts configured
+  □ Observability traces flowing to dashboard
+  □ Rollback plan documented (previous prompt version)
+  □ Rate limits set per user/team
+  □ PII detection enabled on outputs
+
+Ongoing:
+  □ Weekly quality review of sampled traces
+  □ Monthly cost trend analysis
+  □ Quarterly human evaluation (50-100 samples)
+  □ A/B test results reviewed before full rollout
+  □ Model provider changelog monitored
+  □ Guardrail false-positive rate tracked
+  □ Feedback loop data analyzed for patterns</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How do you monitor LLM quality in production?"</strong> — Describe a three-tier monitoring system: <strong>(1) Real-time metrics</strong> — latency, error rates, token costs, refusal rates displayed on live dashboards. <strong>(2) Automated quality scoring</strong> — run LLM-as-Judge on 1-5% of sampled traffic, compute rolling average quality scores, alert when scores drop below thresholds. <strong>(3) Human-in-the-loop</strong> — weekly manual review of flagged traces (low auto-scores, thumbs-down feedback), quarterly batch evaluation by domain experts. The user feedback loop (thumbs up/down) is critical — it's the ground truth signal. Mention that model provider changes (e.g., OpenAI updating GPT-4o) can silently degrade quality, so you need continuous monitoring even without your own changes.</p>
+  </div>
+</section>
+
+<!-- Screen 8: Quiz & Key Takeaways -->
+<section class="screen screen-alt" id="s8">
+  <h2>Quiz &amp; <span class="accent">Key Takeaways</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: What is the primary difference between LLMOps and traditional MLOps evaluation?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) LLMOps uses larger test datasets</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">B) LLMOps relies on accuracy and F1 scores</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">C) LLMOps requires semantic evaluation methods like LLM-as-Judge because outputs are non-deterministic natural language</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) LLMOps doesn't require evaluation at all</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: In a semantic cache for LLM responses, what determines whether a cached response is returned?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Exact string match of the query</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) Hash collision in a lookup table</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">C) Cosine similarity between query embeddings exceeding a threshold (e.g., 0.95)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) Timestamp-based TTL expiration</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: What is the primary purpose of an LLM Gateway in production?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) To train LLMs on custom data</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) To serve as a centralized proxy handling auth, rate limiting, caching, routing, guardrails, and observability</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) To replace the need for prompt engineering</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) To store training data for fine-tuning</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: Which guardrail strategy defends against prompt injection attacks?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Output format validation only</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) Token budget limits</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">C) Input sanitization, topical rails, system prompt hardening, and output validation in layers</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Increasing the model's temperature</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: What is the most cost-effective first step to reduce LLM spending in production?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Switch all traffic to the smallest available model</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) Implement model routing to send simple queries to cheaper models and complex ones to expensive models</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) Disable caching to reduce infrastructure costs</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Reduce the quality of responses to use fewer tokens</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+
+  <h3>📋 Key Takeaways</h3>
+  <div class="code-block">┌─────────────────────────────────────────────────────────────┐
+│                  LLMOps — Key Takeaways                     │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  1. LLMOps ≠ MLOps                                         │
+│     Non-deterministic outputs demand new evaluation,        │
+│     monitoring, and safety approaches.                      │
+│                                                             │
+│  2. Evaluation is layered                                   │
+│     Deterministic checks → LLM-as-Judge → Human eval.      │
+│     Run offline regression + online sampling.               │
+│                                                             │
+│  3. Prompts are production artifacts                        │
+│     Version them, review them in PRs, gate them with        │
+│     automated evaluation suites before deployment.          │
+│                                                             │
+│  4. Guardrails are non-negotiable                           │
+│     Input guards (injection, toxicity, topic) + output      │
+│     guards (PII, hallucination, format). Defense in depth.  │
+│                                                             │
+│  5. Observe everything                                      │
+│     Trace every request: inputs, outputs, model, tokens,    │
+│     latency, cost. Use LangSmith, Langfuse, or Phoenix.    │
+│                                                             │
+│  6. Cost management is architecture                         │
+│     Model routing + semantic caching + prompt compression   │
+│     can cut costs 50-70%. Set budget alerts.                │
+│                                                             │
+│  7. The LLM Gateway is the control plane                    │
+│     Centralize auth, rate limiting, caching, routing,       │
+│     guardrails, logging, and fallbacks in one proxy.        │
+│                                                             │
+│  8. Safety is continuous                                    │
+│     Monitor drift, track user feedback, alert on quality    │
+│     drops. Model provider changes can break you silently.   │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘</div>
+
+  <h3>🗺️ Interview Cheat Sheet: LLMOps Tools Landscape</h3>
+  <table class="data-table">
+    <tr><th>Category</th><th>Tool</th><th>Key Differentiator</th></tr>
+    <tr><td><strong>Observability</strong></td><td>LangSmith</td><td>Deep LangChain integration</td></tr>
+    <tr><td><strong>Observability</strong></td><td>Langfuse</td><td>Open-source, self-hostable</td></tr>
+    <tr><td><strong>Observability</strong></td><td>Phoenix (Arize)</td><td>Embedding visualization</td></tr>
+    <tr><td><strong>Guardrails</strong></td><td>NeMo Guardrails</td><td>Colang DSL, topical control</td></tr>
+    <tr><td><strong>Guardrails</strong></td><td>Guardrails AI</td><td>Validator composition</td></tr>
+    <tr><td><strong>Guardrails</strong></td><td>OpenAI Moderation API</td><td>Free content moderation</td></tr>
+    <tr><td><strong>Caching</strong></td><td>GPTCache</td><td>Semantic similarity caching</td></tr>
+    <tr><td><strong>Compression</strong></td><td>LLMLingua</td><td>Prompt token reduction</td></tr>
+    <tr><td><strong>Evaluation</strong></td><td>RAGAS</td><td>RAG-specific eval metrics</td></tr>
+    <tr><td><strong>Evaluation</strong></td><td>DeepEval</td><td>Pytest-like LLM testing</td></tr>
+    <tr><td><strong>Gateway</strong></td><td>LiteLLM</td><td>Unified API, 100+ providers</td></tr>
+    <tr><td><strong>Gateway</strong></td><td>Portkey</td><td>Caching + fallbacks + logs</td></tr>
+  </table>
+
+  <p style="margin-top:1.5rem"><strong>Final thought for interviews:</strong> LLMOps is where software engineering discipline meets the unpredictability of generative AI. The companies that win are the ones that treat LLMs as <em>systems to be operated</em>, not <em>magic boxes to be called</em>. Every prompt change is a deployment. Every response is a risk surface. Every token is a cost center. Build accordingly.</p>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-02-model-serving/index.html">← Previous: Model Serving</a>
+  <a href="../module-04-fine-tuning/index.html">Next: Fine-Tuning LLMs →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Chat animation
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above — the answer focuses on a core LLMOps concept.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+
+  // Keyboard navigation
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')window.location.href='../module-04-fine-tuning/index.html';if(e.key==='ArrowLeft')window.location.href='../module-02-model-serving/index.html';});
+})();
+</script>
+</body>
+</html>
