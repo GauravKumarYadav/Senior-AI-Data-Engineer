@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 3: Project Management & Culture | Behavioral & Leadership</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#9333EA;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+.nav-dot.gauntlet{background:var(--color-error)}
+.nav-dot.gauntlet.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.screen ul,.screen ol{max-width:700px;margin-bottom:1rem;font-size:1.02rem;padding-left:1.5rem}
+.screen li{margin-bottom:0.4rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card-grid.three-col{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.orange{border-top-color:#D97706}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p,.card ul{font-size:0.9rem;color:var(--color-muted);margin-bottom:0.3rem}
+.card ul{padding-left:1.2rem}
+.card ul li{margin-bottom:0.2rem}
+.aha{background:linear-gradient(135deg,#F5F0FF,#EDE5FF);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#F5F0FF}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#C084FC}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}.code-block .accent{color:#C084FC}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+.story-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.88rem}
+.story-table th,.story-table td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+.story-table th{font-family:var(--font-heading);font-weight:700;font-size:0.85rem;background:rgba(147,51,234,0.06);position:sticky;top:0}
+.story-table td{vertical-align:top}
+.story-table tr:hover{background:rgba(147,51,234,0.03)}
+.workflow-steps{display:flex;flex-wrap:wrap;gap:0.5rem;margin:1.5rem 0;align-items:center}
+.workflow-step{background:#fff;border:2px solid var(--color-accent);border-radius:100px;padding:0.5rem 1.2rem;font-family:var(--font-heading);font-weight:600;font-size:0.9rem;color:var(--color-accent)}
+.workflow-arrow{font-size:1.2rem;color:var(--color-muted)}
+.checklist{list-style:none;padding:0;margin:1rem 0}
+.checklist li{padding:0.5rem 0;font-size:0.98rem;display:flex;align-items:flex-start;gap:0.6rem;border-bottom:1px solid rgba(0,0,0,0.04)}
+.checklist li:last-child{border:none}
+.section-alt-inner{max-width:900px;margin:0 auto;padding:6rem 1.5rem 4rem}
+section.screen.screen-alt{max-width:100%;padding:0}
+section.screen.screen-alt .screen-inner{max-width:900px;margin:0 auto;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;min-height:100vh;min-height:100dvh}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}.story-table{font-size:0.78rem}.story-table th,.story-table td{padding:0.4rem}.workflow-steps{flex-direction:column;align-items:flex-start}.workflow-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎤 Behavioral &amp; Leadership</a><div class="nav-dots"><a href="../module-01-star-method/" class="nav-dot" title="STAR Method"></a><a href="../module-02-communication/" class="nav-dot" title="Communication"></a><a href="../module-03-project-management/" class="nav-dot active" title="Project Management"></a><a href="../module-04-incident-management/" class="nav-dot" title="Incident Management"></a><a href="../module-05-interview-gauntlet/" class="nav-dot gauntlet" title="Interview Gauntlet"></a></div></div></nav>
+
+<!-- ==================== SCREEN 1: Project Management & Culture Intro ==================== -->
+<section class="screen" id="s1">
+  <h2>📋 Project Management &amp; <span class="accent">Culture</span></h2>
+  <p>Here's the uncomfortable truth: <strong>most data engineering projects fail not because of bad code, but because of bad estimates, unmanaged scope, and cultural misalignment.</strong></p>
+  <p>At the senior+ level, you're not just writing pipelines — you're <span class="tooltip-term" data-tip="Leading work means owning timelines, managing stakeholders, navigating scope changes, and fitting into organizational culture. It's the difference between 'I built it' and 'I shipped it.'">leading work</span>, managing humans, and fitting into organizations. The technical skills get you the interview; the project management skills get you the offer.</p>
+  <p>Data engineering estimates are <em>notoriously</em> hard. Every discipline struggles with estimation, but DE is worse:</p>
+  <ul>
+    <li><strong>Data quality is a black box</strong> — you won't know the source has 40% nulls in a "required" field until you're knee-deep in integration</li>
+    <li><strong>Schema changes are silent killers</strong> — an upstream team pushes a migration on Friday at 5pm, your pipeline breaks Saturday morning</li>
+    <li><strong>Vendor dependencies are outside your control</strong> — "2 business days" turns into 3 weeks with legal, security, and procurement</li>
+    <li><strong>Requirements are vague</strong> — "dashboard for customer churn" sounds simple until you discover 7 definitions of "churn" across 4 teams</li>
+    <li><strong>Infrastructure has hidden lead times</strong> — new Kafka cluster? Cloud permissions? Each has its own approval chain</li>
+  </ul>
+
+  <div class="aha">
+    <div class="aha-title">💡 The Interview Signal</div>
+    <p>Saying "I've been burned before so I pad my estimates" is weak. Saying "I use three-point estimation and break projects into phases with explicit unknowns" is strong. <strong>Demonstrate that you have a system, not just experience.</strong></p>
+  </div>
+
+  <p>This module covers the full spectrum: estimation techniques, milestone planning, scope management, stakeholder communication, and deep cultural fluency for Amazon, Google, Meta, and startups. Let's build your project leadership toolkit.</p>
+</section>
+
+<!-- ==================== SCREEN 2: Estimating Timelines ==================== -->
+<section class="screen screen-alt" id="s2">
+  <div class="screen-inner">
+  <h2>Estimating <span class="accent">Timelines</span></h2>
+  <p>Your go-to framework: the <span class="tooltip-term" data-tip="For every task, generate Optimistic, Most Likely, and Pessimistic estimates. Formula: Expected = (O + 4M + P) / 6. This accounts for the fact that pessimistic scenarios happen more often than optimistic ones.">3-Point Estimation</span> technique. For every task, generate three numbers:</p>
+
+  <div class="card-grid three-col">
+    <div class="card green">
+      <h4>🟢 Optimistic (O)</h4>
+      <p><strong>Everything goes right.</strong> No surprises. API is clean, schema is stable, auth is straightforward.</p>
+      <p style="color:var(--color-error);font-size:0.85rem">Happens: almost never.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔵 Most Likely (M)</h4>
+      <p><strong>Reasonable assumptions hold.</strong> Normal friction. Some data quality issues, pagination, rate limiting.</p>
+      <p style="color:var(--color-info);font-size:0.85rem">This is your gut estimate.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--color-error)">
+      <h4>🔴 Pessimistic (P)</h4>
+      <p><strong>Major blockers hit.</strong> Dependencies slip. API docs are wrong, vendor takes weeks, schema changes mid-build.</p>
+      <p style="color:var(--color-error);font-size:0.85rem">More often than you think.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="kw">Formula:</span>  Expected = (<span class="fn">O</span> + 4×<span class="fn">M</span> + <span class="fn">P</span>) / 6
+
+<span class="cm">// Example: New REST API ingestion pipeline</span>
+<span class="fn">O</span> =  5 days   <span class="cm">// clean API, stable schema</span>
+<span class="fn">M</span> = 10 days   <span class="cm">// some data quality issues, pagination</span>
+<span class="fn">P</span> = 20 days   <span class="cm">// API docs wrong, vendor delays, schema changes</span>
+
+<span class="str">Expected = (5 + 40 + 20) / 6 ≈ 11 days</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 The 1.5x Buffer Rule</div>
+    <p>After your 3-point estimate, apply a multiplier: <strong>1.0–1.2x</strong> (done this before), <strong>1.3–1.5x</strong> (familiar domain, some unknowns), <strong>1.5–2.0x</strong> (greenfield with new stack). Never present the buffer as "padding" — frame it as <strong>"accounting for integration risk and unknowns."</strong> The former sounds lazy; the latter sounds experienced.</p>
+  </div>
+
+  <h3>Phase Breakdown</h3>
+  <p>Don't give one big number. Break every project into phases:</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔍 Discovery (5–15%)</h4>
+      <p>Source systems, data contracts, stakeholder requirements. Talk to people. Profile data.</p>
+    </div>
+    <div class="card blue">
+      <h4>📐 Design (10–15%)</h4>
+      <p>Architecture decisions, schema design, tech selection. Write a design doc. Get review.</p>
+    </div>
+    <div class="card green">
+      <h4>⚙️ Implementation (40–50%)</h4>
+      <p>The actual coding. This is the part engineers <strong>over-index</strong> on when estimating.</p>
+    </div>
+    <div class="card orange">
+      <h4>🧪 Testing (15–20%)</h4>
+      <p>Unit tests, integration tests, data quality validation, load testing. The part engineers <strong>under-index</strong> on.</p>
+    </div>
+    <div class="card purple">
+      <h4>🚀 Rollout (10–15%)</h4>
+      <p>Deployment, monitoring, runbooks, stakeholder training, shadow mode / canary period.</p>
+    </div>
+  </div>
+
+  <h3>Worked Example: CRM → Data Lake → Dashboard</h3>
+  <div style="overflow-x:auto;margin:1rem 0">
+  <table class="story-table">
+    <thead>
+      <tr><th>Phase</th><th>Optimistic</th><th>Likely</th><th>Pessimistic</th><th>Expected</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Discovery &amp; data profiling</td><td>2d</td><td>3d</td><td>5d</td><td>3d</td></tr>
+      <tr><td>Schema design &amp; contracts</td><td>2d</td><td>3d</td><td>5d</td><td>3d</td></tr>
+      <tr><td>Ingestion pipeline (API → lake)</td><td>3d</td><td>5d</td><td>10d</td><td>6d</td></tr>
+      <tr><td>Transformation layer (dbt/Spark)</td><td>3d</td><td>5d</td><td>8d</td><td>5d</td></tr>
+      <tr><td>Dashboard / semantic layer</td><td>2d</td><td>3d</td><td>5d</td><td>3d</td></tr>
+      <tr><td>Testing &amp; validation</td><td>2d</td><td>4d</td><td>7d</td><td>4d</td></tr>
+      <tr><td>Deployment &amp; monitoring</td><td>1d</td><td>2d</td><td>4d</td><td>2d</td></tr>
+      <tr><td><strong>Total</strong></td><td><strong>15d</strong></td><td><strong>25d</strong></td><td><strong>44d</strong></td><td><strong>26d</strong></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Bad Estimate</h4>
+      <ul><li>"It'll take 2 weeks."</li></ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Good Estimate</h4>
+      <ul><li>"I'm estimating 5–6 weeks end-to-end, with a working prototype by week 3. The biggest risk is the CRM API — I'll validate data quality during discovery and update the estimate after week 1."</li></ul>
+    </div>
+  </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 3: Breaking Down Large Projects ==================== -->
+<section class="screen" id="s3">
+  <h2>Breaking Down <span class="accent">Large Projects</span></h2>
+  <p>The single most important concept for senior engineers: <strong>deliver end-to-end value as early as possible.</strong></p>
+
+  <h3>The "Thin Vertical Slice" Approach</h3>
+  <p>A <span class="tooltip-term" data-tip="Instead of building all ingestion, then all transformation, then all serving — build ONE pipeline, ONE model, ONE output end-to-end first. You uncover integration issues in week 1, not week 8.">thin vertical slice</span> means building a narrow but complete path through the entire system. One source → one transformation → one output. Prove the pattern, then parallelize.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Anti-Pattern</h4>
+      <ul><li>"We spent 6 weeks building the ingestion layer for all 12 sources. Then discovered the transformation logic needed a different grain. We had to re-do most of the ingestion."</li></ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Better Approach</h4>
+      <ul><li>"We picked the highest-priority source, built ingestion → transformation → output in 2 weeks. Validated the pattern. Then parallelized the remaining sources."</li></ul>
+    </div>
+  </div>
+
+  <h3>Milestone Structure</h3>
+  <div class="workflow-steps">
+    <div class="workflow-step">🔍 Discovery<br><small style="font-weight:400;font-size:0.75rem">1–2 weeks — requirements &amp; profiling</small></div>
+    <span class="workflow-arrow">→</span>
+    <div class="workflow-step">🧪 Prototype<br><small style="font-weight:400;font-size:0.75rem">1–2 weeks — thin vertical slice</small></div>
+    <span class="workflow-arrow">→</span>
+    <div class="workflow-step">🏗️ MVP<br><small style="font-weight:400;font-size:0.75rem">2–4 weeks — production-quality core</small></div>
+    <span class="workflow-arrow">→</span>
+    <div class="workflow-step">🛡️ Hardening<br><small style="font-weight:400;font-size:0.75rem">1–2 weeks — perf, alerts, edge cases</small></div>
+    <span class="workflow-arrow">→</span>
+    <div class="workflow-step">🚀 Launch<br><small style="font-weight:400;font-size:0.75rem">1 week — training, docs, handoff</small></div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔍 Discovery</h4>
+      <ul>
+        <li>Stakeholder interviews &amp; requirements</li>
+        <li>Source system analysis &amp; data profiling</li>
+        <li>Technical feasibility assessment</li>
+        <li>Risk identification</li>
+      </ul>
+      <p style="color:var(--color-success);font-size:0.85rem;margin-top:0.5rem">✅ Done when: written project brief + architecture sketch</p>
+    </div>
+    <div class="card blue">
+      <h4>🧪 Prototype</h4>
+      <ul>
+        <li>Build the thin vertical slice</li>
+        <li>One source → one transform → one output</li>
+        <li>Hacky is fine. Hard-coded values are fine.</li>
+        <li>Goal: prove the pattern</li>
+      </ul>
+      <p style="color:var(--color-success);font-size:0.85rem;margin-top:0.5rem">✅ Done when: working end-to-end flow with real data</p>
+    </div>
+    <div class="card green">
+      <h4>🏗️ MVP</h4>
+      <ul>
+        <li>Production-quality code for core use case</li>
+        <li>Error handling, logging, monitoring</li>
+        <li>Core data quality checks</li>
+        <li>Documentation for handoff</li>
+      </ul>
+      <p style="color:var(--color-success);font-size:0.85rem;margin-top:0.5rem">✅ Done when: primary stakeholder can use the output</p>
+    </div>
+    <div class="card orange">
+      <h4>🛡️ Hardening</h4>
+      <ul>
+        <li>Remaining sources / dimensions</li>
+        <li>Performance optimization &amp; load testing</li>
+        <li>Alerting, runbooks, edge cases</li>
+      </ul>
+      <p style="color:var(--color-success);font-size:0.85rem;margin-top:0.5rem">✅ Done when: comfortable going on vacation</p>
+    </div>
+  </div>
+
+  <h3>Project Brief Template</h3>
+  <div class="code-block"><span class="kw"># Project Brief:</span> <span class="fn">[Project Name]</span>
+
+<span class="kw">## Problem Statement</span>
+<span class="cm">[2-3 sentences. What's broken? What's the cost of inaction?]</span>
+
+<span class="kw">## Proposed Solution</span>
+<span class="cm">[2-3 sentences. What are we building? High-level approach.]</span>
+
+<span class="kw">## Success Criteria</span>
+<span class="str">- [ ] [Measurable outcome 1]
+- [ ] [Measurable outcome 2]
+- [ ] [Measurable outcome 3]</span>
+
+<span class="kw">## Scope</span>
+<span class="fn">In scope:</span>  <span class="cm">[explicit list]</span>
+<span class="fn">Out of scope:</span>  <span class="cm">[THIS IS THE MOST IMPORTANT SECTION]</span>
+
+<span class="kw">## Milestones</span>
+Discovery complete  → Week 1  → Brief + arch sketch
+Prototype demo      → Week 3  → E2E flow, 1 source
+MVP                 → Week 6  → Production pipeline
+Launch              → Week 8  → Full deploy + monitoring
+
+<span class="kw">## Risks</span>
+<span class="cm">| Risk | Likelihood | Impact | Mitigation |</span>
+
+<span class="kw">## Team &amp; Stakeholders</span>
+<span class="fn">Owner:</span> <span class="str">[you]</span>
+<span class="fn">Stakeholders:</span> <span class="str">[who cares]</span>
+<span class="fn">Dependencies:</span> <span class="str">[other teams / systems]</span></div>
+
+  <h3>Worked Example: Real-Time Fraud Detection Pipeline</h3>
+  <div style="overflow-x:auto;margin:1rem 0">
+  <table class="story-table">
+    <thead>
+      <tr><th>Milestone</th><th>Weeks</th><th>Key Activities</th><th>Deliverable</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Discovery</strong></td><td>1–2</td><td>Interview fraud ops, profile transaction data, evaluate Kafka/Kinesis/Pub/Sub, identify ML requirements</td><td>Project brief, architecture diagram, risk register</td></tr>
+      <tr><td><strong>Prototype</strong></td><td>3–4</td><td>Streaming ingestion for one source, rule-based fraud flag (txns &gt;$10K from new accounts), basic Grafana dashboard</td><td>Working demo with real data in dev</td></tr>
+      <tr><td><strong>MVP</strong></td><td>5–8</td><td>ML model integration, all priority sources, schema validation, dead-letter queues, Slack/PagerDuty alerting</td><td>System in shadow mode (scoring, not blocking)</td></tr>
+      <tr><td><strong>Hardening</strong></td><td>9–10</td><td>Load test at 3x peak, chaos engineering, backfill capability, runbook, p99 latency tuning</td><td>System passes load test &amp; failure scenarios</td></tr>
+      <tr><td><strong>Launch</strong></td><td>11–12</td><td>Gradual rollout 10%→50%→100%, fraud ops training, monitoring review with SRE, retrospective</td><td>Live in production, team self-sufficient</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>Walking through this milestone structure when asked "how do you approach a large project?" demonstrates senior-level thinking. You're not just coding — you're <strong>de-risking by proving patterns first, delivering value incrementally, and planning for the messy reality of production systems.</strong></p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 4: Handling Scope Creep ==================== -->
+<section class="screen screen-alt" id="s4">
+  <div class="screen-inner">
+  <h2>Handling <span class="accent">Scope Creep</span></h2>
+  <p>Scope creep in DE is insidious because each individual request sounds small and reasonable:</p>
+  <ul>
+    <li><strong>"Add one more data source"</strong> — completely different schema and update cadence</li>
+    <li><strong>"Add one more metric"</strong> — requires joining 3 new tables with undefined business logic</li>
+    <li><strong>"Backfill the last 2 years"</strong> — fundamentally different engineering problem</li>
+    <li><strong>"Make it real-time instead of daily"</strong> — you just changed the architecture</li>
+    <li><strong>"Also serve the ML team"</strong> — different SLAs, schemas, freshness requirements</li>
+  </ul>
+  <p>Each adds 1–3 days <em>minimum</em>. Stack five and your 6-week project is now 10 weeks — but nobody adjusted the deadline.</p>
+
+  <h3>The "Yes, And Here's the Trade-Off" Framework</h3>
+  <p>Never say "no." Say <strong>"yes, and here's what that means":</strong></p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>1️⃣ Acknowledge</h4>
+      <p>Validate the request's value. "That would make the analysis much richer."</p>
+    </div>
+    <div class="card blue">
+      <h4>2️⃣ Quantify Impact</h4>
+      <p>Explain the cost. "That's a different event schema — I'll need 3–4 days for schema mapping and testing."</p>
+    </div>
+    <div class="card green">
+      <h4>3️⃣ Present Options</h4>
+      <p>"Option A: add it now, push launch by a week. Option B: launch on time, add it as a fast follow."</p>
+    </div>
+    <div class="card orange">
+      <h4>4️⃣ Let Them Decide</h4>
+      <p>The stakeholder owns prioritization. You're the expert providing information, not the blocker.</p>
+    </div>
+  </div>
+
+  <h3>Scope Change Log</h3>
+  <div style="overflow-x:auto;margin:1rem 0">
+  <table class="story-table">
+    <thead>
+      <tr><th>Date</th><th>Requested By</th><th>Change</th><th>Impact</th><th>Decision</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Feb 10</td><td>PM</td><td>Add mobile source</td><td>+4 days</td><td>Approved; new deadline Mar 22</td></tr>
+      <tr><td>Feb 18</td><td>Analytics</td><td>Add cohort metrics</td><td>+3 days</td><td>Deferred to Phase 2</td></tr>
+      <tr><td>Feb 25</td><td>VP</td><td>Real-time refresh</td><td>+2 weeks</td><td>Declined; daily meets needs</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Senior Signal</div>
+    <p>Mentioning that you keep a scope change log signals senior maturity. Projects don't fail because of one big mistake — they fail because of <strong>20 small, undocumented scope expansions.</strong></p>
+  </div>
+
+  <h3>Full STAR Story: Managing Scope Creep</h3>
+  <div class="translate">
+    <div class="translate-code"><span class="cm">// ─── SITUATION ──────────────────</span>
+Leading a <span class="fn">customer 360 data model</span>
+for marketing analytics. Original
+scope: <span class="str">5 data sources, daily refresh,
+8-week timeline.</span>
+
+<span class="cm">// ─── TASK ───────────────────────</span>
+By week 3, <span class="fn">6 additional requests</span>:
+3 more sources, real-time refresh,
+predicted LTV metric, self-serve
+query layer. Each from a different
+stakeholder, each <span class="str">"critical."</span>
+
+<span class="cm">// ─── ACTION ─────────────────────</span>
+<span class="kw">Called a scope review meeting</span> with
+all stakeholders + PM. Prepared a
+one-page document showing:
+- Original scope
+- All requested additions
+- Cumulative impact: <span class="str">8 → 14 weeks</span>
+- Proposed phased plan:
+
+<span class="fn">Phase 1</span> (wk 1-8): original 5 + top 2
+<span class="fn">Phase 2</span> (wk 9-11): remaining + LTV
+<span class="fn">Phase 3</span> (wk 12-14): real-time + query
+
+<span class="kw">Asked each stakeholder to rank</span> their
+requests by business impact.
+
+<span class="cm">// ─── RESULT ─────────────────────</span>
+Group agreed on phased plan. <span class="str">Phase 1
+launched on time.</span> Two Phase 3
+requests ultimately deprioritized —
+business need changed.
+
+PM called the scope review meeting
+<span class="str">"the most productive 30 minutes
+of the quarter."</span></div>
+    <div class="translate-eng">
+      <div class="line">🎬 <strong>SITUATION</strong></div>
+      <div class="line">Clear context: project type, scope, timeline</div>
+      <div class="line">Sets up the tension immediately</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🎯 <strong>TASK</strong></div>
+      <div class="line">Specific number of requests = credible</div>
+      <div class="line">"Each 'critical'" = realistic detail</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⚡ <strong>ACTION</strong></div>
+      <div class="line">🔑 Proactive meeting, not reactive</div>
+      <div class="line">One-page doc = structured thinking</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Quantified impact: 8→14 weeks</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Phased plan = pragmatic, not "no"</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔑 Let stakeholders own prioritization</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📊 <strong>RESULT</strong></div>
+      <div class="line">On-time delivery ✅</div>
+      <div class="line">Avoided 14-week death march ✅</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Stakeholder quote = powerful proof</div>
+      <div class="line">&nbsp;</div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 5: Managing Stakeholder Expectations ==================== -->
+<section class="screen" id="s5">
+  <h2>Managing <span class="accent">Stakeholder Expectations</span></h2>
+  <p>The first two weeks of a project determine whether stakeholders trust you for the remaining ten.</p>
+
+  <h3>Stakeholder Mapping</h3>
+  <div style="overflow-x:auto;margin:1rem 0">
+  <table class="story-table">
+    <thead>
+      <tr><th>Stakeholder</th><th>What They Care About</th><th>Communication Style</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Product Manager</strong></td><td>On-time delivery, feature completeness</td><td>Weekly syncs, JIRA updates</td></tr>
+      <tr><td><strong>Analytics / DS</strong></td><td>Data quality, schema stability, freshness</td><td>Slack, data contracts, schema docs</td></tr>
+      <tr><td><strong>Eng Leadership</strong></td><td>Risk, resource allocation, tech debt</td><td>Bi-weekly updates, design reviews</td></tr>
+      <tr><td><strong>Downstream Consumers</strong></td><td>API stability, SLAs, breaking changes</td><td>Changelogs, migration guides</td></tr>
+      <tr><td><strong>Executives</strong></td><td>Business outcomes, timelines, blockers</td><td>Monthly summaries, R/Y/G status</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Bad News Delivery Formula</h3>
+  <p>Bad news doesn't age well. Deliver it <strong>early, honestly, and with a plan.</strong></p>
+  <div class="card-grid">
+    <div class="card" style="border-top-color:var(--color-error)">
+      <h4>1️⃣ Problem</h4>
+      <p>State the issue clearly. No hedging. "The vendor API has a rate limit we didn't know about."</p>
+    </div>
+    <div class="card orange">
+      <h4>2️⃣ Impact</h4>
+      <p>What does this mean? "The daily sync would take over 80 hours — obviously doesn't work."</p>
+    </div>
+    <div class="card blue">
+      <h4>3️⃣ Plan</h4>
+      <p>Present options. "(a) Request rate limit increase — ticket filed, expect response Thursday. (b) Switch to bulk export — 3 days of rework."</p>
+    </div>
+    <div class="card green">
+      <h4>4️⃣ Ask</h4>
+      <p>What do you need? "Can you help escalate the vendor request? Should I start bulk export as a backup?"</p>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Bad News Anti-Patterns</h4>
+      <ul>
+        <li>Waiting until the deadline to mention it</li>
+        <li>Burying it in a status update</li>
+        <li>Framing it as someone else's fault</li>
+        <li>Presenting the problem without options</li>
+        <li>Downplaying: "it's probably fine"</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Trust-Building Principles</h4>
+      <ul>
+        <li>Do what you said you'd do — every time</li>
+        <li>Under-promise and over-deliver</li>
+        <li>Share uncertainty: "I'm 70% confident"</li>
+        <li>Admit mistakes quickly with revised plans</li>
+        <li>Give credit generously to teammates</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Highest-ROI Habit</div>
+    <p>The weekly update email: five minutes of writing saves hours of "is it done yet?" interruptions. <strong>"I'll send a weekly update every Friday by 3pm — what we shipped, what's next, any blockers."</strong> Establish this in week 1 and you'll never be chased.</p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 6: Amazon Leadership Principles ==================== -->
+<section class="screen screen-alt" id="s6">
+  <div class="screen-inner">
+  <h2>Amazon <span class="accent">Leadership Principles</span></h2>
+  <p>Amazon's 16 LPs are the most formalized culture framework in tech. Every interview question maps to at least one LP. <strong>Know them cold.</strong></p>
+
+  <h3>All 16 at a Glance</h3>
+  <div style="overflow-x:auto;margin:1rem 0">
+  <table class="story-table">
+    <thead>
+      <tr><th>#</th><th>Principle</th><th>One-Liner</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td><strong>Customer Obsession</strong></td><td>Start with the customer, work backwards</td></tr>
+      <tr><td>2</td><td><strong>Ownership</strong></td><td>Think long-term; never say "not my job"</td></tr>
+      <tr><td>3</td><td><strong>Invent and Simplify</strong></td><td>Find new ways and simplify processes</td></tr>
+      <tr><td>4</td><td><strong>Are Right, A Lot</strong></td><td>Good instincts and judgment</td></tr>
+      <tr><td>5</td><td><strong>Learn and Be Curious</strong></td><td>Never stop learning; explore possibilities</td></tr>
+      <tr><td>6</td><td><strong>Hire and Develop the Best</strong></td><td>Raise the bar with every hire</td></tr>
+      <tr><td>7</td><td><strong>Insist on Highest Standards</strong></td><td>Continually raise the bar on quality</td></tr>
+      <tr><td>8</td><td><strong>Think Big</strong></td><td>Bold direction inspires results</td></tr>
+      <tr><td>9</td><td><strong>Bias for Action</strong></td><td>Speed matters; calculated risk-taking</td></tr>
+      <tr><td>10</td><td><strong>Frugality</strong></td><td>Do more with less; constraints breed innovation</td></tr>
+      <tr><td>11</td><td><strong>Earn Trust</strong></td><td>Listen, speak candidly, respect others</td></tr>
+      <tr><td>12</td><td><strong>Dive Deep</strong></td><td>Stay connected to details; audit frequently</td></tr>
+      <tr><td>13</td><td><strong>Disagree and Commit</strong></td><td>Challenge decisions, then commit fully</td></tr>
+      <tr><td>14</td><td><strong>Deliver Results</strong></td><td>Focus on key inputs, deliver with quality</td></tr>
+      <tr><td>15</td><td><strong>Best Employer</strong></td><td>Safe, productive, empathetic workplace</td></tr>
+      <tr><td>16</td><td><strong>Broad Responsibility</strong></td><td>Be better for customers and communities</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Top 6 Deep Dive</h3>
+  <p>These come up most frequently. Prepare 2–3 stories for each.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🎯 Customer Obsession</h4>
+      <p><strong>Q:</strong> "Tell me about a time you went above and beyond for a customer."</p>
+      <p><strong>Key:</strong> Start with the customer need, work backwards. Internal teams count as customers.</p>
+      <ul>
+        <li>✅ Fixed dashboard discrepancy saving 200+ hrs/yr</li>
+        <li>✅ Built reconciliation check + data dictionary</li>
+      </ul>
+      <p style="color:var(--color-error);font-size:0.85rem;margin-top:0.3rem">❌ Anti-pattern: technical decisions without customer impact</p>
+    </div>
+    <div class="card blue">
+      <h4>🏆 Ownership</h4>
+      <p><strong>Q:</strong> "Tell me about a time you took on something outside your responsibility."</p>
+      <p><strong>Key:</strong> Think long-term. Full lifecycle — not just shipping, but monitoring, maintaining.</p>
+      <ul>
+        <li>✅ Owned cost optimization nobody owned → 40% savings</li>
+        <li>✅ Built dashboard, then handed off ownership</li>
+      </ul>
+      <p style="color:var(--color-error);font-size:0.85rem;margin-top:0.3rem">❌ Anti-pattern: "I was told to do X" instead of "I decided"</p>
+    </div>
+    <div class="card green">
+      <h4>⚡ Bias for Action</h4>
+      <p><strong>Q:</strong> "Tell me about a time you made a decision with incomplete information."</p>
+      <p><strong>Key:</strong> Move quickly on reversible decisions. Experiment, iterate, course-correct.</p>
+      <ul>
+        <li>✅ Built compatibility adapter on Friday for Monday deadline</li>
+        <li>✅ Feature flags for safe rollback, zero downtime</li>
+      </ul>
+      <p style="color:var(--color-error);font-size:0.85rem;margin-top:0.3rem">❌ Anti-pattern: reckless decisions without risk mitigation</p>
+    </div>
+    <div class="card purple">
+      <h4>🔬 Dive Deep</h4>
+      <p><strong>Q:</strong> "Tell me about a time you found the root cause of a problem."</p>
+      <p><strong>Key:</strong> Don't accept surface-level explanations. Dig into data, read the code, check assumptions.</p>
+      <ul>
+        <li>✅ Traced ML accuracy drop to synthetic engagement events</li>
+        <li>✅ Built distribution drift monitor that caught 2 more issues</li>
+      </ul>
+      <p style="color:var(--color-error);font-size:0.85rem;margin-top:0.3rem">❌ Anti-pattern: staying high-level, not showing how you debugged</p>
+    </div>
+    <div class="card orange">
+      <h4>🦴 Disagree and Commit</h4>
+      <p><strong>Q:</strong> "Tell me about a time you disagreed with your manager."</p>
+      <p><strong>Key:</strong> Challenge with data and logic. Once decided, commit fully. No "I told you so."</p>
+      <ul>
+        <li>✅ One-page risk analysis: big-bang vs phased migration</li>
+        <li>✅ Compromise discovered 12 query incompatibilities</li>
+      </ul>
+      <p style="color:var(--color-error);font-size:0.85rem;margin-top:0.3rem">❌ Anti-pattern: disagreeing without data or alternatives</p>
+    </div>
+    <div class="card">
+      <h4>🏁 Deliver Results</h4>
+      <p><strong>Q:</strong> "Tell me about a time you delivered under tight constraints."</p>
+      <p><strong>Key:</strong> Focus on outcomes, not activity. Hit deadlines. Prioritize ruthlessly.</p>
+      <ul>
+        <li>✅ PII encryption: 200+ tables in 6 weeks, zero breakages</li>
+        <li>✅ Metadata-driven approach adopted org-wide</li>
+      </ul>
+      <p style="color:var(--color-error);font-size:0.85rem;margin-top:0.3rem">❌ Anti-pattern: focusing on effort ("I worked 80-hour weeks")</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Story Mapping Strategy</div>
+    <p>Prepare 8–10 strong stories that collectively cover all 16 LPs. You don't need 16 unique stories — each story should naturally demonstrate 2–3 principles. <strong>Practice pivoting the same story to emphasize different LPs depending on the question.</strong></p>
+  </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 7: Google, Meta & Startup Culture ==================== -->
+<section class="screen" id="s7">
+  <h2>Google, Meta &amp; <span class="accent">Startup Culture</span></h2>
+  <p>Each company evaluates culture differently. Know their language.</p>
+
+  <h3>Google: "Googleyness"</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🤝 Collaboration Over Ego</h4>
+      <p>You make the team better. Seek opposing views. Share credit.</p>
+      <p style="font-size:0.85rem;color:var(--color-accent);margin-top:0.4rem"><strong>Q:</strong> "Tell me about a time you helped a teammate succeed."</p>
+      <p style="font-size:0.85rem;color:var(--color-muted)"><strong>A:</strong> "Paired with a junior on Spark optimization. Instead of taking over, I taught them to read execution plans. They reduced runtime from 4hrs to 25min and became the team's go-to expert."</p>
+    </div>
+    <div class="card blue">
+      <h4>🧠 Intellectual Humility</h4>
+      <p>Admit what you don't know. Change your mind when presented with evidence.</p>
+      <p style="font-size:0.85rem;color:var(--color-accent);margin-top:0.4rem"><strong>Q:</strong> "Tell me about a time you changed your mind."</p>
+      <p style="font-size:0.85rem;color:var(--color-muted)"><strong>A:</strong> Show how you gathered evidence, recognized your position was wrong, and pivoted — without ego.</p>
+    </div>
+    <div class="card green">
+      <h4>🌫️ Comfort with Ambiguity</h4>
+      <p>Thrive when the problem isn't fully defined. Make progress without perfect requirements.</p>
+      <p style="font-size:0.85rem;color:var(--color-accent);margin-top:0.4rem"><strong>Q:</strong> "Tell me about ambiguous requirements."</p>
+      <p style="font-size:0.85rem;color:var(--color-muted)"><strong>A:</strong> "VP asked for 'customer health' with no definition. I interviewed 5 stakeholders, synthesized a 3-tier framework, built a prototype, and iterated. The ambiguity was an advantage."</p>
+    </div>
+    <div class="card purple">
+      <h4>⚖️ Doing the Right Thing</h4>
+      <p>Ethical judgment. Push back on things that are wrong, even when uncomfortable.</p>
+      <p style="font-size:0.85rem;color:var(--color-accent);margin-top:0.4rem"><strong>Key signal:</strong> Google values <em>thought process</em> over outcome.</p>
+      <p style="font-size:0.85rem;color:var(--color-muted)">"First I considered… then I realized… so I pivoted to…" beats "I did X and it worked."</p>
+    </div>
+  </div>
+
+  <h3>Meta: Core Values</h3>
+  <div class="card-grid">
+    <div class="card" style="border-top-color:#1877F2">
+      <h4>🚀 Move Fast</h4>
+      <p>Ship early, iterate. Speed of execution is paramount.</p>
+      <p style="font-size:0.85rem;color:var(--color-muted);margin-top:0.4rem"><strong>A:</strong> "Discovered billing data issue Wednesday. Proposed 48-hour fix sprint. Deployed Thursday night with feature flag, validated Friday morning. Prevented $200K in errors."</p>
+    </div>
+    <div class="card" style="border-top-color:#E4405F">
+      <h4>💪 Be Bold</h4>
+      <p>Take big swings. The riskiest thing is not taking risks.</p>
+      <p style="font-size:0.85rem;color:var(--color-muted);margin-top:0.4rem"><strong>Key:</strong> Propose replacing core systems. Show the ROI. "I was bold — proposed replacing our core system and proved ROI."</p>
+    </div>
+    <div class="card" style="border-top-color:#2D8B55">
+      <h4>🌍 Build Social Value</h4>
+      <p>Your work should create real-world positive impact.</p>
+      <p style="font-size:0.85rem;color:var(--color-muted);margin-top:0.4rem"><strong>Key:</strong> Connect your technical work to user impact at scale.</p>
+    </div>
+    <div class="card" style="border-top-color:#7B5EA7">
+      <h4>🔭 Long-Term Impact</h4>
+      <p>Don't optimize for short-term metrics at the expense of the future.</p>
+      <p style="font-size:0.85rem;color:var(--color-muted);margin-top:0.4rem"><strong>Key:</strong> Show strategic thinking beyond the current sprint.</p>
+    </div>
+    <div class="card" style="border-top-color:#D97706">
+      <h4>🔓 Be Open</h4>
+      <p>Transparent communication. Information flows freely.</p>
+      <p style="font-size:0.85rem;color:var(--color-muted);margin-top:0.4rem"><strong>Key:</strong> Reach across team boundaries. Meta's codebase is famously open.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Meta Interview Tip</div>
+    <p>Every story needs <strong>scale numbers</strong>: millions of users, petabytes of data, thousands of QPS. "Processes 2B events/day with p99 latency of 200ms" — that's Meta language. If your story involves 100 rows in a spreadsheet, save it for a different company.</p>
+  </div>
+
+  <h3>Startup Mindset</h3>
+  <div class="card-grid three-col">
+    <div class="card">
+      <h4>🧪 Scrappiness</h4>
+      <p>Do more with less. Build the 80% solution in 20% of the time.</p>
+      <p style="font-size:0.85rem;color:var(--color-accent);margin-top:0.4rem"><strong>Q:</strong> "Tell me about working with limited resources."</p>
+      <p style="font-size:0.85rem;color:var(--color-muted)"><strong>A:</strong> Show how you chose pragmatic solutions over perfect ones and still delivered value.</p>
+    </div>
+    <div class="card blue">
+      <h4>🎯 Wearing Multiple Hats</h4>
+      <p>DE + analytics + DevOps + sometimes PM. Versatility is the signal.</p>
+      <p style="font-size:0.85rem;color:var(--color-accent);margin-top:0.4rem"><strong>Q:</strong> "How do you handle ambiguous ownership?"</p>
+      <p style="font-size:0.85rem;color:var(--color-muted)"><strong>A:</strong> Show you stepped into gaps without being asked and delivered across disciplines.</p>
+    </div>
+    <div class="card green">
+      <h4>📈 Impact Per Person</h4>
+      <p>In a startup, every engineer has outsized impact. Show how you moved the needle directly.</p>
+      <p style="font-size:0.85rem;color:var(--color-accent);margin-top:0.4rem"><strong>Q:</strong> "What's the most impactful thing you've built?"</p>
+      <p style="font-size:0.85rem;color:var(--color-muted)"><strong>A:</strong> Connect your individual work directly to revenue, users, or survival of the product.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 8: Company Research & Prep ==================== -->
+<section class="screen screen-alt" id="s8">
+  <div class="screen-inner">
+  <h2>Company Research &amp; <span class="accent">Prep</span></h2>
+  <p>Before every interview, spend <strong>60–90 minutes</strong> on company research. This isn't optional.</p>
+
+  <h3>Research Checklist</h3>
+  <ul class="checklist">
+    <li>☐ <strong>Official Sources (15 min)</strong> — Careers page, "Our Values," mission statement, recent earnings calls</li>
+    <li>☐ <strong>Engineering Culture (20 min)</strong> — Engineering blog, open-source contributions, conference talks</li>
+    <li>☐ <strong>Employee Perspectives (15 min)</strong> — Glassdoor patterns, LinkedIn posts from current engineers, Blind themes</li>
+    <li>☐ <strong>Interview-Specific (15 min)</strong> — Glassdoor interview questions, Levels.fyi process details, YouTube prep videos</li>
+  </ul>
+
+  <h3>Story Adaptation: Same Story, Different Framing</h3>
+  <div style="overflow-x:auto;margin:1rem 0">
+  <table class="story-table">
+    <thead>
+      <tr><th>Your Experience</th><th>Amazon Framing</th><th>Google Framing</th><th>Meta Framing</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Built a new pipeline</td><td>"I identified a customer pain point and worked backwards…"</td><td>"I navigated ambiguous requirements by collaborating with 5 teams…"</td><td>"I shipped a v1 in 2 weeks that processes 1B events/day…"</td></tr>
+      <tr><td>Fixed production issue</td><td>"I took ownership and dove deep into root cause…"</td><td>"I structured the debugging process and helped the team learn…"</td><td>"I moved fast — fixed in 4 hours, preventing $500K in losses…"</td></tr>
+      <tr><td>Proposed new architecture</td><td>"I had backbone and disagreed with the existing approach…"</td><td>"I evaluated trade-offs and built consensus across teams…"</td><td>"I was bold — proposed replacing our core system and proved ROI…"</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Research Notes Template</h3>
+  <div class="code-block"><span class="kw"># Company Research:</span> <span class="fn">[Company Name]</span>
+<span class="kw">## Date:</span> <span class="str">[Interview Date]</span>
+<span class="kw">## Role:</span> <span class="str">[Position]</span>
+
+<span class="kw">## Core Values</span>
+<span class="fn">1.</span> [Value 1] — My story: <span class="str">[which story maps here]</span>
+<span class="fn">2.</span> [Value 2] — My story: <span class="str">[which story maps here]</span>
+<span class="fn">3.</span> [Value 3] — My story: <span class="str">[which story maps here]</span>
+
+<span class="kw">## Engineering Culture</span>
+Tech stack:        <span class="cm">[what they use]</span>
+Blog themes:       <span class="cm">[what they write about]</span>
+Open source:       <span class="cm">[notable projects]</span>
+Interview style:   <span class="cm">[coding, system design, behavioral mix]</span>
+
+<span class="kw">## Recent News</span>
+<span class="cm">[Headline 1] — how this might come up</span>
+<span class="cm">[Headline 2] — how this might come up</span>
+
+<span class="kw">## Questions I'll Ask Them</span>
+<span class="fn">1.</span> <span class="str">[About engineering culture]</span>
+<span class="fn">2.</span> <span class="str">[About the team/role]</span>
+<span class="fn">3.</span> <span class="str">[About growth/impact]</span>
+
+<span class="kw">## Stories Prepared</span>
+<span class="cm">| Story | Primary Value | Backup Value |</span>
+<span class="cm">| [Story 1] | [Value] | [Value] |</span>
+<span class="cm">| [Story 2] | [Value] | [Value] |</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 The Framing Difference</div>
+    <p>Notice how the <em>same experience</em> gets three completely different framings. Amazon wants ownership language. Google wants collaboration and thought process. Meta wants speed and scale. <strong>The story doesn't change — the emphasis does.</strong></p>
+  </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 9: Quiz ==================== -->
+<section class="screen" id="s9">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+  <p>Let's see how well this module landed. No peeking. 🐶</p>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: A PM asks how long a new pipeline will take. What's the best approach?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Give your gut estimate — you've done this before</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">B) Double whatever you think it'll take — always pad</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">C) Use 3-point estimation and present a confidence range with explicit risks</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Say "I'll let you know after I start building" — estimates are always wrong anyway</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Which Amazon LP is tested when they ask "tell me about a time you went above your job description"?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Customer Obsession</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) Ownership</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) Bias for Action</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) Deliver Results</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: Your project scope just expanded by 30%. What's your first move?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Push back immediately — protect the original timeline</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) Absorb it silently and work overtime to hit the deadline</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">C) Document the change, quantify the impact on timeline, and present trade-offs to stakeholders</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Escalate to your manager and let them handle it</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: How do you deliver bad news about a project delay?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Wait until you've fixed the problem so you can deliver bad news + solution together</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) Early, with an honest assessment of impact and a mitigation plan with options</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) In your weekly status update — don't make it a big deal</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Frame it as the vendor's/other team's fault to protect your credibility</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: What's the best way to research a company's culture before an interview?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Read their Wikipedia page and About section</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">B) Ask ChatGPT to summarize their values</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">C) Engineering blog, careers page, Glassdoor patterns, and LinkedIn posts from current employees</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Just focus on the technical prep — culture fit is mostly luck</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 10: Work-Life Balance & Team Dynamics ==================== -->
+<section class="screen screen-alt" id="s10">
+  <div class="screen-inner">
+  <h2>Work-Life Balance &amp; <span class="accent">Team Dynamics</span></h2>
+  <p>These questions seem soft but they're secretly the hardest. Your answer reveals how you think about sustainability, conflict, and organizational health.</p>
+
+  <h3>The Authentic Answer Framework</h3>
+  <p>A strong work-life balance answer has three parts:</p>
+  <div class="card-grid three-col">
+    <div class="card">
+      <h4>🧘 Intentional Sustainability</h4>
+      <p>"The best work comes from engineers who are rested and focused, not burned out."</p>
+    </div>
+    <div class="card blue">
+      <h4>🔥 Flexible When It Matters</h4>
+      <p>"When there's a production incident or critical deadline, I'm fully engaged — that's part of the job."</p>
+    </div>
+    <div class="card green">
+      <h4>🛡️ Protect Against Chronic Overwork</h4>
+      <p>"Persistent overtime is a signal, not a solution. I dig into the root cause: over-committed? Process bottleneck? Tech debt?"</p>
+    </div>
+  </div>
+
+  <h3>Team Dynamics Questions</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>"Preferred team size?"</h4>
+      <p style="color:var(--color-muted);font-size:0.9rem">"I've done my best work on teams of 4–6. Small enough for sync without heavy process, large enough for code review coverage. But I've been effective on teams of 2 and 15 — it's more about communication patterns than the number."</p>
+    </div>
+    <div class="card blue">
+      <h4>"Describe your working style."</h4>
+      <p style="color:var(--color-muted);font-size:0.9rem">"Deep-focus mornings for complex problems. Afternoons for collaboration: reviews, pairing, meetings. Strong async communicator — thorough Slack messages and design docs so I don't block people."</p>
+    </div>
+    <div class="card green">
+      <h4>"How do you handle conflict?"</h4>
+      <p style="color:var(--color-muted);font-size:0.9rem">"Direct and early. Technical disagreements go to design reviews with data and alternatives — never Slack rants. Personal friction gets a 1-on-1. Most conflicts come from misaligned expectations, not bad intentions."</p>
+    </div>
+  </div>
+
+  <h3>Red Flag Detection: Questions to Ask <em>Them</em></h3>
+  <div style="overflow-x:auto;margin:1rem 0">
+  <table class="story-table">
+    <thead>
+      <tr><th>Question to Ask</th><th>What You're Assessing</th><th>🚩 Red Flag</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>"What's your on-call rotation?"</td><td>Work-life balance, ops maturity</td><td>"Everyone just pitches in"</td></tr>
+      <tr><td>"How do you handle tech debt?"</td><td>Engineering culture</td><td>"We don't have time for that"</td></tr>
+      <tr><td>"What was the last post-mortem?"</td><td>Blameless culture</td><td>"We don't do post-mortems"</td></tr>
+      <tr><td>"How often do people get promoted?"</td><td>Growth opportunities</td><td>"When leadership decides"</td></tr>
+      <tr><td>"What's your biggest challenge?"</td><td>Transparency</td><td>"Nothing, everything's great"</td></tr>
+      <tr><td>"How do you prioritize?"</td><td>Eng influence</td><td>"Leadership tells us what to build"</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Managing Up</h3>
+  <p>Senior engineers manage the relationship with their manager, not just take direction:</p>
+  <ul class="checklist">
+    <li>☐ <strong>Understand their priorities</strong> — What does your manager get measured on? Align your work accordingly.</li>
+    <li>☐ <strong>Bring solutions, not just problems</strong> — "Pipeline is broken, here are two options, I recommend A because…"</li>
+    <li>☐ <strong>Make their job easier</strong> — Proactive updates. Agenda for 1:1s. Flag risks early. Don't make them ask.</li>
+    <li>☐ <strong>Seek feedback explicitly</strong> — "What's one thing I could do better?" every 1:1. Act on it visibly.</li>
+    <li>☐ <strong>Disagree productively</strong> — Say so once, with reasoning. If they decide differently, commit fully.</li>
+  </ul>
+
+  <h3>Quick Reference: Module 3 Key Takeaways</h3>
+  <div style="overflow-x:auto;margin:1rem 0">
+  <table class="story-table">
+    <thead>
+      <tr><th>Topic</th><th>Core Principle</th><th>Interview Signal</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Estimation</td><td>3-point estimation + phase breakdown</td><td>"I have a system for uncertainty"</td></tr>
+      <tr><td>Milestones</td><td>Thin vertical slices; value early</td><td>"I de-risk by proving patterns first"</td></tr>
+      <tr><td>Scope Creep</td><td>"Yes, and here's the trade-off"</td><td>"I protect the team while respecting stakeholders"</td></tr>
+      <tr><td>Stakeholder Mgmt</td><td>Early, frequent, transparent</td><td>"I build trust through predictability"</td></tr>
+      <tr><td>Amazon LPs</td><td>Map stories to multiple LPs</td><td>"I speak your language"</td></tr>
+      <tr><td>Googleyness</td><td>Collaboration, humility, ambiguity</td><td>"I make teams better"</td></tr>
+      <tr><td>Meta Values</td><td>Speed, boldness, scale</td><td>"I ship fast and measure everything"</td></tr>
+      <tr><td>Company Research</td><td>60–90 min structured template</td><td>"I did my homework"</td></tr>
+      <tr><td>Team Dynamics</td><td>Sustainability, directness</td><td>"Low-maintenance, high-output"</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 The Bottom Line</div>
+    <p>Project management and cultural fit are the #1 differentiator between senior and mid-level candidates. Two engineers with identical coding skills will get different outcomes based on how they talk about <strong>managing work, managing people, and fitting into an organization.</strong> This is where you stop being "a good coder" and start being "someone I want to lead a project."</p>
+  </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-02-communication/index.html">← Communication &amp; Influence</a>
+  <a href="../module-04-incident-management/index.html">Next: Incident Management →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Quiz
+  const quizFeedback={
+    q1:{correct:'✅ Correct! 3-point estimation with a confidence range shows you have a system — not just a gut feeling. Present the range with explicit risks and a checkpoint to refine.',wrong:'❌ Not quite. The best approach is a 3-point estimate (optimistic/likely/pessimistic) presented as a confidence range. "I\'m estimating 2-3 weeks — the upper end accounts for data quality issues we typically see with new sources."'},
+    q2:{correct:'✅ Nailed it! "Going above your job description" is classic Ownership. They want to hear you think long-term and never say "that\'s not my job." Show you take responsibility for outcomes, not just tasks.',wrong:'❌ The answer is Ownership. "Going above your job description" = "never say that\'s not my job." Ownership means thinking about the full lifecycle and taking responsibility for outcomes beyond your assigned tasks.'},
+    q3:{correct:'✅ Perfect! Document → quantify → present trade-offs. You\'re not the blocker — you\'re the expert providing information. The stakeholder owns the prioritization decision. This is the "Yes, and here\'s the trade-off" framework.',wrong:'❌ The best first move is to document the change, quantify the impact on timeline, and present trade-offs. Neither silently absorbing it nor reflexively pushing back is right — be the expert who provides information for an informed decision.'},
+    q4:{correct:'✅ Exactly! Bad news doesn\'t age well. The formula: Problem → Impact → Plan → Ask. Deliver it early, honestly, and with options. Waiting, burying, or blaming are all anti-patterns.',wrong:'❌ The answer is: deliver bad news early, with an honest impact assessment and a mitigation plan. Waiting until you\'ve fixed it, burying it in status updates, or blaming others all erode trust. Problem → Impact → Plan → Ask.'},
+    q5:{correct:'✅ Right! Multiple sources give you a well-rounded picture: engineering blog shows what they celebrate, careers page shows stated values, Glassdoor shows patterns (not individual complaints), and LinkedIn posts reveal actual culture. Budget 60-90 minutes per company.',wrong:'❌ The best approach combines multiple sources: engineering blog, careers page, Glassdoor patterns, and LinkedIn posts from current employees. Each reveals different aspects of culture. Budget 60-90 minutes of structured research per company.'}
+  };
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    const fbData=quizFeedback[qid];
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent=fbData.correct;}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent=fbData.wrong;}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

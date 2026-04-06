@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 2: Communication & Influence | Behavioral & Leadership</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#9333EA;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+.nav-dot.gauntlet{background:var(--color-error)}
+.nav-dot.gauntlet.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.screen ul,.screen ol{max-width:700px;margin-bottom:1rem;font-size:1.02rem;padding-left:1.5rem}
+.screen li{margin-bottom:0.4rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card-grid.three-col{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.orange{border-top-color:#D97706}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p,.card ul{font-size:0.9rem;color:var(--color-muted);margin-bottom:0.3rem}
+.card ul{padding-left:1.2rem}
+.card ul li{margin-bottom:0.2rem}
+.aha{background:linear-gradient(135deg,#F5F0FF,#EDE5FF);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#F5F0FF}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#C084FC}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}.code-block .accent{color:#C084FC}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+.story-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.88rem}
+.story-table th,.story-table td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+.story-table th{font-family:var(--font-heading);font-weight:700;font-size:0.85rem;background:rgba(147,51,234,0.06);position:sticky;top:0}
+.story-table td{vertical-align:top}
+.story-table tr:hover{background:rgba(147,51,234,0.03)}
+.workflow-steps{display:flex;flex-wrap:wrap;gap:0.5rem;margin:1.5rem 0;align-items:center}
+.workflow-step{background:#fff;border:2px solid var(--color-accent);border-radius:100px;padding:0.5rem 1.2rem;font-family:var(--font-heading);font-weight:600;font-size:0.9rem;color:var(--color-accent)}
+.workflow-arrow{font-size:1.2rem;color:var(--color-muted)}
+.checklist{list-style:none;padding:0;margin:1rem 0}
+.checklist li{padding:0.5rem 0;font-size:0.98rem;display:flex;align-items:flex-start;gap:0.6rem;border-bottom:1px solid rgba(0,0,0,0.04)}
+.checklist li:last-child{border:none}
+section.screen.screen-alt{max-width:100%;padding:0}
+section.screen.screen-alt .screen-inner{max-width:900px;margin:0 auto;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;min-height:100vh;min-height:100dvh}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}.story-table{font-size:0.78rem}.story-table th,.story-table td{padding:0.4rem}.workflow-steps{flex-direction:column;align-items:flex-start}.workflow-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎤 Behavioral &amp; Leadership</a><div class="nav-dots"><a href="../module-01-star-method/" class="nav-dot" title="STAR Method"></a><a href="../module-02-communication/" class="nav-dot active" title="Communication"></a><a href="../module-03-project-management/" class="nav-dot" title="Project Management"></a><a href="../module-04-incident-management/" class="nav-dot" title="Incident Management"></a><a href="../module-05-interview-gauntlet/" class="nav-dot gauntlet" title="Interview Gauntlet"></a></div></div></nav>
+
+<!-- ==================== SCREEN 1: Communication & Influence Intro ==================== -->
+<section class="screen" id="s1">
+  <h2>🗣️ Communication &amp; <span class="accent">Influence</span></h2>
+  <p>Here's what nobody tells you about senior engineering interviews: <strong>they're secretly communication interviews.</strong> Yes, you'll whiteboard a system design. Yes, you'll talk about data modeling. But the panel is quietly scoring something else the entire time — <em>can this person operate at the altitude we need?</em></p>
+  <p>At IC4 and above, your job shifts. You spend less time writing code and more time writing proposals, aligning stakeholders, translating technical risk into business language, and convincing people who outrank you to fund the right thing. The engineers who get stuck at mid-level aren't lacking technical skill — they're lacking <span class="tooltip-term" data-tip="The ability to make technical complexity accessible, persuade without authority, and drive decisions through clear articulation of trade-offs and impact.">communication leverage</span>.</p>
+  <p>This module gives you that leverage. Every section maps directly to questions you'll face in interviews at companies like Google, Meta, Amazon, Walmart, Stripe, and Databricks.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 The Layer Cake Technique — Your #1 Framework</div>
+    <p>Think of every technical explanation as a three-layer cake. You always start from the top and only go deeper when someone asks. <strong>Layer 1:</strong> Business Impact → <strong>Layer 2:</strong> High-Level Architecture → <strong>Layer 3:</strong> Technical Details. Most engineers instinctively jump to Layer 3. That's the trap. Resist it.</p>
+  </div>
+
+  <h3>What This Module Covers</h3>
+  <ul>
+    <li><strong>Explaining complexity simply</strong> — the Layer Cake technique &amp; analogy-based explanations</li>
+    <li><strong>Writing documents that drive decisions</strong> — RFC templates &amp; persuasive writing</li>
+    <li><strong>Presenting to leadership</strong> — executive summaries &amp; 15-minute presentation outlines</li>
+    <li><strong>Saying no with data</strong> — the Acknowledge → Trade-offs → Alternative → Align framework</li>
+    <li><strong>Influencing without authority</strong> — credibility, coalition building, proposals over demands</li>
+    <li><strong>Written vs verbal communication</strong> — Slack, email, meetings, documentation as leadership</li>
+  </ul>
+
+  <p>These are skills you'll use every single week once you're in the role. Let's get into it.</p>
+</section>
+
+<!-- ==================== SCREEN 2: The Layer Cake Technique ==================== -->
+<section class="screen screen-alt" id="s2">
+  <div class="screen-inner">
+  <h2>The <span class="accent">Layer Cake</span> Technique</h2>
+  <p>This is the single most effective framework for technical communication to mixed audiences. Think of your explanation as a three-layer cake — always start from the top.</p>
+
+  <div class="card-grid three-col">
+    <div class="card">
+      <h4>🏢 Layer 1 — Business Impact</h4>
+      <p style="color:var(--color-accent);font-weight:600;margin-bottom:0.5rem">Always lead here</p>
+      <p>What does this mean for the business? For the customer? For revenue, speed, or risk?</p>
+      <p><em>"This change will cut our data delivery time from 6 hours to 45 minutes, which means analysts get fresh numbers for the morning standup."</em></p>
+      <p style="font-size:0.82rem;color:var(--color-success)">✅ This is the only layer some audiences need.</p>
+    </div>
+    <div class="card blue">
+      <h4>🏗️ Layer 2 — Architecture</h4>
+      <p style="color:var(--color-info);font-weight:600;margin-bottom:0.5rem">Go here when asked "how?"</p>
+      <p>What are the major components? How do they connect? Boxes-and-arrows thinking. No implementation details.</p>
+      <p><em>"We're replacing our nightly batch job with a streaming architecture that processes events as they happen."</em></p>
+      <p style="font-size:0.82rem;color:var(--color-muted)">⏸️ Pause. Read the room. If they nod, you're done.</p>
+    </div>
+    <div class="card green">
+      <h4>⚙️ Layer 3 — Technical Details</h4>
+      <p style="color:var(--color-success);font-weight:600;margin-bottom:0.5rem">Only when explicitly asked</p>
+      <p>Specific technologies, configurations, code-level decisions. Only go here when asked or when your audience is technical.</p>
+      <p><em>"We're using Kafka Connect for ingestion, Spark Structured Streaming for transforms, and Delta Lake for ACID writes."</em></p>
+      <p style="font-size:0.82rem;color:var(--color-error)">❌ Starting here = the #1 communication mistake.</p>
+    </div>
+  </div>
+
+  <h3>Analogy Arsenal — Your Secret Weapon</h3>
+  <p>Analogies take something unfamiliar and map it onto something your audience already understands. Use these battle-tested mappings:</p>
+
+  <div style="overflow-x:auto;margin:1rem 0">
+  <table class="story-table">
+    <thead>
+      <tr><th>Technical Concept</th><th>Analogy</th><th>Explanation</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Data pipeline</td><td>🏭 Assembly line</td><td>Raw materials go in one end, finished product comes out the other. Each station does one specific job.</td></tr>
+      <tr><td>Schema</td><td>📝 Contract</td><td>A formal agreement about the shape of data. If someone changes the format without telling us, the contract breaks.</td></tr>
+      <tr><td>Data warehouse</td><td>📚 Library</td><td>All our data organized by subject, indexed, and optimized for people to come ask questions.</td></tr>
+      <tr><td>Streaming vs. batch</td><td>💬 Text vs. mail</td><td>Batch = mail — collected, sorted, delivered once a day. Streaming = texting — instant, one at a time.</td></tr>
+      <tr><td>Data quality checks</td><td>🛂 Airport security</td><td>Every piece of data goes through a checkpoint. If something looks wrong, it gets flagged before reaching its destination.</td></tr>
+      <tr><td>Technical debt</td><td>🔧 Deferred maintenance</td><td>Like skipping oil changes. Runs fine today, but you're accumulating damage that gets more expensive to fix.</td></tr>
+      <tr><td>Idempotency</td><td>🏧 ATM withdrawal</td><td>If you hit the button twice, you should only get charged once. Our systems must work the same way.</td></tr>
+      <tr><td>Partitioning</td><td>🗄️ Filing cabinet</td><td>Instead of one giant drawer, we organize data into separate drawers by date or category for faster lookup.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 The Analogy Bridge</div>
+    <p>When using analogies in an interview, say the analogy first, then bridge: <em>"Think of it like [analogy]. In our system, that translates to [technical reality]."</em> This shows you can translate AND that you know the real details.</p>
+  </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 3: Explaining to Non-Technical Audiences ==================== -->
+<section class="screen" id="s3">
+  <h2>Explaining to <span class="accent">Non-Technical Audiences</span></h2>
+  <p>Every senior engineer has had this moment: you start explaining why the pipeline broke, and within 30 seconds you see the glazed eyes, the polite nodding, the director checking their phone. <strong>This isn't their failure. It's yours.</strong></p>
+
+  <h3>Example A: Explaining a Spark Pipeline to a PM</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Too Technical</h4>
+      <ul>
+        <li>"We're running a PySpark job on an EMR cluster that reads from the S3 data lake, performs deduplication, schema enforcement via Great Expectations, joins across three Delta tables, and writes to a Redshift staging table with an upsert strategy using a composite key."</li>
+      </ul>
+      <p style="font-size:0.85rem;color:var(--color-error);margin-top:0.5rem">The PM heard: noise.</p>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Layer Cake Applied</h4>
+      <ul>
+        <li><strong>Layer 1:</strong> "This pipeline takes raw clickstream data and turns it into the clean tables your team queries every morning for the product dashboard."</li>
+        <li><strong>Layer 2:</strong> "It's a three-step process: collect raw events, clean and validate them, then load into the analytics DB your team uses."</li>
+        <li><strong>Key:</strong> "Your team gets clean data every hour with zero manual work."</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Example B: Data Quality Issues → Business Analyst</h3>
+  <div class="translate">
+    <div class="translate-code"><span class="cm">// What happened technically:</span>
+<span class="kw">upstream</span> payments system
+  → changed record format
+  → schema mismatch
+  → 3% transactions misclassified
+  → revenue breakdown by category
+     is <span class="str">wrong</span> (total is correct)
+
+<span class="cm">// Fix deployed:</span>
+<span class="fn">mapping_updated</span>()
+<span class="fn">reprocessing_5_days</span>()
+<span class="fn">auto_check_added</span>()
+  → catch format changes <span class="str">within 1 hour</span></div>
+    <div class="translate-eng">
+      <div class="line"><strong>What you say:</strong></div>
+      <div class="line">"Great catch — the numbers are off. One of our data sources started sending records in a slightly different format last Tuesday."</div>
+      <div class="line">"Think of it like getting a shipment where the labels changed."</div>
+      <div class="line"><strong>Impact:</strong> ~3% of transactions from last 5 days were miscategorized. Total revenue is right, breakdown by product is wrong.</div>
+      <div class="line"><strong>Fix:</strong> Already corrected the mapping. Dashboard shows correct numbers by end of day tomorrow.</div>
+      <div class="line"><strong>Prevention:</strong> Added automated check — if format changes again, we catch it within an hour.</div>
+    </div>
+  </div>
+
+  <h3>Example C: Migration Timeline → VP</h3>
+  <div class="translate">
+    <div class="translate-code"><span class="cm">// Scope:</span>
+<span class="fn">47</span> production pipelines
+<span class="fn">12</span> dependent teams
+<span class="kw">each pipeline</span> = inputs + processing
+  + quality checks + consumers
+
+<span class="cm">// Phases:</span>
+Phase 1 (wk 1-4): <span class="fn">10</span> high-impact
+Phase 2 (wk 5-8): <span class="fn">37</span> remaining
+Phase 3 (wk 9-12): parallel run
+  + decommission old platform
+
+<span class="cm">// Fast option:</span>
+Top 10 in <span class="str">4 weeks</span> = 80% value
+  in 1/3 the time</div>
+    <div class="translate-eng">
+      <div class="line"><strong>Lead with empathy:</strong> "I understand the urgency — the sooner we migrate, the sooner we stop paying for two platforms."</div>
+      <div class="line"><strong>Scale the problem:</strong> "We're moving 47 production pipelines serving 12 teams. Each is like a supply chain."</div>
+      <div class="line"><strong>Name the risk:</strong> "If we rush, finance, product analytics, and ML lose their data — delayed reports, wrong models, bad business decisions."</div>
+      <div class="line"><strong>Offer a compromise:</strong> "I could migrate the top 10 in 4 weeks — 80% of the value in one-third the time."</div>
+      <div class="line"><strong>Close with action:</strong> "Want me to put together that option as a proposal?"</div>
+    </div>
+  </div>
+
+  <h3>Reading the Room — Recovery Moves</h3>
+  <p>If questions stop, someone asks about something you covered 3 minutes ago, or you hear "so basically what you're saying is…" — you've lost them. Recovery:</p>
+  <ul>
+    <li><em>"Let me zoom out — the key takeaway here is…"</em></li>
+    <li><em>"Actually, the technical details matter less than the outcome, which is…"</em></li>
+    <li><em>"Does that framing make sense, or should I come at it from a different angle?"</em></li>
+  </ul>
+</section>
+
+<!-- ==================== SCREEN 4: Writing RFC/Design Documents ==================== -->
+<section class="screen screen-alt" id="s4">
+  <div class="screen-inner">
+  <h2>Writing <span class="accent">RFC/Design Documents</span></h2>
+  <p>RFC stands for <span class="tooltip-term" data-tip="Request for Comments — a written proposal for a significant technical decision. It's not a spec; it's a persuasion document that also serves as a decision record.">Request for Comments</span>. It's a persuasion document that forces clarity, scales your influence, and creates alignment before code is written.</p>
+
+  <h3>The Complete RFC Template</h3>
+  <div class="code-block"><span class="kw"># RFC:</span> [Concise, Descriptive Title]
+
+<span class="fn">Author:</span>     [Your Name]
+<span class="fn">Status:</span>     Draft | In Review | Approved | Rejected
+<span class="fn">Date:</span>       YYYY-MM-DD
+<span class="fn">Reviewers:</span>  [Key stakeholders]
+<span class="fn">Deadline:</span>   YYYY-MM-DD
+
+<span class="cm">──────────────────────────────────────────</span>
+
+<span class="kw">## 1. Problem Statement</span>
+What problem? Why now? Include data: error rates,
+costs, customer impact. Be specific.
+  <span class="str">→ What is broken, slow, expensive, or risky?</span>
+  <span class="str">→ Who is affected and how badly?</span>
+  <span class="str">→ What happens if we do nothing?</span>
+
+<span class="kw">## 2. Proposed Solution</span>
+2-3 paragraphs. Lead with "what" before "how."
+A VP should understand without reading further.
+
+<span class="kw">## 3. Technical Design</span>
+  3.1 Architecture Overview (diagram)
+  3.2 Data Flow (sources → transforms → sinks)
+  3.3 API / Interface Changes
+  3.4 Data Model Changes
+  3.5 Infrastructure Requirements + cost estimates
+
+<span class="kw">## 4. Alternatives Considered</span>
+| Alternative | Pros | Cons | Why Not |
+<span class="cm">Always include "Do Nothing" as an option.</span>
+
+<span class="kw">## 5. Rollout Plan</span>
+Phased milestones + <span class="str">rollback plan</span>
+
+<span class="kw">## 6. Risks & Mitigations</span>
+| Risk | Likelihood | Impact | Mitigation |
+
+<span class="kw">## 7. Success Metrics</span>
+Metric: [Current] → [Target]
+
+<span class="kw">## 8. Open Questions</span>
+<span class="cm">// Not a weakness — shows intellectual honesty</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 7 Tips for Persuasive RFCs</div>
+    <p><strong>1.</strong> Front-load the business case — make a busy director think "I need to keep reading." <strong>2.</strong> Write for your most skeptical reader. <strong>3.</strong> Use data, not adjectives — don't say "slow," say "P99 went from 200ms to 3.4s." <strong>4.</strong> Keep it scannable — headers, bullets, tables, bold. <strong>5.</strong> Include a "Do Nothing" alternative. <strong>6.</strong> Be honest about unknowns. <strong>7.</strong> Name a decision deadline — without one, RFCs drift forever.</p>
+  </div>
+
+  <h3>Example: Migrating from Airflow to Dagster</h3>
+  <div class="code-block"><span class="kw"># RFC: Migrate Orchestration from Airflow to Dagster</span>
+
+<span class="fn">Author:</span> Jordan Chen  |  <span class="fn">Status:</span> In Review
+<span class="fn">Date:</span>   2026-01-15   |  <span class="fn">Deadline:</span> 2026-02-01
+
+<span class="kw">## Problem Statement</span>
+Airflow 1.10 orchestrates <span class="fn">142</span> production DAGs serving
+analytics, ML, and finance. We're experiencing:
+  • <span class="str">15-20</span> scheduler crashes/month (manual restart)
+  • <span class="str">3-day</span> average DAG authoring time (boilerplate)
+  • No native data asset lineage (governance needs by Q3)
+  • Upgrade to Airflow 2.x = rewrite <span class="str">60%+</span> of DAGs
+
+<span class="cm">Cost of status quo: ~40 eng-hours/month on incidents
+  + missed governance deadline</span>
+
+<span class="kw">## Proposed Solution</span>
+Migrate to Dagster — asset-based orchestration that
+aligns with data mesh strategy, provides built-in
+lineage, and reduces authoring time via software-
+defined assets.
+
+<span class="kw">## Alternatives Considered</span>
+| Alternative       | Why Not                              |
+| Airflow 2.x       | Similar rewrite, no lineage          |
+| Prefect 2.0       | Weaker lineage ecosystem             |
+| Do nothing         | Instability worsens, governance miss |
+
+<span class="kw">## Rollout</span>
+Phase 1 (wk 1-3):  10 non-critical DAGs → validate
+Phase 2 (wk 4-8):  80 analytics DAGs
+Phase 3 (wk 9-12): remaining + parallel run
+
+<span class="str">Rollback: Airflow stays operational throughout.
+Any pipeline reverts to Airflow within 1 hour.</span></div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 5: Presenting to Leadership ==================== -->
+<section class="screen" id="s5">
+  <h2>Presenting to <span class="accent">Leadership</span></h2>
+  <p>When you present to directors, VPs, or C-level, you have about <strong>90 seconds</strong> before they decide whether to pay attention. Use this structure:</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔴 1. Problem</h4>
+      <p>One sentence on what's broken or at risk. Use dollars, customer impact, or time.</p>
+      <p><em>"Our data pipeline infrastructure causes 4 hours of analyst downtime per week."</em></p>
+    </div>
+    <div class="card blue">
+      <h4>💡 2. Recommendation</h4>
+      <p>One sentence on what you propose. Don't give three options — give YOUR recommendation.</p>
+      <p><em>"I recommend we migrate to a modern orchestration platform over the next quarter."</em></p>
+    </div>
+    <div class="card green">
+      <h4>📊 3. Impact</h4>
+      <p>What changes if we do this? Quantify it.</p>
+      <p><em>"This will eliminate downtime and save ~200 engineer-hours per year."</em></p>
+    </div>
+    <div class="card purple">
+      <h4>🙋 4. Ask</h4>
+      <p>What do you need from them? Budget? Headcount? A decision? Time?</p>
+      <p><em>"I'm asking for approval to dedicate two engineers to this for 12 weeks."</em></p>
+    </div>
+  </div>
+
+  <p>That's it. Sixty seconds. If they want more, they'll ask — and <em>that's</em> when you go deeper.</p>
+
+  <h3>15-Minute Technical Presentation Outline</h3>
+  <div class="code-block"><span class="kw">15-MINUTE TECHNICAL PRESENTATION</span>
+<span class="cm">═══════════════════════════════════════════</span>
+
+<span class="fn">MIN 0-2:</span>  CONTEXT & PROBLEM <span class="cm">(2 min)</span>
+  • One slide. Max 3 bullet points.
+  • "Here's the problem, who it affects, the cost."
+  • <span class="str">No technical jargon in this section.</span>
+
+<span class="fn">MIN 2-5:</span>  PROPOSED SOLUTION <span class="cm">(3 min)</span>
+  • One architecture diagram (boxes & arrows).
+  • Walk through the flow in plain language.
+  • Highlight what changes vs. what stays the same.
+
+<span class="fn">MIN 5-8:</span>  WHY THIS APPROACH <span class="cm">(3 min)</span>
+  • 2-3 alternatives considered and why not.
+  • Key trade-offs acknowledged honestly.
+  • Data supporting your recommendation.
+
+<span class="fn">MIN 8-11:</span> PLAN & TIMELINE <span class="cm">(3 min)</span>
+  • Phased rollout with milestones.
+  • Resource requirements (people, budget, deps).
+  • Risk mitigation strategy.
+
+<span class="fn">MIN 11-13:</span> IMPACT & METRICS <span class="cm">(2 min)</span>
+  • Before/after comparison with numbers.
+  • How you'll measure success.
+  • When leadership will see results.
+
+<span class="fn">MIN 13-15:</span> ASK & DISCUSSION <span class="cm">(2 min)</span>
+  • State your specific ask clearly.
+  • Open for questions.
+
+<span class="cm">BACKUP SLIDES (for Q&A):
+  • Detailed technical architecture
+  • Cost breakdown
+  • Competitive/industry comparison
+  • Team capacity plan</span></div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Handling Tough Questions</div>
+    <p><strong>"Why can't we do this faster?"</strong> → Acknowledge the desire, explain what you'd cut and the risk, offer a phased approach. <strong>"What's the risk?"</strong> → Be direct, don't minimize. Always pair risk with mitigation. <strong>"Why now vs. [other priority]?"</strong> → Answer with cost of delay, don't criticize the other priority. <strong>"I don't understand [X]"</strong> → Never make them feel bad. Drop to Layer 1 immediately with an analogy.</p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 6: Saying No with Data ==================== -->
+<section class="screen screen-alt" id="s6">
+  <div class="screen-inner">
+  <h2>Saying <span class="accent">No</span> with Data</h2>
+  <p>Mid-level engineers say yes to everything and burn out. Senior engineers say no strategically and deliver what matters. The key insight: <strong>you're never just saying no — you're saying "yes to something better."</strong></p>
+
+  <h3>The Framework</h3>
+  <div class="workflow-steps">
+    <div class="workflow-step">🤝 Acknowledge</div>
+    <span class="workflow-arrow">→</span>
+    <div class="workflow-step">📊 Trade-offs</div>
+    <span class="workflow-arrow">→</span>
+    <div class="workflow-step">💡 Alternative</div>
+    <span class="workflow-arrow">→</span>
+    <div class="workflow-step">🎯 Align</div>
+  </div>
+  <p>Validate the need → Show the cost with data → Offer a path without the downsides → Close the loop as a conversation.</p>
+
+  <h3>Scenario Responses</h3>
+  <div class="card-grid three-col">
+    <div class="card">
+      <h4>🔧 PM Wants a Quick Hack</h4>
+      <p style="font-size:0.82rem;color:var(--color-text);margin-bottom:0.5rem"><strong>Context:</strong> PM wants a new data source added by hardcoding special-case logic.</p>
+      <ul>
+        <li><strong>Acknowledge:</strong> "I can definitely integrate this — the business need makes total sense."</li>
+        <li><strong>Trade-off:</strong> "We have 8 hardcoded cases already — they're 60% of our production incidents this quarter."</li>
+        <li><strong>Alternative:</strong> "4 days instead of 2 → config-driven approach. Next 5 data sources take hours, not days."</li>
+        <li><strong>Align:</strong> "If Wednesday is a hard deadline, I can do the hack + immediate refactor ticket. Your call."</li>
+      </ul>
+    </div>
+    <div class="card blue">
+      <h4>⏰ "I Need It By Tomorrow"</h4>
+      <p style="font-size:0.82rem;color:var(--color-text);margin-bottom:0.5rem"><strong>Context:</strong> Director needs a dataset for a presentation tomorrow. No pipeline exists.</p>
+      <ul>
+        <li><strong>Acknowledge:</strong> "Tomorrow's presentation is important — I want to make sure you have what you need."</li>
+        <li><strong>Trade-off:</strong> "The raw data hasn't been through quality checks. Maybe 10-15% margin of error."</li>
+        <li><strong>Alternative:</strong> "I'll pull a 'preliminary' dataset by 3 PM with confidence levels. Proper pipeline in next sprint."</li>
+        <li><strong>Align:</strong> "You can share it as directional data. Does that work?"</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h4>🏋️ "Take on More Work"</h4>
+      <p style="font-size:0.82rem;color:var(--color-text);margin-bottom:0.5rem"><strong>Context:</strong> Manager asks you to lead a new cross-team project. You're already leading two workstreams + on-call.</p>
+      <ul>
+        <li><strong>Acknowledge:</strong> "I'm excited about this — it's the kind of work I want to grow into."</li>
+        <li><strong>Trade-off:</strong> "I'm leading migration + data quality + on-call rotation. Something has to give."</li>
+        <li><strong>Alternative:</strong> "Option A: hand off data quality. Option B: start in 3 weeks. Option C: I lead strategy, someone else drives daily."</li>
+        <li><strong>Align:</strong> "Which works best for the team's priorities?"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">⚡ Critical Rule</div>
+    <p>Never say "no" without offering an alternative. A "no" with no alternative is just a wall. A "no" with an alternative is leadership.</p>
+  </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 7: Influencing Without Authority ==================== -->
+<section class="screen" id="s7">
+  <h2>Influencing <span class="accent">Without Authority</span></h2>
+  <p>This is the defining skill of staff+ engineers. Your impact extends beyond your team, but your authority doesn't. You need ML engineers to adopt your data contracts, the platform team to prioritize your request, a VP to fund your proposal. <strong>None of them report to you.</strong></p>
+
+  <h3>Key Strategies</h3>
+  <div class="card-grid three-col">
+    <div class="card">
+      <h4>🏆 Build Credibility</h4>
+      <p><strong>Expertise:</strong> Solve problems visibly. Write root cause analyses and share broadly. Give internal tech talks.</p>
+      <p><strong>Reliability:</strong> Do what you say you'll do. If you promise a timeline, hit it. Follow through on action items — most people don't.</p>
+      <p style="font-size:0.82rem;margin-top:0.5rem;color:var(--color-accent)">Trust = (Credibility + Reliability + Authenticity) / Self-Interest</p>
+    </div>
+    <div class="card blue">
+      <h4>📋 Proposal, Not Demand</h4>
+      <p><strong>❌ Demand:</strong> "We need to standardize on Protobuf."</p>
+      <p><strong>✅ Proposal:</strong> "We've had 14 incidents from schema mismatches. I put together a proposal for Protobuf — can I get your feedback by Friday?"</p>
+      <ul>
+        <li>Lead with the problem, not the solution</li>
+        <li>Show data (14 incidents)</li>
+        <li>Invite their expertise</li>
+        <li>Give a clear, low-effort next step</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h4>🤝 Coalition Building</h4>
+      <p>Never propose something for the first time in a big meeting. The meeting is where decisions get <em>ratified</em>.</p>
+      <ul>
+        <li>Pre-socialize with 2-3 key stakeholders</li>
+        <li>Have 1:1 conversations first</li>
+        <li>Find your champions</li>
+        <li>Address objections privately</li>
+        <li>Give credit generously</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Complete STAR Story Example</h3>
+  <div class="translate">
+    <div class="translate-code"><span class="kw">S:</span> Data platform on aging Hadoop.
+   3 teams affected by frequent
+   job failures. Nobody was
+   prioritizing a migration.
+
+<span class="kw">T:</span> Senior DE — no authority to
+   allocate budget or assign
+   engineers from other teams.
+   Goal: build consensus, get
+   project funded.
+
+<span class="kw">A:</span> 1. <span class="fn">Collected data</span> — tracked
+      incidents for 2 months
+      → 35 eng-hrs/week wasted
+      → ~$180K/year lost
+
+   2. <span class="fn">Wrote RFC</span> — phased EMR
+      migration plan
+
+   3. <span class="fn">Pre-socialized</span> — met 1:1
+      with ML, analytics, finance
+      tech leads. Each had
+      different concerns → all
+      incorporated.
+
+   4. <span class="fn">Found champion</span> — ML lead
+      co-presented to VP
+
+   5. <span class="fn">Led with cost data</span> +
+      3 tech leads supporting
+      same proposal
+
+<span class="kw">R:</span> VP approved. 2 engineers +
+   cloud budget for Q2.
+   <span class="str">Migration: 10 weeks</span>
+   <span class="str">Incidents: 12/mo → 1/mo</span>
+   <span class="str">ML training: 3x faster</span>
+   <span class="str">Saved ~$150K/year</span>
+   RFC became org template.</div>
+    <div class="translate-eng">
+      <div class="line"><strong>🎬 Situation:</strong> Aging Hadoop cluster causing frequent failures across 3 teams. Nobody was prioritizing a fix — too big, too risky.</div>
+      <div class="line"><strong>🎯 Task:</strong> As senior DE, I had no authority over budget or other teams' engineers. I needed to build consensus and get a migration funded.</div>
+      <div class="line"><strong>⚡ Action — The Influence Playbook:</strong></div>
+      <div class="line">First, I collected the data — 35 engineer-hours/week wasted across 4 teams = ~$180K/year in lost productivity.</div>
+      <div class="line">Then I wrote an RFC with a phased EMR migration plan.</div>
+      <div class="line">Before sharing broadly, I met individually with tech leads from ML (GPU support), analytics (query perf), and finance (cost). Incorporated all concerns.</div>
+      <div class="line">Found a champion: the ML lead, burned most by cluster issues, agreed to co-present to the VP.</div>
+      <div class="line">In the presentation: led with cost data + three tech leads all backing the same proposal. Hard to say no to.</div>
+      <div class="line"><strong>📊 Result:</strong> VP approved — 2 engineers + cloud budget. Migration done in 10 weeks. Incidents: 12/mo → 1. ML jobs 3x faster. Saved ~$150K/year. The RFC became the team template.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 8: Quiz ==================== -->
+<section class="screen screen-alt" id="s8">
+  <div class="screen-inner">
+  <h2>🧪 Knowledge <span class="accent">Check</span></h2>
+  <p>Test your understanding of communication and influence principles. Think before you click — just like in an interview.</p>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: Your VP asks why migration takes 6 months. What do you lead with?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) The detailed technical architecture and all the components involved</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">B) A list of all 47 pipelines that need to be migrated</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">C) Business impact and risk — what breaks if we rush, and a phased option</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Ask them why they think it should be faster</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: What's the #1 mistake engineers make when explaining technical concepts?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Using too many analogies</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) Speaking too slowly</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">C) Starting with technical details instead of business impact</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) Not having enough slides</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: A PM wants a feature that would add significant tech debt. How do you respond?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Say no — tech debt is always unacceptable</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) Just build it — the PM owns the roadmap</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">C) Acknowledge the value, explain trade-offs with data, propose alternatives</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Escalate to your manager immediately</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: When should you write an RFC instead of just building it?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) For every single code change, no matter how small</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) When the decision affects multiple teams, is hard to reverse, or has significant cost</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) Only when your manager explicitly asks for one</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Never — code speaks louder than documents</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: What's the most effective way to influence without authority?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) CC your manager's manager on all emails</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">B) Be the loudest voice in meetings</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) Wait for someone with authority to champion your idea</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">D) Build credibility through expertise and reliability, then propose with data</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 9: Written vs Verbal Communication ==================== -->
+<section class="screen" id="s9">
+  <h2>Written vs Verbal <span class="accent">Communication</span></h2>
+  <p>The wrong medium kills good ideas. Knowing <em>when</em> to write vs. talk is a senior skill most engineers never develop.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>✍️ Write When…</h4>
+      <ul>
+        <li>Information is complex &amp; needs referencing later</li>
+        <li>Reaching people across time zones (async)</li>
+        <li>Precision matters — ambiguity would cause problems</li>
+        <li>You need a paper trail for decisions</li>
+        <li>Audience needs time to think before responding</li>
+        <li>You're proposing a significant change (RFC territory)</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🗣️ Talk When…</h4>
+      <ul>
+        <li>Topic is emotionally sensitive (feedback, conflict)</li>
+        <li>You need rapid back-and-forth brainstorming</li>
+        <li>Issue is urgent — needs resolution in minutes</li>
+        <li>Body language and tone matter</li>
+        <li>Slack thread has gone 3+ exchanges deep — it's unproductive</li>
+        <li>After the call, write it down anyway</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Effective Slack Messages</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Bad Slack</h4>
+      <ul>
+        <li>"hey can someone help me with the pipeline it's broken and I'm not sure what happened but the data isn't showing up in the dashboard and stakeholders are asking about it"</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Good Slack</h4>
+      <ul>
+        <li><strong>🔴 Pipeline Issue — Dashboard Data Missing</strong></li>
+        <li><strong>What:</strong> daily_revenue failed at transform, 6:14 AM. Dashboard stale.</li>
+        <li><strong>Impact:</strong> Finance can't see today's revenue.</li>
+        <li><strong>Tried:</strong> Checked logs — OOM error. Restarting w/ more memory.</li>
+        <li><strong>Ask:</strong> Anyone seen OOM on this cluster recently?</li>
+        <li><strong>ETA:</strong> Targeting 10 AM.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Running Effective Meetings</h3>
+  <div class="card-grid three-col">
+    <div class="card">
+      <h4>📋 Before</h4>
+      <ul>
+        <li>Send agenda 2+ hours before</li>
+        <li>Include the goal: "We will decide X"</li>
+        <li>Share pre-reading materials</li>
+        <li>No agenda = cancel the meeting</li>
+      </ul>
+    </div>
+    <div class="card blue">
+      <h4>⚡ During</h4>
+      <ul>
+        <li>Start on time — don't punish the punctual</li>
+        <li>First 2 min: restate goal + agenda</li>
+        <li>Off-track? "Great point — let's capture as follow-up"</li>
+        <li>Last 5 min: recap decisions + action items</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h4>✅ After</h4>
+      <ul>
+        <li>Post notes within 1 hour</li>
+        <li>Include: decisions, action items (who/what/when)</li>
+        <li>If no decisions were made → question the meeting</li>
+        <li>Follow up on action items</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Documentation as Leadership</h3>
+  <p>Senior engineers who document well multiply their impact. Your documents answer for you when you're not in the room.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>📐 ADRs</h4>
+      <p>Architecture Decision Records — why we chose this approach. Invaluable 6 months later.</p>
+    </div>
+    <div class="card blue">
+      <h4>📖 Runbooks</h4>
+      <p>Step-by-step incident response. Write these <em>before</em> the incident.</p>
+    </div>
+    <div class="card green">
+      <h4>🚀 Onboarding Guides</h4>
+      <p>How does a new team member get productive? If it doesn't exist, write it.</p>
+    </div>
+    <div class="card orange">
+      <h4>📊 Post-Mortems</h4>
+      <p>What went wrong, why, and what changed. Blameless, thorough, actionable.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🚌 The Bus Factor Test</div>
+    <p>If you went on a two-week vacation, could someone else operate your systems using only your documentation? If not, you have a documentation gap — and a bus factor of 1.</p>
+  </div>
+
+  <h3>Quick Reference Checklist</h3>
+  <ul class="checklist">
+    <li>☐ I start every explanation at Layer 1 (business impact) before going deeper</li>
+    <li>☐ I have 3+ analogies ready for my most common technical concepts</li>
+    <li>☐ I've written at least one RFC for a significant technical decision</li>
+    <li>☐ I use the Problem → Recommendation → Impact → Ask format for leadership</li>
+    <li>☐ I can say no using Acknowledge → Trade-offs → Alternative → Align</li>
+    <li>☐ I pre-socialize proposals before big meetings</li>
+    <li>☐ My Slack messages have structure: what, impact, tried, ask, ETA</li>
+    <li>☐ I send agendas before meetings and post notes after</li>
+    <li>☐ I have runbooks and documentation for my critical systems</li>
+    <li>☐ I can adapt my communication style to PMs, analysts, leadership, and peers</li>
+  </ul>
+
+  <div class="aha">
+    <div class="aha-title">🎯 The Bottom Line</div>
+    <p>The best engineers aren't the ones who know the most — they're the ones who can <em>communicate</em> what they know to the right audience at the right altitude. <strong>Communication is leverage.</strong> Master it, and your technical skills finally get the recognition they deserve.</p>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-01-star-method/index.html">← STAR Method &amp; Story Preparation</a>
+  <a href="../module-03-project-management/index.html">Next: Project Management &amp; Culture →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Quiz
+  const quizFeedback={
+    q1:{correct:'✅ Correct! Always lead with business impact and risk when talking to leadership. The Layer Cake starts at the top — business impact → architecture → technical details.',wrong:'❌ Not quite. When a VP asks "why so long?" they need business impact and risk, not technical details. Lead with what breaks if you rush, and offer a phased alternative.'},
+    q2:{correct:'✅ Exactly! Most engineers instinctively jump to Layer 3 (technical details). The Layer Cake technique teaches you to always start at Layer 1 (business impact) and only go deeper when asked.',wrong:'❌ The #1 mistake is starting with technical details instead of business impact. Remember the Layer Cake: Business Impact → Architecture → Technical Details. Always start at the top.'},
+    q3:{correct:'✅ Perfect! The Acknowledge → Trade-offs → Alternative → Align framework. You validate their need, show the cost with data, offer a better path, and make it a conversation.',wrong:'❌ The right approach is the A-T-A-A framework: Acknowledge the value, explain Trade-offs with data, propose an Alternative, and Align on the path forward. Never just say no or just say yes.'},
+    q4:{correct:'✅ Right! RFCs are for decisions that are significant, cross-team, hard to reverse, or costly. They force clarity, scale your influence, and create alignment before code is written.',wrong:'❌ RFCs are most valuable when the decision affects multiple teams, is hard to reverse, or has significant cost implications. They\'re not for every change, but they\'re essential for big ones.'},
+    q5:{correct:'✅ Nailed it! Influence comes from trust, which comes from demonstrated expertise and reliability. Then you propose with data, pre-socialize, and build coalitions. Authority is borrowed; credibility is earned.',wrong:'❌ Real influence comes from credibility (expertise + reliability) combined with data-driven proposals. Not from volume, escalation, or waiting. Build trust first, then propose with evidence.'}
+  };
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    const fbData=quizFeedback[qid];
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent=fbData.correct;}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent=fbData.wrong;}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

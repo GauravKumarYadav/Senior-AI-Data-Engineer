@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Behavioral & Leadership Interview Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#9333EA;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.6}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-20%;right:-10%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(147,51,234,0.08) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-15%;left:-5%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(147,51,234,0.06) 0%,transparent 70%);pointer-events:none}
+.badge{display:inline-block;background:var(--color-accent);color:#fff;padding:0.4rem 1.2rem;border-radius:100px;font-size:0.85rem;font-weight:600;letter-spacing:0.5px;margin-bottom:1.5rem;text-transform:uppercase}
+.hero h1{font-family:var(--font-heading);font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;line-height:1.1;margin-bottom:1rem;max-width:800px}
+.hero h1 .accent{color:var(--color-accent)}
+.hero p{font-size:1.2rem;color:var(--color-muted);max-width:600px;margin-bottom:2rem}
+.spark-icon{font-size:4rem;margin-bottom:1rem}
+.stats{display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;margin-bottom:3rem}
+.stat{text-align:center}
+.stat-num{font-family:var(--font-heading);font-size:2rem;font-weight:800;color:var(--color-accent)}
+.stat-label{font-size:0.85rem;color:var(--color-muted)}
+.modules-section{padding:4rem 2rem;max-width:1000px;margin:0 auto}
+.modules-section h2{font-family:var(--font-heading);font-size:2rem;font-weight:700;text-align:center;margin-bottom:0.5rem}
+.modules-section .sub{text-align:center;color:var(--color-muted);margin-bottom:3rem;font-size:1.05rem}
+.module-card{display:flex;align-items:flex-start;gap:1.5rem;background:#fff;border-radius:16px;padding:1.8rem;margin-bottom:1.2rem;box-shadow:0 2px 12px rgba(0,0,0,0.04);transition:transform 0.2s,box-shadow 0.2s;text-decoration:none;color:var(--color-text);border:1px solid rgba(0,0,0,0.04)}
+.module-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.08)}
+.mod-num{flex-shrink:0;width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:1.2rem;color:#fff}
+.mod-num.c1{background:#9333EA}.mod-num.c2{background:#7C3AED}.mod-num.c3{background:var(--color-info)}.mod-num.c4{background:var(--color-success)}.mod-num.c5{background:var(--color-error)}
+.mod-info h3{font-family:var(--font-heading);font-size:1.15rem;font-weight:700;margin-bottom:0.3rem}
+.mod-info p{font-size:0.92rem;color:var(--color-muted);line-height:1.5}
+.mod-tags{display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:0.6rem}
+.mod-tag{font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:100px;background:var(--color-bg-warm);color:var(--color-muted);font-weight:500}
+.footer{text-align:center;padding:3rem 2rem;color:var(--color-muted);font-size:0.9rem}
+.cta-btn{display:inline-block;background:var(--color-accent);color:#fff;padding:1rem 2.5rem;border-radius:100px;font-family:var(--font-heading);font-weight:700;font-size:1.1rem;text-decoration:none;transition:transform 0.2s,box-shadow 0.2s}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(147,51,234,0.3)}
+.arrow{margin-left:0.5rem;transition:transform 0.2s}.module-card:hover .arrow{transform:translateX(4px)}
+@media(max-width:600px){.module-card{flex-direction:column;gap:1rem}.stats{gap:1.2rem}}
+</style>
+</head>
+<body>
+<section class="hero">
+  <div class="spark-icon">🎤</div>
+  <span class="badge">Interview Prep Course</span>
+  <h1>Master <span class='accent'>Behavioral & Leadership</span> for Your Next Interview</h1>
+  <p>5 interactive modules covering 60+ real interview questions — with story templates, scenario practice, and company-specific prep.</p>
+  <div class="stats">
+    <div class="stat"><div class="stat-num">5</div><div class="stat-label">Modules</div></div>
+    <div class="stat"><div class="stat-num">60+</div><div class="stat-label">Questions</div></div>
+    <div class="stat"><div class="stat-num">15+</div><div class="stat-label">Quizzes</div></div>
+    <div class="stat"><div class="stat-num">0</div><div class="stat-label">Prerequisites</div></div>
+  </div>
+  <a href="module-01-star-method/index.html" class="cta-btn">Start Learning 🎤</a>
+</section>
+
+<section class="modules-section">
+  <h2>Course Modules</h2>
+  <p class="sub">From story prep to interview gauntlet — structured for behavioral success</p>
+
+  <a href="module-01-star-method/index.html" class="module-card">
+    <div class="mod-num c1">01</div>
+    <div class="mod-info">
+      <h3>STAR Method & Story Preparation <span class="arrow">→</span></h3>
+      <p>Master the STAR framework, build your story bank of 8-10 quantified stories, and learn the technical leadership archetypes that impress interviewers.</p>
+      <div class="mod-tags"><span class="mod-tag">STAR Method</span><span class="mod-tag">Story Bank</span><span class="mod-tag">Quantify Results</span><span class="mod-tag">Templates</span></div>
+    </div>
+  </a>
+
+  <a href="module-02-communication/index.html" class="module-card">
+    <div class="mod-num c2">02</div>
+    <div class="mod-info">
+      <h3>Communication & Influence <span class="arrow">→</span></h3>
+      <p>Explain complex systems to non-technical audiences, write persuasive RFCs, present to leadership, and influence decisions without authority.</p>
+      <div class="mod-tags"><span class="mod-tag">Layer Cake</span><span class="mod-tag">RFC Writing</span><span class="mod-tag">Saying No</span><span class="mod-tag">Influence</span></div>
+    </div>
+  </a>
+
+  <a href="module-03-project-culture/index.html" class="module-card">
+    <div class="mod-num c3">03</div>
+    <div class="mod-info">
+      <h3>Project Management & Culture <span class="arrow">→</span></h3>
+      <p>Estimate timelines, manage scope creep, navigate Amazon LPs, Google Googleyness, Meta values, and research any company's culture.</p>
+      <div class="mod-tags"><span class="mod-tag">Estimation</span><span class="mod-tag">Scope Creep</span><span class="mod-tag">Amazon LPs</span><span class="mod-tag">Company Culture</span></div>
+    </div>
+  </a>
+
+  <a href="module-04-incidents/index.html" class="module-card">
+    <div class="mod-num c4">04</div>
+    <div class="mod-info">
+      <h3>Incident Management & Common Questions <span class="arrow">→</span></h3>
+      <p>Tell compelling incident stories, run blameless postmortems, communicate during crises, and nail the 6 most common behavioral questions.</p>
+      <div class="mod-tags"><span class="mod-tag">Pipeline Failures</span><span class="mod-tag">Postmortems</span><span class="mod-tag">Communication</span><span class="mod-tag">Common Q&A</span></div>
+    </div>
+  </a>
+
+  <a href="module-05-gauntlet/index.html" class="module-card">
+    <div class="mod-num c5">05</div>
+    <div class="mod-info">
+      <h3>The Interview Gauntlet 🔥 <span class="arrow">→</span></h3>
+      <p>Pure practice — 8 STAR prompts, 6 leadership scenarios, communication challenges, company-specific prep for Amazon/Google/Meta, and 20 rapid-fire Q&A.</p>
+      <div class="mod-tags"><span class="mod-tag">STAR Practice</span><span class="mod-tag">Scenarios</span><span class="mod-tag">Rapid Fire</span><span class="mod-tag">Company Prep</span></div>
+    </div>
+  </a>
+</section>
+
+<footer class="footer">
+  <p>🎤 Behavioral & Leadership Interview Mastery — Built for engineers who want to ace their next behavioral round.</p>
+</footer>
+</body>
+</html>

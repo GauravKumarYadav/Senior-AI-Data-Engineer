@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 4: Incident Management & Common Questions | Behavioral & Leadership</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#9333EA;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+.nav-dot.gauntlet{background:var(--color-error)}.nav-dot.gauntlet.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.screen ul,.screen ol{max-width:700px;margin-bottom:1rem;font-size:1.02rem;padding-left:1.5rem}
+.screen li{margin-bottom:0.4rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card-grid.three-col{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.orange{border-top-color:#D97706}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p,.card ul{font-size:0.9rem;color:var(--color-muted);margin-bottom:0.3rem}
+.card ul{padding-left:1.2rem}
+.card ul li{margin-bottom:0.2rem}
+.aha{background:linear-gradient(135deg,#F5F0FF,#EDE5FF);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#F5F0FF}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#C084FC}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}.code-block .accent{color:#C084FC}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+.story-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.88rem}
+.story-table th,.story-table td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+.story-table th{font-family:var(--font-heading);font-weight:700;font-size:0.85rem;background:rgba(147,51,234,0.06);position:sticky;top:0}
+.story-table td{vertical-align:top}
+.story-table tr:hover{background:rgba(147,51,234,0.03)}
+.workflow-steps{display:flex;flex-wrap:wrap;gap:0.5rem;margin:1.5rem 0;align-items:center}
+.workflow-step{background:#fff;border:2px solid var(--color-accent);border-radius:100px;padding:0.5rem 1.2rem;font-family:var(--font-heading);font-weight:600;font-size:0.9rem;color:var(--color-accent)}
+.workflow-arrow{font-size:1.2rem;color:var(--color-muted)}
+.checklist{list-style:none;padding:0;margin:1rem 0}
+.checklist li{padding:0.5rem 0;font-size:0.98rem;display:flex;align-items:flex-start;gap:0.6rem;border-bottom:1px solid rgba(0,0,0,0.04)}
+.checklist li:last-child{border:none}
+.section-alt-inner{max-width:900px;margin:0 auto;padding:6rem 1.5rem 4rem}
+section.screen.screen-alt{max-width:100%;padding:0}
+section.screen.screen-alt .screen-inner{max-width:900px;margin:0 auto;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;min-height:100vh;min-height:100dvh}
+/* Chat timeline animation */
+.chat-container{display:flex;flex-direction:column;gap:0.6rem;margin:1.5rem 0}
+.chat-msg{display:flex;align-items:flex-start;gap:0.8rem;opacity:0;transform:translateY(16px);transition:opacity 0.5s ease,transform 0.5s ease;padding:0.8rem 1rem;border-radius:12px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-icon{font-size:1.4rem;flex-shrink:0;width:2rem;text-align:center}
+.chat-body{flex:1}
+.chat-time{font-family:var(--font-code);font-size:0.8rem;font-weight:600;color:var(--color-accent);margin-bottom:0.15rem}
+.chat-text{font-size:0.9rem;line-height:1.5}
+.chat-text strong{color:var(--color-text)}
+.chat-detail{font-size:0.8rem;color:var(--color-muted);margin-top:0.4rem;font-family:var(--font-code);white-space:pre-wrap;background:var(--color-bg-code);color:#CDD6F4;padding:0.6rem 0.8rem;border-radius:8px;line-height:1.6}
+.chat-msg.alert-msg{border-left:3px solid var(--color-error)}
+.chat-msg.escalation-msg{border-left:3px solid #D97706}
+.chat-msg.fix-msg{border-left:3px solid var(--color-info)}
+.chat-msg.clear-msg{border-left:3px solid var(--color-success)}
+/* Expandable sections */
+.expand-section{background:#fff;border-radius:14px;margin:0.8rem 0;box-shadow:0 2px 8px rgba(0,0,0,0.04);overflow:hidden}
+.expand-header{padding:1.2rem 1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:var(--font-heading);font-weight:700;font-size:1rem;transition:background 0.2s;user-select:none}
+.expand-header:hover{background:rgba(147,51,234,0.04)}
+.expand-arrow{transition:transform 0.3s;font-size:1.2rem;color:var(--color-accent)}
+.expand-header.open .expand-arrow{transform:rotate(90deg)}
+.expand-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease}
+.expand-body.open{max-height:2000px}
+.expand-content{padding:0 1.4rem 1.4rem;font-size:0.95rem;line-height:1.7}
+.expand-content h5{font-family:var(--font-heading);font-weight:700;font-size:0.9rem;margin:0.8rem 0 0.3rem;color:var(--color-accent)}
+.expand-content p{margin-bottom:0.6rem;font-size:0.92rem}
+.expand-content ul{padding-left:1.2rem;margin-bottom:0.6rem;font-size:0.9rem}
+.expand-content ul li{margin-bottom:0.2rem}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}.story-table{font-size:0.78rem}.story-table th,.story-table td{padding:0.4rem}.workflow-steps{flex-direction:column;align-items:flex-start}.workflow-arrow{transform:rotate(90deg)}.chat-detail{font-size:0.72rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎤 Behavioral &amp; Leadership</a><div class="nav-dots"><a href="../module-01-star-method/" class="nav-dot" title="STAR Method"></a><a href="../module-02-communication/" class="nav-dot" title="Communication"></a><a href="../module-03-project-management/" class="nav-dot" title="Project Management"></a><a href="../module-04-incident-management/" class="nav-dot active" title="Incident Management"></a><a href="../module-05-interview-gauntlet/" class="nav-dot gauntlet" title="Interview Gauntlet"></a></div></div></nav>
+
+<!-- ==================== SCREEN 1: Intro ==================== -->
+<section class="screen" id="s1">
+  <h2>🚨 Incident Management &amp; <span class="accent">Common Questions</span></h2>
+  <p>Here's what separates a senior engineer from a mid-level one in an interview: <strong>how they talk about things going wrong.</strong></p>
+  <p>Anyone can tell a story about a project that went well. But when an interviewer asks, <em>"Tell me about a production incident you handled,"</em> they're testing something much deeper than your debugging skills.</p>
+
+  <div style="overflow-x:auto;margin:1rem 0">
+  <table class="story-table">
+    <thead><tr><th>What They Evaluate</th><th>Why It Matters</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Composure under pressure</strong></td><td>Can you think clearly at 2 AM?</td></tr>
+      <tr><td><strong>Debugging methodology</strong></td><td>Do you have a systematic approach?</td></tr>
+      <tr><td><strong>Ownership mentality</strong></td><td>Do you fix it or wait for someone?</td></tr>
+      <tr><td><strong>Communication skills</strong></td><td>Can you update stakeholders clearly?</td></tr>
+      <tr><td><strong>Learning orientation</strong></td><td>Do you prevent recurrence or move on?</td></tr>
+      <tr><td><strong>Technical depth</strong></td><td>Do you understand <em>why</em> things break?</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Pro Tip</div>
+    <p>A well-told incident story is worth more than three success stories. It's harder to fake, more memorable, and demonstrates the exact qualities companies need in senior hires. Prepare at least two incident stories — they'll come up in almost every loop.</p>
+  </div>
+
+  <h3>Modified STAR for Incidents</h3>
+  <div class="code-block"><span class="kw">S</span> — Situation:  <span class="fn">10%</span>   <span class="cm">// What system, what scale, what's at stake</span>
+<span class="kw">T</span> — Task:       <span class="fn">10%</span>   <span class="cm">// Your role — on-call? owner? escalation?</span>
+<span class="kw">A</span> — Action:     <span class="fn">50%</span>   <span class="cm">// Detection → Diagnosis → Fix → Communication</span>
+<span class="kw">R</span> — Result:     <span class="fn">30%</span>   <span class="cm">// Resolution + postmortem + systemic improvements</span>
+<span class="cm">// ─────────────────────────────────────────────</span>
+<span class="str">Result is BIGGER here (30% vs 25%).</span>
+The aftermath — postmortem, monitoring, process changes —
+is where you demonstrate <span class="kw">senior-level thinking</span>.</div>
+
+  <p>At the senior and staff level, incident management isn't a side responsibility. It <em>is</em> the job. This module gives you the frameworks, templates, and example stories to demonstrate all of that in an interview.</p>
+</section>
+
+<!-- ==================== SCREEN 2: Types of Pipeline Failures ==================== -->
+<section class="screen screen-alt" id="s2">
+  <div class="screen-inner">
+  <h2>Types of <span class="accent">Pipeline Failures</span></h2>
+  <p>You should have stories ready for at least three of these five failure categories. Each type tests different skills.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔀 Schema Change from Upstream</h4>
+      <p><strong>What happens:</strong> An upstream team renames a column, changes a type, or drops a field without notifying you.</p>
+      <p><strong>Detected by:</strong> Parsing errors, data quality checks, or business users noticing "off" reports.</p>
+      <p><strong>Fix:</strong> Update schema mapping, backfill affected data, implement schema contracts.</p>
+      <p style="color:var(--color-success);font-size:0.82rem;margin-top:0.5rem">✅ Changed: Schema registry, data contracts, drift alerts, runbooks</p>
+    </div>
+
+    <div class="card blue">
+      <h4>📈 Data Volume Spike (OOM/Timeout)</h4>
+      <p><strong>What happens:</strong> A campaign launches, bots attack, or duplicates flood in. Volume jumps 5–10x and your pipeline chokes.</p>
+      <p><strong>Detected by:</strong> Timeout alerts, OOM crashes, SLA breaches, billing spikes.</p>
+      <p><strong>Fix:</strong> Scale up, add backpressure/rate limiting, implement autoscaling.</p>
+      <p style="color:var(--color-success);font-size:0.82rem;margin-top:0.5rem">✅ Changed: Autoscaling, volume anomaly detection, chunked processing</p>
+    </div>
+
+    <div class="card" style="border-top-color:var(--color-error)">
+      <h4>👻 Silent Data Corruption</h4>
+      <p><strong>What happens:</strong> Pipeline runs green. Data is wrong. No errors, no alerts. <strong>The scariest failure type.</strong></p>
+      <p><strong>Detected by:</strong> Business user flags it, quality checks, reconciliation jobs, ML model degradation.</p>
+      <p><strong>Fix:</strong> Identify scope, fix root cause, backfill, notify downstream consumers.</p>
+      <p style="color:var(--color-success);font-size:0.82rem;margin-top:0.5rem">✅ Changed: Automated reconciliation, statistical checks, data impact in PRs</p>
+    </div>
+
+    <div class="card orange">
+      <h4>🔌 Third-Party API Issues</h4>
+      <p><strong>What happens:</strong> External API returns 429 (rate limited) or 503 (down). Pipeline fails or processes partial data.</p>
+      <p><strong>Detected by:</strong> HTTP error spikes, completeness checks, vendor status page.</p>
+      <p><strong>Fix:</strong> Exponential backoff, circuit breaker, dead-letter queue for retries.</p>
+      <p style="color:var(--color-success);font-size:0.82rem;margin-top:0.5rem">✅ Changed: Backoff + circuit breaker, DLQ, vendor status in monitoring</p>
+    </div>
+
+    <div class="card purple">
+      <h4>☁️ Cloud Service Degradation</h4>
+      <p><strong>What happens:</strong> S3 returns 500s, BigQuery throttles, GCP region has issues. Multiple unrelated pipelines fail.</p>
+      <p><strong>Detected by:</strong> Cloud service errors, latency spikes, status page incidents.</p>
+      <p><strong>Fix:</strong> Check status page, reduce concurrency, cross-region failover.</p>
+      <p style="color:var(--color-success);font-size:0.82rem;margin-top:0.5rem">✅ Changed: Health pre-flight checks, standardized retries, multi-region</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Strategy</div>
+    <p>Silent data corruption stories are interview gold — they show you catch things that don't throw errors. Schema change stories show cross-team communication. Volume spikes show you design for scale. Pick your strongest two.</p>
+  </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 3: Incident Story — Schema Change ==================== -->
+<section class="screen" id="s3">
+  <h2>Incident Story: <span class="accent">Schema Change</span></h2>
+  <p>Question: <em>"Tell me about a time you handled a production incident."</em></p>
+  <p>Full STAR story template — "The Schema Change That Broke Revenue Reporting"</p>
+
+  <div class="translate">
+    <div class="translate-code"><span class="cm">// ─── SITUATION (10%) ───────────────</span>
+Senior data engineer, fintech company.
+Core pipeline: Kafka → Spark → Snowflake.
+Powered CFO's daily revenue dashboard.
+<span class="str">12M transactions/day, 6 AM SLA.</span>
+
+<span class="cm">// ─── TASK (10%) ───────────────────</span>
+<span class="kw">I was the on-call engineer</span> the night
+it broke. PagerDuty alert at 3:17 AM:
+<span class="fn">ColumnNotFoundException</span>.
+My task: restore before 6 AM SLA.
+As pipeline owner, I also owned
+the postmortem.
+
+<span class="cm">// ─── ACTION (50%) ─────────────────</span>
+<span class="fn">Acknowledged</span> within 3 minutes.
+Stack trace → missing column
+<span class="str">"transaction_fee_currency"</span>.
+
+<span class="fn">Hypothesis:</span> upstream schema change.
+Checked payments team's deploy log —
+confirmed v2.14.0 shipped at 2:45 AM.
+Field renamed to <span class="str">"fee_currency_code"</span>.
+No downstream notification.
+
+<span class="fn">Immediate fix:</span> coalesce pattern
+handling both old and new field names.
+<span class="kw">Deployed fix at 4:10 AM.</span>
+Re-ran from last good offset.
+Revenue table verified by 5:35 AM.
+
+<span class="fn">Communicated</span> status to team channel:
+what happened, what I did, timeline.
+
+<span class="fn">Next morning:</span> initiated blameless
+postmortem. Framed as systemic gap,
+not blame. Three action items:
+1. Schema registry for Kafka topics
+2. Schema validation at ingestion
+3. 48-hour change notification protocol
+
+<span class="cm">// ─── RESULT (30%) ─────────────────</span>
+Resolved in <span class="str">2 hours 18 minutes</span>.
+SLA met. Schema registry caught
+<span class="str">3 more changes</span> next quarter.
+Notification protocol adopted
+<span class="str">company-wide</span>.
+Schema incidents: <span class="str">1/month → 0</span>
+for 6 months.
+CFO never knew it broke.
+<span class="cm">// That's exactly how it should be.</span></div>
+    <div class="translate-eng">
+      <div class="line">🎬 <strong>SITUATION</strong> — 3 sentences max</div>
+      <div class="line">Role + company type</div>
+      <div class="line">System architecture in one line</div>
+      <div class="line">Stakes: who uses it, what SLA</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🎯 <strong>TASK</strong> — YOUR specific role</div>
+      <div class="line">"I was the on-call" = clear ownership</div>
+      <div class="line">Specific alert type shows technical depth</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Dual responsibility: fix + prevent</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⚡ <strong>ACTION</strong> — The money section</div>
+      <div class="line">Quick acknowledgment = professionalism</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔑 Systematic diagnosis, not guessing</div>
+      <div class="line">Verified hypothesis with evidence</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔑 Clean fix: backward-compatible</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Specific timestamps = credibility</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔑 Communication was proactive</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔑 "Blameless" = cultural maturity signal</div>
+      <div class="line">Framed as system gap, not person's fault</div>
+      <div class="line">Concrete, specific action items</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📊 <strong>RESULT</strong> — Numbers + systemic change</div>
+      <div class="line">Resolution time ✅</div>
+      <div class="line">Prevention metrics ✅</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Org-wide adoption ✅</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Before/after reliability ✅</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🪞 Perfect closer — invisible to users</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 4: Incident Story — Silent Corruption ==================== -->
+<section class="screen screen-alt" id="s4">
+  <div class="screen-inner">
+  <h2>Incident Story: <span class="accent">Silent Corruption</span></h2>
+  <p>Question: <em>"Describe a time you identified a problem no one else had noticed."</em></p>
+  <p>"Silent Data Corruption in the ML Feature Store"</p>
+
+  <div class="translate">
+    <div class="translate-code"><span class="cm">// ─── SITUATION (10%) ───────────────</span>
+Senior DE at an e-commerce company.
+Feature store serving real-time
+recommendation models.
+Key feature: <span class="str">user_avg_order_value_30d</span>
+Fed product ranking model that
+directly impacted revenue.
+
+<span class="cm">// ─── TASK (10%) ───────────────────</span>
+<span class="kw">No alert. No error. No report.</span>
+I spotted it during routine review
+of feature distribution dashboards
+I'd built the previous quarter.
+Median dropped <span class="fn">~22% over 2 weeks</span>.
+My task: real trend or data bug?
+
+<span class="cm">// ─── ACTION (50%) ─────────────────</span>
+<span class="fn">Step 1:</span> Rule out business shift.
+Queried raw transactions directly —
+median was stable. Confirmed:
+<span class="kw">feature store was wrong</span>.
+
+<span class="fn">Step 2:</span> Traced computation pipeline.
+Checked dbt model git history.
+Found commit from 12 days prior —
+teammate refactored for performance:
+<span class="str">INNER JOIN → LEFT JOIN</span> to handle
+new users with no orders.
+
+<span class="fn">Root cause:</span> Intent was correct, but
+users with zero orders now included.
+<span class="kw">AVG() ignored NULLs</span> but downstream
+calc used <span class="fn">COUNT(*)</span> instead of
+<span class="fn">COUNT(order_value)</span> — inflating
+the denominator.
+
+<span class="fn">Step 3:</span> Documented root cause.
+Fixed COUNT, validated against source.
+Blast radius: <span class="str">12 days, 2.3M profiles</span>.
+Coordinated backfill with ML team.
+
+<span class="cm">// ─── RESULT (30%) ─────────────────</span>
+ML team confirmed: CTR had dropped
+<span class="str">8%</span> during affected window.
+After backfill: <span class="str">CTR recovered in 48h</span>.
+Prevention:
+1. <span class="str">Statistical drift detection</span> on
+   all critical features (>10% shift)
+2. <span class="str">Data impact analysis</span> mandatory
+   in PR template for dbt changes
+3. <span class="str">Daily reconciliation</span> for top 10
+   features vs source-of-truth
+
+Drift detection caught <span class="str">2 more issues</span>
+next quarter before reaching models.
+
+<span class="cm">// "The most dangerous bugs are the</span>
+<span class="cm">//  ones that don't raise errors."</span></div>
+    <div class="translate-eng">
+      <div class="line">🎬 <strong>SITUATION</strong></div>
+      <div class="line">Role + domain</div>
+      <div class="line">System: feature store → ML models</div>
+      <div class="line">Specific feature name = credibility</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Direct revenue connection = stakes</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🎯 <strong>TASK</strong></div>
+      <div class="line">🔑 "No alert. No error." = powerful opening</div>
+      <div class="line">Shows proactive monitoring behavior</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Specific % shows analytical eye</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⚡ <strong>ACTION</strong> — Systematic investigation</div>
+      <div class="line">Rule out the obvious first</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔑 Git history investigation = thorough</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔑 Subtle SQL semantics — shows depth</div>
+      <div class="line">This is the kind of bug that senior</div>
+      <div class="line">engineers catch and juniors miss</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Blast radius assessment = mature thinking</div>
+      <div class="line">Cross-team coordination = leadership</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📊 <strong>RESULT</strong></div>
+      <div class="line">Quantified downstream impact ✅</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Recovery metric ✅</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Systemic prevention #1 ✅</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Systemic prevention #2 ✅</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Systemic prevention #3 ✅</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Proof the system works ✅</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🪞 Closing principle = memorable</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Why This Story Is Interview Gold</div>
+    <p>You found a problem <strong>no one reported</strong>, using dashboards <strong>you built proactively</strong>. You traced it through git history, understood subtle SQL semantics, assessed blast radius, coordinated cross-team, and built prevention. This is the full senior engineer toolkit in one story.</p>
+  </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 5: Postmortem Process ==================== -->
+<section class="screen" id="s5">
+  <h2>The <span class="accent">Postmortem Process</span></h2>
+  <p>A <span class="tooltip-term" data-tip="A structured review of an incident that focuses on what happened and why — not who is at fault. The goal is to fix systems, not punish people.">blameless postmortem</span> focuses on <strong>what happened and why</strong> — not who's at fault. Humans make mistakes; the goal is to fix the systems that allowed a mistake to cause an incident.</p>
+
+  <ul>
+    <li><strong>People hide mistakes when blame is the consequence.</strong> You lose the chance to prevent real incidents.</li>
+    <li><strong>Root causes are almost never "someone screwed up."</strong> There's always a systemic reason.</li>
+    <li><strong>Blame kills psychological safety</strong> — the #1 predictor of high-performing teams (Google's Project Aristotle).</li>
+  </ul>
+
+  <h3>Postmortem Template</h3>
+  <div class="code-block"><span class="kw">============================================================</span>
+<span class="fn">                    INCIDENT POSTMORTEM</span>
+<span class="kw">============================================================</span>
+
+<span class="cm">Incident Title:</span>   <span class="str">[Clear, descriptive — not "Pipeline Broke"]</span>
+<span class="cm">Date / Severity:</span>  <span class="str">[YYYY-MM-DD] [P1/P2/P3]</span>
+<span class="cm">Duration:</span>         <span class="str">[Detection → full resolution]</span>
+<span class="cm">Author:</span>           <span class="str">[Who wrote this]</span>
+
+<span class="kw">────────────────────────────────────────</span>
+<span class="fn">EXECUTIVE SUMMARY</span>    <span class="cm">// 2-3 sentences, non-technical</span>
+<span class="fn">IMPACT</span>               <span class="cm">// Users, revenue, data, SLA, downstream</span>
+<span class="fn">TIMELINE (UTC)</span>       <span class="cm">// Minute-by-minute: HH:MM — [event]</span>
+<span class="fn">ROOT CAUSE</span>           <span class="cm">// WHY was the bug possible? Not "human error"</span>
+<span class="fn">CONTRIBUTING FACTORS</span> <span class="cm">// Made it worse or delayed detection</span>
+<span class="fn">WHAT WENT WELL</span>       <span class="cm">// Celebrate what worked</span>
+<span class="fn">WHAT WENT WRONG</span>      <span class="cm">// Honest about gaps</span>
+<span class="fn">ACTION ITEMS</span>         <span class="cm">// Specific owner + deadline + measurable</span>
+<span class="fn">LESSONS LEARNED</span>      <span class="cm">// Key takeaways for team & org</span></div>
+
+  <h3>Running the Meeting</h3>
+  <div class="workflow-steps">
+    <div class="workflow-step">🎯 Set the Tone<br><small style="font-weight:400;font-size:0.75rem">2 min — "This is blameless"</small></div>
+    <span class="workflow-arrow">→</span>
+    <div class="workflow-step">📋 Walk Timeline<br><small style="font-weight:400;font-size:0.75rem">15 min — minute-by-minute</small></div>
+    <span class="workflow-arrow">→</span>
+    <div class="workflow-step">🔍 Root Cause<br><small style="font-weight:400;font-size:0.75rem">15 min — use "5 Whys"</small></div>
+    <span class="workflow-arrow">→</span>
+    <div class="workflow-step">⚖️ Well vs Wrong<br><small style="font-weight:400;font-size:0.75rem">10 min — honest both ways</small></div>
+    <span class="workflow-arrow">→</span>
+    <div class="workflow-step">✅ Action Items<br><small style="font-weight:400;font-size:0.75rem">15 min — owner + deadline</small></div>
+  </div>
+
+  <h3>Root Cause vs. Contributing Factors</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🎯 Root Cause</h4>
+      <ul>
+        <li>The single underlying reason the incident happened</li>
+        <li>Remove it → incident wouldn't have occurred</li>
+        <li><strong>Example:</strong> dbt model changed COUNT(order_value) to COUNT(*), inflating the denominator</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid #D97706">
+      <h4>⚡ Contributing Factors</h4>
+      <ul>
+        <li>Conditions that made the incident more likely, harder to detect, or more severe</li>
+        <li>Didn't <em>cause</em> it, but amplified impact</li>
+        <li><strong>Examples:</strong> No automated test, code review missed it, monitoring existed but wasn't checked</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Actionable Action Items Formula</h3>
+  <div class="code-block"><span class="kw">[Verb]</span> + <span class="fn">[specific thing]</span> + <span class="str">[measurable definition of done]</span>
++ <span class="cm">Owner: [name]  Due: [date]  Priority: [P1/P2/P3]</span>
+
+<span class="cm">// ❌ "Be more careful with schema changes"</span>
+<span class="str">// ✅ "Add schema validation step to ingestion pipeline</span>
+<span class="str">//     that alerts on column additions, deletions, or</span>
+<span class="str">//     type changes — Owner: Sarah, Due: March 15"</span>
+
+<span class="cm">// ❌ "Improve monitoring"</span>
+<span class="str">// ✅ "Add row-count anomaly detection to revenue table</span>
+<span class="str">//     alerting if count deviates >20% from 7-day avg</span>
+<span class="str">//     — Owner: Mike, Due: March 22"</span></div>
+</section>
+
+<!-- ==================== SCREEN 6: Sample Incident Timeline ==================== -->
+<section class="screen screen-alt" id="s6">
+  <div class="screen-inner">
+  <h2>Sample <span class="accent">Incident Timeline</span></h2>
+  <p>A minute-by-minute P1 incident, animated. Watch how communication flows at each stage. <strong>Click "Replay" to watch again.</strong></p>
+
+  <div style="text-align:right;margin-bottom:0.5rem">
+    <button onclick="replayTimeline()" style="background:var(--color-accent);color:#fff;border:none;border-radius:8px;padding:0.5rem 1.2rem;font-family:var(--font-heading);font-weight:600;cursor:pointer;font-size:0.85rem">🔄 Replay</button>
+  </div>
+
+  <div class="chat-container" id="timeline">
+    <div class="chat-msg alert-msg" data-delay="0">
+      <div class="chat-icon">🚨</div>
+      <div class="chat-body">
+        <div class="chat-time">02:15 AM — Alert Fires</div>
+        <div class="chat-text">PagerDuty: Revenue pipeline failed — <strong>ColumnNotFoundException</strong>. Severity: P1.</div>
+        <div class="chat-detail">Good alert: specific system, failure type, severity.
+Links to runbook and dashboard.
+Goes to the right person via PagerDuty, not just Slack.</div>
+      </div>
+    </div>
+
+    <div class="chat-msg" data-delay="600">
+      <div class="chat-icon">📱</div>
+      <div class="chat-body">
+        <div class="chat-time">02:18 AM — On-Call Acknowledges</div>
+        <div class="chat-text">Acknowledged within <strong>3 minutes</strong>. Initial assessment posted.</div>
+        <div class="chat-detail">📱 INCIDENT ACKNOWLEDGED
+━━━━━━━━━━━━━━━━━━━━━━━
+Alert:    Revenue pipeline — ColumnNotFoundException
+On-call:  [Your Name]
+Status:   Investigating
+Channel:  #incident-2025-11-14
+Next update in: 15 minutes</div>
+      </div>
+    </div>
+
+    <div class="chat-msg" data-delay="1200">
+      <div class="chat-icon">🔍</div>
+      <div class="chat-body">
+        <div class="chat-time">02:25 AM — Initial Diagnosis</div>
+        <div class="chat-text">Systematic approach: check logs → dependencies → recent deploys → upstream.</div>
+        <div class="chat-detail">🔍 INVESTIGATION UPDATE
+━━━━━━━━━━━━━━━━━━━━━━━
+Findings:  Spark job failed at ingestion step.
+           Missing column "transaction_fee_currency."
+Hypothesis: Upstream schema change renamed or removed field.
+Impact:    Revenue table not updated. SLA: 06:00 UTC.
+Next update in: 15 minutes</div>
+      </div>
+    </div>
+
+    <div class="chat-msg escalation-msg" data-delay="1800">
+      <div class="chat-icon">📞</div>
+      <div class="chat-body">
+        <div class="chat-time">02:40 AM — Escalation</div>
+        <div class="chat-text">Can't resolve alone in 20 min → escalate with <strong>what you've tried + what you need</strong>.</div>
+        <div class="chat-detail">📞 ESCALATION — P1 INCIDENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Escalating to: @payments-team-lead
+Reason:   Schema change confirmed in payments v2.14.0.
+          Need field mapping to implement fix.
+What I've tried: Verified schema-related, not data-related.
+SLA at risk: Revenue table must update by 06:00 UTC.</div>
+      </div>
+    </div>
+
+    <div class="chat-msg fix-msg" data-delay="2400">
+      <div class="chat-icon">🎯</div>
+      <div class="chat-body">
+        <div class="chat-time">03:10 AM — Root Cause Identified</div>
+        <div class="chat-text">Confirmed: payments v2.14.0 renamed <strong>transaction_fee_currency → fee_currency_code</strong>. Hard-coded schema reference.</div>
+        <div class="chat-detail">🎯 ROOT CAUSE IDENTIFIED
+━━━━━━━━━━━━━━━━━━━━━━━
+Root Cause: Field renamed without notification.
+            Hard-coded reference in Spark schema.
+Blast radius: Revenue table, finance recon, fraud detection.
+Fix plan: Coalesce pattern for old + new field names.
+ETA to fix: 30 minutes</div>
+      </div>
+    </div>
+
+    <div class="chat-msg fix-msg" data-delay="3000">
+      <div class="chat-icon">🔧</div>
+      <div class="chat-body">
+        <div class="chat-time">03:30 AM — Fix Deployed</div>
+        <div class="chat-text">Minimum viable fix deployed. Pipeline re-run initiated from last good offset.</div>
+        <div class="chat-detail">🔧 FIX DEPLOYED
+━━━━━━━━━━━━━━━
+Fix: Coalesce pattern for both field names. Commit: abc123f
+Rerun: Pipeline initiated from 03:00 UTC offset.
+ETA for verification: 03:45 UTC
+Monitoring: Watching Spark progress + row counts.</div>
+      </div>
+    </div>
+
+    <div class="chat-msg" data-delay="3600">
+      <div class="chat-icon">✅</div>
+      <div class="chat-body">
+        <div class="chat-time">03:45 AM — Verification Complete</div>
+        <div class="chat-text">Output verified against expected values. Row counts match. Key metrics spot-checked. Dashboards loading.</div>
+      </div>
+    </div>
+
+    <div class="chat-msg clear-msg" data-delay="4200">
+      <div class="chat-icon">🟢</div>
+      <div class="chat-body">
+        <div class="chat-time">04:00 AM — All Clear</div>
+        <div class="chat-text"><strong>Incident resolved.</strong> Duration: 1h 45m. SLA met. No data loss.</div>
+        <div class="chat-detail">🟢 ALL CLEAR — INCIDENT RESOLVED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Duration:   1h 45m (alert to all-clear)
+Impact:     Revenue table delayed but updated before SLA.
+            ~180K transactions backfilled.
+Root Cause: Upstream schema change without notification.
+Postmortem: Scheduled for Nov 15, 10:00 AM
+Follow-up:  Schema registry + notification protocol.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Key Takeaway</div>
+    <p>Notice the communication cadence: acknowledge → investigate → escalate → root cause → fix → verify → all clear. Each update answers: <strong>What's happening? What's the impact? What's next?</strong> This is the pattern interviewers want to hear.</p>
+  </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 7: Monitoring After Incidents ==================== -->
+<section class="screen" id="s7">
+  <h2>Monitoring After <span class="accent">Incidents</span></h2>
+
+  <div class="aha">
+    <div class="aha-title">🧠 Never the Same Bug Twice</div>
+    <p>Every incident should result in at least one monitoring improvement that would have either <strong>prevented</strong> the incident or <strong>detected it faster</strong>. If the same type of incident happens twice, it's not bad luck — it's a process failure. "Here's what we did to make sure it never happened again" is the sentence that earns senior-level scores.</p>
+  </div>
+
+  <h3>5 Types of Monitors</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>⏰ Data Freshness</h4>
+      <p><strong>Checks:</strong> Is the data up to date?</p>
+      <p><strong>Alert:</strong> Table not updated within SLA window</p>
+      <p style="font-size:0.82rem;color:var(--color-info);margin-top:0.3rem">"Revenue table should refresh by 06:00 UTC. Alert at 06:15."</p>
+    </div>
+    <div class="card blue">
+      <h4>📊 Row Count</h4>
+      <p><strong>Checks:</strong> Expected number of records?</p>
+      <p><strong>Alert:</strong> Count deviates &gt;X% from trailing average</p>
+      <p style="font-size:0.82rem;color:var(--color-info);margin-top:0.3rem">"Alert if daily txn count is ±20% from 7-day average."</p>
+    </div>
+    <div class="card green">
+      <h4>🔀 Schema Validation</h4>
+      <p><strong>Checks:</strong> Does incoming data match expected schema?</p>
+      <p><strong>Alert:</strong> New columns, missing columns, type changes</p>
+      <p style="font-size:0.82rem;color:var(--color-info);margin-top:0.3rem">"Alert if Kafka schema differs from registered schema."</p>
+    </div>
+    <div class="card purple">
+      <h4>📈 Value Distribution</h4>
+      <p><strong>Checks:</strong> Are values in expected ranges?</p>
+      <p><strong>Alert:</strong> Statistical drift, unexpected nulls, outliers</p>
+      <p style="font-size:0.82rem;color:var(--color-info);margin-top:0.3rem">"Alert if order_value median shifts &gt;15% WoW."</p>
+    </div>
+    <div class="card orange">
+      <h4>🎯 SLA Tracking</h4>
+      <p><strong>Checks:</strong> Meeting committed delivery times?</p>
+      <p><strong>Alert:</strong> Warning before breach, critical at breach</p>
+      <p style="font-size:0.82rem;color:var(--color-info);margin-top:0.3rem">"Warning at 05:30 if not updated. Critical at 06:00."</p>
+    </div>
+  </div>
+
+  <h3>Alert Fatigue Prevention</h3>
+  <div style="overflow-x:auto;margin:1rem 0">
+  <table class="story-table">
+    <thead><tr><th>Strategy</th><th>How to Implement</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Severity tiers</strong></td><td>P1 = PagerDuty call. P2 = Slack. P3 = Dashboard only.</td></tr>
+      <tr><td><strong>Actionable only</strong></td><td>Every alert must have a clear action. No action? It's a metric, not an alert.</td></tr>
+      <tr><td><strong>Tune quarterly</strong></td><td>Alert fires &gt;5x/week without being actionable? Widen threshold or fix root cause.</td></tr>
+      <tr><td><strong>Dedup &amp; correlate</strong></td><td>5 alerts from same root cause = 1 page, not 5.</td></tr>
+      <tr><td><strong>On-call health</strong></td><td>Target: &lt;3 actionable pages per shift. Higher? Invest in noise reduction.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Signal</div>
+    <p>Mentioning alert fatigue signals operational maturity. "We added the monitoring, but I was careful to set thresholds that would be actionable without creating noise" — that's a sentence that impresses.</p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 8: Communication During Incidents ==================== -->
+<section class="screen screen-alt" id="s8">
+  <div class="screen-inner">
+  <h2>Communication During <span class="accent">Incidents</span></h2>
+
+  <h3>The Incident Commander (IC) Role</h3>
+  <p>For P1 incidents with multiple people, one person coordinates — <strong>they don't debug</strong>. Appoint an IC when more than 2 people are working, multiple systems are affected, or the incident will last 30+ minutes.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📣 IC Responsibilities</h4>
+      <ul>
+        <li>Own all status update communication</li>
+        <li>Coordinate responders, prevent duplication</li>
+        <li>Manage escalations, decide when/whom</li>
+        <li>Track timeline in real-time</li>
+        <li>Break tie-breakers on fix approach</li>
+        <li>Only IC declares "all clear"</li>
+      </ul>
+    </div>
+    <div class="card blue">
+      <h4>🗂️ Stakeholder Tiers</h4>
+      <ul>
+        <li><strong>Tier 1:</strong> Eng team — immediate, technical details</li>
+        <li><strong>Tier 2:</strong> Eng mgmt — within 15 min, impact + ETA</li>
+        <li><strong>Tier 3:</strong> Business — within 30 min, non-technical</li>
+        <li><strong>Tier 4:</strong> Customer-facing — only if impacted, no tech details</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Status Update Template</h3>
+  <div class="code-block"><span class="fn">⚠️ INCIDENT STATUS UPDATE</span>
+<span class="kw">━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="cm">Incident:</span>  <span class="str">[Name]</span>
+<span class="cm">Severity:</span>  <span class="str">[P1/P2/P3]</span>
+<span class="cm">Status:</span>    <span class="str">[Investigating / Identified / Fix in Progress / Resolved]</span>
+<span class="cm">IC:</span>        <span class="str">[Name]</span>
+<span class="cm">Updated:</span>   <span class="str">[Timestamp]</span>
+
+<span class="fn">WHAT'S HAPPENING:</span>  <span class="cm">[1-2 sentences on current state]</span>
+<span class="fn">WHAT WE KNOW:</span>     <span class="cm">[Root cause or current hypothesis]</span>
+<span class="fn">WHAT WE'RE DOING:</span> <span class="cm">[Current action and who's on it]</span>
+<span class="fn">IMPACT:</span>            <span class="cm">[What's affected and who's impacted]</span>
+<span class="fn">ETA:</span>               <span class="cm">[Best estimate or "next update in X min"]</span></div>
+
+  <h3>War Room Etiquette</h3>
+  <ul>
+    <li><strong>One conversation at a time.</strong> Side conversations split focus.</li>
+    <li><strong>State facts, not opinions.</strong> "The error log shows X" beats "I think it's probably Y."</li>
+    <li><strong>Announce before acting.</strong> "I'm checking Kafka consumer lag" — prevents two people doing the same thing.</li>
+    <li><strong>Don't change production without announcing.</strong> "Restarting ingestion service in 2 min — objections?"</li>
+    <li><strong>Keep incident channel clean.</strong> Jokes and side topics go elsewhere.</li>
+    <li><strong>Respect the IC's authority.</strong> Disagree in the postmortem, not the war room.</li>
+  </ul>
+
+  <h3>Staying Calm Under Pressure</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🧘 Before (Preparation)</h4>
+      <ul>
+        <li>Have runbooks for common failure modes</li>
+        <li>Know your systems — don't Google "how does our pipeline work" at 3 AM</li>
+        <li>Practice: game day exercises, tabletop drills</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>⚡ During (Execution)</h4>
+      <ul>
+        <li>Breathe. Literally. 3 deep breaths first.</li>
+        <li>Narrate your actions in the incident channel</li>
+        <li>Set a 15-min timer — no progress? Reassess or escalate</li>
+        <li>Don't make it worse. Verify before you apply.</li>
+        <li>Remember: it's just data. You will figure this out.</li>
+      </ul>
+    </div>
+  </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 9: Common Behavioral Questions ==================== -->
+<section class="screen" id="s9">
+  <h2>Common <span class="accent">Behavioral Questions</span></h2>
+  <p>These six questions appear in virtually every behavioral interview. Click each to expand the full STAR answer.</p>
+
+  <div class="expand-section">
+    <div class="expand-header" onclick="toggleExpand(this)">
+      <span>🚀 "Tell me about a time you had to learn something quickly."</span>
+      <span class="expand-arrow">▶</span>
+    </div>
+    <div class="expand-body">
+      <div class="expand-content">
+        <h5>Why they ask:</h5>
+        <p>Technology changes constantly. They want to know if you can ramp up fast in unfamiliar territory.</p>
+        <h5>What they look for:</h5>
+        <ul>
+          <li>Self-directed learning, not waiting to be taught</li>
+          <li>A systematic approach (not random Googling)</li>
+          <li>Application to a real deliverable</li>
+          <li>Humility about the gap + confidence in your ability</li>
+        </ul>
+        <h5>Strong STAR Answer:</h5>
+        <p><strong>S:</strong> Team tasked with migrating batch ETL to streaming with Apache Flink. I had deep Spark/Airflow experience but zero Flink or stream processing.</p>
+        <p><strong>T:</strong> Senior engineer assigned to design the POC. Three weeks to build a working prototype and present to leadership.</p>
+        <p><strong>A:</strong> Structured learning in three phases. Week 1: fundamentals — official docs, Confluent courses, local Flink cluster. Week 2: built simplified pipeline with sample data, deliberately hit every edge case. Scheduled calls with 3 engineers at other companies who'd done similar migrations. Week 3: integrated with actual Kafka topics, ran parallel with batch pipeline to compare outputs.</p>
+        <p><strong>R:</strong> POC ready on time. Demonstrated sub-minute freshness vs. existing 4-hour batch. Leadership approved migration. Prototype became production foundation. Wrote internal learning guide that reduced team ramp-up from weeks to days.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="expand-section">
+    <div class="expand-header" onclick="toggleExpand(this)">
+      <span>🏆 "Describe a project you're most proud of."</span>
+      <span class="expand-arrow">▶</span>
+    </div>
+    <div class="expand-body">
+      <div class="expand-content">
+        <h5>Why they ask:</h5>
+        <p>Your choice of project reveals what you value — technical elegance, business impact, team growth. There's no wrong answer, but there are revealing ones.</p>
+        <h5>What they look for:</h5>
+        <ul>
+          <li>Real complexity and impact (not a weekend hack)</li>
+          <li>Ability to explain <em>why</em> you're proud — values and self-awareness</li>
+          <li>End-to-end ownership</li>
+          <li>Passion and energy when talking about it</li>
+        </ul>
+        <h5>Strong STAR Answer:</h5>
+        <p><strong>S:</strong> Analytics team spent ~15 hrs/week manually building reports from 5 disconnected sources. Data was inconsistent, manual process introduced errors.</p>
+        <p><strong>T:</strong> I proposed and owned building a unified data platform — single source of truth integrating all five sources.</p>
+        <p><strong>A:</strong> Designed architecture (Fivetran → dbt → Snowflake → Preset). The harder work was defining data models with stakeholders. Ran workshops with analytics, marketing, and finance to align on metric definitions. Documented in a shared data dictionary. Built incrementally — one source per sprint for immediate value.</p>
+        <p><strong>R:</strong> Three months: all five integrated. Manual reporting dropped from 15 hrs to &lt;2 hrs/week. First time the company had agreed-upon metric definitions. Finance and marketing stopped arguing about numbers. 18 months later, every team used the platform.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="expand-section">
+    <div class="expand-header" onclick="toggleExpand(this)">
+      <span>⚖️ "How do you handle conflicting priorities?"</span>
+      <span class="expand-arrow">▶</span>
+    </div>
+    <div class="expand-body">
+      <div class="expand-content">
+        <h5>Why they ask:</h5>
+        <p>Senior engineers constantly juggle competing requests. This tests navigating organizational complexity.</p>
+        <h5>What they look for:</h5>
+        <ul>
+          <li>A framework for prioritization (not "I work harder")</li>
+          <li>Diplomatic communication — can you say no?</li>
+          <li>Business judgment — prioritize by impact</li>
+          <li>Proactive escalation, not waiting for crisis</li>
+        </ul>
+        <h5>Strong STAR Answer:</h5>
+        <p><strong>S:</strong> Three stakeholders competing for my time: product (event tracking, 4 weeks), finance (revenue recon fix, board meeting in 2 weeks), ML team (feature store optimization, 6-hour refresh).</p>
+        <p><strong>T:</strong> Couldn't do all three. Needed to determine actual priority, communicate clearly, and ensure nothing critical fell through.</p>
+        <p><strong>A:</strong> Quantified impact and urgency of each. Finance = non-negotiable (board meeting). Product = fixed date but could be incremental. ML = important but not time-bound. Wrote one-page priority proposal, shared with all three + manager in a single meeting. Transparent about trade-offs. Found a quick-win for ML: config change for 40% speedup without full optimization.</p>
+        <p><strong>R:</strong> Finance fixed a week early. Product delivered incrementally, ready for launch. ML quick-win bought breathing room for full optimization next sprint. All three stakeholders told my manager they appreciated the transparency. Key lesson: prioritization isn't saying no — it's saying "here's when."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="expand-section">
+    <div class="expand-header" onclick="toggleExpand(this)">
+      <span>💥 "Tell me about a time you made a mistake."</span>
+      <span class="expand-arrow">▶</span>
+    </div>
+    <div class="expand-body">
+      <div class="expand-content">
+        <h5>Why they ask:</h5>
+        <p>Tests self-awareness, integrity, and growth mindset. Everyone makes mistakes — what matters is owning, fixing, and learning.</p>
+        <h5>What they look for:</h5>
+        <ul>
+          <li>Genuine ownership — not "the real mistake was made by someone else"</li>
+          <li>A real mistake with real consequences</li>
+          <li>Systematic fix, not just apology</li>
+          <li>Clear lesson that changed your behavior</li>
+        </ul>
+        <h5>Strong STAR Answer:</h5>
+        <p><strong>S:</strong> Migrating customer data pipeline from Postgres to BigQuery. PII data — names, emails, purchase history — for ~3M customers.</p>
+        <p><strong>T:</strong> Responsible for writing migration script and validating correctness. I'd done similar migrations and felt confident.</p>
+        <p><strong>A:</strong> Tested against staging subset, ran in production Saturday. Completed without errors, spot checks looked correct. Monday: customer support flagged ~12K records with incorrect emails — shifted by one row due to sorting inconsistency between Postgres and BigQuery that didn't manifest in smaller staging data. Immediately owned it. Notified manager and data privacy team within 30 minutes. Wrote rollback, had corrected data by EOD. Then investigated <em>why</em> I missed it: validation used aggregate counts and spot checks, not row-level comparison. Built automated validation framework with row-level hash comparisons for all future migrations.</p>
+        <p><strong>R:</strong> Data corrected within 8 hours. No customer-facing impact (analytics warehouse only). Framework used for 4 subsequent migrations, caught a type-casting issue in one. Lesson: confidence without verification is arrogance — validation should be proportional to risk, not inversely proportional to experience.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="expand-section">
+    <div class="expand-header" onclick="toggleExpand(this)">
+      <span>🌫️ "How do you approach ambiguous requirements?"</span>
+      <span class="expand-arrow">▶</span>
+    </div>
+    <div class="expand-body">
+      <div class="expand-content">
+        <h5>Why they ask:</h5>
+        <p>At senior level, the most important projects are the most ambiguous. If you only execute with detailed specs, you're not ready for senior.</p>
+        <h5>What they look for:</h5>
+        <ul>
+          <li>Comfort with ambiguity (not paralysis)</li>
+          <li>A repeatable process for turning vague into specific</li>
+          <li>Stakeholder engagement to build alignment</li>
+          <li>Iterative delivery, not big-bang</li>
+        </ul>
+        <h5>Strong STAR Answer:</h5>
+        <p><strong>S:</strong> VP of Product: "We need to understand our customer lifecycle better." No specific metrics, no deliverables, no timeline. Driven by increasing churn.</p>
+        <p><strong>T:</strong> Senior DE asked to turn this ambiguous request into concrete deliverables.</p>
+        <p><strong>A:</strong> Listening tour: 30-min conversations with 5 stakeholders (product, marketing, CS, finance, CEO). Same 3 questions each: what decisions would you make, what data exists, what's missing? Answers revealed 3 use cases: churn prediction, onboarding journey, CLV by channel. Wrote one-page scope doc with success criteria, got sign-off in a week. Prioritized churn (most urgent). Built iteratively: v1 with basic signals in week 2, feedback, v2 with sophisticated features by week 4.</p>
+        <p><strong>R:</strong> Churn model identified 340 at-risk accounts month one. CS team retained 60% — saving ~$180K ARR. Lifecycle dashboard became most-viewed in the company. Approach — listen, scope, prioritize, iterate — became my template. Lesson: ambiguity isn't a problem; it's an opportunity to create alignment that didn't exist before.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="expand-section">
+    <div class="expand-header" onclick="toggleExpand(this)">
+      <span>⚙️ "Describe how you've improved a process or system."</span>
+      <span class="expand-arrow">▶</span>
+    </div>
+    <div class="expand-body">
+      <div class="expand-content">
+        <h5>Why they ask:</h5>
+        <p>Tests whether you see beyond your current task. Do you identify inefficiencies and fix them, or just do what's assigned?</p>
+        <h5>What they look for:</h5>
+        <ul>
+          <li>Proactive identification (not waiting to be told)</li>
+          <li>Understanding of business impact</li>
+          <li>Execution — you implemented it, not just suggested</li>
+          <li>Adoption — others benefited</li>
+        </ul>
+        <h5>Strong STAR Answer:</h5>
+        <p><strong>S:</strong> Deploying pipelines was manual: engineers wrote code, filled a deployment ticket, ops ran steps manually (~45 min/pipeline). 8-10 deploys/week, ~20% had manual errors requiring rollback.</p>
+        <p><strong>T:</strong> Nobody tasked me. Identified it in a retro where 3 engineers independently mentioned deployment friction. I volunteered.</p>
+        <p><strong>A:</strong> Shadowed ops engineer for 2 days. Mapped process, found 90% automatable. Built CI/CD with GitHub Actions: PR → lint + unit tests, merge → staging + integration tests, manual approval → production with auto-rollback on failure. Wrote docs, ran demo, paired with each engineer on first automated deploy.</p>
+        <p><strong>R:</strong> Deploy time: 45 min → 6 min. Manual errors: zero. Full audit trail helped SOC 2 compliance. Pattern forked by 2 other teams. Ops engineer freed for infrastructure work. Lesson: process improvements compound.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 10: Quiz ==================== -->
+<section class="screen screen-alt" id="s10">
+  <div class="screen-inner">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+  <p>Let's see if this module landed. No peeking. 👀</p>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: In a postmortem, what's the difference between root cause and contributing factor?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Root cause is the first thing that went wrong; contributing factors are everything after</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) Root cause is the primary trigger — remove it and the incident wouldn't have occurred. Contributing factors made impact worse or delayed detection.</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) They're basically the same thing, just different terminology</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Root cause is the technical issue; contributing factors are the human errors</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Your pipeline is producing wrong data but no alerts fired. What type of failure is this?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Schema change from upstream</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) Data volume spike</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">C) Silent data corruption</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) Cloud service degradation</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: When should you escalate a P1 incident?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Immediately — always escalate P1s right away</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) Only when you've completely exhausted all options</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">C) When you can't diagnose within 15–20 minutes or when impact is expanding</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Only when a manager tells you to</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: What makes an action item "actionable"?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) It sounds important and gets leadership buy-in</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) It starts with "improve" or "be more careful"</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">C) Specific owner, deadline, and measurable outcome — not "be more careful"</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) It's tracked in Jira with a story point estimate</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: What's the FIRST thing you do when a P1 alert fires at 2 AM?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Start debugging the root cause immediately</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">B) Restart the failing service to see if it recovers</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">C) Acknowledge the alert and assess impact before jumping to fix</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Wake up your manager to let them know</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-03-project-management/index.html">← Project Management &amp; Culture</a>
+  <a href="../module-05-interview-gauntlet/index.html">Next: The Interview Gauntlet 🔥 →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Quiz
+  const quizFeedback={
+    q1:{correct:'✅ Correct! Root cause is the primary trigger — remove it and the incident wouldn\'t have occurred. Contributing factors made the impact worse or delayed detection but didn\'t cause the incident by themselves.',wrong:'❌ Not quite. Root cause is the single underlying reason the incident happened. Contributing factors are conditions that amplified the impact, made it harder to detect, or delayed resolution.'},
+    q2:{correct:'✅ Exactly! Silent data corruption is the scariest failure type — pipeline runs green, no errors, no alerts, but the data is wrong. This is why data quality monitoring is critical.',wrong:'❌ When data is wrong but no alerts fire, that\'s silent data corruption — the most dangerous failure type because there\'s no signal anything is wrong until a human notices.'},
+    q3:{correct:'✅ Right! Escalate when you can\'t diagnose within 15–20 minutes or when the impact is expanding. Don\'t exhaust all options alone — escalation is a tool, not an admission of failure.',wrong:'❌ The right answer is to escalate when you can\'t diagnose within 15–20 minutes or when impact is expanding. Escalation gets the right expertise involved faster.'},
+    q4:{correct:'✅ Nailed it! An actionable action item has a specific owner, deadline, and measurable outcome. "Be more careful" is never an action item — "Add schema validation to ingestion pipeline, Owner: Sarah, Due: March 15" is.',wrong:'❌ An actionable action item needs three things: specific owner, deadline, and measurable outcome. The formula: [Verb] + [specific thing] + [measurable definition of done].'},
+    q5:{correct:'✅ Perfect! Acknowledge first, then assess impact. Jumping straight to debugging without understanding the scope can lead to panic-driven mistakes. Three deep breaths, acknowledge, assess, then debug.',wrong:'❌ The first step is always: acknowledge the alert and assess impact. Don\'t jump to fixing or debugging before you understand what\'s affected. Five seconds of centering prevents fifteen minutes of panic.'}
+  };
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    const fbData=quizFeedback[qid];
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent=fbData.correct;}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent=fbData.wrong;}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+
+  // Expandable sections
+  window.toggleExpand=function(header){
+    header.classList.toggle('open');
+    const body=header.nextElementSibling;
+    body.classList.toggle('open');
+  };
+
+  // Chat timeline animation
+  const timelineObserver=new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        animateTimeline();
+        timelineObserver.unobserve(entry.target);
+      }
+    });
+  },{threshold:0.2});
+  const tl=document.getElementById('timeline');
+  if(tl)timelineObserver.observe(tl);
+
+  function animateTimeline(){
+    const msgs=document.querySelectorAll('#timeline .chat-msg');
+    msgs.forEach(msg=>{
+      const delay=parseInt(msg.dataset.delay)||0;
+      setTimeout(()=>msg.classList.add('visible'),delay);
+    });
+  }
+
+  window.replayTimeline=function(){
+    const msgs=document.querySelectorAll('#timeline .chat-msg');
+    msgs.forEach(msg=>msg.classList.remove('visible'));
+    setTimeout(animateTimeline,200);
+  };
+})();
+</script>
+</body>
+</html>

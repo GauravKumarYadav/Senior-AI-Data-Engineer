@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 1: STAR Method & Story Preparation | Behavioral & Leadership</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#9333EA;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+.nav-dot.gauntlet{background:var(--color-error)}
+.nav-dot.gauntlet.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.screen ul,.screen ol{max-width:700px;margin-bottom:1rem;font-size:1.02rem;padding-left:1.5rem}
+.screen li{margin-bottom:0.4rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card-grid.three-col{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.orange{border-top-color:#D97706}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p,.card ul{font-size:0.9rem;color:var(--color-muted);margin-bottom:0.3rem}
+.card ul{padding-left:1.2rem}
+.card ul li{margin-bottom:0.2rem}
+.aha{background:linear-gradient(135deg,#F5F0FF,#EDE5FF);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#F5F0FF}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#C084FC}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}.code-block .accent{color:#C084FC}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+.story-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.88rem}
+.story-table th,.story-table td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+.story-table th{font-family:var(--font-heading);font-weight:700;font-size:0.85rem;background:rgba(147,51,234,0.06);position:sticky;top:0}
+.story-table td{vertical-align:top}
+.story-table tr:hover{background:rgba(147,51,234,0.03)}
+.workflow-steps{display:flex;flex-wrap:wrap;gap:0.5rem;margin:1.5rem 0;align-items:center}
+.workflow-step{background:#fff;border:2px solid var(--color-accent);border-radius:100px;padding:0.5rem 1.2rem;font-family:var(--font-heading);font-weight:600;font-size:0.9rem;color:var(--color-accent)}
+.workflow-arrow{font-size:1.2rem;color:var(--color-muted)}
+.checklist{list-style:none;padding:0;margin:1rem 0}
+.checklist li{padding:0.5rem 0;font-size:0.98rem;display:flex;align-items:flex-start;gap:0.6rem;border-bottom:1px solid rgba(0,0,0,0.04)}
+.checklist li:last-child{border:none}
+.section-alt-inner{max-width:900px;margin:0 auto;padding:6rem 1.5rem 4rem}
+section.screen.screen-alt{max-width:100%;padding:0}
+section.screen.screen-alt .screen-inner{max-width:900px;margin:0 auto;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;min-height:100vh;min-height:100dvh}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}.story-table{font-size:0.78rem}.story-table th,.story-table td{padding:0.4rem}.workflow-steps{flex-direction:column;align-items:flex-start}.workflow-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🎤 Behavioral &amp; Leadership</a><div class="nav-dots"><a href="../module-01-star-method/" class="nav-dot active" title="STAR Method"></a><a href="../module-02-communication/" class="nav-dot" title="Communication"></a><a href="../module-03-project-management/" class="nav-dot" title="Project Management"></a><a href="../module-04-incident-management/" class="nav-dot" title="Incident Management"></a><a href="../module-05-interview-gauntlet/" class="nav-dot gauntlet" title="Interview Gauntlet"></a></div></div></nav>
+
+<!-- ==================== SCREEN 1: STAR Method Intro ==================== -->
+<section class="screen" id="s1">
+  <h2>🎤 STAR Method &amp; <span class="accent">Story Preparation</span></h2>
+  <p>Here's the truth most engineers don't want to hear: <strong>your technical skills get you the interview; your stories get you the offer.</strong></p>
+  <p>At the senior+ level, every candidate in the room can design a data pipeline or debate Kafka vs. Kinesis. The differentiator is whether you can clearly articulate <em>how you've led, decided, failed, and recovered</em> in real working environments.</p>
+  <p>STAR is a storytelling framework that forces structure onto your answers. It stands for <span class="tooltip-term" data-tip="Situation — set the scene. Task — define YOUR responsibility. Action — the steps YOU took. Result — quantified outcome + reflection.">Situation, Task, Action, Result</span>. Every <span class="tooltip-term" data-tip="An interview format where you're asked to describe past experiences. Based on the premise that past behavior is the best predictor of future behavior.">behavioral interview</span> answer you give should follow this skeleton — not because it's clever, but because it's <em>clear</em>.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 The Secret Ratio — Time Allocation</div>
+    <p>Most candidates over-explain the Situation and rush through the Action. Here's what actually works:</p>
+  </div>
+
+  <div class="code-block"><span class="kw">S</span> — Situation:  <span class="fn">15%</span>  (~15-20 seconds)   <span class="cm">// Set the scene FAST</span>
+<span class="kw">T</span> — Task:       <span class="fn">10%</span>  (~10-15 seconds)   <span class="cm">// YOUR specific job</span>
+<span class="kw">A</span> — Action:     <span class="fn">50%</span>  (~50-60 seconds)   <span class="cm">// THIS IS YOUR MOMENT</span>
+<span class="kw">R</span> — Result:     <span class="fn">25%</span>  (~25-30 seconds)   <span class="cm">// Land with NUMBERS</span>
+<span class="cm">// ─────────────────────────────────────────────</span>
+<span class="str">Total: ~2 minutes.</span> That's your target.</div>
+
+  <p>Behavioral interviews aren't soft — they're the hardest round to prepare for because you can't Google the answer in real time. You either have the stories or you don't. This module makes sure you have them.</p>
+
+  <h3>Why Interviewers Use Behavioral Questions</h3>
+  <p>The premise is simple and research-backed: <strong>past behavior is the best predictor of future behavior.</strong> When an interviewer asks <em>"Tell me about a time you disagreed with your manager,"</em> they're evaluating:</p>
+  <ul>
+    <li><strong>Decision-making patterns</strong> — How do you think under pressure?</li>
+    <li><strong>Self-awareness</strong> — Do you know your role in the outcome?</li>
+    <li><strong>Communication skills</strong> — Can you tell a coherent story in 2 minutes?</li>
+    <li><strong>Leadership signals</strong> — Do you drive outcomes or ride along?</li>
+    <li><strong>Cultural fit</strong> — How do you handle conflict, failure, ambiguity?</li>
+  </ul>
+  <p>Every major tech company — Google, Amazon, Meta, Microsoft, Apple, Netflix, and yes, Walmart — uses behavioral rounds. At senior/staff level, expect <strong>30–60% of your interview to be behavioral.</strong></p>
+</section>
+
+<!-- ==================== SCREEN 2: Anatomy of Each Section ==================== -->
+<section class="screen screen-alt" id="s2">
+  <div class="screen-inner">
+  <h2>The Anatomy of <span class="accent">Each Section</span></h2>
+  <p>Each STAR component has a specific job. Nail the balance, and your answer will feel effortless to the interviewer.</p>
+  <div class="card-grid">
+
+    <div class="card">
+      <h4>🎬 S — Situation (15%)</h4>
+      <p><strong>Goal:</strong> Minimum viable context. Three sentences max.</p>
+      <ul>
+        <li><strong>Where?</strong> "On the data platform team…"</li>
+        <li><strong>When?</strong> "About two years ago…"</li>
+        <li><strong>Landscape?</strong> "Legacy pipeline, 2TB daily, failing 3-4x/week"</li>
+      </ul>
+      <p style="margin-top:0.5rem;color:var(--color-error);font-size:0.85rem">❌ Don't explain the company's business model or the team's entire history.</p>
+    </div>
+
+    <div class="card blue">
+      <h4>🎯 T — Task (10%)</h4>
+      <p><strong>Goal:</strong> Clarify YOUR specific role — not the team's goal.</p>
+      <ul>
+        <li>❌ "The team needed to fix the pipeline."</li>
+        <li>✅ "I was the senior engineer responsible for the new architecture."</li>
+      </ul>
+      <p style="margin-top:0.5rem;color:var(--color-error);font-size:0.85rem">❌ Skip this and the interviewer assumes you were along for the ride.</p>
+    </div>
+
+    <div class="card green">
+      <h4>⚡ A — Action (50%)</h4>
+      <p><strong>Goal:</strong> Be specific, sequential, and use "I" not "we."</p>
+      <ul>
+        <li>Decisions you made and why</li>
+        <li>Trade-offs you evaluated (and rejected)</li>
+        <li>People you influenced</li>
+        <li>Obstacles you navigated</li>
+      </ul>
+      <p style="margin-top:0.5rem;color:var(--color-success);font-size:0.85rem">✅ This is where you demonstrate seniority. Junior = what they coded. Senior = what they decided.</p>
+    </div>
+
+    <div class="card purple">
+      <h4>📊 R — Result (25%)</h4>
+      <p><strong>Goal:</strong> Quantify impact + reflect on learnings.</p>
+      <ul>
+        <li>"81% runtime improvement"</li>
+        <li>"0 incidents in next quarter"</li>
+        <li>"Pattern became team standard"</li>
+      </ul>
+      <p style="margin-top:0.5rem;color:var(--color-success);font-size:0.85rem">✅ Add a one-sentence reflection: "Looking back, I'd start stakeholder alignment earlier."</p>
+    </div>
+
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>The Action section is where interviews are won or lost. Structure your actions as a numbered sequence: "First, I audited… Then, I prototyped two approaches… I presented both options… After getting alignment, I paired with two engineers to implement…"</p>
+  </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 3: Quantifying Results ==================== -->
+<section class="screen" id="s3">
+  <h2>How to <span class="accent">Quantify Results</span></h2>
+  <p>Compare these two answers and feel the difference:</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Vague Answers</h4>
+      <ul>
+        <li>"The pipeline got a lot faster."</li>
+        <li>"We reduced some incidents."</li>
+        <li>"The project was successful."</li>
+        <li>"Everyone was happy with it."</li>
+        <li>"It saved money."</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Specific Answers</h4>
+      <ul>
+        <li>"Runtime dropped from 4.5hrs to 38min — 86% reduction."</li>
+        <li>"Incidents went from 4/week to zero for the full quarter."</li>
+        <li>"Completed in 10 weeks, 2 weeks under deadline."</li>
+        <li>"Pattern adopted by 3 other teams within 6 months."</li>
+        <li>"Reduced EMR costs by $8,500/month."</li>
+      </ul>
+    </div>
+  </div>
+
+  <p>Numbers are <em>undeniable.</em> They prove you measure your impact — exactly what senior engineers are expected to do.</p>
+
+  <h3>The 5 Metric Categories</h3>
+  <p>Every story should have at least two metrics from these categories:</p>
+
+  <div class="card-grid three-col">
+    <div class="card">
+      <h4>🚀 Performance</h4>
+      <ul>
+        <li>Runtime reduction</li>
+        <li>p50/p95/p99 latency</li>
+        <li>Data freshness / SLA</li>
+        <li>Throughput (records/sec)</li>
+      </ul>
+    </div>
+    <div class="card blue">
+      <h4>🛡️ Reliability</h4>
+      <ul>
+        <li>Reduction in pages/incidents</li>
+        <li>SLA improvement (99.5→99.95%)</li>
+        <li>MTTR reduction</li>
+        <li>Failure rate drop</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h4>💰 Cost</h4>
+      <ul>
+        <li>Infrastructure savings ($/mo)</li>
+        <li>Compute hour reduction</li>
+        <li>Storage optimization</li>
+        <li>Headcount efficiency</li>
+      </ul>
+    </div>
+    <div class="card purple">
+      <h4>👥 Team & Adoption</h4>
+      <ul>
+        <li>Teams onboarded</li>
+        <li>Developer adoption rates</li>
+        <li>Support ticket reduction</li>
+        <li>Time saved/dev/week</li>
+      </ul>
+    </div>
+    <div class="card orange">
+      <h4>📈 Business Impact</h4>
+      <ul>
+        <li>Revenue protected/enabled</li>
+        <li>Decision latency reduced</li>
+        <li>Compliance met (SOX, GDPR)</li>
+        <li>New capabilities unlocked</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 The Metric Stack Technique</div>
+    <p>Stack three layers: <strong>Technical</strong> ("Reduced runtime by 75%") → <strong>Team</strong> ("Freed 10 hrs/week across 3 teams") → <strong>Business</strong> ("Enabled same-day reporting, unblocking a $2M initiative"). This is staff-level thinking.</p>
+  </div>
+
+  <h3>When You Don't Have Exact Numbers</h3>
+  <p>Use one of these strategies:</p>
+  <ul>
+    <li><strong>Reasonable estimates:</strong> "Based on monitoring, roughly 60% improvement."</li>
+    <li><strong>Directional impact:</strong> "Went from multiple incidents/week to essentially zero."</li>
+    <li><strong>Proxy metrics:</strong> "On-call pages dropped from ~20/week to 2-3."</li>
+    <li><strong>Before/After framing:</strong> Describe the old pain → new state. Contrast is persuasive even without percentages.</li>
+  </ul>
+</section>
+
+<!-- ==================== SCREEN 4: Building Your Story Bank ==================== -->
+<section class="screen screen-alt" id="s4">
+  <div class="screen-inner">
+  <h2>Building Your <span class="accent">Story Bank</span></h2>
+  <p>You need <strong>8–10 polished stories</strong>. Here's why that's the magic number:</p>
+  <ul>
+    <li>Most behavioral rounds have 4–6 questions</li>
+    <li>With 8–10 stories, you always have one that fits — even unusual prompts</li>
+    <li>Each story can be adapted to 2–3 question types = coverage for <strong>20–30 distinct prompts</strong></li>
+    <li>Fewer than 6? You'll stretch stories awkwardly. More than 12? You won't practice any deeply enough.</li>
+  </ul>
+
+  <h3>The Story Selection Matrix</h3>
+  <p>Your stories should collectively cover all categories. Audit your coverage — every column needs at least 2 stories:</p>
+
+  <div style="overflow-x:auto;margin:1rem 0">
+  <table class="story-table">
+    <thead>
+      <tr><th>#</th><th>Story Title</th><th>Leadership</th><th>Conflict</th><th>Failure</th><th>Innovation</th><th>Collab</th><th>Technical</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Pipeline Migration</td><td>✅</td><td></td><td></td><td>✅</td><td>✅</td><td>✅</td></tr>
+      <tr><td>2</td><td>Tech Disagreement</td><td></td><td>✅</td><td></td><td></td><td>✅</td><td>✅</td></tr>
+      <tr><td>3</td><td>Mentoring Junior Eng</td><td>✅</td><td></td><td></td><td></td><td>✅</td><td></td></tr>
+      <tr><td>4</td><td>Production Incident</td><td></td><td></td><td>✅</td><td></td><td>✅</td><td>✅</td></tr>
+      <tr><td>5</td><td>New Tool Adoption</td><td>✅</td><td>✅</td><td></td><td>✅</td><td>✅</td><td></td></tr>
+      <tr><td>6</td><td>Missed Deadline</td><td></td><td>✅</td><td>✅</td><td></td><td></td><td></td></tr>
+      <tr><td>7</td><td>Tech Debt Paydown</td><td>✅</td><td></td><td></td><td></td><td></td><td>✅</td></tr>
+      <tr><td>8</td><td>Cross-Team Project</td><td>✅</td><td></td><td></td><td>✅</td><td>✅</td><td>✅</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>The Workflow</h3>
+  <p>Do this over a weekend. It takes 3–4 hours — the single highest-ROI interview prep activity:</p>
+  <div class="workflow-steps">
+    <div class="workflow-step">🧠 Brain Dump<br><small style="font-weight:400;font-size:0.75rem">45 min — list 15-20 raw seeds</small></div>
+    <span class="workflow-arrow">→</span>
+    <div class="workflow-step">🎯 Select &amp; Score<br><small style="font-weight:400;font-size:0.75rem">30 min — pick top 8-10</small></div>
+    <span class="workflow-arrow">→</span>
+    <div class="workflow-step">✍️ Write STAR Drafts<br><small style="font-weight:400;font-size:0.75rem">2 hrs — 200-300 words each</small></div>
+    <span class="workflow-arrow">→</span>
+    <div class="workflow-step">🎙️ Practice Aloud<br><small style="font-weight:400;font-size:0.75rem">1 hr — record &amp; review</small></div>
+    <span class="workflow-arrow">→</span>
+    <div class="workflow-step">🔄 Iterate Weekly<br><small style="font-weight:400;font-size:0.75rem">Ongoing — tighten &amp; sharpen</small></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Adapting One Story to Multiple Questions</div>
+    <p>A great story is a multi-tool. Your "Pipeline Migration" story can answer "Led a project" (emphasize planning/delegation), "Improved a process" (emphasize before/after), "Navigated ambiguity" (emphasize research/risk), or "Worked cross-team" (emphasize stakeholders). <strong>Same story, different angle — shift the Action emphasis and reframe the Task.</strong></p>
+  </div>
+
+  <p>When you hear the question, take 5–10 seconds to choose your story <em>and your angle.</em> It's perfectly fine to say: "Let me think for a moment." This is way better than diving into a story that doesn't fit.</p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 5: Technical Leadership Archetypes ==================== -->
+<section class="screen" id="s5">
+  <h2>Technical Leadership <span class="accent">Archetypes</span></h2>
+  <p>These are the six story types every senior engineer should have ready. Each maps to common interview questions and demonstrates different leadership dimensions.</p>
+
+  <div class="card-grid">
+
+    <div class="card">
+      <h4>🏗️ Architecture Decision</h4>
+      <p><strong>Interviewers look for:</strong> systems thinking, trade-off evaluation, clear communication of complex decisions.</p>
+      <ul>
+        <li>How you gathered requirements</li>
+        <li>Options considered (2-3 minimum)</li>
+        <li>Evaluation criteria used</li>
+        <li>How you communicated the recommendation</li>
+        <li>How you handled pushback</li>
+      </ul>
+      <p style="margin-top:0.5rem;font-size:0.82rem;color:var(--color-accent)">→ "Tell me about a significant technical decision you made."</p>
+    </div>
+
+    <div class="card blue">
+      <h4>⚖️ Technology Choice</h4>
+      <p><strong>Interviewers look for:</strong> depth of knowledge, pragmatism over hype, stakeholder justification.</p>
+      <ul>
+        <li>The business problem driving the choice</li>
+        <li>Candidates evaluated (Kafka vs. Kinesis, etc.)</li>
+        <li>Methodology: POC, benchmark, survey</li>
+        <li>What tipped the decision</li>
+        <li>Post-decision validation</li>
+      </ul>
+      <p style="margin-top:0.5rem;font-size:0.82rem;color:var(--color-accent)">→ Best version: you advocated <em>against</em> the trendier option.</p>
+    </div>
+
+    <div class="card green">
+      <h4>🤝 Disagreement Resolution</h4>
+      <p><strong>Interviewers look for:</strong> courage to dissent, diplomacy, outcome focus.</p>
+      <ul>
+        <li>Specific, technical disagreement</li>
+        <li>Data/evidence for your position</li>
+        <li>How you communicated (1:1, doc, meeting)</li>
+        <li>How you listened to the other side</li>
+        <li>Resolution: your way, their way, or third?</li>
+      </ul>
+      <p style="margin-top:0.5rem;font-size:0.82rem;color:var(--color-error)">⚠️ Never frame as "I was right, they were wrong."</p>
+    </div>
+
+    <div class="card purple">
+      <h4>🌱 Mentoring</h4>
+      <p><strong>Interviewers look for:</strong> investment in others, teaching ability, patience.</p>
+      <ul>
+        <li>Who the person was &amp; their gap</li>
+        <li>Your approach (pairing, code review, stretch)</li>
+        <li>A specific teaching moment</li>
+        <li>Measurable growth outcome</li>
+        <li>What YOU learned from it</li>
+      </ul>
+      <p style="margin-top:0.5rem;font-size:0.82rem;color:var(--color-accent)">→ "Tell me about a time you helped someone grow."</p>
+    </div>
+
+    <div class="card orange">
+      <h4>🧹 Tech Debt</h4>
+      <p><strong>Interviewers look for:</strong> pragmatism, business sense, execution ability.</p>
+      <ul>
+        <li>What the debt was &amp; how it accumulated</li>
+        <li>Business impact of leaving it</li>
+        <li>How you made the case to leadership</li>
+        <li>Execution plan (phased, scout rule, sprint)</li>
+        <li>Before/after on velocity/reliability</li>
+      </ul>
+      <p style="margin-top:0.5rem;font-size:0.82rem;color:var(--color-accent)">→ "Describe a time you balanced technical quality with delivery."</p>
+    </div>
+
+    <div class="card">
+      <h4>🚀 Tool Adoption</h4>
+      <p><strong>Interviewers look for:</strong> influence without authority, change management, empathy.</p>
+      <ul>
+        <li>The problem the tool solved</li>
+        <li>Why the status quo was insufficient</li>
+        <li>Your pilot/prototype approach</li>
+        <li>Adoption strategy (docs, workshops, champions)</li>
+        <li>Sustained usage metrics</li>
+      </ul>
+      <p style="margin-top:0.5rem;font-size:0.82rem;color:var(--color-success)">✅ Best version: includes resistance you encountered and adapted to.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==================== SCREEN 6: Story Template — Pipeline Migration ==================== -->
+<section class="screen screen-alt" id="s6">
+  <div class="screen-inner">
+  <h2>Story Template: <span class="accent">Pipeline Migration</span></h2>
+  <p>Question: <em>"Tell me about a time you led a significant technical project."</em></p>
+  <p>This is a fully written STAR story — 250 words, ~2 minutes spoken. Use it as a model for your own stories.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span class="cm">// ─── SITUATION (15%) ───────────────</span>
+At my previous company, our core
+revenue reporting pipeline was built
+on legacy PySpark scripts on EMR.
+It processed ~3TB daily, but had
+grown organically over 3 years.
+We averaged 4 production incidents
+per week. No tests, no docs, no
+data quality checks.
+
+<span class="cm">// ─── TASK (10%) ───────────────────</span>
+As the senior data engineer, <span class="kw">I was
+tasked with designing and leading</span>
+the migration to a modern, reliable
+architecture. 3-month deadline,
+one other engineer part-time.
+
+<span class="cm">// ─── ACTION (50%) ─────────────────</span>
+<span class="fn">First</span>, I audited the existing
+pipeline — mapped 47 transformation
+steps. Found 60% of failures came
+from 3 root causes: schema drift,
+null handling, S3 race condition.
+
+<span class="fn">Then</span>, I evaluated 3 options:
+refactor Spark, migrate to dbt on
+Snowflake, or hybrid Spark+dbt.
+<span class="kw">I wrote a one-page RFC</span> comparing
+cost, timeline, and risk.
+
+We chose hybrid. <span class="kw">I broke migration
+into 3 phases</span> — ingestion, transforms,
+quality checks — each running parallel
+with legacy for 2-week validation.
+
+<span class="kw">I paired with</span> the junior engineer on
+dbt models; personally handled Spark
+refactoring and the CI/CD pipeline.
+
+<span class="cm">// ─── RESULT (25%) ─────────────────</span>
+Completed in <span class="str">10 weeks</span> (under 12-week
+deadline). Runtime: <span class="str">4.5hrs → 52min</span>
+(<span class="str">81% improvement</span>). Incidents:
+<span class="str">4/week → 0</span> for first full quarter.
+EMR costs down <span class="str">$8,500/month</span>.
+Architecture became template for
+3 subsequent team migrations.
+
+<span class="cm">// Reflection:</span>
+I'd involve analytics team in
+validation earlier — they caught
+a subtle issue in week 8.</div>
+    <div class="translate-eng">
+      <div class="line">🎬 <strong>SITUATION</strong> — 3 sentences</div>
+      <div class="line">Where: previous company, data platform</div>
+      <div class="line">Scale: 3TB daily</div>
+      <div class="line">Pain: 4 incidents/week, no tests</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🎯 <strong>TASK</strong> — YOUR specific role</div>
+      <div class="line">"I was tasked" = ownership language</div>
+      <div class="line">Constraints stated: 3 months, limited help</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⚡ <strong>ACTION</strong> — Sequential, "I" language</div>
+      <div class="line">Step 1: Audit + root cause analysis</div>
+      <div class="line">"47 steps" + "60% from 3 causes" = specific</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Step 2: Evaluated options (3 minimum!)</div>
+      <div class="line">"I wrote an RFC" = senior behavior</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Step 3: Phased execution plan</div>
+      <div class="line">Parallel validation = risk management</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Step 4: Delegation + personal ownership</div>
+      <div class="line">"Paired with" = mentoring signal</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📊 <strong>RESULT</strong> — Numbers, numbers, numbers</div>
+      <div class="line">Timeline metric ✅</div>
+      <div class="line">Performance metric ✅</div>
+      <div class="line">Reliability metric ✅</div>
+      <div class="line">Cost metric ✅</div>
+      <div class="line">Adoption/scale metric ✅</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🪞 Reflection = self-awareness signal</div>
+      <div class="line">Genuine, specific, not fake-humble</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Notice the Pattern</div>
+    <p>The Situation is just 3 sentences. The Task uses "I was tasked" — ownership language. The Action has 4 clear sequential steps with "First/Then" transitions. The Result has <strong>5 different metrics</strong> plus a genuine reflection. This is what a 2-minute senior-level answer looks like.</p>
+  </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 7: Story Template — Technical Disagreement ==================== -->
+<section class="screen" id="s7">
+  <h2>Story Template: <span class="accent">Technical Disagreement</span></h2>
+  <p>Question: <em>"Tell me about a time you disagreed with a teammate or manager."</em></p>
+  <p>This template demonstrates diplomacy, data-driven advocacy, and strengthening relationships through conflict.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span class="cm">// ─── SITUATION (15%) ───────────────</span>
+Our team was building a real-time
+data ingestion service — ~50,000
+events/second at peak from our
+mobile app's clickstream.
+
+The tech lead proposed AWS Kinesis
+for the streaming layer — we had
+existing AWS infra and some
+Kinesis experience.
+
+<span class="cm">// ─── TASK (10%) ───────────────────</span>
+<span class="kw">I was the engineer responsible for
+the ingestion service design.</span>
+After research and benchmarks, I
+believed Apache Kafka (MSK) was
+the better choice. My task: advocate
+without undermining the tech lead.
+
+<span class="cm">// ─── ACTION (50%) ─────────────────</span>
+<span class="fn">Rather than disagreeing in standup</span>,
+<span class="kw">I scheduled a 1:1</span> with the tech
+lead. I came with a written
+comparison across 5 dimensions:
+throughput, cost at scale, ops
+complexity, integrations, and
+team learning curve.
+
+<span class="kw">I acknowledged the valid reasons
+for Kinesis</span> — simpler setup,
+existing familiarity, tighter
+AWS integration.
+
+<span class="fn">Then</span> I walked through my Kafka
+benchmarks: 40% lower latency,
+flexible consumer groups without
+resharding.
+
+<span class="kw">I proposed a compromise</span>: one-week
+POC with both technologies using
+production-like traffic. Let the
+data decide. I paired with a
+teammate who preferred Kinesis
+so the comparison was fair.
+
+<span class="cm">// ─── RESULT (25%) ─────────────────</span>
+POC showed Kafka: <span class="str">35% lower p99
+latency</span>, simpler scaling for
+multi-consumer use case. Tech lead
+agreed with the data. We shipped
+with MSK.
+
+The POC process became <span class="str">the team's
+standard for future tech decisions</span>.
+
+Tech lead later told me he
+appreciated that <span class="str">I brought data
+instead of opinions</span>, and made
+space for both options to compete.
+<span class="str">The relationship strengthened</span>
+through the disagreement.</div>
+    <div class="translate-eng">
+      <div class="line">🎬 <strong>SITUATION</strong></div>
+      <div class="line">Scale establishes credibility: 50K/sec</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Sets up the tension: someone else</div>
+      <div class="line">already proposed a solution</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🎯 <strong>TASK</strong></div>
+      <div class="line">"I was responsible" = clear ownership</div>
+      <div class="line">"After research and benchmarks" = I did</div>
+      <div class="line">the homework first, didn't just have</div>
+      <div class="line">an opinion</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⚡ <strong>ACTION</strong></div>
+      <div class="line">🔑 Key move: private 1:1, not public</div>
+      <div class="line">callout. Shows emotional intelligence.</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔑 Acknowledging their valid points</div>
+      <div class="line">shows respect and objectivity.</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Data-driven: specific benchmark results</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔑 "Proposed a compromise" = not "my way</div>
+      <div class="line">or the highway." "Let the data decide"</div>
+      <div class="line">is the most powerful phrase in any</div>
+      <div class="line">disagreement story.</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📊 <strong>RESULT</strong></div>
+      <div class="line">Technical metric ✅</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Process improvement metric ✅</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🪞 Relationship outcome = strongest</div>
+      <div class="line">possible ending for a disagreement story.</div>
+      <div class="line">You didn't just "win" — you made</div>
+      <div class="line">the team better.</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Why This Story Works</div>
+    <p>Three killer moves: (1) Private 1:1 instead of public challenge, (2) Acknowledged valid reasons for the other side, (3) "Let the data decide" as the resolution mechanism. This template shows you can disagree while <em>strengthening</em> relationships — the #1 signal interviewers look for in conflict stories.</p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 8: Quiz ==================== -->
+<section class="screen screen-alt" id="s8">
+  <div class="screen-inner">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+  <p>Let's see if this module landed. No peeking.</p>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: What percentage of your answer should be the Action section?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) ~25% — split evenly with each section</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) ~50% — this is where interviews are won or lost</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) ~75% — barely touch Situation and Result</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) ~35% — focus more on the Situation for context</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Your interviewer asks about a failure. You tell a success story with a minor setback. What's wrong?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Nothing — reframing failures as successes shows confidence</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) The setback should have been bigger</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">C) You're not answering the actual question — they asked for a real failure with genuine accountability</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) You should never discuss failures in an interview</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: Which is the better answer?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) "We improved the pipeline and it was a lot faster."</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) "I designed the new architecture, coordinated with the platform team, and reduced runtime by 75%."</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: How long should a behavioral answer be?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) 30–60 seconds — keep it tight</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) 90–120 seconds — structured, detailed, respectful of time</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) 3–5 minutes — show depth and thoroughness</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) As long as it takes — don't rush your story</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: When should you use "we" vs "I" in your answers?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Always use "we" — it shows you're a team player</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">B) Always use "I" — the interview is about you</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">C) "I" for decisions and leadership actions, "we" for team execution</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Alternate between them evenly so it sounds balanced</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 9: Practice Framework & Pitfalls ==================== -->
+<section class="screen" id="s9">
+  <h2>Practice Framework &amp; <span class="accent">Pitfalls</span></h2>
+
+  <h3>The 2-Minute Rule</h3>
+  <p>Your behavioral answers should be <strong>90–120 seconds</strong>. Here's the spectrum:</p>
+  <div class="card-grid">
+    <div class="card" style="border-top-color:var(--color-error)">
+      <h4>⚠️ Under 60 seconds</h4>
+      <p>Too thin. Interviewer thinks you're making it up or it wasn't meaningful.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--color-success)">
+      <h4>✅ 90–120 seconds</h4>
+      <p>The sweet spot. Structured, detailed, respectful of time. Aim here.</p>
+    </div>
+    <div class="card" style="border-top-color:#D97706">
+      <h4>⚠️ Over 150 seconds</h4>
+      <p>You're rambling. The interviewer is checking the clock.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--color-error)">
+      <h4>🚫 Over 3 minutes</h4>
+      <p>You've lost them completely. They're writing "poor communication" in their notes.</p>
+    </div>
+  </div>
+
+  <h3>The "So What?" Test</h3>
+  <p>Go through your story sentence by sentence. If a detail doesn't serve the story, cut it.</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Cut These</h4>
+      <ul>
+        <li>"The company was founded in 2015 and had 200 employees." <em>→ So what? Irrelevant.</em></li>
+        <li>"I had a meeting with the PM on Tuesday." <em>→ The day doesn't matter.</em></li>
+        <li>"We use Jira for project tracking." <em>→ Unless Jira is the point of the story.</em></li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Keep These</h4>
+      <ul>
+        <li>"Pipeline processed 3TB daily." <em>→ Establishes scale.</em></li>
+        <li>"I wrote a one-page RFC comparing 3 approaches." <em>→ Shows structured thinking.</em></li>
+        <li>"Failures came from 3 root causes." <em>→ Shows analytical depth.</em></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Recording Technique</h3>
+  <ol>
+    <li><strong>Pick a story.</strong> Read your STAR notes once.</li>
+    <li><strong>Set a timer for 2 minutes.</strong> Hit record on your phone.</li>
+    <li><strong>Tell the story from memory.</strong> Don't read.</li>
+    <li><strong>Listen back.</strong> Check: Did you hit all 4 sections? Use "I"? Quantify the result? Stay under 2 min?</li>
+    <li><strong>Do it again.</strong> The second take is always better. Third is gold.</li>
+  </ol>
+
+  <h3>Common Pitfalls — ❌ vs ✅</h3>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ What NOT to Do</h4>
+      <ul>
+        <li>Being too vague — "We improved things"</li>
+        <li>Using "we" throughout — can't tell what YOU did</li>
+        <li>No quantified result — story feels incomplete</li>
+        <li>Trivial example — doesn't show senior work</li>
+        <li>Badmouthing others — "My manager was terrible"</li>
+        <li>Too humble — "Anyone could have done it"</li>
+        <li>Too boastful — "I single-handedly saved the company"</li>
+        <li>Not answering the question asked</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ What to Do Instead</h4>
+      <ul>
+        <li>Use specific numbers and tools</li>
+        <li>Rewrite with "I" for decisions, "we" for team execution</li>
+        <li>Always have 2-3 metrics in your Result</li>
+        <li>Pick stories with real stakes and complexity</li>
+        <li>Frame conflicts professionally: focus on YOUR actions</li>
+        <li>Own contributions clearly with specifics</li>
+        <li>"I led the design. Two engineers helped execute."</li>
+        <li>Repeat the key word from the question in your answer</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Handling Follow-Up Questions</div>
+    <p>Don't panic — follow-ups mean they're engaged. Common ones: <strong>"What would you do differently?"</strong> (show self-awareness), <strong>"Why not X?"</strong> (explain the trade-off), <strong>"How did the team react?"</strong> (be honest about resistance), <strong>"What was the hardest part?"</strong> (be vulnerable — it's usually people, not tech).</p>
+  </div>
+
+  <h3>Quick Reference Checklist</h3>
+  <ul class="checklist">
+    <li>☐ I have 8–10 stories written in STAR format</li>
+    <li>☐ Each story has at least 2 quantified metrics in the Result</li>
+    <li>☐ My stories cover: leadership, conflict, failure, innovation, collaboration, technical depth</li>
+    <li>☐ I've practiced each story out loud at least 3 times</li>
+    <li>☐ Each story is under 2 minutes when spoken</li>
+    <li>☐ I use "I" for my contributions and "we" only for team execution</li>
+    <li>☐ I have a genuine reflection/learning for each story</li>
+    <li>☐ I've practiced with a partner who gave me feedback</li>
+    <li>☐ I can adapt my top 3 stories to at least 2 different question types</li>
+    <li>☐ I have at least one story about failure where I own the mistake</li>
+  </ul>
+
+  <div class="aha">
+    <div class="aha-title">🎯 The Bottom Line</div>
+    <p>The best interview answer isn't the most impressive story. It's the most <em>clearly told</em> story. <strong>Structure beats spectacle every time.</strong> Do the work: open a blank doc, start your brain dump, and build your <span class="tooltip-term" data-tip="A collection of 8-10 pre-written, practiced STAR stories that you can deploy and adapt to any behavioral question. The single highest-ROI interview prep activity.">Story Bank</span>. Your future self — the one who just crushed a behavioral round — will thank you.</p>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../index.html">← Course Home</a>
+  <a href="../module-02-communication/index.html">Next: Communication &amp; Influence →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Quiz
+  const quizFeedback={
+    q1:{correct:'✅ Correct! The Action section gets 50% of your time — it\'s where interviews are won or lost.',wrong:'❌ Not quite. The Action section should be ~50% of your answer. It\'s the meat of your story where you demonstrate seniority.'},
+    q2:{correct:'✅ Exactly! If they ask about failure, give a real failure. Repeat the key word: "Let me tell you about a significant failure…" Dodging the question is a red flag.',wrong:'❌ When an interviewer asks about failure, they want genuine accountability. A reframed success story signals you can\'t own your mistakes.'},
+    q3:{correct:'✅ Right! The second answer uses "I" language, names specific actions, and quantifies the result. The first is vague and uses "we."',wrong:'❌ The first answer is too vague and uses "we." The second uses "I," names specific actions, and gives a quantified result — that\'s what interviewers want.'},
+    q4:{correct:'✅ Nailed it! 90-120 seconds is the sweet spot. Under 60 feels thin, over 150 means you\'re rambling.',wrong:'❌ The target is 90-120 seconds. It\'s enough time for all four STAR sections without losing the interviewer\'s attention.'},
+    q5:{correct:'✅ Perfect! "I" for decisions, research, analysis, and leadership actions. "We" for team execution. This lets the interviewer evaluate YOUR contribution.',wrong:'❌ The right balance is "I" for your decisions and leadership actions, "we" for team execution. Using only one or the other creates the wrong impression.'}
+  };
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    const fbData=quizFeedback[qid];
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent=fbData.correct;}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent=fbData.wrong;
+      // highlight correct answer
+      box.querySelectorAll('.quiz-opt').forEach(o=>{
+        if(!o.classList.contains('wrong')){
+          const idx=Array.from(box.querySelectorAll('.quiz-opt')).indexOf(o);
+          // find correct by checking onclick
+        }
+      });
+    }
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>
