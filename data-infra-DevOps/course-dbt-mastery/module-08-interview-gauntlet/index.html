@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 8: The Interview Gauntlet 🔥 | dbt Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-error);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-error)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-error)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-error);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p,.card ul{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.card ul{list-style:none;padding:0}.card ul li{padding:0.2rem 0}
+.aha{background:linear-gradient(135deg,#FFF5F5,#FFF0F0);border-left:4px solid var(--color-error);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-error)}
+.aha p{font-size:0.95rem;margin:0}
+.aha.green{background:linear-gradient(135deg,#F0FAF4,#E8F5EC);border-left-color:var(--color-success)}
+.aha.green .aha-title{color:var(--color-success)}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+table.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+table.info-table th,table.info-table td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+table.info-table th{font-family:var(--font-heading);font-weight:700;background:var(--color-bg-warm)}
+table.info-table tr:hover{background:rgba(0,0,0,0.02)}
+.qa-block{background:#fff;border-radius:16px;padding:1.8rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.qa-block h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.8rem;font-size:1.05rem;color:var(--color-error)}
+.qa-block .answer{display:none;padding-top:0.8rem;border-top:1px solid rgba(0,0,0,0.06);margin-top:0.8rem}
+.qa-block .answer.show{display:block}
+.qa-toggle{padding:0.5rem 1.2rem;border-radius:100px;border:2px solid var(--color-error);background:none;color:var(--color-error);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.85rem;transition:all 0.2s}
+.qa-toggle:hover{background:var(--color-error);color:#fff}
+.rapid-fire{display:grid;gap:0.8rem;margin:1.5rem 0}
+.rapid-item{background:#fff;border-radius:12px;padding:1rem 1.2rem;box-shadow:0 2px 6px rgba(0,0,0,0.04);cursor:pointer;transition:all 0.2s}
+.rapid-item:hover{box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.rapid-item .q{font-weight:600;font-size:0.95rem;margin-bottom:0}
+.rapid-item .a{font-size:0.9rem;color:var(--color-muted);max-height:0;overflow:hidden;transition:max-height 0.3s,margin 0.3s;margin-top:0}
+.rapid-item.open .a{max-height:200px;margin-top:0.5rem}
+.screen-alt{background:var(--color-bg-warm)}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-error);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+@media(max-width:600px){.card-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🔨 dbt Mastery</a><div class="nav-dots"><a href="../module-01-what-is-dbt/" class="nav-dot"></a><a href="../module-02-models-materializations/" class="nav-dot"></a><a href="../module-03-incremental-models/" class="nav-dot"></a><a href="../module-04-testing-quality/" class="nav-dot"></a><a href="../module-05-snapshots-scd/" class="nav-dot"></a><a href="../module-06-macros-jinja/" class="nav-dot"></a><a href="../module-07-cicd-production/" class="nav-dot"></a><a href="../module-08-interview-gauntlet/" class="nav-dot active"></a></div></div></nav>
+
+<!-- Screen 1: Architecture & Design -->
+<section class="screen" id="s1">
+  <h2>🔥 Architecture &amp; Design — <span class="accent">"Design Me a dbt Project"</span></h2>
+  <p>This module is different. No lectures — just <strong>scenario-based questions</strong> that mirror real dbt interviews. Work through each question, formulate your answer, then reveal the response.</p>
+
+  <div class="qa-block" id="qa1">
+    <h4>Q1: You're joining an e-commerce company with 50 raw source tables, 3 analysts, and Snowflake. Design the dbt project structure.</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa1')">Reveal Answer</button>
+    <div class="answer">
+      <div class="code-block">ecommerce-dbt/
+├── models/
+│   ├── staging/              <span class="cm"># 1:1 with source tables, materialized as views</span>
+│   │   ├── shopify/
+│   │   │   ├── _shopify__sources.yml
+│   │   │   ├── stg_shopify__orders.sql
+│   │   │   └── stg_shopify__customers.sql
+│   │   └── stripe/
+│   │       ├── _stripe__sources.yml
+│   │       └── stg_stripe__payments.sql
+│   ├── intermediate/         <span class="cm"># Business logic joins, pre-aggregation</span>
+│   │   └── int_orders_with_payments.sql
+│   └── marts/                <span class="cm"># Business-facing, consumption-ready</span>
+│       ├── core/   (fct_orders, dim_customers)
+│       ├── finance/ (fct_revenue, rpt_monthly_revenue)
+│       └── marketing/ (fct_customer_acquisition)
+├── snapshots/  tests/  macros/  seeds/</div>
+      <p><strong>Key decisions:</strong> Staging is 1:1 with sources (views), organized by source system. Intermediate handles complex joins. Marts organized by business domain. Custom <code>generate_schema_name</code> macro so dev uses prefixed schemas while prod uses clean names.</p>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa2">
+    <h4>Q2: Your fct_orders has 2 billion rows and takes 90 minutes to build. How do you optimize it?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa2')">Reveal Answer</button>
+    <div class="answer">
+      <p>1. <strong>Materialize as incremental</strong> with merge strategy, <code>unique_key='order_id'</code>, 3-day lookback</p>
+      <p>2. <strong>Partition by <code>order_date</code></strong> (BigQuery) or cluster by <code>order_date, customer_id</code> (Snowflake)</p>
+      <p>3. <strong>Reduce upstream scanning</strong> — ensure staging views filter appropriately</p>
+      <p>4. <strong>Right-size warehouse</strong> — use MEDIUM for this model, SMALL for lighter models via <code>{{ config(snowflake_warehouse='TRANSFORM_MEDIUM') }}</code></p>
+      <p>5. <strong>Schedule full refresh weekly</strong> (Sunday 2am), incremental daily</p>
+      <p>6. <strong>Consider splitting</strong> — if 90 min is due to complex joins, pre-compute intermediate models</p>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa3">
+    <h4>Q3: Two teams (Finance and Marketing) both need customer data but with different definitions. How?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa3')">Reveal Answer</button>
+    <div class="answer">
+      <p><strong>Shared foundation, domain-specific marts:</strong></p>
+      <p>• <code>dim_customers</code> in <code>marts/core/</code> — the canonical customer dimension with shared attributes</p>
+      <p>• <code>fct_customer_revenue</code> in <code>marts/finance/</code> — Finance's view with LTV, payment terms</p>
+      <p>• <code>fct_customer_engagement</code> in <code>marts/marketing/</code> — Marketing's view with acquisition channel, campaigns</p>
+      <p>Both domain marts <code>ref('dim_customers')</code> for shared attributes. Business-specific logic stays in domain models. Document the "official" definition in <code>dim_customers</code> description.</p>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa4">
+    <h4>Q4: When would you use ephemeral vs. view vs. table vs. incremental?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa4')">Reveal Answer</button>
+    <div class="answer">
+      <table class="info-table">
+        <tr><th>Materialization</th><th>When to Use</th></tr>
+        <tr><td><strong>Ephemeral</strong></td><td>CTE-like helper referenced by ONE model. Never queried directly. Avoid if multiple models ref it (SQL duplicated).</td></tr>
+        <tr><td><strong>View</strong></td><td>Staging models (lightweight, always current). Small datasets. Zero storage cost.</td></tr>
+        <tr><td><strong>Table</strong></td><td>Mart/report models queried by BI tools. Complex transformations. Frequently queried.</td></tr>
+        <tr><td><strong>Incremental</strong></td><td>Large fact tables (millions+ rows). Event/log tables. Only new/changed data needs processing.</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 2: Architecture (continued) -->
+<section class="screen screen-alt" id="s2">
+  <h2>Architecture &amp; Design — <span class="accent">Part 2</span></h2>
+
+  <div class="qa-block" id="qa5">
+    <h4>Q5: You inherit a dbt project: 200 models all as tables, zero tests, everything runs sequentially. Remediation plan?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa5')">Reveal Answer</button>
+    <div class="answer">
+      <div class="card-grid">
+        <div class="card"><h4>Week 1–2: Triage</h4><p>Add unique + not_null on all PKs (codegen). Switch staging to views. Run dbt_project_evaluator.</p></div>
+        <div class="card blue"><h4>Week 3–4: Quick Wins</h4><p>Convert 5 largest fact tables to incremental. Add relationships tests. Implement dbt build.</p></div>
+        <div class="card green"><h4>Month 2: CI/CD</h4><p>Set up Slim CI (state:modified+). Add pre-commit hooks. Add source freshness checks.</p></div>
+        <div class="card purple"><h4>Month 3: Docs &amp; Scale</h4><p>Add descriptions to all models. Set up snapshots. Implement run_results monitoring.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa6">
+    <h4>Q6: How do you handle different environments (dev, staging, prod) in dbt?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa6')">Reveal Answer</button>
+    <div class="answer">
+      <p><strong>Three-pronged approach:</strong></p>
+      <p>1. <strong><code>profiles.yml</code></strong> — different targets per environment (dev uses personal schema, prod uses production database)</p>
+      <p>2. <strong><code>generate_schema_name</code> macro override</strong> — dev: <code>dev_alice_staging</code>, prod: <code>staging</code></p>
+      <p>3. <strong><code>target.name</code> conditionals</strong> — mask PII in dev, use different warehouse sizes</p>
+      <p>CI gets its own target with isolated schemas: <code>ci_pr_{{ var('pr_number') }}</code>. Each PR builds into its own schema, cleaned up after merge.</p>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa7">
+    <h4>Q7: Explain a star schema implementation in dbt for e-commerce analytics.</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa7')">Reveal Answer</button>
+    <div class="answer">
+      <div class="code-block">                    ┌──────────────┐
+                    │ dim_products │
+                    └──────┬───────┘
+                           │
+┌──────────────┐    ┌──────┴───────┐    ┌──────────────┐
+│ dim_customers├────┤  fct_orders  ├────┤  dim_dates   │
+└──────────────┘    └──────┬───────┘    └──────────────┘
+                           │
+                    ┌──────┴───────┐
+                    │ dim_channels │
+                    └──────────────┘</div>
+      <p><strong>Fact table</strong> (<code>fct_orders</code>): grain = one row per order. Contains FKs + measures. Incremental.</p>
+      <p><strong>Dimensions</strong>: <code>dim_customers</code> (SCD2 from snapshot), <code>dim_products</code> (SCD2), <code>dim_dates</code> (<code>dbt_utils.date_spine</code>). Tables.</p>
+      <p><strong>Staging</strong>: 1:1 views on raw sources. <strong>Intermediate</strong>: <code>int_orders_with_payments</code> joins before the fact table.</p>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa8">
+    <h4>Q8: When would you use dbt Mesh (multi-project) vs. a monolith?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa8')">Reveal Answer</button>
+    <div class="answer">
+      <table class="info-table">
+        <tr><th>Factor</th><th>Single Project</th><th>dbt Mesh</th></tr>
+        <tr><td>Team size</td><td>1–10 engineers</td><td>10+ across domains</td></tr>
+        <tr><td>Model count</td><td>&lt; 500</td><td>500+</td></tr>
+        <tr><td>Ownership</td><td>Shared</td><td>Domain ownership needed</td></tr>
+        <tr><td>Deploy cadence</td><td>Same schedule</td><td>Independent deploys</td></tr>
+        <tr><td>Cross-team deps</td><td>Implicit (same DAG)</td><td>Explicit (contracts + APIs)</td></tr>
+      </table>
+      <p>Use Mesh when teams need independent deployment cycles and clear ownership boundaries.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 3: Incremental Model Debugging -->
+<section class="screen" id="s3">
+  <h2>🐛 Incremental Model Debugging — <span class="accent">"My Model Has a Bug"</span></h2>
+  <p>These scenarios test your ability to diagnose and fix common incremental model issues — situations you <strong>will</strong> face in production.</p>
+
+  <div class="qa-block" id="qa9">
+    <h4>Q1: Your incremental fct_orders has duplicate rows. Orders from yesterday appear twice. What happened?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa9')">Reveal Answer</button>
+    <div class="answer">
+      <p><strong>Diagnosis checklist:</strong></p>
+      <p>1. <strong>Missing <code>unique_key</code></strong> — Without it, merge behaves like append</p>
+      <p>2. <strong>Wrong <code>unique_key</code></strong> — Using <code>customer_id</code> instead of <code>order_id</code></p>
+      <p>3. <strong>Upstream duplicates</strong> — <code>stg_orders</code> itself has duplicates (source issue)</p>
+      <p>4. <strong>Overlapping lookback + append strategy</strong> — Reprocessed rows get inserted again</p>
+      <p><strong>Fix:</strong> Verify <code>unique_key</code> matches the grain, ensure staging is deduplicated, use <code>merge</code> strategy, then <code>--full-refresh</code>.</p>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa10">
+    <h4>Q2: After deploying a logic change to fct_orders, new rows use the new formula but historical rows show old values. Fix?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa10')">Reveal Answer</button>
+    <div class="answer">
+      <p>This is <strong>expected behavior</strong> for incremental models — changes only apply to newly processed rows.</p>
+      <p><strong>Fix:</strong> <code>dbt run --select fct_orders --full-refresh</code>. This drops and rebuilds the table with the new logic applied to ALL rows. Validate before the next incremental run resumes.</p>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa11">
+    <h4>Q3: Your is_incremental() block filters WHERE updated_at > MAX(updated_at). Late-arriving orders from 3 days ago are missed. Why?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa11')">Reveal Answer</button>
+    <div class="answer">
+      <p>The <code>MAX(updated_at)</code> in the target is from today. Late-arriving orders have <code>updated_at</code> from 3 days ago — older than MAX, so they're filtered out.</p>
+      <div class="code-block"><span class="cm">-- Fix: Add a lookback window</span>
+<span class="kw">WHERE</span> updated_at >= (
+    <span class="kw">SELECT</span> <span class="fn">DATEADD</span>(day, <span class="fn">-3</span>, <span class="fn">MAX</span>(updated_at)) <span class="kw">FROM</span> {{ this }}
+)</div>
+      <p>The <code>merge</code> strategy with <code>unique_key</code> ensures reprocessed rows update in place (no duplicates).</p>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa12">
+    <h4>Q4: You add a new column discount_amount to your incremental model. After running, all values are NULL. What's wrong?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa12')">Reveal Answer</button>
+    <div class="answer">
+      <p>Check <code>on_schema_change</code> config:</p>
+      <p>• <code>ignore</code> (default): new column is silently dropped — won't be added to target</p>
+      <p>• <code>append_new_columns</code>: column is added, new rows have values, old rows are NULL</p>
+      <p><strong>Fix:</strong> Set <code>on_schema_change='append_new_columns'</code> and re-run. If ALL rows need the column populated, run <code>--full-refresh</code>.</p>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa13">
+    <h4>Q5: Your incremental model processed 0 rows. No errors. What do you check?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa13')">Reveal Answer</button>
+    <div class="answer">
+      <p>1. <strong>Source freshness</strong> — Is new data arriving?</p>
+      <p>2. <strong>Incremental filter</strong> — Is <code>MAX(updated_at)</code> in the future? (timezone bug)</p>
+      <p>3. <strong><code>is_incremental()</code> behavior</strong> — Does the target table exist?</p>
+      <p>4. <strong>Compiled SQL</strong> — <code>dbt compile --select fct_orders</code> and inspect the actual WHERE clause</p>
+      <p>5. <strong>Timezone mismatch</strong> — Source in UTC but <code>{{ this }}</code> has local time values</p>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa14">
+    <h4>Q6: Model works perfectly with --full-refresh but produces different row counts incrementally. How to diagnose?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa14')">Reveal Answer</button>
+    <div class="answer">
+      <p><strong>Causes of incremental/full-refresh parity bugs:</strong></p>
+      <p>1. <strong>Late-arriving data</strong> without lookback — some rows never captured</p>
+      <p>2. <strong>Different filter logic</strong> — the <code>{% if is_incremental() %}</code> block differs from full-load</p>
+      <p>3. <strong>Source mutations</strong> — rows change after initial load, no merge on <code>unique_key</code></p>
+      <p>4. <strong>Aggregation windows</strong> — incremental processes a slice but aggregation depends on full dataset</p>
+      <p><strong>Fix:</strong> Run <code>dbt_audit_helper.compare_relations</code> to find exact differing rows, then adjust incremental logic.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 4: Testing & Data Quality -->
+<section class="screen screen-alt" id="s4">
+  <h2>📊 Testing &amp; Data Quality — <span class="accent">"The Dashboard Shows Wrong Numbers"</span></h2>
+
+  <div class="qa-block" id="qa15">
+    <h4>Q1: dim_customers.total_orders doesn't match COUNT in fct_orders for some customers. Investigate.</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa15')">Reveal Answer</button>
+    <div class="answer">
+      <div class="code-block"><span class="cm">-- tests/assert_customer_order_count_consistency.sql</span>
+<span class="kw">SELECT</span> c.customer_id, c.total_orders, <span class="fn">COUNT</span>(o.order_id) <span class="kw">AS</span> actual
+<span class="kw">FROM</span> {{ ref(<span class="str">'dim_customers'</span>) }} c
+<span class="kw">LEFT JOIN</span> {{ ref(<span class="str">'fct_orders'</span>) }} o <span class="kw">ON</span> c.customer_id = o.customer_id
+<span class="kw">GROUP BY</span> c.customer_id, c.total_orders
+<span class="kw">HAVING</span> c.total_orders != <span class="fn">COUNT</span>(o.order_id)</div>
+      <p>Then check: refresh schedule differences, filter differences (cancelled orders?), incremental drift.</p>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa16">
+    <h4>Q2: Your accepted_values test on orders.status fails because a new status 'backordered' appeared. What do you do?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa16')">Reveal Answer</button>
+    <div class="answer">
+      <p>1. <strong>Immediate:</strong> Change severity to <code>warn</code> so production doesn't halt</p>
+      <p>2. <strong>Investigate:</strong> Confirm 'backordered' is legitimate from source system</p>
+      <p>3. <strong>Update:</strong> Add 'backordered' to accepted values list</p>
+      <p>4. <strong>Process:</strong> Ensure downstream CASE WHEN statements handle the new status</p>
+      <p>5. <strong>Prevent:</strong> Consider <code>dbt_utils.get_column_values()</code> to dynamically fetch statuses</p>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa17">
+    <h4>Q3: Source freshness shows raw_orders last loaded 36 hours ago (error: 24h). dbt build is about to run. What do you do?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa17')">Reveal Answer</button>
+    <div class="answer">
+      <p>1. <strong>Don't build</strong> — stale source data means incomplete results</p>
+      <p>2. <strong>Alert the ingestion team</strong> — Fivetran/Airbyte may have a sync failure</p>
+      <p>3. <strong>Design:</strong> Configure Airflow DAG to check source freshness BEFORE <code>dbt build</code> — skip build and alert on error</p>
+      <p>4. <strong>Communicate:</strong> Notify stakeholders that today's data may be stale</p>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa18">
+    <h4>Q4: Ensure daily revenue never drops more than 50% compared to the previous day. Write the test.</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa18')">Reveal Answer</button>
+    <div class="answer">
+      <div class="code-block"><span class="cm">-- tests/assert_revenue_no_cliff_drop.sql</span>
+{{ config(severity=<span class="str">'warn'</span>) }}
+
+<span class="kw">WITH</span> daily <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> <span class="fn">DATE</span>(order_date) <span class="kw">AS</span> order_day,
+           <span class="fn">SUM</span>(order_amount_dollars) <span class="kw">AS</span> revenue
+    <span class="kw">FROM</span> {{ ref(<span class="str">'fct_orders'</span>) }}
+    <span class="kw">WHERE</span> order_date >= <span class="fn">DATEADD</span>(day, <span class="fn">-30</span>, <span class="fn">CURRENT_DATE</span>())
+    <span class="kw">GROUP BY</span> <span class="fn">DATE</span>(order_date)
+),
+with_prev <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> *, <span class="fn">LAG</span>(revenue) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> order_day) <span class="kw">AS</span> prev_revenue
+    <span class="kw">FROM</span> daily
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> with_prev
+<span class="kw">WHERE</span> prev_revenue <span class="kw">IS NOT NULL</span>
+  <span class="kw">AND</span> revenue < prev_revenue * <span class="fn">0.5</span></div>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa19">
+    <h4>Q5: dbt tests vs warehouse constraints vs model contracts. What's your position?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa19')">Reveal Answer</button>
+    <div class="answer">
+      <p><strong>Use all three — defense in depth:</strong></p>
+      <p>• <strong>Model contracts</strong> (dbt 1.5+): Compile-time schema validation — catches structural issues before SQL runs</p>
+      <p>• <strong>Warehouse constraints</strong>: Prevent bad data from being written (not all warehouses enforce them)</p>
+      <p>• <strong>dbt tests</strong>: Post-load validation, flexible (cross-model relationships), severity levels, <code>store_failures</code></p>
+      <p><strong>Stack them:</strong> contracts (compile) → constraints (write) → tests (validate).</p>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 5: Jinja/Macro Challenges -->
+<section class="screen" id="s5">
+  <h2>🧩 Jinja/Macro Challenges — <span class="accent">"Write the Macro"</span></h2>
+
+  <div class="qa-block" id="qa20">
+    <h4>Q1: Write a macro that generates a CASE WHEN mapping status codes to labels.</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa20')">Reveal Answer</button>
+    <div class="answer">
+      <div class="code-block"><span class="cm">-- macros/status_label.sql</span>
+{% macro status_label(column_name) %}
+    <span class="kw">case</span> {{ column_name }}
+        <span class="kw">when</span> <span class="str">'PL'</span> <span class="kw">then</span> <span class="str">'Placed'</span>
+        <span class="kw">when</span> <span class="str">'SH'</span> <span class="kw">then</span> <span class="str">'Shipped'</span>
+        <span class="kw">when</span> <span class="str">'DL'</span> <span class="kw">then</span> <span class="str">'Delivered'</span>
+        <span class="kw">when</span> <span class="str">'RT'</span> <span class="kw">then</span> <span class="str">'Returned'</span>
+        <span class="kw">when</span> <span class="str">'CA'</span> <span class="kw">then</span> <span class="str">'Cancelled'</span>
+        <span class="kw">else</span> <span class="str">'Unknown'</span>
+    <span class="kw">end</span>
+{% endmacro %}
+
+<span class="cm">-- Usage: SELECT {{ status_label('status_code') }} AS status_label</span></div>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa21">
+    <h4>Q2: Write a macro that generates a UNION ALL of monthly partitioned tables.</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa21')">Reveal Answer</button>
+    <div class="answer">
+      <div class="code-block"><span class="cm">-- macros/union_monthly_tables.sql</span>
+{% macro union_monthly_tables(source_name, prefix, start_date, end_date) %}
+    {% <span class="kw">set</span> start = modules.datetime.datetime.strptime(start_date, <span class="str">'%Y-%m'</span>) %}
+    {% <span class="kw">set</span> tables = [] %}
+    {% <span class="kw">for</span> i <span class="kw">in</span> range(<span class="fn">100</span>) %}
+        {% <span class="kw">if</span> current &lt;= end %}
+            {% <span class="kw">do</span> tables.append(prefix ~ current.strftime(<span class="str">'%Y_%m'</span>)) %}
+        {% endif %}
+    {% endfor %}
+
+    {% <span class="kw">for</span> table <span class="kw">in</span> tables %}
+        <span class="kw">select</span> *, <span class="str">'{{ table }}'</span> <span class="kw">as</span> source_table
+        <span class="kw">from</span> {{ source(source_name, table) }}
+        {% <span class="kw">if not</span> loop.last %}<span class="kw">union all</span>{% endif %}
+    {% endfor %}
+{% endmacro %}</div>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa22">
+    <h4>Q3: Write a macro that grants SELECT on all models in a schema to a role. Use it as a post-hook.</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa22')">Reveal Answer</button>
+    <div class="answer">
+      <div class="code-block"><span class="cm">-- macros/grant_select.sql</span>
+{% macro grant_select(schema_name, role_name) %}
+    <span class="kw">grant usage on schema</span> {{ target.database }}.{{ schema_name }}
+        <span class="kw">to role</span> {{ role_name }};
+    <span class="kw">grant select on all tables in schema</span>
+        {{ target.database }}.{{ schema_name }} <span class="kw">to role</span> {{ role_name }};
+    <span class="kw">grant select on all views in schema</span>
+        {{ target.database }}.{{ schema_name }} <span class="kw">to role</span> {{ role_name }};
+{% endmacro %}
+
+<span class="cm">-- dbt_project.yml: on-run-end: "{{ grant_select('marts', 'analyst_role') }}"</span></div>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa23">
+    <h4>Q4: This Jinja code has a bug. Find it:</h4>
+    <div class="code-block">{% <span class="kw">set</span> payment_methods = [<span class="str">'credit_card'</span>, <span class="str">'paypal'</span>, <span class="str">'apple_pay'</span>] %}
+<span class="kw">SELECT</span> order_id,
+    {% <span class="kw">for</span> method <span class="kw">in</span> payment_methods %}
+        <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> payment_method = <span class="str">'{{ method }}'</span>
+            <span class="kw">THEN</span> amount <span class="kw">ELSE</span> <span class="fn">0</span> <span class="kw">END</span>) <span class="kw">AS</span> {{ method }}_total,
+    {% endfor %}
+<span class="kw">FROM</span> {{ ref(<span class="str">'stg_payments'</span>) }}
+<span class="kw">GROUP BY</span> order_id</div>
+    <button class="qa-toggle" onclick="toggleAnswer('qa23')">Reveal Answer</button>
+    <div class="answer">
+      <p><strong>Bug:</strong> Trailing comma after the last <code>{% endfor %}</code> — the <code>,</code> after <code>apple_pay_total,</code> creates invalid SQL (comma before FROM).</p>
+      <p><strong>Fix:</strong> Use <code>{% if not loop.last %},{% endif %}</code>:</p>
+      <div class="code-block">{% <span class="kw">for</span> method <span class="kw">in</span> payment_methods %}
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> payment_method = <span class="str">'{{ method }}'</span>
+        <span class="kw">THEN</span> amount <span class="kw">ELSE</span> <span class="fn">0</span> <span class="kw">END</span>) <span class="kw">AS</span> {{ method }}_total
+    {% <span class="kw">if not</span> loop.last %},{% endif %}
+{% endfor %}</div>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 6: Production Operations -->
+<section class="screen screen-alt" id="s6">
+  <h2>🚨 Production Operations — <span class="accent">"It's 3am and the Pipeline Broke"</span></h2>
+
+  <div class="qa-block" id="qa24">
+    <h4>Q1: Daily dbt build fails at 4am. Slack alert: fct_orders test unique_order_id failed (47 duplicate rows). Walk me through incident response.</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa24')">Reveal Answer</button>
+    <div class="answer">
+      <p>1. <strong>Triage severity:</strong> 47 duplicates in millions of rows = low impact but needs fixing</p>
+      <p>2. <strong>Check downstream:</strong> Did <code>dbt build</code> gate downstream models? (Yes, if error severity)</p>
+      <p>3. <strong>Investigate:</strong> <code>SELECT order_id, COUNT(*) FROM fct_orders GROUP BY 1 HAVING COUNT(*) > 1</code></p>
+      <p>4. <strong>Check source:</strong> Are duplicates coming from <code>stg_orders</code>? (Source system issue?)</p>
+      <p>5. <strong>Fix:</strong> Add dedup logic in staging (ROW_NUMBER) or verify <code>unique_key</code> config</p>
+      <p>6. <strong>Remediate:</strong> <code>--full-refresh</code> on <code>fct_orders</code> after fix</p>
+      <p>7. <strong>Prevent:</strong> Add <code>unique</code> test to <code>stg_orders.order_id</code> to catch source duplicates earlier</p>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa25">
+    <h4>Q2: A model that normally takes 5 minutes suddenly takes 90 minutes. No code changes. What do you investigate?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa25')">Reveal Answer</button>
+    <div class="answer">
+      <p>1. <strong>Warehouse load</strong> — saturated with concurrent queries?</p>
+      <p>2. <strong>Data volume spike</strong> — source table suddenly grew?</p>
+      <p>3. <strong>Incremental regression</strong> — <code>is_incremental()</code> returning False? (table dropped → full rebuild)</p>
+      <p>4. <strong>Warehouse sizing</strong> — someone changed the warehouse size?</p>
+      <p>5. <strong>Query plan</strong> — check warehouse query profile for spills to disk, bad join strategies</p>
+      <p>6. <strong>Clustering</strong> — check if micro-partition pruning is effective</p>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa26">
+    <h4>Q3: Deploy a breaking change — rename order_total → order_amount_dollars. Three dashboards consume this table. Rollout plan?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa26')">Reveal Answer</button>
+    <div class="answer">
+      <p>1. <strong>Announce:</strong> 2-week notice to all consumers</p>
+      <p>2. <strong>Deprecation period:</strong> Add both columns: <code>order_amount_dollars, order_amount_dollars AS order_total -- DEPRECATED</code></p>
+      <p>3. <strong>Track usage:</strong> Query <code>INFORMATION_SCHEMA.ACCESS_HISTORY</code> to see who still uses <code>order_total</code></p>
+      <p>4. <strong>Remove:</strong> After consumers migrate, drop the deprecated column</p>
+      <p>5. <strong>Contracts:</strong> Add model contract enforcement to prevent future accidental renames</p>
+    </div>
+  </div>
+
+  <div class="qa-block" id="qa27">
+    <h4>Q4: Reduce the dbt project's warehouse compute costs by 40%. What levers do you pull?</h4>
+    <button class="qa-toggle" onclick="toggleAnswer('qa27')">Reveal Answer</button>
+    <div class="answer">
+      <p>1. <strong>Convert tables to views</strong> — staging models don't need to be tables (biggest savings)</p>
+      <p>2. <strong>Convert large tables to incremental</strong> — stop rebuilding 100M+ row tables daily</p>
+      <p>3. <strong>Right-size warehouses</strong> — SMALL for staging, MEDIUM for marts, LARGE only for full refreshes</p>
+      <p>4. <strong>Auto-suspend warehouses</strong> — 60-second auto-suspend between runs</p>
+      <p>5. <strong>Eliminate unused models</strong> — query <code>ACCESS_HISTORY</code> for models nobody queries; disable them</p>
+      <p>6. <strong>Use Slim CI</strong> — stop rebuilding entire project on every PR</p>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 7: Rapid Fire -->
+<section class="screen" id="s7">
+  <h2>⚡ Rapid Fire — <span class="accent">20 Quick Q&amp;A</span></h2>
+  <p>Click any question to reveal the answer. Know these cold.</p>
+
+  <div class="rapid-fire">
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">1. What does <code>dbt build</code> do that <code>dbt run</code> doesn't?</div><div class="a">→ Runs models, tests, snapshots, AND seeds in DAG order with test gating. <code>dbt run</code> only runs models.</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">2. What's the difference between <code>{{ ref() }}</code> and <code>{{ source() }}</code>?</div><div class="a">→ <code>ref()</code> references dbt models (within the project). <code>source()</code> references external raw tables (entry point to dbt).</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">3. When does <code>is_incremental()</code> return False?</div><div class="a">→ First run (table doesn't exist), <code>--full-refresh</code> flag, or model not configured as incremental.</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">4. What is <code>{{ this }}</code>?</div><div class="a">→ A reference to the current model's existing target table. Only meaningful inside <code>{% if is_incremental() %}</code>.</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">5. Name the 4 built-in dbt tests.</div><div class="a">→ <code>unique</code>, <code>not_null</code>, <code>accepted_values</code>, <code>relationships</code>.</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">6. <code>severity: warn</code> vs <code>severity: error</code>?</div><div class="a">→ <code>warn</code> logs the failure but allows downstream models to proceed. <code>error</code> halts downstream execution in <code>dbt build</code>.</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">7. Snapshot timestamp vs check strategies?</div><div class="a">→ <code>timestamp</code> compares <code>updated_at</code> column (faster). <code>check</code> compares actual column values (no timestamp needed).</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">8. How do you identify the current record in a snapshot?</div><div class="a">→ <code>WHERE dbt_valid_to IS NULL</code>.</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">9. What file stores the DAG/project graph?</div><div class="a">→ <code>target/manifest.json</code>.</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">10. What does <code>state:modified+</code> do?</div><div class="a">→ Builds only models that changed since the last production run, plus all downstream dependencies.</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">11. What's the <code>+</code> operator in selectors?</div><div class="a">→ <code>model+</code> = model and all downstream. <code>+model</code> = model and all upstream. <code>+model+</code> = both.</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">12. What does <code>store_failures=true</code> do?</div><div class="a">→ Saves failing test rows to a table in the warehouse for investigation.</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">13. How do you mask PII in dev but keep it in prod?</div><div class="a">→ <code>{% if target.name == 'prod' %}customer_email{% else %}MD5(customer_email){% endif %}</code>.</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">14. What does <code>dbt deps</code> do?</div><div class="a">→ Installs packages defined in <code>packages.yml</code> into the <code>dbt_packages/</code> directory.</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">15. Purpose of <code>generate_schema_name</code> macro?</div><div class="a">→ Controls schema names. Override so dev uses <code>dev_alice_marts</code> while prod uses <code>marts</code>.</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">16. Name three must-have dbt packages.</div><div class="a">→ <code>dbt_utils</code>, <code>dbt_expectations</code>, <code>codegen</code>.</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">17. What's a model contract?</div><div class="a">→ Enforced schema definition (column names, types, constraints) that must match the model's output. Compile-time check.</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">18. What does <code>on_schema_change='fail'</code> do?</div><div class="a">→ Raises an error when an incremental model's SELECT returns different columns than the existing target table.</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">19. How do you run a one-time backfill on an incremental model?</div><div class="a">→ <code>dbt run --select my_model --vars '{"backfill_start": "2024-01-01"}'</code> with var-driven WHERE clause. Or <code>--full-refresh</code> for complete rebuild.</div></div>
+    <div class="rapid-item" onclick="this.classList.toggle('open')"><div class="q">20. <code>dbt compile</code> vs <code>dbt run</code>?</div><div class="a">→ <code>compile</code> resolves Jinja and writes compiled SQL to <code>target/compiled/</code> without executing. <code>run</code> compiles AND executes against the warehouse.</div></div>
+  </div>
+</section>
+
+<!-- Screen 8: Key Takeaways -->
+<section class="screen screen-alt" id="s8">
+  <h2>🔑 Key Takeaways — <span class="accent">Interview Gauntlet</span></h2>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🏗️ Architecture</h4>
+      <p>Test your ability to structure projects, choose materializations, and justify tradeoffs. Always explain the "why."</p>
+    </div>
+    <div class="card blue">
+      <h4>🐛 Incrementals</h4>
+      <p>Always comes back to: unique_key, incremental filter, lookback window, and full-refresh parity.</p>
+    </div>
+    <div class="card green">
+      <h4>📊 Data Quality</h4>
+      <p>Know tests, severity, store_failures, source freshness, and cross-model validation cold.</p>
+    </div>
+    <div class="card purple">
+      <h4>🧩 Jinja/Macros</h4>
+      <p>Watch for trailing commas in loops! Know run_query() with execute guards, and DRY patterns.</p>
+    </div>
+    <div class="card">
+      <h4>🚨 Production Ops</h4>
+      <p>Incident response: triage → investigate → fix → remediate → prevent. Real-world experience wins.</p>
+    </div>
+    <div class="card blue">
+      <h4>⚡ Rapid Fire</h4>
+      <p>Vocabulary and core concepts — know the dbt glossary cold. Tradeoffs matter more than memorized syntax.</p>
+    </div>
+  </div>
+
+  <div class="aha green">
+    <div class="aha-title">🎉 Congratulations!</div>
+    <p>You've completed the dbt Mastery course — all 8 modules. You now have the knowledge to ace dbt interviews at any level. Remember: interviewers care more about <strong>reasoning and tradeoffs</strong> than memorized syntax. Reference specific scenarios, table sizes, and timing from your projects. Stay current with dbt 1.5+ features (contracts, Mesh), Slim CI, and Cosmos — these signal seniority. Good luck! 🚀</p>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-07-cicd-production/index.html">← Module 7: CI/CD</a>
+  <a href="../index.html">Course Home →</a>
+</footer>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  window.toggleAnswer=function(id){
+    const block=document.getElementById(id);
+    const answer=block.querySelector('.answer');
+    const btn=block.querySelector('.qa-toggle');
+    answer.classList.toggle('show');
+    btn.textContent=answer.classList.contains('show')?'Hide Answer':'Reveal Answer';
+  };
+})();
+</script>
+</body>
+</html>

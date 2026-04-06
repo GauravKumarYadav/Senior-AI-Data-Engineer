@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 6: Macros, Jinja & Packages | dbt Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+.screen-alt{background:var(--color-bg-warm)}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+table.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+table.info-table th,table.info-table td{padding:0.6rem 0.8rem;border:1px solid rgba(0,0,0,0.08);text-align:left}
+table.info-table th{background:var(--color-bg-warm);font-family:var(--font-heading);font-weight:700}
+table.info-table tr:nth-child(even){background:rgba(0,0,0,0.02)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🔨 dbt Mastery</a><div class="nav-dots"><a href="../module-01-what-is-dbt/" class="nav-dot"></a><a href="../module-02-models-materializations/" class="nav-dot"></a><a href="../module-03-incremental-models/" class="nav-dot"></a><a href="../module-04-testing-quality/" class="nav-dot"></a><a href="../module-05-snapshots-scd/" class="nav-dot"></a><a href="../module-06-macros-jinja/" class="nav-dot active"></a><a href="../module-07-cicd-production/" class="nav-dot"></a><a href="../module-08-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Jinja in SQL -->
+<section class="screen" id="s1">
+  <h2>🧩 Jinja in SQL — <span class="accent">The Template Engine</span></h2>
+  <p>Every <code>.sql</code> file in dbt is a <strong>Jinja template</strong>, not plain SQL. Before dbt sends anything to the warehouse, the Jinja engine processes your file — resolving variables, executing control flow, and expanding macros into raw SQL.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>{{ expression }}</h4>
+      <p><strong>Output:</strong> evaluates and prints the result. Example: <code>{{ ref('stg_orders') }}</code> → full table path.</p>
+    </div>
+    <div class="card blue">
+      <h4>{% statement %}</h4>
+      <p><strong>Logic:</strong> control flow, no output. Example: <code>{% if target.name == 'prod' %}</code>. For if/else, loops, set.</p>
+    </div>
+    <div class="card green">
+      <h4>{# comment #}</h4>
+      <p><strong>Comment:</strong> completely stripped from output. Not visible in compiled SQL. Use for TODOs.</p>
+    </div>
+  </div>
+
+  <h3>Jinja Template vs Compiled SQL</h3>
+  <div class="translate">
+    <div class="translate-code"><span class="cm">{# Core orders fact table #}</span>
+<span class="fn">{{</span> config(materialized=<span class="str">'table'</span>) <span class="fn">}}</span>
+
+<span class="kw">SELECT</span>
+    order_id, customer_id,
+    order_amount_cents / <span class="fn">100.0</span> <span class="kw">AS</span> amount,
+    <span class="kw">{%</span> <span class="kw">if</span> target.name == <span class="str">'prod'</span> <span class="kw">%}</span>
+        customer_email,
+    <span class="kw">{%</span> <span class="kw">else</span> <span class="kw">%}</span>
+        MD5(customer_email) <span class="kw">AS</span> customer_email,
+    <span class="kw">{%</span> endif <span class="kw">%}</span>
+    CURRENT_TIMESTAMP() <span class="kw">AS</span> loaded_at
+<span class="kw">FROM</span> <span class="fn">{{</span> ref(<span class="str">'stg_orders'</span>) <span class="fn">}}</span></div>
+    <div class="translate-eng">
+      <div class="line">💬 Jinja comment — stripped from output</div>
+      <div class="line">⚙️ Config — sets materialization</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📊 Normal SQL columns</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔒 Conditional: show real email in prod…</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔒 …mask it everywhere else</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔗 ref() resolves to full table path</div>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># View compiled SQL (what the warehouse actually sees)</span>
+$ dbt compile --select fct_orders
+<span class="cm"># Output in: target/compiled/your_project/models/marts/fct_orders.sql</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Explain how Jinja works in dbt."</strong> — "Every dbt SQL file is a Jinja template processed before execution. <code>{{ }}</code> for expressions that output values, <code>{% %}</code> for control flow, and <code>{# #}</code> for comments stripped from compiled SQL. I use <code>dbt compile</code> to inspect generated SQL during development."</p>
+  </div>
+</section>
+
+<!-- Screen 2: Built-in Macros -->
+<section class="screen screen-alt" id="s2">
+  <h2>🔧 Built-in Macros — <span class="accent">ref, source, config</span></h2>
+  <p>These macros form the backbone of every dbt project. They're what makes dbt's DAG, documentation, and environment awareness possible.</p>
+
+  <h3>{{ ref('model_name') }} — The Heart of dbt</h3>
+  <div class="code-block"><span class="cm">-- What ref() does:</span>
+<span class="cm">-- 1. Resolves model name → full table/view path</span>
+<span class="cm">-- 2. Registers a dependency in the DAG</span>
+<span class="cm">-- 3. Handles environment-specific schemas</span>
+
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="fn">{{</span> ref(<span class="str">'stg_orders'</span>) <span class="fn">}}</span>
+<span class="cm">-- Dev:  → SELECT * FROM DEV_SCHEMA.stg_orders</span>
+<span class="cm">-- Prod: → SELECT * FROM ANALYTICS.staging.stg_orders</span>
+
+<span class="cm">-- Cross-project ref (dbt Mesh):</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="fn">{{</span> ref(<span class="str">'other_project'</span>, <span class="str">'shared_model'</span>) <span class="fn">}}</span></div>
+
+  <h3>{{ var('variable') }} — Project Variables</h3>
+  <div class="code-block"><span class="kw">{%</span> <span class="kw">set</span> lookback = var(<span class="str">'lookback_days'</span>, <span class="fn">3</span>) <span class="kw">%}</span>
+
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="fn">{{</span> ref(<span class="str">'stg_orders'</span>) <span class="fn">}}</span>
+<span class="kw">WHERE</span> order_date &gt;= DATEADD(day, -<span class="fn">{{</span> lookback <span class="fn">}}</span>, CURRENT_DATE())
+
+<span class="cm">-- Override at runtime:</span>
+<span class="cm">-- $ dbt run --vars '{"lookback_days": 7}'</span></div>
+
+  <h3>Key Jinja Variables</h3>
+  <table class="info-table">
+    <thead><tr><th>Variable</th><th>What It Contains</th></tr></thead>
+    <tbody>
+      <tr><td><code>{{ ref('model') }}</code></td><td>Resolved table reference + DAG dependency</td></tr>
+      <tr><td><code>{{ source('src','tbl') }}</code></td><td>Resolved source reference + freshness</td></tr>
+      <tr><td><code>{{ this }}</code></td><td>Current model's table (for incremental)</td></tr>
+      <tr><td><code>{{ target.name }}</code></td><td>Environment name (dev/prod/ci)</td></tr>
+      <tr><td><code>{{ target.schema }}</code></td><td>Target schema</td></tr>
+      <tr><td><code>{{ var('key', default) }}</code></td><td>Project variable with optional default</td></tr>
+      <tr><td><code>{{ env_var('API_KEY') }}</code></td><td>OS environment variable</td></tr>
+    </tbody>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"What does ref() do beyond resolving table names?"</strong> — "Three things: (1) resolves to environment-specific paths. (2) Registers DAG dependencies — dbt knows execution order. (3) Creates documentation lineage for <code>dbt docs generate</code>."</p>
+  </div>
+</section>
+
+<!-- Screen 3: Custom Macros -->
+<section class="screen" id="s3">
+  <h2>⚡ Custom Macros — <span class="accent">Reusable SQL Functions</span></h2>
+  <p>Macros are Jinja functions in <code>macros/</code> that accept arguments and return SQL strings — the dbt equivalent of Python functions.</p>
+
+  <div class="code-block"><span class="cm">-- macros/cents_to_dollars.sql</span>
+<span class="kw">{%</span> macro cents_to_dollars(column_name, decimal_places=<span class="fn">2</span>) <span class="kw">%}</span>
+    ROUND(<span class="fn">{{</span> column_name <span class="fn">}}</span> / <span class="fn">100.0</span>, <span class="fn">{{</span> decimal_places <span class="fn">}}</span>)
+<span class="kw">{%</span> endmacro <span class="kw">%}</span></div>
+
+  <div class="code-block"><span class="cm">-- Using it in a model</span>
+<span class="kw">SELECT</span>
+    order_id,
+    <span class="fn">{{</span> cents_to_dollars(<span class="str">'order_amount_cents'</span>) <span class="fn">}}</span>     <span class="kw">AS</span> order_amount_dollars,
+    <span class="fn">{{</span> cents_to_dollars(<span class="str">'shipping_cost_cents'</span>, <span class="fn">2</span>) <span class="fn">}}</span> <span class="kw">AS</span> shipping_cost_dollars,
+    <span class="fn">{{</span> cents_to_dollars(<span class="str">'tax_cents'</span>) <span class="fn">}}</span>               <span class="kw">AS</span> tax_dollars
+<span class="kw">FROM</span> <span class="fn">{{</span> source(<span class="str">'ecommerce'</span>, <span class="str">'raw_orders'</span>) <span class="fn">}}</span>
+
+<span class="cm">-- Compiles to:</span>
+<span class="cm">-- ROUND(order_amount_cents / 100.0, 2) AS order_amount_dollars,</span>
+<span class="cm">-- ROUND(shipping_cost_cents / 100.0, 2) AS shipping_cost_dollars,</span>
+<span class="cm">-- ROUND(tax_cents / 100.0, 2) AS tax_dollars</span></div>
+
+  <h3>More Practical Macros</h3>
+  <div class="code-block"><span class="cm">-- macros/safe_divide.sql</span>
+<span class="kw">{%</span> macro safe_divide(numerator, denominator, default=<span class="fn">0</span>) <span class="kw">%}</span>
+    <span class="kw">CASE</span>
+        <span class="kw">WHEN</span> <span class="fn">{{</span> denominator <span class="fn">}}</span> = <span class="fn">0</span> <span class="kw">OR</span> <span class="fn">{{</span> denominator <span class="fn">}}</span> <span class="kw">IS</span> <span class="fn">NULL</span>
+        <span class="kw">THEN</span> <span class="fn">{{</span> default <span class="fn">}}</span>
+        <span class="kw">ELSE</span> <span class="fn">{{</span> numerator <span class="fn">}}</span>::FLOAT / <span class="fn">{{</span> denominator <span class="fn">}}</span>
+    <span class="kw">END</span>
+<span class="kw">{%</span> endmacro <span class="kw">%}</span></div>
+
+  <div class="code-block"><span class="cm">-- macros/generate_schema_name.sql (override dbt default)</span>
+<span class="kw">{%</span> macro generate_schema_name(custom_schema_name, node) -<span class="kw">%}</span>
+    <span class="kw">{%-</span> <span class="kw">set</span> default_schema = target.schema <span class="kw">-%}</span>
+    <span class="kw">{%-</span> <span class="kw">if</span> custom_schema_name <span class="kw">is</span> none <span class="kw">-%}</span>
+        <span class="fn">{{</span> default_schema <span class="fn">}}</span>
+    <span class="kw">{%-</span> <span class="kw">elif</span> target.name == <span class="str">'prod'</span> <span class="kw">-%}</span>
+        <span class="fn">{{</span> custom_schema_name | trim <span class="fn">}}</span>
+    <span class="kw">{%-</span> <span class="kw">else</span> <span class="kw">-%}</span>
+        <span class="fn">{{</span> default_schema <span class="fn">}}</span>_<span class="fn">{{</span> custom_schema_name | trim <span class="fn">}}</span>
+    <span class="kw">{%-</span> endif <span class="kw">-%}</span>
+<span class="kw">{%-</span> endmacro <span class="kw">%}</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Give me an example of a custom macro."</strong> — "A <code>cents_to_dollars</code> macro standardizing currency conversion across all models. If we change rounding logic, we update one file. I also wrote <code>safe_divide</code> for metrics and a <code>generate_schema_name</code> override for clean prod schemas vs prefixed dev schemas."</p>
+  </div>
+</section>
+
+<!-- Screen 4: Control Flow -->
+<section class="screen screen-alt" id="s4">
+  <h2>🔀 Control Flow — <span class="accent">if, for, set</span></h2>
+  <p>Jinja's control flow lets you generate dynamic SQL — conditionally including columns, looping over lists, and setting variables for reuse.</p>
+
+  <h3>{% for %} — Looping to Generate SQL</h3>
+  <div class="code-block"><span class="kw">{%</span> <span class="kw">set</span> statuses = [<span class="str">'placed'</span>, <span class="str">'shipped'</span>, <span class="str">'completed'</span>, <span class="str">'returned'</span>, <span class="str">'cancelled'</span>] <span class="kw">%}</span>
+
+<span class="kw">SELECT</span>
+    customer_id,
+    COUNT(*) <span class="kw">AS</span> total_orders,
+    <span class="kw">{%</span> <span class="kw">for</span> status <span class="kw">in</span> statuses <span class="kw">%}</span>
+        SUM(<span class="kw">CASE WHEN</span> status = <span class="str">'{{ status }}'</span> <span class="kw">THEN</span> <span class="fn">1</span> <span class="kw">ELSE</span> <span class="fn">0</span> <span class="kw">END</span>)
+            <span class="kw">AS</span> <span class="fn">{{</span> status <span class="fn">}}</span>_count
+        <span class="kw">{%</span> <span class="kw">if not</span> loop.last <span class="kw">%}</span>,<span class="kw">{%</span> endif <span class="kw">%}</span>
+    <span class="kw">{%</span> endfor <span class="kw">%}</span>
+<span class="kw">FROM</span> <span class="fn">{{</span> ref(<span class="str">'stg_orders'</span>) <span class="fn">}}</span>
+<span class="kw">GROUP BY</span> customer_id</div>
+
+  <h3>Loop Variables</h3>
+  <table class="info-table">
+    <thead><tr><th>Variable</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>loop.index</code></td><td>Current iteration (1-indexed)</td></tr>
+      <tr><td><code>loop.index0</code></td><td>Current iteration (0-indexed)</td></tr>
+      <tr><td><code>loop.first</code></td><td>True if first iteration</td></tr>
+      <tr><td><code>loop.last</code></td><td>True if last iteration</td></tr>
+      <tr><td><code>loop.length</code></td><td>Total number of iterations</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Dynamic UNION ALL</h3>
+  <div class="code-block"><span class="kw">{%</span> <span class="kw">set</span> months = [<span class="str">'2024_01'</span>, <span class="str">'2024_02'</span>, <span class="str">'2024_03'</span>, <span class="str">'2024_04'</span>] <span class="kw">%}</span>
+
+<span class="kw">{%</span> <span class="kw">for</span> month <span class="kw">in</span> months <span class="kw">%}</span>
+    <span class="kw">SELECT</span>
+        event_id, user_id, event_type, event_timestamp,
+        <span class="str">'{{ month }}'</span> <span class="kw">AS</span> source_month
+    <span class="kw">FROM</span> <span class="fn">{{</span> source(<span class="str">'events'</span>, <span class="str">'events_'</span> ~ month) <span class="fn">}}</span>
+    <span class="kw">{%</span> <span class="kw">if not</span> loop.last <span class="kw">%}</span><span class="kw">UNION ALL</span><span class="kw">{%</span> endif <span class="kw">%}</span>
+<span class="kw">{%</span> endfor <span class="kw">%}</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How do you avoid repetitive SQL in dbt?"</strong> — "Three techniques: (1) <code>{% for %}</code> loops — generate CASE WHENs from a list. Adding a new status = adding one string. (2) Custom macros like <code>cents_to_dollars()</code>. (3) <code>{% if %}</code> for environment-specific logic like PII masking in dev."</p>
+  </div>
+</section>
+
+<!-- Screen 5: adapter.dispatch() -->
+<section class="screen" id="s5">
+  <h2>🌐 adapter.dispatch() — <span class="accent">Cross-Database</span></h2>
+  <p>When your project runs on multiple warehouses, function syntax differs. <code>adapter.dispatch()</code> routes to the correct implementation based on the active adapter.</p>
+
+  <div class="code-block"><span class="cm">-- macros/date_trunc_month.sql</span>
+
+<span class="kw">{%</span> macro date_trunc_month(date_column) <span class="kw">%}</span>
+    <span class="fn">{{</span> <span class="kw">return</span>(adapter.dispatch(<span class="str">'date_trunc_month'</span>)(date_column)) <span class="fn">}}</span>
+<span class="kw">{%</span> endmacro <span class="kw">%}</span>
+
+<span class="cm">-- Snowflake implementation</span>
+<span class="kw">{%</span> macro snowflake__date_trunc_month(date_column) <span class="kw">%}</span>
+    DATE_TRUNC(<span class="str">'month'</span>, <span class="fn">{{</span> date_column <span class="fn">}}</span>)
+<span class="kw">{%</span> endmacro <span class="kw">%}</span>
+
+<span class="cm">-- BigQuery implementation</span>
+<span class="kw">{%</span> macro bigquery__date_trunc_month(date_column) <span class="kw">%}</span>
+    DATE_TRUNC(<span class="fn">{{</span> date_column <span class="fn">}}</span>, MONTH)
+<span class="kw">{%</span> endmacro <span class="kw">%}</span>
+
+<span class="cm">-- Default fallback</span>
+<span class="kw">{%</span> macro default__date_trunc_month(date_column) <span class="kw">%}</span>
+    DATE_TRUNC(<span class="str">'month'</span>, <span class="fn">{{</span> date_column <span class="fn">}}</span>)
+<span class="kw">{%</span> endmacro <span class="kw">%}</span></div>
+
+  <div class="code-block"><span class="cm">Dispatch Flow:</span>
+
+1. Check: does <span class="fn">snowflake__</span>date_trunc_month exist?
+   └── If adapter is Snowflake: <span class="str">YES → use it</span>
+2. Check: does <span class="fn">bigquery__</span>date_trunc_month exist?
+   └── If adapter is BigQuery: <span class="str">YES → use it</span>
+3. Fallback: use <span class="fn">default__</span>date_trunc_month
+
+Naming convention: <span class="kw">{adapter}__macro_name</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How do you handle SQL syntax differences across warehouses?"</strong> — "With <code>adapter.dispatch()</code>. I write a base macro that delegates to <code>snowflake__</code>, <code>bigquery__</code>, etc. implementations. It auto-routes based on the active adapter. Especially useful for date functions, string functions, and type casting."</p>
+  </div>
+</section>
+
+<!-- Screen 6: dbt_utils Package -->
+<section class="screen screen-alt" id="s6">
+  <h2>📦 dbt_utils — <span class="accent">The Essential Package</span></h2>
+  <p><code>dbt_utils</code> is the most widely used dbt package — battle-tested macros every production project needs. Think of it as the <strong>lodash of dbt</strong>.</p>
+
+  <div class="code-block"><span class="cm"># packages.yml</span>
+packages:
+  - package: dbt-labs/dbt_utils
+    version: [<span class="str">">=1.1.0"</span>, <span class="str">"<2.0.0"</span>]
+
+<span class="cm">$ dbt deps   # Install packages</span></div>
+
+  <h3>Top Macros</h3>
+  <div class="code-block"><span class="cm">-- generate_surrogate_key: composite hash keys</span>
+<span class="kw">SELECT</span>
+    <span class="fn">{{</span> dbt_utils.generate_surrogate_key([<span class="str">'order_id'</span>, <span class="str">'line_item_id'</span>]) <span class="fn">}}</span>
+        <span class="kw">AS</span> order_line_key
+<span class="cm">-- → MD5(CAST(order_id AS VARCHAR) || '-' || CAST(line_item_id AS VARCHAR))</span>
+
+<span class="cm">-- get_column_values: dynamically fetch distinct values</span>
+<span class="kw">{%</span> <span class="kw">set</span> methods = dbt_utils.get_column_values(
+    table=ref(<span class="str">'stg_payments'</span>), column=<span class="str">'payment_method'</span>
+) <span class="kw">%}</span>
+
+<span class="cm">-- date_spine: generate continuous date series</span>
+<span class="fn">{{</span> dbt_utils.date_spine(
+    datepart=<span class="str">"day"</span>,
+    start_date=<span class="str">"CAST('2023-01-01' AS DATE)"</span>,
+    end_date=<span class="str">"CURRENT_DATE()"</span>
+) <span class="fn">}}</span></div>
+
+  <h3>dbt_utils Cheat Sheet</h3>
+  <table class="info-table">
+    <thead><tr><th>Macro</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>generate_surrogate_key</code></td><td>Create composite hash keys</td></tr>
+      <tr><td><code>pivot / unpivot</code></td><td>Row ↔ column transformations</td></tr>
+      <tr><td><code>union_relations</code></td><td>Union tables, align schemas</td></tr>
+      <tr><td><code>date_spine</code></td><td>Generate continuous dates</td></tr>
+      <tr><td><code>get_column_values</code></td><td>Fetch distinct values at compile</td></tr>
+      <tr><td><code>star</code></td><td>SELECT * with exclusions</td></tr>
+      <tr><td><code>safe_add / safe_divide</code></td><td>Null-safe arithmetic</td></tr>
+      <tr><td><code>deduplicate</code></td><td>Remove duplicates by key</td></tr>
+    </tbody>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"What dbt packages do you use?"</strong> — "<code>dbt_utils</code> is non-negotiable — <code>generate_surrogate_key</code> for composite keys, <code>union_relations</code> for multi-region unions, <code>date_spine</code> for date dimensions. I also use <code>dbt_expectations</code> for advanced testing and <code>dbt_audit_helper</code> for comparing results during refactors."</p>
+  </div>
+</section>
+
+<!-- Screen 7: packages.yml & dbt deps -->
+<section class="screen" id="s7">
+  <h2>📋 Dependency Management — <span class="accent">packages.yml</span></h2>
+  <p>Packages extend dbt with reusable macros, models, and tests. Managing them properly is essential.</p>
+
+  <div class="code-block"><span class="cm"># packages.yml (project root)</span>
+packages:
+  <span class="cm"># Versioned from dbt Hub</span>
+  - package: dbt-labs/dbt_utils
+    version: [<span class="str">">=1.1.0"</span>, <span class="str">"<2.0.0"</span>]
+
+  - package: calogica/dbt_expectations
+    version: [<span class="str">">=0.10.0"</span>, <span class="str">"<0.11.0"</span>]
+
+  <span class="cm"># Git-based (internal packages)</span>
+  - git: <span class="str">"https://github.com/your-org/dbt-internal-macros.git"</span>
+    revision: v1.2.0    <span class="cm"># Pin to tag — NEVER use main/master</span>
+
+  <span class="cm"># Local package (monorepo)</span>
+  - local: ../shared-dbt-macros</div>
+
+  <h3>Key Packages for Production</h3>
+  <table class="info-table">
+    <thead><tr><th>Package</th><th>Purpose</th><th>Must-Have?</th></tr></thead>
+    <tbody>
+      <tr><td><code>dbt_utils</code></td><td>Core utility macros</td><td>✅ Yes</td></tr>
+      <tr><td><code>dbt_expectations</code></td><td>Advanced data tests</td><td>✅ Yes</td></tr>
+      <tr><td><code>dbt_audit_helper</code></td><td>Model comparison/auditing</td><td>Recommended</td></tr>
+      <tr><td><code>codegen</code></td><td>Auto-generate YAML/SQL</td><td>Dev productivity</td></tr>
+      <tr><td><code>dbt_project_evaluator</code></td><td>Best practice linting</td><td>Recommended</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Version Pinning</h3>
+  <div class="code-block"><span class="str">✅ GOOD</span> — Pin to a range (allows patches):
+  version: [<span class="str">">=1.1.0"</span>, <span class="str">"<2.0.0"</span>]
+
+<span class="str">✅ GOOD</span> — Exact version (maximum reproducibility):
+  version: <span class="fn">1.1.1</span>
+
+<span class="kw">❌ BAD</span> — No version constraint (breaks on updates):
+  - package: dbt-labs/dbt_utils
+
+<span class="kw">❌ BAD</span> — Git ref to a branch (not reproducible):
+  revision: main</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How do you manage dbt packages?"</strong> — "Version ranges like <code>>=1.1.0, &lt;2.0.0</code> for Hub packages — allows patches, prevents major breaks. Git packages pinned to tags, never branches. Packages install to <code>dbt_packages/</code> (gitignored), fetched fresh with <code>dbt deps</code> in CI."</p>
+  </div>
+</section>
+
+<!-- Screen 8: Advanced — run_query & execute -->
+<section class="screen screen-alt" id="s8">
+  <h2>🚀 Advanced — <span class="accent">run_query & execute</span></h2>
+  <p>For power users: query the warehouse at compile time, run admin operations, and build truly dynamic models.</p>
+
+  <div class="code-block"><span class="cm">-- macros/get_max_date.sql</span>
+<span class="kw">{%</span> macro get_max_order_date() <span class="kw">%}</span>
+    <span class="kw">{%</span> <span class="kw">set</span> query <span class="kw">%}</span>
+        <span class="kw">SELECT</span> MAX(order_date)::VARCHAR <span class="kw">AS</span> max_date
+        <span class="kw">FROM</span> <span class="fn">{{</span> ref(<span class="str">'fct_orders'</span>) <span class="fn">}}</span>
+    <span class="kw">{%</span> endset <span class="kw">%}</span>
+
+    <span class="kw">{%</span> <span class="kw">set</span> results = run_query(query) <span class="kw">%}</span>
+
+    <span class="kw">{%</span> <span class="kw">if</span> execute <span class="kw">%}</span>                      <span class="cm">← CRITICAL guard!</span>
+        <span class="kw">{%</span> <span class="kw">set</span> max_date = results.columns[<span class="fn">0</span>].values()[<span class="fn">0</span>] <span class="kw">%}</span>
+        <span class="fn">{{</span> <span class="kw">return</span>(max_date) <span class="fn">}}</span>
+    <span class="kw">{%</span> <span class="kw">else</span> <span class="kw">%}</span>
+        <span class="fn">{{</span> <span class="kw">return</span>(<span class="str">'2020-01-01'</span>) <span class="fn">}}</span>
+    <span class="kw">{%</span> endif <span class="kw">%}</span>
+<span class="kw">{%</span> endmacro <span class="kw">%}</span></div>
+
+  <p><strong>The <code>execute</code> variable:</strong> During <code>dbt compile</code>, Jinja processes templates but doesn't actually run queries. <code>execute</code> is <code>True</code> only during <code>dbt run</code> / <code>dbt build</code>. <strong>Always</strong> guard <code>run_query()</code> with <code>{% if execute %}</code>.</p>
+
+  <h3>Custom Operation Macros</h3>
+  <div class="code-block"><span class="cm">-- macros/operations/drop_old_models.sql</span>
+<span class="kw">{%</span> macro drop_old_models(days=<span class="fn">30</span>) <span class="kw">%}</span>
+    <span class="kw">{%</span> <span class="kw">set</span> query <span class="kw">%}</span>
+        <span class="kw">SELECT</span> table_name <span class="kw">FROM</span> information_schema.tables
+        <span class="kw">WHERE</span> table_schema = <span class="str">'{{ target.schema }}'</span>
+          <span class="kw">AND</span> last_altered &lt; DATEADD(day, -<span class="fn">{{</span> days <span class="fn">}}</span>, CURRENT_TIMESTAMP())
+    <span class="kw">{%</span> endset <span class="kw">%}</span>
+    <span class="kw">{%</span> <span class="kw">set</span> results = run_query(query) <span class="kw">%}</span>
+    <span class="kw">{%</span> <span class="kw">if</span> execute <span class="kw">%}</span>
+        <span class="kw">{%</span> <span class="kw">for</span> table <span class="kw">in</span> results.columns[<span class="fn">0</span>].values() <span class="kw">%}</span>
+            <span class="fn">{{</span> log(<span class="str">"Dropping: "</span> ~ table, info=<span class="fn">true</span>) <span class="fn">}}</span>
+            <span class="kw">{%</span> do run_query(<span class="str">"DROP TABLE IF EXISTS "</span> ~ target.schema ~ <span class="str">"."</span> ~ table) <span class="kw">%}</span>
+        <span class="kw">{%</span> endfor <span class="kw">%}</span>
+    <span class="kw">{%</span> endif <span class="kw">%}</span>
+<span class="kw">{%</span> endmacro <span class="kw">%}</span>
+
+<span class="cm">-- Run: $ dbt run-operation drop_old_models --args '{"days": 60}'</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"What is run_query() and when would you use it?"</strong> — "<code>run_query()</code> executes SQL at compile time and returns results as a Jinja object. I use it for dynamic SQL — like fetching distinct values for pivot columns. Critical: always guard with <code>{% if execute %}</code> because during parse phase the query can't run. I also use it in operation macros for admin tasks."</p>
+  </div>
+</section>
+
+<!-- Screen 9: Quiz -->
+<section class="screen" id="s9">
+  <h2>🧪 Quiz: <span class="accent">Module 6 Review</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: What are the three Jinja delimiters?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) {{ }} for comments, {% %} for output, {# #} for logic</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) {{ }} for output/expressions, {% %} for control flow, {# #} for comments</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) {{ }} for variables, {% %} for macros, {# #} for SQL</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) All three produce SQL output</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: What does ref() do BEYOND resolving the table name?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Nothing — it only resolves names</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) It registers a DAG dependency and creates documentation lineage</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) It runs the referenced model first</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) It validates the referenced model's schema</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: You need CASE WHENs for 5 status values. Best approach?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Write all 5 CASE WHENs manually</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) Use {% for %} loop over a {% set statuses = [...] %} list</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) Create a separate model for each status</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Use a {% if %} chain for each status</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: What happens if run_query() is called without {% if execute %}?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Nothing — it works fine</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) It may fail during dbt compile when no warehouse connection exists</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) It runs twice</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) It returns an empty result</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: What is adapter.dispatch() used for?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Sending data to an external API</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) Routing to adapter-specific macro implementations for cross-DB compatibility</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) Dispatching dbt runs to multiple warehouses simultaneously</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Debugging macro execution</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-05-snapshots-scd/index.html">← Module 5: Snapshots</a>
+  <a href="../module-07-cicd-production/index.html">Next: CI/CD & Production →</a>
+</footer>
+
+<script>
+(function(){
+  var pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){var h=document.documentElement;var pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  window.checkQuiz=function(el,qid,correct){
+    var box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    var fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above and try to recall the correct answer.';}
+    box.querySelectorAll('.quiz-opt').forEach(function(o){o.style.pointerEvents='none';});
+  };
+})();
+</script>
+</body>
+</html>

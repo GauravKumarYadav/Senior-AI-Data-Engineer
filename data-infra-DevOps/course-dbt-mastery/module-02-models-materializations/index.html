@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 2: Models & Materializations | dbt Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🔨 dbt Mastery</a><div class="nav-dots"><a href="../module-01-what-is-dbt/" class="nav-dot"></a><a href="../module-02-models-materializations/" class="nav-dot active"></a><a href="../module-03-incremental-models/" class="nav-dot"></a><a href="../module-04-testing-quality/" class="nav-dot"></a><a href="../module-05-snapshots-scd/" class="nav-dot"></a><a href="../module-06-macros-jinja/" class="nav-dot"></a><a href="../module-07-cicd-production/" class="nav-dot"></a><a href="../module-08-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: What Are Materializations? -->
+<section class="screen" id="s1">
+  <h2>What Are <span class="accent">Materializations</span>?</h2>
+  <p>A <strong>materialization</strong> tells dbt <em>how</em> to persist the results of a model's <code>SELECT</code> statement in the warehouse. You write a <code>SELECT</code> — dbt decides whether to wrap it in a <code>CREATE VIEW</code>, <code>CREATE TABLE AS SELECT</code>, a <code>MERGE</code> statement, or inline it as a CTE.</p>
+
+  <div class="card-grid">
+    <div class="card"><h4>👁️ view</h4><p>CREATE VIEW AS (SELECT ...) — no data stored, re-executes every query</p></div>
+    <div class="card blue"><h4>📦 table</h4><p>CREATE TABLE AS SELECT — full rebuild, data stored and precomputed</p></div>
+    <div class="card green"><h4>📈 incremental</h4><p>INSERT/MERGE into existing table — only new or changed rows processed</p></div>
+    <div class="card purple"><h4>👻 ephemeral</h4><p>Inlined as CTE — no database object created at all</p></div>
+  </div>
+
+  <p>The right choice depends on: <strong>(1)</strong> complexity of the transformation, <strong>(2)</strong> frequency of access, and <strong>(3)</strong> data volume.</p>
+
+  <div class="code-block"><span class="cm">-- Setting materialization in a model</span>
+{{ <span class="fn">config</span>(materialized=<span class="str">'table'</span>) }}
+
+<span class="kw">SELECT</span>
+    order_id,
+    customer_id,
+    order_amount_cents / <span class="fn">100.0</span> <span class="kw">AS</span> order_amount_dollars
+<span class="kw">FROM</span> {{ <span class="fn">ref</span>(<span class="str">'stg_orders'</span>) }}</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Views for simple transformations queried infrequently, tables for complex transforms queried often, incremental for large datasets where you only want to process new rows, and ephemeral for intermediate logic you don't need to persist. The key tradeoff is build time vs. query time vs. storage cost."</p>
+  </div>
+</section>
+
+<!-- Screen 2: Views -->
+<section class="screen screen-alt" id="s2">
+  <h2>Views — The <span class="accent">Lightweight</span> Default</h2>
+  <p>A <strong>view</strong> materialization creates a database view. No data is stored — the view is just a saved SQL query. Every time someone queries the view, the underlying SQL executes against the source tables.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span class="cm">-- models/staging/stg_orders.sql</span>
+{{ <span class="fn">config</span>(materialized=<span class="str">'view'</span>) }}
+
+<span class="kw">SELECT</span>
+    id <span class="kw">AS</span> order_id,
+    user_id <span class="kw">AS</span> customer_id,
+    order_date,
+    status,
+    <span class="kw">CAST</span>(amount <span class="kw">AS</span> <span class="fn">DECIMAL</span>(<span class="fn">10</span>,<span class="fn">2</span>)) <span class="kw">AS</span> order_amount_cents
+<span class="kw">FROM</span> {{ <span class="fn">source</span>(<span class="str">'ecommerce'</span>, <span class="str">'raw_orders'</span>) }}
+<span class="kw">WHERE</span> status != <span class="str">'test'</span></div>
+    <div class="translate-eng">
+      <div class="line">📄 Staging model for orders</div>
+      <div class="line">👁️ Materialized as a view — instant build</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">✏️ Rename columns to clean conventions</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔢 Explicit type casting</div>
+      <div class="line">🔗 source() points to raw table</div>
+      <div class="line">🗑️ Filter out junk data</div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Advantages</h4>
+      <ul>
+        <li>⚡ Fast to build — creating a view is nearly instant</li>
+        <li>🔄 Always fresh — queries always read latest source data</li>
+        <li>💾 No storage cost — no duplicate data stored</li>
+        <li>🚀 Instant deployment — no waiting for table rebuilds</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Disadvantages</h4>
+      <ul>
+        <li>🐢 Slow to query — every query re-executes the SQL</li>
+        <li>💥 Cascading compute — downstream queries multiply</li>
+        <li>💸 Warehouse load — complex views are expensive</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Staging models are 1:1 with source tables and perform lightweight transformations — renaming columns, casting types, filtering test data. These are cheap SQL operations that don't benefit from table materialization. Views keep staging builds instant, and since staging models are only queried by downstream dbt models (not dashboards), the compute cost is manageable."</p>
+  </div>
+</section>
+
+<!-- Screen 3: Tables -->
+<section class="screen" id="s3">
+  <h2>Tables — <span class="accent">Precomputed</span> for Performance</h2>
+  <p>A <strong>table</strong> materialization creates a physical table using <code>CREATE TABLE AS SELECT</code>. The query runs once during <code>dbt run</code>, data is stored, and subsequent queries read precomputed results — no re-execution.</p>
+
+  <div class="code-block"><span class="cm">-- models/marts/dim_customers.sql</span>
+{{ <span class="fn">config</span>(materialized=<span class="str">'table'</span>) }}
+
+<span class="kw">WITH</span> customer_orders <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        customer_id,
+        <span class="fn">MIN</span>(order_date) <span class="kw">AS</span> first_order_date,
+        <span class="fn">MAX</span>(order_date) <span class="kw">AS</span> most_recent_order_date,
+        <span class="fn">COUNT</span>(*) <span class="kw">AS</span> number_of_orders,
+        <span class="fn">SUM</span>(order_amount_cents) / <span class="fn">100.0</span> <span class="kw">AS</span> lifetime_value
+    <span class="kw">FROM</span> {{ <span class="fn">ref</span>(<span class="str">'stg_orders'</span>) }}
+    <span class="kw">GROUP BY</span> customer_id
+)
+
+<span class="kw">SELECT</span>
+    c.customer_id, c.first_name, c.last_name,
+    <span class="kw">COALESCE</span>(co.number_of_orders, <span class="fn">0</span>) <span class="kw">AS</span> total_orders,
+    <span class="kw">COALESCE</span>(co.lifetime_value, <span class="fn">0</span>) <span class="kw">AS</span> lifetime_value_dollars,
+    <span class="kw">CASE</span>
+        <span class="kw">WHEN</span> co.lifetime_value >= <span class="fn">1000</span> <span class="kw">THEN</span> <span class="str">'platinum'</span>
+        <span class="kw">WHEN</span> co.lifetime_value >= <span class="fn">500</span>  <span class="kw">THEN</span> <span class="str">'gold'</span>
+        <span class="kw">WHEN</span> co.lifetime_value >= <span class="fn">100</span>  <span class="kw">THEN</span> <span class="str">'silver'</span>
+        <span class="kw">ELSE</span> <span class="str">'bronze'</span>
+    <span class="kw">END AS</span> customer_tier
+<span class="kw">FROM</span> {{ <span class="fn">ref</span>(<span class="str">'stg_customers'</span>) }} <span class="kw">AS</span> c
+<span class="kw">LEFT JOIN</span> customer_orders <span class="kw">AS</span> co <span class="kw">ON</span> c.customer_id = co.customer_id</div>
+
+  <div class="code-block"><span class="cm">  Table vs. View Decision Matrix</span>
+
+┌───────────────────┬────────────┬────────────┐
+│ Factor            │ Use View   │ Use Table  │
+├───────────────────┼────────────┼────────────┤
+│ Transform cost    │ Low        │ High       │
+│ Query frequency   │ Low        │ High       │
+│ Data freshness    │ Critical   │ Can wait   │
+│ Downstream users  │ Few models │ Dashboards │
+│ Data volume       │ Small      │ Any        │
+└───────────────────┴────────────┴────────────┘</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"When the transformation is expensive and gets queried frequently. For example, a dim_customers model that joins three tables, aggregates order history, and calculates customer tiers — this should be a table because it would be wasteful to re-compute on every dashboard query. I also switch to table when I notice slow dashboard performance traced to view cascading."</p>
+  </div>
+</section>
+
+<!-- Screen 4: Incremental Models -->
+<section class="screen screen-alt" id="s4">
+  <h2>Incremental — Process Only <span class="accent">New Data</span></h2>
+  <p><strong>Incremental</strong> is dbt's most powerful materialization. Instead of rebuilding the entire table from scratch, it only processes <strong>new or changed rows</strong> since the last run. For a 500M-row table with 100K daily arrivals, this means processing 100K instead of 500M.</p>
+
+  <div class="code-block"><span class="cm">-- models/marts/fct_orders.sql</span>
+{{ <span class="fn">config</span>(
+    materialized=<span class="str">'incremental'</span>,
+    unique_key=<span class="str">'order_id'</span>,
+    incremental_strategy=<span class="str">'merge'</span>
+) }}
+
+<span class="kw">SELECT</span>
+    o.order_id,
+    o.customer_id,
+    o.order_date,
+    o.status,
+    o.order_amount_cents / <span class="fn">100.0</span> <span class="kw">AS</span> order_amount_dollars,
+    <span class="fn">CURRENT_TIMESTAMP</span>() <span class="kw">AS</span> dbt_updated_at
+<span class="kw">FROM</span> {{ <span class="fn">ref</span>(<span class="str">'stg_orders'</span>) }} <span class="kw">AS</span> o
+
+<span class="kw">{% if</span> <span class="fn">is_incremental</span>() <span class="kw">%}</span>
+    <span class="cm">-- Only process rows newer than the latest existing row</span>
+    <span class="kw">WHERE</span> o.order_date > (<span class="kw">SELECT</span> <span class="fn">MAX</span>(order_date) <span class="kw">FROM</span> {{ <span class="fn">this</span> }})
+<span class="kw">{% endif %}</span></div>
+
+  <div class="code-block"><span class="cm">         Incremental Model Execution</span>
+
+  First Run:    <span class="kw">SELECT</span> * <span class="kw">FROM</span> source
+                ──► <span class="fn">CREATE TABLE</span> (full build)
+
+  Next Runs:    <span class="kw">SELECT</span> * <span class="kw">FROM</span> source
+                <span class="kw">WHERE</span> date > <span class="fn">max</span>(existing_table.date)
+                ──► <span class="fn">MERGE INTO</span> existing table
+
+  Full Refresh: dbt run <span class="str">--full-refresh</span>
+                ──► <span class="fn">DROP + CREATE TABLE</span> (rebuild)</div>
+
+  <p>The <code>{{ this }}</code> variable refers to the current model's existing table. It's only valid inside an <code>{% if is_incremental() %}</code> block. We'll cover incremental models in depth in Module 3.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Performance and cost. A table materialization rebuilds from scratch every run — fine for small datasets, but a 500M-row fact table would take hours. Incremental processes only new/changed rows, reducing build time from hours to minutes and cutting warehouse compute costs significantly. The tradeoff is added complexity in handling edge cases like late-arriving data."</p>
+  </div>
+</section>
+
+<!-- Screen 5: Ephemeral -->
+<section class="screen" id="s5">
+  <h2>Ephemeral — The <span class="accent">Invisible</span> Model</h2>
+  <p>An <strong>ephemeral</strong> model doesn't create any database object. Instead, dbt inlines the model's SQL as a <strong>Common Table Expression (CTE)</strong> in every model that references it.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span class="cm">-- int_order_totals.sql (ephemeral)</span>
+{{ <span class="fn">config</span>(materialized=<span class="str">'ephemeral'</span>) }}
+
+<span class="kw">SELECT</span>
+    customer_id,
+    <span class="fn">COUNT</span>(*) <span class="kw">AS</span> total_orders,
+    <span class="fn">SUM</span>(order_amount_cents) / <span class="fn">100.0</span>
+        <span class="kw">AS</span> total_spent_dollars
+<span class="kw">FROM</span> {{ <span class="fn">ref</span>(<span class="str">'stg_orders'</span>) }}
+<span class="kw">GROUP BY</span> customer_id</div>
+    <div class="translate-eng">
+      <div class="line">📄 Intermediate model — NOT persisted</div>
+      <div class="line">👻 Becomes a CTE in downstream models</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📊 Aggregate order data per customer</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔄 This SQL gets copy-pasted as a WITH clause</div>
+    </div>
+  </div>
+
+  <h3>What dbt compiles downstream to:</h3>
+  <div class="code-block"><span class="cm">-- Compiled dim_customers.sql</span>
+<span class="kw">WITH</span> __dbt__cte__int_order_totals <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        customer_id,
+        <span class="fn">COUNT</span>(*) <span class="kw">AS</span> total_orders,
+        <span class="fn">SUM</span>(order_amount_cents) / <span class="fn">100.0</span> <span class="kw">AS</span> total_spent_dollars
+    <span class="kw">FROM</span> ECOMMERCE_DEV.dbt_jsmith.stg_orders
+    <span class="kw">GROUP BY</span> customer_id
+)
+
+<span class="kw">SELECT</span>
+    c.customer_id, c.first_name, c.last_name,
+    <span class="kw">COALESCE</span>(ot.total_orders, <span class="fn">0</span>) <span class="kw">AS</span> total_orders
+<span class="kw">FROM</span> ECOMMERCE_DEV.dbt_jsmith.stg_customers <span class="kw">AS</span> c
+<span class="kw">LEFT JOIN</span> __dbt__cte__int_order_totals <span class="kw">AS</span> ot
+    <span class="kw">ON</span> c.customer_id = ot.customer_id</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Ephemeral models are inlined as CTEs — no database object is created. I'd avoid them when the model is referenced by many downstream models, because the CTE gets duplicated in each compiled query, multiplying compute. They're best for simple, focused logic referenced by one or two downstream models."</p>
+  </div>
+</section>
+
+<!-- Screen 6: Naming Conventions & Layers -->
+<section class="screen screen-alt" id="s6">
+  <h2>Model Layers & <span class="accent">Naming</span> Conventions</h2>
+  <p>A well-organized dbt project uses a <strong>layered architecture</strong> with clear naming conventions that communicate purpose at a glance.</p>
+
+  <div class="code-block"><span class="cm">             dbt Model Layers</span>
+
+  ┌───────────┐    ┌───────────────┐    ┌─────────────────┐
+  │ STAGING   │    │ INTERMEDIATE  │    │     MARTS       │
+  │  stg_*    │───►│    int_*      │───►│  fct_* / dim_*  │
+  │           │    │               │    │                 │
+  │ 1:1 with  │    │ Business      │    │ Business-ready  │
+  │ sources   │    │ logic joins   │    │ fact & dim      │
+  │           │    │               │    │ tables          │
+  │ <span class="fn">view</span>      │    │ <span class="fn">ephemeral</span>     │    │ <span class="fn">table</span> /         │
+  │           │    │ or view       │    │ <span class="fn">incremental</span>     │
+  └───────────┘    └───────────────┘    └─────────────────┘</div>
+
+  <div class="card-grid">
+    <div class="card"><h4>stg_ — Staging</h4><p>1:1 source mapping. Rename, cast, filter. Always views. No joins, no aggregations.</p></div>
+    <div class="card blue"><h4>int_ — Intermediate</h4><p>Business logic: joins, pivots, window functions. Not queried by end users.</p></div>
+    <div class="card green"><h4>fct_ — Facts</h4><p>Events/transactions. One row per event (order, click, payment). Table or incremental.</p></div>
+    <div class="card purple"><h4>dim_ — Dimensions</h4><p>Entities. One row per entity (customer, product, store). Table materialization.</p></div>
+  </div>
+
+  <div class="code-block"><span class="cm">-- models/staging/stg_customers.sql</span>
+{{ <span class="fn">config</span>(materialized=<span class="str">'view'</span>) }}
+
+<span class="kw">SELECT</span>
+    id <span class="kw">AS</span> customer_id,
+    <span class="fn">LOWER</span>(<span class="fn">TRIM</span>(first_name)) <span class="kw">AS</span> first_name,
+    <span class="fn">LOWER</span>(<span class="fn">TRIM</span>(last_name)) <span class="kw">AS</span> last_name,
+    <span class="fn">LOWER</span>(<span class="fn">TRIM</span>(email)) <span class="kw">AS</span> email,
+    <span class="kw">CAST</span>(created_at <span class="kw">AS</span> <span class="fn">TIMESTAMP</span>) <span class="kw">AS</span> created_at
+<span class="kw">FROM</span> {{ <span class="fn">source</span>(<span class="str">'ecommerce'</span>, <span class="str">'raw_customers'</span>) }}
+<span class="kw">WHERE</span> id <span class="kw">IS NOT NULL</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"I follow the staging → intermediate → marts pattern. Staging is 1:1 with sources — renaming, casting, filtering — always views. Intermediate holds reusable business logic — typically ephemeral. Marts are business-ready fct_ and dim_ tables. Naming conventions make it immediately clear where a model sits in the pipeline and who should be querying it."</p>
+  </div>
+</section>
+
+<!-- Screen 7: config() Block -->
+<section class="screen" id="s7">
+  <h2>The config() Block — <span class="accent">Model-Level</span> Config</h2>
+  <p>Every dbt model can include a <code>{{ config() }}</code> block to set model-specific configurations, overriding directory-level settings from <code>dbt_project.yml</code>.</p>
+
+  <div class="code-block"><span class="cm">-- Full config block example</span>
+{{ <span class="fn">config</span>(
+    materialized=<span class="str">'incremental'</span>,
+    schema=<span class="str">'marts'</span>,
+    alias=<span class="str">'fact_orders'</span>,
+    tags=[<span class="str">'daily'</span>, <span class="str">'critical'</span>],
+    unique_key=<span class="str">'order_id'</span>,
+    incremental_strategy=<span class="str">'merge'</span>,
+    cluster_by=[<span class="str">'order_date'</span>],
+    on_schema_change=<span class="str">'append_new_columns'</span>,
+    pre_hook=<span class="str">"ALTER SESSION SET TIMEZONE = 'UTC'"</span>,
+    post_hook=<span class="str">"GRANT SELECT ON {{ this }} TO ROLE reporter"</span>
+) }}</div>
+
+  <h3>Tags & Selectors</h3>
+  <div class="code-block"><span class="cm"># Run only models tagged 'daily'</span>
+$ dbt run <span class="str">--select tag:daily</span>
+
+<span class="cm"># Run a model and all its downstream dependencies</span>
+$ dbt run <span class="str">--select stg_orders+</span>
+
+<span class="cm"># Run a model and all its upstream dependencies</span>
+$ dbt run <span class="str">--select +fct_orders</span>
+
+<span class="cm"># Combine selectors</span>
+$ dbt run <span class="str">--select tag:critical,path:models/marts</span></div>
+
+  <h3>Custom generate_schema_name</h3>
+  <div class="code-block"><span class="cm">-- macros/generate_schema_name.sql</span>
+<span class="kw">{% macro</span> <span class="fn">generate_schema_name</span>(custom_schema_name, node) <span class="kw">%}</span>
+    <span class="kw">{%- if</span> custom_schema_name <span class="kw">is not none -%}</span>
+        {{ custom_schema_name | <span class="fn">trim</span> }}
+    <span class="kw">{%- else -%}</span>
+        {{ target.schema }}
+    <span class="kw">{%- endif -%}</span>
+<span class="kw">{% endmacro %}</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"I use the schema config to assign models to logical schemas — staging, intermediate, marts. By default, dbt prepends the target schema, so I customize generate_schema_name. In dev, I keep the prefix for developer isolation. In prod, I override to use exact schema names."</p>
+  </div>
+</section>
+
+<!-- Screen 8: Custom Schemas -->
+<section class="screen screen-alt" id="s8">
+  <h2>Custom Schemas & <span class="accent">Multi-Schema</span> Deploys</h2>
+  <p>In production, you want staging models in a <code>staging</code> schema, marts in <code>marts</code>, and PII models in a restricted <code>sensitive</code> schema. dbt's custom schema handling is commonly misunderstood.</p>
+
+  <div class="code-block"><span class="cm">-- macros/generate_schema_name.sql (prod-aware)</span>
+<span class="kw">{% macro</span> <span class="fn">generate_schema_name</span>(custom_schema_name, node) <span class="kw">-%}</span>
+    <span class="kw">{%- set</span> default_schema = target.schema <span class="kw">-%}</span>
+
+    <span class="kw">{%- if</span> target.name == <span class="str">'prod'</span> <span class="kw">-%}</span>
+        <span class="cm">{# In production, use the custom schema directly #}</span>
+        <span class="kw">{%- if</span> custom_schema_name <span class="kw">is not none -%}</span>
+            {{ custom_schema_name | <span class="fn">trim</span> }}
+        <span class="kw">{%- else -%}</span>
+            {{ default_schema }}
+        <span class="kw">{%- endif -%}</span>
+    <span class="kw">{%- else -%}</span>
+        <span class="cm">{# In dev, prefix with target schema for isolation #}</span>
+        <span class="kw">{%- if</span> custom_schema_name <span class="kw">is not none -%}</span>
+            {{ default_schema }}_{{ custom_schema_name | <span class="fn">trim</span> }}
+        <span class="kw">{%- else -%}</span>
+            {{ default_schema }}
+        <span class="kw">{%- endif -%}</span>
+    <span class="kw">{%- endif -%}</span>
+<span class="kw">{%- endmacro %}</span></div>
+
+  <div class="code-block"><span class="cm">       Schema Resolution by Environment</span>
+
+┌────────────────────┬──────────────────┬──────────────┐
+│ Model Config       │ Dev Schema       │ Prod Schema  │
+├────────────────────┼──────────────────┼──────────────┤
+│ schema: staging    │ dbt_jsmith_      │ staging      │
+│                    │   staging        │              │
+│ schema: marts      │ dbt_jsmith_      │ marts        │
+│                    │   marts          │              │
+│ (no custom schema) │ dbt_jsmith       │ analytics    │
+└────────────────────┴──────────────────┴──────────────┘</div>
+
+  <h3>Access Control with Post-Hooks</h3>
+  <div class="code-block"><span class="cm"># dbt_project.yml</span>
+<span class="kw">models</span>:
+  ecommerce_analytics:
+    marts:
+      <span class="fn">+schema</span>: marts
+      <span class="fn">+post-hook</span>:
+        - <span class="str">"GRANT SELECT ON {{ this }} TO ROLE analyst"</span>
+        - <span class="str">"GRANT SELECT ON {{ this }} TO ROLE dashboard_reader"</span>
+    staging:
+      <span class="fn">+schema</span>: staging
+      <span class="fn">+post-hook</span>:
+        - <span class="str">"GRANT SELECT ON {{ this }} TO ROLE engineer"</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"The most common confusion is that dbt prepends the target schema by default. In dev, this is helpful for isolation. In prod, I customize generate_schema_name to use the custom schema name directly. This gives us clean production schemas like staging and marts while keeping developer schemas isolated as dbt_&lt;username&gt;_staging."</p>
+  </div>
+</section>
+
+<!-- Screen 9: Quiz -->
+<section class="screen" id="s9">
+  <h2>Quiz: <span class="accent">Module 2 Review</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: A complex model joins 5 tables, includes window functions, and is queried by 10 Looker dashboards. Which materialization?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) view — so dashboards always see fresh data</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) table — precompute the expensive query so dashboards are fast</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) ephemeral — to keep the warehouse clean</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) incremental — always use incremental for everything</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: What does an ephemeral model become in the compiled SQL?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) A temporary table in the warehouse</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) A Common Table Expression (CTE) inlined in downstream models</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) A view that's dropped after the run completes</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) A stored procedure</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: What is the correct naming convention for a staging model that maps to raw_orders?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) orders.sql</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) raw_orders_staging.sql</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">C) stg_orders.sql</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) fct_orders.sql</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: If target schema is dbt_jsmith and you set +schema: marts, what schema does dbt use by default?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) marts</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) dbt_jsmith</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">C) dbt_jsmith_marts</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) public_marts</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: Which layer should dashboards and analysts query?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Staging (stg_*)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">B) Intermediate (int_*)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">C) Marts (fct_* and dim_*)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Sources (raw tables)</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-01-what-is-dbt/index.html">← Prev: What Is dbt?</a>
+  <a href="../module-03-incremental-models/index.html">Next: Incremental Models →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Chat animation
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above and try to recall the key concept.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+
+  // Arrow key navigation
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'){const a=document.querySelector('footer.module-nav a:last-child');if(a)window.location.href=a.href;}
+    if(e.key==='ArrowLeft'){const a=document.querySelector('footer.module-nav a:first-child');if(a)window.location.href=a.href;}
+  });
+})();
+</script>
+</body>
+</html>

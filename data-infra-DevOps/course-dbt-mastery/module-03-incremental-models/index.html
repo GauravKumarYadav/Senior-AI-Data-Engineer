@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 3: Incremental Models | dbt Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🔨 dbt Mastery</a><div class="nav-dots"><a href="../module-01-what-is-dbt/" class="nav-dot"></a><a href="../module-02-models-materializations/" class="nav-dot"></a><a href="../module-03-incremental-models/" class="nav-dot active"></a><a href="../module-04-testing-quality/" class="nav-dot"></a><a href="../module-05-snapshots-scd/" class="nav-dot"></a><a href="../module-06-macros-jinja/" class="nav-dot"></a><a href="../module-07-cicd-production/" class="nav-dot"></a><a href="../module-08-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Why Incremental Models Matter -->
+<section class="screen" id="s1">
+  <h2>📈 Why <span class="accent">Incremental Models</span> Matter</h2>
+  <p>In toy dbt projects, you can rebuild every table from scratch on every run. In production — with billions of rows, tight SLAs, and real money riding on warehouse compute costs — that's simply not possible. <strong>Incremental models are the single most important materialization for production dbt projects.</strong></p>
+  <p>Your <code>fct_orders</code> table has 800 million rows spanning 3 years. Every day, 200K new orders arrive. A <code>table</code> materialization scans all 800M rows every run — 45 minutes, $50+ in compute. An incremental model processes only the 200K new rows in under 2 minutes.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ TABLE Materialization</h4>
+      <ul>
+        <li>📊 Scan 800,000,000 rows every run</li>
+        <li>⏱️ Build time: ~45 minutes</li>
+        <li>💰 Daily compute: ~$50</li>
+        <li>📅 Monthly cost: ~$1,500</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ INCREMENTAL Materialization</h4>
+      <ul>
+        <li>📊 Scan 200,000 new rows per run</li>
+        <li>⏱️ Build time: ~2 minutes</li>
+        <li>💰 Daily compute: ~$0.50</li>
+        <li>📅 Monthly cost: ~$15</li>
+      </ul>
+    </div>
+  </div>
+
+  <p><strong>The fundamental idea</strong>: An incremental model keeps its existing data and only processes rows that are new or changed since the last run. dbt determines what's "new" based on a filter you provide inside an <code>{% if is_incremental() %}</code> block.</p>
+  <p><strong>The tradeoff</strong>: Incremental models are more complex to write, harder to debug, and introduce edge cases around late-arriving data, schema changes, and data corrections.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"When the data volume makes full rebuilds impractical or expensive. I use incremental models for fact tables with millions+ rows where new data arrives in a predictable, append-like pattern — event logs, orders, clickstream data. I'd use a table for smaller datasets or dimension tables that need full refreshes. The key decision factor is: does the cost/time of a full rebuild justify the added complexity of incremental logic?"</p>
+  </div>
+</section>
+
+<!-- Screen 2: The Core Pattern -->
+<section class="screen screen-alt" id="s2">
+  <h2>The Core Pattern — <span class="accent">config + is_incremental()</span></h2>
+  <p>Every incremental model has two parts: the config block and the incremental filter.</p>
+
+  <div class="code-block"><span class="cm">-- models/marts/fct_orders.sql</span>
+
+<span class="cm">-- Part 1: The config block</span>
+{{ <span class="fn">config</span>(
+    <span class="kw">materialized</span>=<span class="str">'incremental'</span>,
+    <span class="kw">unique_key</span>=<span class="str">'order_id'</span>,
+    <span class="kw">incremental_strategy</span>=<span class="str">'merge'</span>,
+    <span class="kw">on_schema_change</span>=<span class="str">'append_new_columns'</span>
+) }}
+
+<span class="cm">-- Part 2: The base SELECT (always runs)</span>
+<span class="kw">SELECT</span>
+    o.order_id,
+    o.customer_id,
+    o.order_date,
+    o.status,
+    o.order_amount_cents / <span class="fn">100.0</span> <span class="kw">AS</span> order_amount_dollars,
+    <span class="fn">CURRENT_TIMESTAMP</span>() <span class="kw">AS</span> dbt_loaded_at
+<span class="kw">FROM</span> {{ <span class="fn">ref</span>(<span class="str">'stg_orders'</span>) }} <span class="kw">AS</span> o
+
+<span class="cm">-- Part 3: The incremental filter (only on subsequent runs)</span>
+{% <span class="kw">if</span> <span class="fn">is_incremental</span>() %}
+    <span class="kw">WHERE</span> o.loaded_at > (<span class="kw">SELECT MAX</span>(dbt_loaded_at) <span class="kw">FROM</span> {{ <span class="fn">this</span> }})
+{% <span class="kw">endif</span> %}</div>
+
+  <h3>How dbt Executes This</h3>
+  <p><strong>First run</strong> — <code>is_incremental()</code> returns <code>False</code>: dbt builds the full table with no WHERE clause. <strong>Subsequent runs</strong> — returns <code>True</code>: dbt selects only new rows, then MERGEs them into the existing table.</p>
+
+  <div class="card-grid">
+    <div class="card"><h4>🔑 unique_key</h4><p>Column(s) that uniquely identify each row. Used by merge strategy to UPDATE (exists) or INSERT (new).</p></div>
+    <div class="card blue"><h4>📌 {{ this }}</h4><p>A reference to the current model's existing table. Only valid inside {% if is_incremental() %}.</p></div>
+    <div class="card green"><h4>🔄 is_incremental()</h4><p>Returns True when: (1) configured as incremental, (2) target table exists, AND (3) no --full-refresh flag.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"is_incremental() returns True only when three conditions are met: the model is configured as incremental, the target table already exists in the warehouse, and the run doesn't include --full-refresh. On the first run, it's False (no existing table), so dbt builds the full table. On subsequent runs, it's True, so the WHERE clause filters to only new rows."</p>
+  </div>
+</section>
+
+<!-- Screen 3: Incremental Strategies -->
+<section class="screen" id="s3">
+  <h2>Incremental <span class="accent">Strategies</span></h2>
+  <p>dbt supports four incremental strategies. The strategy determines <strong>how</strong> new rows are combined with existing data.</p>
+
+  <div class="card-grid">
+    <div class="card"><h4>📥 append</h4><p>INSERT new rows. Never updates existing rows. Fastest. Can create duplicates if rerun. Use for immutable events (clickstream, logs).</p></div>
+    <div class="card blue"><h4>🔀 merge</h4><p>MERGE (upsert) using unique_key. Updates existing rows, inserts new ones. Most common. The workhorse of production dbt.</p></div>
+    <div class="card green"><h4>🗑️ delete+insert</h4><p>DELETE matching rows, then INSERT. Alternative when MERGE is slow. Same behavior, different execution path.</p></div>
+    <div class="card purple"><h4>📦 insert_overwrite</h4><p>Overwrite entire partitions containing new data. Best for BigQuery partitioned tables. Requires partition_by config.</p></div>
+  </div>
+
+  <div class="code-block"><span class="cm">-- Append: immutable event data</span>
+{{ <span class="fn">config</span>(<span class="kw">materialized</span>=<span class="str">'incremental'</span>, <span class="kw">incremental_strategy</span>=<span class="str">'append'</span>) }}
+
+<span class="kw">SELECT</span> event_id, user_id, event_type, event_timestamp
+<span class="kw">FROM</span> {{ <span class="fn">ref</span>(<span class="str">'stg_clickstream_events'</span>) }}
+{% <span class="kw">if</span> <span class="fn">is_incremental</span>() %}
+    <span class="kw">WHERE</span> event_timestamp > (<span class="kw">SELECT MAX</span>(event_timestamp) <span class="kw">FROM</span> {{ <span class="fn">this</span> }})
+{% <span class="kw">endif</span> %}</div>
+
+  <div class="code-block"><span class="cm">-- Merge: mutable data (order status can change)</span>
+{{ <span class="fn">config</span>(<span class="kw">materialized</span>=<span class="str">'incremental'</span>, <span class="kw">unique_key</span>=<span class="str">'order_id'</span>, <span class="kw">incremental_strategy</span>=<span class="str">'merge'</span>) }}
+
+<span class="kw">SELECT</span> order_id, customer_id, status, updated_at
+<span class="kw">FROM</span> {{ <span class="fn">ref</span>(<span class="str">'stg_orders'</span>) }}
+{% <span class="kw">if</span> <span class="fn">is_incremental</span>() %}
+    <span class="kw">WHERE</span> updated_at > (<span class="kw">SELECT MAX</span>(updated_at) <span class="kw">FROM</span> {{ <span class="fn">this</span> }})
+{% <span class="kw">endif</span> %}</div>
+
+  <div class="code-block"><span class="cm">-- Insert_overwrite: partition-level replacement (BigQuery)</span>
+{{ <span class="fn">config</span>(
+    <span class="kw">materialized</span>=<span class="str">'incremental'</span>,
+    <span class="kw">incremental_strategy</span>=<span class="str">'insert_overwrite'</span>,
+    <span class="kw">partition_by</span>={<span class="str">"field"</span>: <span class="str">"order_date"</span>, <span class="str">"data_type"</span>: <span class="str">"date"</span>, <span class="str">"granularity"</span>: <span class="str">"day"</span>}
+) }}
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> {{ <span class="fn">ref</span>(<span class="str">'stg_orders'</span>) }}
+{% <span class="kw">if</span> <span class="fn">is_incremental</span>() %}
+    <span class="kw">WHERE</span> order_date >= <span class="fn">DATE_SUB</span>(<span class="fn">CURRENT_DATE</span>(), <span class="kw">INTERVAL</span> <span class="fn">3</span> DAY)
+{% <span class="kw">endif</span> %}</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Merge, with unique_key='order_id'. When an order status changes from 'shipped' to 'delivered', the merge strategy updates the existing row. I'd filter on updated_at to capture both new orders and status changes. For immutable event data like clickstream, I'd use append since rows never change."</p>
+  </div>
+</section>
+
+<!-- Screen 4: unique_key -->
+<section class="screen screen-alt" id="s4">
+  <h2>unique_key — <span class="accent">Deduplication</span> &amp; Composite Keys</h2>
+  <p>The <code>unique_key</code> tells dbt how to identify whether an incoming row already exists. Get this wrong, and you'll either create duplicates or lose data.</p>
+
+  <div class="code-block"><span class="cm">-- Single column (most common)</span>
+{{ <span class="fn">config</span>(<span class="kw">unique_key</span>=<span class="str">'order_id'</span>) }}
+
+<span class="cm">-- Composite key (no single column is unique)</span>
+{{ <span class="fn">config</span>(<span class="kw">unique_key</span>=[<span class="str">'customer_id'</span>, <span class="str">'activity_date'</span>]) }}
+
+<span class="cm">-- Surrogate key (when you need to create a unique key)</span>
+<span class="kw">SELECT</span>
+    {{ <span class="fn">dbt_utils.generate_surrogate_key</span>([<span class="str">'order_id'</span>, <span class="str">'line_item_id'</span>]) }}
+        <span class="kw">AS</span> surrogate_key,
+    order_id, line_item_id, product_id, quantity
+<span class="kw">FROM</span> {{ <span class="fn">ref</span>(<span class="str">'stg_order_items'</span>) }}</div>
+
+  <h3>⚠️ Common Gotchas</h3>
+  <div class="card-grid">
+    <div class="card"><h4>❌ Non-Unique Column</h4><p>unique_key='customer_id' on an orders table → Only keeps one order per customer!</p></div>
+    <div class="card blue"><h4>❌ Forgetting Composite</h4><p>unique_key='date' on a per-customer-per-day table → Only one customer's data survives per day!</p></div>
+    <div class="card green"><h4>✅ Match the Grain</h4><p>One row per order → 'order_id'. One per customer per day → ['customer_id', 'date']. Key = grain.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Through the unique_key config, which must match the table's grain. For an orders table, it's order_id. For a daily customer activity table, it's ['customer_id', 'activity_date']. When I don't have a natural key, I generate a surrogate key using dbt_utils.generate_surrogate_key(). The unique_key drives the MERGE statement's ON clause — get it wrong and you get duplicates or data loss."</p>
+  </div>
+</section>
+
+<!-- Screen 5: on_schema_change -->
+<section class="screen" id="s5">
+  <h2>on_schema_change — <span class="accent">Evolving Schemas</span></h2>
+  <p>In production, source schemas change. A product team adds a <code>discount_amount</code> column. Your incremental model's SELECT now returns more columns than the target table has. The <code>on_schema_change</code> config determines what dbt does.</p>
+
+  <div class="card-grid">
+    <div class="card"><h4>🙈 ignore (default)</h4><p>New columns silently dropped. Use when you control schema tightly. Risky — you lose data!</p></div>
+    <div class="card blue"><h4>➕ append_new_columns</h4><p>New columns added as nullable. Old rows get NULL for new columns. Good when schema evolves naturally.</p></div>
+    <div class="card green"><h4>🔄 sync_all_columns</h4><p>Add new columns, remove old ones. Most aggressive — can remove columns you still need!</p></div>
+    <div class="card purple"><h4>🛑 fail</h4><p>Raise an error on mismatch. Forces explicit handling. Safest for critical production tables.</p></div>
+  </div>
+
+  <div class="code-block"><span class="cm">-- For critical fact tables, fail on schema changes</span>
+<span class="cm">-- Forces explicit handling via --full-refresh or schema migration</span>
+{{ <span class="fn">config</span>(
+    <span class="kw">materialized</span>=<span class="str">'incremental'</span>,
+    <span class="kw">unique_key</span>=<span class="str">'order_id'</span>,
+    <span class="kw">on_schema_change</span>=<span class="str">'fail'</span>
+) }}
+
+<span class="cm">-- When 'fail' triggers, you have two options:</span>
+<span class="cm">-- 1. Full refresh: dbt run --select fct_orders --full-refresh</span>
+<span class="cm">-- 2. Manual ALTER: Add the column manually, then run normally</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"For critical tables, I use 'fail' to force explicit handling — I don't want schema changes sneaking in silently. For event tables with evolving properties, I use 'append_new_columns' since new fields are expected. I avoid 'ignore' in production because it silently drops data. When a schema change is detected, I do a --full-refresh to rebuild with the correct schema."</p>
+  </div>
+</section>
+
+<!-- Screen 6: Full Refresh -->
+<section class="screen screen-alt" id="s6">
+  <h2>Full Refresh — <span class="accent">The Escape Hatch</span></h2>
+  <p><code>dbt run --full-refresh</code> is your emergency reset button. It forces dbt to drop the existing table and rebuild from scratch.</p>
+
+  <div class="code-block"><span class="cm"># Full refresh a single model</span>
+$ dbt run --select fct_orders --full-refresh
+
+<span class="cm"># Full refresh all incremental models</span>
+$ dbt run --full-refresh
+
+<span class="cm"># Full refresh a model and all downstream dependencies</span>
+$ dbt run --select fct_orders+ --full-refresh</div>
+
+  <div class="card-grid">
+    <div class="card"><h4>🔧 Schema Change</h4><p>New columns need to be added to the target table.</p></div>
+    <div class="card blue"><h4>🐛 Bug Fix</h4><p>Historical data was calculated wrong — recompute all rows.</p></div>
+    <div class="card green"><h4>📥 Backfill</h4><p>Source data was retroactively corrected.</p></div>
+    <div class="card purple"><h4>📋 Logic Change</h4><p>Business rule changed; need to recompute everything.</p></div>
+  </div>
+
+  <div class="code-block"><span class="cm">┌──────────────────────────────────────────────────────┐</span>
+<span class="cm">│          Typical Production Schedule                 │</span>
+<span class="cm">│                                                      │</span>
+<span class="cm">│  Mon-Sat:  dbt run                                   │</span>
+<span class="cm">│            (incremental — process new rows only)     │</span>
+<span class="cm">│                                                      │</span>
+<span class="cm">│  Sunday:   dbt run --full-refresh                    │</span>
+<span class="cm">│            (complete rebuild — catch any drift)      │</span>
+<span class="cm">│                                                      │</span>
+<span class="cm">│  Cost: 6 fast runs + 1 slow run per week             │</span>
+<span class="cm">│  Benefit: Guaranteed data consistency                │</span>
+<span class="cm">└──────────────────────────────────────────────────────┘</span></div>
+
+  <p><strong>Design for full-refresh safety</strong>: Your incremental model should produce the <strong>exact same results</strong> whether run incrementally or as a full refresh. If your incremental logic diverges from a full rebuild, you have a bug.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"I run incremental daily for cost efficiency and schedule weekly full refreshes as a safety net. This catches late-arriving data, retroactive corrections, and any incremental drift. For critical models, I also validate that incremental and full-refresh produce identical row counts as a data quality check."</p>
+  </div>
+</section>
+
+<!-- Screen 7: Late-Arriving Data -->
+<section class="screen" id="s7">
+  <h2>Gotchas — <span class="accent">Late-Arriving Data</span></h2>
+  <p>Late-arriving data is the #1 production issue with incremental models. Your filter says "give me everything after the max timestamp," but data can arrive <em>after</em> the cutoff because of processing delays, timezone issues, or batch retries.</p>
+
+  <div class="code-block"><span class="cm">-- The Problem: Late data is filtered out forever!</span>
+<span class="cm">-- Run at 6am: MAX(loaded_at) = 5:59am → processes all rows ✓</span>
+<span class="cm">-- At 7am: batch from 4am-5am finally arrives</span>
+<span class="cm">-- Next run: MAX is now today's 5:59am</span>
+<span class="cm">-- Late rows (4am-5am yesterday) are OLDER → filtered out forever! ✗</span></div>
+
+  <h3>Solution 1: Lookback Window</h3>
+  <div class="code-block">{% <span class="kw">if</span> <span class="fn">is_incremental</span>() %}
+    <span class="cm">-- Look back 3 days to catch late-arriving data</span>
+    <span class="kw">WHERE</span> loaded_at >= (
+        <span class="kw">SELECT</span> <span class="fn">DATEADD</span>(day, <span class="fn">-3</span>, <span class="fn">MAX</span>(loaded_at))
+        <span class="kw">FROM</span> {{ <span class="fn">this</span> }}
+    )
+{% <span class="kw">endif</span> %}
+<span class="cm">-- merge + unique_key ensures no duplicates when reprocessing</span></div>
+
+  <h3>Solution 2: Monotonically Increasing Column</h3>
+  <div class="code-block">{% <span class="kw">if</span> <span class="fn">is_incremental</span>() %}
+    <span class="cm">-- _fivetran_synced = when row was loaded, not event time</span>
+    <span class="cm">-- Monotonically increasing → no late-arrival issues</span>
+    <span class="kw">WHERE</span> _fivetran_synced > (<span class="kw">SELECT MAX</span>(_fivetran_synced) <span class="kw">FROM</span> {{ <span class="fn">this</span> }})
+{% <span class="kw">endif</span> %}</div>
+
+  <h3>Backfill Pattern with dbt vars</h3>
+  <div class="code-block">{% <span class="kw">if</span> <span class="fn">is_incremental</span>() %}
+    {% <span class="kw">if</span> <span class="fn">var</span>(<span class="str">'backfill_start_date'</span>, none) <span class="kw">is not</span> none %}
+        <span class="kw">WHERE</span> order_date <span class="kw">BETWEEN</span> <span class="str">'{{ var("backfill_start_date") }}'</span>
+                          <span class="kw">AND</span> <span class="str">'{{ var("backfill_end_date") }}'</span>
+    {% <span class="kw">else</span> %}
+        <span class="kw">WHERE</span> loaded_at > (<span class="kw">SELECT MAX</span>(loaded_at) <span class="kw">FROM</span> {{ <span class="fn">this</span> }})
+    {% <span class="kw">endif</span> %}
+{% <span class="kw">endif</span> %}
+
+<span class="cm">-- Normal: dbt run --select fct_orders</span>
+<span class="cm">-- Backfill: dbt run --select fct_orders \</span>
+<span class="cm">--   --vars '{"backfill_start_date": "2024-01-15", "backfill_end_date": "2024-01-20"}'</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Three strategies: (1) A lookback window — reprocess the last 3 days with merge so existing rows get updated and late arrivals are captured. (2) Use a monotonically increasing column like _fivetran_synced instead of event time. (3) On BigQuery, use insert_overwrite to rewrite recent partitions entirely. I also schedule periodic full refreshes as a safety net."</p>
+  </div>
+</section>
+
+<!-- Screen 8: Real-World Patterns -->
+<section class="screen screen-alt" id="s8">
+  <h2>Real-World <span class="accent">Production Patterns</span></h2>
+  <p>Three patterns that come up in every real dbt project and every senior-level interview.</p>
+
+  <h3>Pattern 1: High-Volume Event Table</h3>
+  <div class="code-block"><span class="cm">-- fct_page_views.sql — immutable events</span>
+{{ <span class="fn">config</span>(
+    <span class="kw">materialized</span>=<span class="str">'incremental'</span>,
+    <span class="kw">incremental_strategy</span>=<span class="str">'append'</span>,     <span class="cm">-- Events never change</span>
+    <span class="kw">partition_by</span>={<span class="str">"field"</span>: <span class="str">"event_date"</span>, <span class="str">"data_type"</span>: <span class="str">"date"</span>},
+    <span class="kw">cluster_by</span>=[<span class="str">'user_id'</span>]
+) }}
+
+<span class="kw">SELECT</span> event_id, user_id, page_url, session_id,
+    <span class="fn">CAST</span>(event_timestamp <span class="kw">AS DATE</span>) <span class="kw">AS</span> event_date, event_timestamp
+<span class="kw">FROM</span> {{ <span class="fn">ref</span>(<span class="str">'stg_page_views'</span>) }}
+{% <span class="kw">if</span> <span class="fn">is_incremental</span>() %}
+    <span class="kw">WHERE</span> event_timestamp > (<span class="kw">SELECT MAX</span>(event_timestamp) <span class="kw">FROM</span> {{ <span class="fn">this</span> }})
+{% <span class="kw">endif</span> %}</div>
+
+  <h3>Pattern 2: Daily Snapshot (Aggregated Metrics)</h3>
+  <div class="code-block"><span class="cm">-- fct_daily_order_metrics.sql — recompute last 3 days</span>
+{{ <span class="fn">config</span>(<span class="kw">materialized</span>=<span class="str">'incremental'</span>, <span class="kw">unique_key</span>=[<span class="str">'metric_date'</span>], <span class="kw">incremental_strategy</span>=<span class="str">'merge'</span>) }}
+
+<span class="kw">SELECT</span>
+    <span class="fn">DATE</span>(order_date) <span class="kw">AS</span> metric_date,
+    <span class="fn">COUNT</span>(<span class="kw">DISTINCT</span> order_id) <span class="kw">AS</span> total_orders,
+    <span class="fn">SUM</span>(order_amount_dollars) <span class="kw">AS</span> total_revenue
+<span class="kw">FROM</span> {{ <span class="fn">ref</span>(<span class="str">'fct_orders'</span>) }}
+{% <span class="kw">if</span> <span class="fn">is_incremental</span>() %}
+    <span class="kw">WHERE DATE</span>(order_date) >= (<span class="kw">SELECT</span> <span class="fn">DATEADD</span>(day, <span class="fn">-3</span>, <span class="fn">MAX</span>(metric_date)) <span class="kw">FROM</span> {{ <span class="fn">this</span> }})
+{% <span class="kw">endif</span> %}
+<span class="kw">GROUP BY DATE</span>(order_date)</div>
+
+  <h3>Pattern 3: SCD Type 2 with dbt Snapshots</h3>
+  <div class="code-block"><span class="cm">-- snapshots/snap_customers.sql</span>
+{% <span class="kw">snapshot</span> snap_customers %}
+{{ <span class="fn">config</span>(
+    <span class="kw">target_schema</span>=<span class="str">'snapshots'</span>,
+    <span class="kw">unique_key</span>=<span class="str">'customer_id'</span>,
+    <span class="kw">strategy</span>=<span class="str">'timestamp'</span>,
+    <span class="kw">updated_at</span>=<span class="str">'updated_at'</span>,
+    <span class="kw">invalidate_hard_deletes</span>=True
+) }}
+<span class="kw">SELECT</span> customer_id, first_name, last_name, email, subscription_tier, updated_at
+<span class="kw">FROM</span> {{ <span class="fn">source</span>(<span class="str">'ecommerce'</span>, <span class="str">'raw_customers'</span>) }}
+{% <span class="kw">endsnapshot</span> %}
+
+<span class="cm">-- Produces: dbt_valid_from, dbt_valid_to, dbt_scd_id columns</span>
+<span class="cm">-- customer 101: bronze (Jan-Jun) → gold (Jun-present)</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"I built an incremental fact table processing ~500K rows daily from a 300M+ row table. Merge strategy with order_id as unique key and a 3-day lookback for late-arriving data. Partitioned by order_date, clustered by customer_id. Weekly full refreshes caught drift. We also used dbt snapshots on the customer dimension for SCD Type 2 historical tracking."</p>
+  </div>
+</section>
+
+<!-- Screen 9: Quiz -->
+<section class="screen" id="s9">
+  <h2>Quiz: <span class="accent">Module 3 Review</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: When does is_incremental() return True?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Always, for any model configured as incremental</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) Only when: incremental config + target table exists + no --full-refresh flag</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) Only on the first run of the model</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) When the source data has new rows</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Which strategy for an orders table where status can change (pending → shipped → delivered)?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) append — fastest performance</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) merge — updates existing rows when status changes</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) insert_overwrite — replaces entire partitions</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) delete+insert — always use this on Snowflake</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: Orders arriving at 2am are missing from your midnight incremental run. Cause and fix?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) The warehouse is down at 2am — schedule later</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) Late-arriving data — add a lookback window (e.g., MAX(loaded_at) - INTERVAL 6 HOURS)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) The unique_key is wrong — change to order_date</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Use on_schema_change='fail' to catch the missing data</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: What does {{ this }} refer to in an incremental model?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) The source table being read</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) The current model's existing target table in the warehouse</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) The dbt project name</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) The Jinja template itself</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: A developer changes the business logic for calculating order_total after 6 months. What should you do?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Just run dbt run — new logic applies to new rows automatically</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) Run dbt run --select fct_orders --full-refresh to rebuild with corrected logic</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) Delete the table manually and run dbt run</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Change on_schema_change to sync_all_columns</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-02-models-materializations/index.html">← Prev: Models &amp; Materializations</a>
+  <a href="../module-04-testing-quality/index.html">Next: Testing &amp; Quality →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above and try to recall the key concept.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'){const a=document.querySelector('footer.module-nav a:last-child');if(a)window.location.href=a.href;}
+    if(e.key==='ArrowLeft'){const a=document.querySelector('footer.module-nav a:first-child');if(a)window.location.href=a.href;}
+  });
+})();
+</script>
+</body>
+</html>

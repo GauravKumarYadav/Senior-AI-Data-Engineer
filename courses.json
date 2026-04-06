@@ -54,5 +54,13 @@
     "href": "./databases-SQL/course-sql-databases/",
     "desc": "Window functions, CTEs, recursive queries, query optimization, PostgreSQL internals, NoSQL essentials — from fundamentals to interview-ready.",
     "tags": ["6 Modules", "80+ Questions", "20+ Quizzes"]
+  },
+  {
+    "title": "dbt Mastery",
+    "icon": "🔨",
+    "color": "#E07B39",
+    "href": "./data-infra-DevOps/course-dbt-mastery/",
+    "desc": "8 modules from core concepts to production — models, materializations, incremental strategies, testing, snapshots, Jinja macros, CI/CD, and interview scenarios.",
+    "tags": ["8 Modules", "100+ Questions", "25+ Quizzes"]
   }
 ]

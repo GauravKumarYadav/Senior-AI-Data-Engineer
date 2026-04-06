@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 5: Snapshots & SCD Type 2 | dbt Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.screen-alt{background:var(--color-bg-warm)}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+table.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+table.info-table th,table.info-table td{padding:0.6rem 0.8rem;border:1px solid rgba(0,0,0,0.08);text-align:left}
+table.info-table th{background:var(--color-bg-warm);font-family:var(--font-heading);font-weight:700}
+table.info-table tr:nth-child(even){background:rgba(0,0,0,0.02)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🔨 dbt Mastery</a><div class="nav-dots"><a href="../module-01-what-is-dbt/" class="nav-dot"></a><a href="../module-02-models-materializations/" class="nav-dot"></a><a href="../module-03-incremental-models/" class="nav-dot"></a><a href="../module-04-testing-quality/" class="nav-dot"></a><a href="../module-05-snapshots-scd/" class="nav-dot active"></a><a href="../module-06-macros-jinja/" class="nav-dot"></a><a href="../module-07-cicd-production/" class="nav-dot"></a><a href="../module-08-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Why Track Historical Changes? -->
+<section class="screen" id="s1">
+  <h2>📸 Why Track <span class="accent">Historical Changes</span>?</h2>
+  <p>In a typical e-commerce database, when a customer upgrades from "bronze" to "gold" tier, the source system <strong>overwrites the old value</strong>. Yesterday they were bronze; today they're gold. The old value is gone — mutated in place.</p>
+  <p>But your analytics team needs to answer: <em>"How much revenue did gold-tier customers generate last quarter?"</em> If a customer upgraded mid-quarter, should their earlier purchases count as bronze or gold?</p>
+  <p>This is the <strong>Slowly Changing Dimension (SCD)</strong> problem. Dimensions — customers, products, stores — change over time, and your analytics warehouse needs to preserve that history even when the source system doesn't.</p>
+
+  <div class="code-block"><span class="cm">SOURCE DATABASE (raw_customers):</span>
+┌─────────────┬────────┬──────────────┬─────────────────────┐
+│ customer_id │ tier   │ email        │ updated_at          │
+├─────────────┼────────┼──────────────┼─────────────────────┤
+│ 101         │ gold   │ ali@shop.com │ 2024-06-15 10:30:00 │
+└─────────────┴────────┴──────────────┴─────────────────────┘
+  ↑ Was "bronze" before June 15 — but that info is <span class="kw">GONE</span>.
+
+<span class="cm">WHAT WE WANT (snapshot table):</span>
+┌─────────────┬────────┬──────────────┬────────────┬────────────┐
+│ customer_id │ tier   │ email        │ valid_from │ valid_to   │
+├─────────────┼────────┼──────────────┼────────────┼────────────┤
+│ 101         │ bronze │ ali@shop.com │ 2024-01-01 │ 2024-06-15 │
+│ 101         │ gold   │ ali@shop.com │ 2024-06-15 │ <span class="fn">NULL</span>       │
+└─────────────┴────────┴──────────────┴────────────┴────────────┘
+  ↑ Both versions preserved! <span class="fn">NULL</span> valid_to = current record.</div>
+
+  <h3>SCD Types — A Quick Taxonomy</h3>
+  <table class="info-table">
+    <thead><tr><th>Type</th><th>Behavior</th><th>Use Case</th></tr></thead>
+    <tbody>
+      <tr><td>Type 0</td><td>Never update — keep original</td><td>Rarely used (original signup date)</td></tr>
+      <tr><td>Type 1</td><td>Overwrite — no history</td><td>Small/unimportant dimensions</td></tr>
+      <tr><td><strong>Type 2</strong></td><td><strong>Add new row — full history</strong></td><td><strong>dbt snapshots — the standard</strong></td></tr>
+      <tr><td>Type 3</td><td>Add column (current + previous)</td><td>When only one prior value matters</td></tr>
+    </tbody>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"What is SCD Type 2 and how does dbt implement it?"</strong> — "SCD Type 2 preserves full history by adding a new row every time a dimension changes, with validity timestamps marking each version. dbt implements this through <code>snapshot</code> blocks that compare the current source state against the snapshot table. When a row changes, dbt sets <code>dbt_valid_to</code> on the old row and inserts a new row with <code>dbt_valid_from</code> = now and <code>dbt_valid_to</code> = NULL."</p>
+  </div>
+</section>
+
+<!-- Screen 2: Snapshot Blocks — Anatomy -->
+<section class="screen screen-alt" id="s2">
+  <h2>🧱 Snapshot Blocks — <span class="accent">Anatomy & Syntax</span></h2>
+  <p>Snapshots live in the <code>snapshots/</code> directory (not <code>models/</code>) and use a special <code>{% snapshot %}</code> block syntax.</p>
+
+  <div class="code-block"><span class="cm">-- snapshots/snap_customers.sql</span>
+<span class="kw">{%</span> snapshot snap_customers <span class="kw">%}</span>
+
+<span class="fn">{{</span> config(
+    target_database=<span class="str">'ANALYTICS_DB'</span>,
+    target_schema=<span class="str">'snapshots'</span>,
+    unique_key=<span class="str">'customer_id'</span>,
+    strategy=<span class="str">'timestamp'</span>,
+    updated_at=<span class="str">'updated_at'</span>,
+    invalidate_hard_deletes=<span class="fn">True</span>
+) <span class="fn">}}</span>
+
+<span class="kw">SELECT</span>
+    customer_id,
+    first_name,
+    last_name,
+    email,
+    subscription_tier,
+    shipping_country,
+    lifetime_spend_cents,
+    updated_at
+<span class="kw">FROM</span> <span class="fn">{{</span> source(<span class="str">'ecommerce'</span>, <span class="str">'raw_customers'</span>) <span class="fn">}}</span>
+
+<span class="kw">{%</span> endsnapshot <span class="kw">%}</span></div>
+
+  <h3>Key Elements</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🔑 unique_key</h4><p>The natural key identifying each entity. Must be truly unique in the source.</p></div>
+    <div class="card blue"><h4>📐 strategy</h4><p>How dbt detects changes: <code>timestamp</code> or <code>check</code>.</p></div>
+    <div class="card green"><h4>🗄️ target_schema</h4><p>Where the snapshot table is created. Best practice: isolate in own schema.</p></div>
+    <div class="card purple"><h4>🗑️ invalidate_hard_deletes</h4><p>Whether to track rows deleted from the source.</p></div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Running snapshots</span>
+$ dbt snapshot                           <span class="cm"># Run all snapshots</span>
+$ dbt snapshot --select snap_customers   <span class="cm"># Run a specific one</span>
+$ dbt build                              <span class="cm"># Runs models, tests, snapshots, seeds in DAG order</span></div>
+
+  <h3>What dbt Generates (First Run)</h3>
+  <div class="code-block"><span class="kw">CREATE TABLE</span> ANALYTICS_DB.snapshots.snap_customers <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        customer_id, first_name, last_name, email,
+        subscription_tier, shipping_country,
+        lifetime_spend_cents, updated_at,
+        <span class="cm">-- dbt adds these meta columns:</span>
+        MD5(customer_id || <span class="str">'|'</span> || updated_at)  <span class="kw">AS</span> dbt_scd_id,
+        updated_at                              <span class="kw">AS</span> dbt_valid_from,
+        <span class="fn">NULL</span>::TIMESTAMP                         <span class="kw">AS</span> dbt_valid_to,
+        CURRENT_TIMESTAMP()                     <span class="kw">AS</span> dbt_updated_at
+    <span class="kw">FROM</span> RAW_DB.ecommerce.raw_customers
+);</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Where do snapshots live and how are they different from models?"</strong> — "Snapshots live in <code>snapshots/</code>, use <code>{% snapshot %}</code> blocks, and always query source tables directly — not <code>ref()</code> to other models. They're run with <code>dbt snapshot</code> or <code>dbt build</code>. The output table includes <code>dbt_valid_from</code>, <code>dbt_valid_to</code>, and <code>dbt_scd_id</code> columns automatically."</p>
+  </div>
+</section>
+
+<!-- Screen 3: Strategies -->
+<section class="screen" id="s3">
+  <h2>🔍 Strategies — <span class="accent">timestamp vs check</span></h2>
+  <p>dbt offers two strategies for detecting changes. The wrong strategy can miss changes or create unnecessary versions.</p>
+
+  <h3>Strategy 1: timestamp (preferred)</h3>
+  <div class="code-block"><span class="kw">{%</span> snapshot snap_products <span class="kw">%}</span>
+<span class="fn">{{</span> config(
+    target_schema=<span class="str">'snapshots'</span>,
+    unique_key=<span class="str">'product_id'</span>,
+    strategy=<span class="str">'timestamp'</span>,
+    updated_at=<span class="str">'updated_at'</span>
+) <span class="fn">}}</span>
+<span class="kw">SELECT</span> product_id, product_name, category,
+       price_cents, is_active, updated_at
+<span class="kw">FROM</span> <span class="fn">{{</span> source(<span class="str">'ecommerce'</span>, <span class="str">'raw_products'</span>) <span class="fn">}}</span>
+<span class="kw">{%</span> endsnapshot <span class="kw">%}</span></div>
+
+  <h3>Strategy 2: check (column comparison)</h3>
+  <div class="code-block"><span class="kw">{%</span> snapshot snap_products_check <span class="kw">%}</span>
+<span class="fn">{{</span> config(
+    target_schema=<span class="str">'snapshots'</span>,
+    unique_key=<span class="str">'product_id'</span>,
+    strategy=<span class="str">'check'</span>,
+    check_cols=[<span class="str">'product_name'</span>, <span class="str">'category'</span>, <span class="str">'price_cents'</span>, <span class="str">'is_active'</span>]
+) <span class="fn">}}</span>
+<span class="kw">SELECT</span> product_id, product_name, category,
+       price_cents, is_active
+<span class="kw">FROM</span> <span class="fn">{{</span> source(<span class="str">'ecommerce'</span>, <span class="str">'raw_products'</span>) <span class="fn">}}</span>
+<span class="kw">{%</span> endsnapshot <span class="kw">%}</span></div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>⏱️ timestamp</h4>
+      <ul>
+        <li>✅ Fast — single column compare</li>
+        <li>✅ <code>dbt_valid_from</code> = source timestamp</li>
+        <li>⚠️ Requires reliable <code>updated_at</code></li>
+        <li>⚠️ False positives if timestamp changes w/o data change</li>
+        <li>🏆 DEFAULT CHOICE</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>✔️ check</h4>
+      <ul>
+        <li>✅ No timestamp column needed</li>
+        <li>✅ Checks actual values — no false positives</li>
+        <li>⚠️ Slower — multi-column compare each run</li>
+        <li>⚠️ May miss changes if columns excluded</li>
+        <li>Use only when no reliable timestamp</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm">The In-Between Problem:</span>
+
+Actual changes:  bronze → silver → gold
+                 (Jan 1)  (Jan 5)  (Jan 10)
+
+Snapshot runs:   Jan 1          Jan 15
+                 ↓              ↓
+Captured:        bronze ──────→ gold
+                 <span class="kw">(silver state is LOST forever)</span>
+
+<span class="str">Solution: Run snapshots frequently (daily or more)</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"When would you use check vs timestamp?"</strong> — "I default to <code>timestamp</code> — it's faster. I use <code>check</code> when the source has no <code>updated_at</code> column, or when the timestamp is unreliable. With <code>check</code>, I specify exactly which columns to monitor so non-meaningful changes don't trigger new versions. The tradeoff is performance."</p>
+  </div>
+</section>
+
+<!-- Screen 4: Output Columns -->
+<section class="screen screen-alt" id="s4">
+  <h2>📋 Understanding the <span class="accent">Snapshot Table</span></h2>
+  <p>Every snapshot table includes four dbt-managed columns alongside your source columns. Understanding these is critical for downstream dimension models.</p>
+
+  <div class="code-block"><span class="cm">snap_customers — After Multiple Runs</span>
+┌─────────────┬────────┬──────────────┬──────────────────┬──────────────────┐
+│ customer_id │ tier   │ email        │ dbt_valid_from   │ dbt_valid_to     │
+├─────────────┼────────┼──────────────┼──────────────────┼──────────────────┤
+│ 101         │ bronze │ ali@shop.com │ 2024-01-01 06:00 │ 2024-03-15 06:00 │
+│ 101         │ silver │ ali@shop.com │ 2024-03-15 06:00 │ 2024-06-15 06:00 │
+│ 101         │ gold   │ ali@b.com    │ 2024-06-15 06:00 │ <span class="fn">NULL</span>             │
+│ 102         │ gold   │ bob@shop.com │ 2024-02-01 06:00 │ <span class="fn">NULL</span>             │
+│ 103         │ bronze │ cat@shop.com │ 2024-01-15 06:00 │ 2024-09-01 06:00 │
+└─────────────┴────────┴──────────────┴──────────────────┴──────────────────┘</div>
+
+  <table class="info-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>dbt_scd_id</code></td><td>VARCHAR</td><td>Unique surrogate key for each snapshot row</td></tr>
+      <tr><td><code>dbt_valid_from</code></td><td>TIMESTAMP</td><td>When this version became active</td></tr>
+      <tr><td><code>dbt_valid_to</code></td><td>TIMESTAMP</td><td>When superseded (NULL = current)</td></tr>
+      <tr><td><code>dbt_updated_at</code></td><td>TIMESTAMP</td><td>When dbt last processed this row</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Key Queries Against Snapshots</h3>
+  <div class="code-block"><span class="cm">-- Get CURRENT state (latest version)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> snap_customers
+<span class="kw">WHERE</span> dbt_valid_to <span class="kw">IS</span> <span class="fn">NULL</span>;
+
+<span class="cm">-- Point-in-time lookup</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> snap_customers
+<span class="kw">WHERE</span> customer_id = <span class="fn">101</span>
+  <span class="kw">AND</span> dbt_valid_from &lt;= <span class="str">'2024-04-01'</span>
+  <span class="kw">AND</span> (dbt_valid_to &gt; <span class="str">'2024-04-01'</span> <span class="kw">OR</span> dbt_valid_to <span class="kw">IS</span> <span class="fn">NULL</span>);
+
+<span class="cm">-- Count tier changes per customer</span>
+<span class="kw">SELECT</span> customer_id, COUNT(*) - <span class="fn">1</span> <span class="kw">AS</span> tier_changes
+<span class="kw">FROM</span> snap_customers
+<span class="kw">GROUP BY</span> customer_id
+<span class="kw">HAVING</span> COUNT(*) &gt; <span class="fn">1</span>;</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How do you get the current version from a snapshot table?"</strong> — "Filter for <code>WHERE dbt_valid_to IS NULL</code>. The current version always has NULL <code>dbt_valid_to</code>. For point-in-time queries, filter where <code>dbt_valid_from &lt;= target_date AND (dbt_valid_to &gt; target_date OR dbt_valid_to IS NULL)</code>."</p>
+  </div>
+</section>
+
+<!-- Screen 5: Hard Deletes -->
+<section class="screen" id="s5">
+  <h2>🗑️ Hard Deletes — <span class="accent">invalidate_hard_deletes</span></h2>
+  <p>When a row is <strong>deleted</strong> from the source, what happens in the snapshot? By default, dbt does nothing — the row looks "current" forever. <code>invalidate_hard_deletes=True</code> fixes this.</p>
+
+  <div class="code-block"><span class="cm">Hard Delete Detection</span>
+
+Run 1 (Jan 1):  Source has customers 101, 102, 103
+Snapshot: 101 (valid), 102 (valid), 103 (valid)
+
+<span class="kw">── Customer 103 is deleted from source ──</span>
+
+Run 2 (Jan 15): Source has customers 101, 102 <span class="kw">(no 103!)</span>
+
+invalidate_hard_deletes=<span class="fn">False</span> (default):
+→ 103 stays with dbt_valid_to=<span class="fn">NULL</span> (looks current!) ❌
+
+invalidate_hard_deletes=<span class="fn">True</span>:
+→ 103 gets dbt_valid_to=CURRENT_TIMESTAMP()
+→ Row is properly closed out ✅</div>
+
+  <p><strong>Performance note:</strong> With <code>invalidate_hard_deletes=True</code>, dbt must perform a full anti-join between source and snapshot every run. For 100M+ row tables, this can be expensive.</p>
+
+  <h3>Detecting Deletes in Downstream Models</h3>
+  <div class="code-block"><span class="cm">-- models/marts/dim_customers.sql</span>
+<span class="kw">SELECT</span>
+    dbt_scd_id          <span class="kw">AS</span> customer_key,
+    customer_id,
+    first_name, last_name, email,
+    subscription_tier,
+    dbt_valid_from      <span class="kw">AS</span> effective_from,
+    dbt_valid_to        <span class="kw">AS</span> effective_to,
+    <span class="kw">CASE WHEN</span> dbt_valid_to <span class="kw">IS</span> <span class="fn">NULL</span> <span class="kw">THEN</span> <span class="fn">TRUE</span> <span class="kw">ELSE</span> <span class="fn">FALSE</span> <span class="kw">END</span> <span class="kw">AS</span> is_current,
+    <span class="kw">CASE WHEN</span> dbt_valid_to <span class="kw">IS NOT</span> <span class="fn">NULL</span>
+     <span class="kw">AND</span> customer_id <span class="kw">NOT IN</span> (
+         <span class="kw">SELECT</span> customer_id <span class="kw">FROM</span> <span class="fn">{{</span> ref(<span class="str">'snap_customers'</span>) <span class="fn">}}</span>
+         <span class="kw">WHERE</span> dbt_valid_to <span class="kw">IS</span> <span class="fn">NULL</span>
+     ) <span class="kw">THEN</span> <span class="fn">TRUE</span> <span class="kw">ELSE</span> <span class="fn">FALSE</span>
+    <span class="kw">END</span>                 <span class="kw">AS</span> is_deleted
+<span class="kw">FROM</span> <span class="fn">{{</span> ref(<span class="str">'snap_customers'</span>) <span class="fn">}}</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"What happens when a source row is deleted?"</strong> — "By default, nothing — the deleted row stays with <code>dbt_valid_to = NULL</code>, looking current. With <code>invalidate_hard_deletes=True</code>, dbt detects missing rows via an anti-join and closes them out. I enable this for entity dimensions where deletions matter; I disable it for huge tables where the anti-join cost is high."</p>
+  </div>
+</section>
+
+<!-- Screen 6: Dimension Tables from Snapshots -->
+<section class="screen screen-alt" id="s6">
+  <h2>🏗️ Building <span class="accent">Dimension Tables</span> from Snapshots</h2>
+  <p>Snapshots are raw SCD Type 2 tables. In practice, you build polished <strong>dimension models</strong> on top — adding business logic, derived columns, and proper naming.</p>
+
+  <div class="code-block"><span class="cm">-- models/marts/dim_customers.sql</span>
+<span class="fn">{{</span> config(materialized=<span class="str">'table'</span>) <span class="fn">}}</span>
+
+<span class="kw">WITH</span> snapshot_data <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="fn">{{</span> ref(<span class="str">'snap_customers'</span>) <span class="fn">}}</span>
+),
+enriched <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        dbt_scd_id                              <span class="kw">AS</span> customer_version_key,
+        customer_id,
+        first_name || <span class="str">' '</span> || last_name          <span class="kw">AS</span> full_name,
+        LOWER(email)                            <span class="kw">AS</span> email,
+        COALESCE(subscription_tier, <span class="str">'free'</span>)     <span class="kw">AS</span> subscription_tier,
+        lifetime_spend_cents / <span class="fn">100.0</span>            <span class="kw">AS</span> lifetime_spend_dollars,
+        <span class="kw">CASE</span>
+            <span class="kw">WHEN</span> subscription_tier = <span class="str">'gold'</span>     <span class="kw">THEN</span> <span class="fn">3</span>
+            <span class="kw">WHEN</span> subscription_tier = <span class="str">'silver'</span>   <span class="kw">THEN</span> <span class="fn">2</span>
+            <span class="kw">WHEN</span> subscription_tier = <span class="str">'bronze'</span>   <span class="kw">THEN</span> <span class="fn">1</span>
+            <span class="kw">ELSE</span> <span class="fn">0</span>
+        <span class="kw">END</span>                                     <span class="kw">AS</span> tier_rank,
+        dbt_valid_from                          <span class="kw">AS</span> effective_from,
+        dbt_valid_to                            <span class="kw">AS</span> effective_to,
+        dbt_valid_to <span class="kw">IS</span> <span class="fn">NULL</span>                    <span class="kw">AS</span> is_current_version,
+        ROW_NUMBER() <span class="kw">OVER</span> (
+            <span class="kw">PARTITION BY</span> customer_id <span class="kw">ORDER BY</span> dbt_valid_from
+        )                                       <span class="kw">AS</span> version_number
+    <span class="kw">FROM</span> snapshot_data
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> enriched</div>
+
+  <h3>Joining Facts to SCD Type 2 Dimensions</h3>
+  <p>You must join on the natural key <strong>AND</strong> the validity period to get correct attributes at the time of each fact event.</p>
+
+  <div class="code-block"><span class="cm">-- Join orders to customer dim valid at order time</span>
+<span class="kw">SELECT</span>
+    o.order_id, o.order_date, o.order_amount_dollars,
+    c.full_name,
+    c.subscription_tier    <span class="kw">AS</span> tier_at_order_time
+<span class="kw">FROM</span> <span class="fn">{{</span> ref(<span class="str">'fct_orders'</span>) <span class="fn">}}</span> o
+<span class="kw">LEFT JOIN</span> <span class="fn">{{</span> ref(<span class="str">'dim_customers'</span>) <span class="fn">}}</span> c
+    <span class="kw">ON</span> o.customer_id = c.customer_id
+    <span class="kw">AND</span> o.order_date &gt;= c.effective_from
+    <span class="kw">AND</span> (o.order_date &lt; c.effective_to <span class="kw">OR</span> c.effective_to <span class="kw">IS</span> <span class="fn">NULL</span>)</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How do you join a fact table to an SCD Type 2 dimension?"</strong> — "Join on the natural key AND the validity period: <code>ON fact.customer_id = dim.customer_id AND fact.event_date >= dim.effective_from AND (fact.event_date &lt; dim.effective_to OR dim.effective_to IS NULL)</code>. The NULL check handles the current version."</p>
+  </div>
+</section>
+
+<!-- Screen 7: Snapshots vs Manual SCD -->
+<section class="screen" id="s7">
+  <h2>⚖️ Snapshots vs <span class="accent">Manual SCD</span></h2>
+  <p>Not every SCD scenario calls for dbt snapshots. Understanding when to use each is a mark of senior dbt proficiency.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Use dbt Snapshots</h4>
+      <ul>
+        <li>Source has no change history (mutations overwrite)</li>
+        <li>Table is reasonably sized (&lt; 50M rows)</li>
+        <li>Changes are infrequent (dimensions change slowly)</li>
+        <li>Daily-granularity tracking is acceptable</li>
+        <li>Standard timestamp/check strategy suffices</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🔧 Build Manual SCD</h4>
+      <ul>
+        <li>Source already has CDC/event stream history</li>
+        <li>Need sub-daily change granularity</li>
+        <li>Source table is huge (100M+ rows)</li>
+        <li>Need SCD Type 3 or Type 6 (hybrid)</li>
+        <li>Complex merge / conditional update logic</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Manual SCD from CDC Source</h3>
+  <div class="code-block"><span class="cm">-- models/marts/dim_customers_from_cdc.sql</span>
+<span class="fn">{{</span> config(materialized=<span class="str">'incremental'</span>, unique_key=<span class="str">'customer_version_key'</span>) <span class="fn">}}</span>
+
+<span class="kw">WITH</span> cdc_events <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        customer_id, first_name, last_name, email,
+        subscription_tier, operation, event_timestamp,
+        LEAD(event_timestamp) <span class="kw">OVER</span> (
+            <span class="kw">PARTITION BY</span> customer_id <span class="kw">ORDER BY</span> event_timestamp
+        ) <span class="kw">AS</span> next_event_timestamp
+    <span class="kw">FROM</span> <span class="fn">{{</span> ref(<span class="str">'stg_customer_cdc_events'</span>) <span class="fn">}}</span>
+    <span class="kw">{%</span> <span class="kw">if</span> is_incremental() <span class="kw">%}</span>
+        <span class="kw">WHERE</span> event_timestamp &gt; (<span class="kw">SELECT</span> MAX(effective_from) <span class="kw">FROM</span> <span class="fn">{{</span> this <span class="fn">}}</span>)
+    <span class="kw">{%</span> endif <span class="kw">%}</span>
+)
+<span class="kw">SELECT</span>
+    <span class="fn">{{</span> dbt_utils.generate_surrogate_key([<span class="str">'customer_id'</span>, <span class="str">'event_timestamp'</span>]) <span class="fn">}}</span>
+        <span class="kw">AS</span> customer_version_key,
+    customer_id, first_name, last_name, email, subscription_tier,
+    event_timestamp      <span class="kw">AS</span> effective_from,
+    next_event_timestamp <span class="kw">AS</span> effective_to,
+    next_event_timestamp <span class="kw">IS</span> <span class="fn">NULL</span> <span class="kw">AS</span> is_current_version
+<span class="kw">FROM</span> cdc_events</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"When would you NOT use dbt snapshots?"</strong> — "Three scenarios: (1) Source already provides CDC history — I'd build an incremental model instead. (2) Source is 100M+ rows — full-table comparison gets expensive. (3) I need sub-daily tracking — snapshots only capture state at run time, so intermediate states are lost."</p>
+  </div>
+</section>
+
+<!-- Screen 8: Gotchas & Best Practices -->
+<section class="screen screen-alt" id="s8">
+  <h2>⚠️ Real-World <span class="accent">Gotchas & Best Practices</span></h2>
+  <p>After running snapshots in production for months, these are the issues that bite teams.</p>
+
+  <h3>Gotcha 1: Always Snapshot source(), Never ref()</h3>
+  <div class="code-block"><span class="cm">-- ❌ WRONG — Don't snapshot a staging model</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="fn">{{</span> ref(<span class="str">'stg_customers'</span>) <span class="fn">}}</span>   <span class="cm">-- Tracks transformation changes!</span>
+
+<span class="cm">-- ✅ CORRECT — Snapshot the raw source directly</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="fn">{{</span> source(<span class="str">'ecommerce'</span>, <span class="str">'raw_customers'</span>) <span class="fn">}}</span>   <span class="cm">-- Tracks source changes!</span></div>
+
+  <h3>Gotcha 2: Never Change unique_key After Deployment</h3>
+  <p>Changing the <code>unique_key</code> corrupts the table. dbt can't match old rows to new ones. If you must change it, drop the table and rebuild from scratch.</p>
+
+  <h3>Gotcha 3: Timezone Mismatches</h3>
+  <div class="code-block"><span class="cm">-- ✅ Always normalize timezones in the snapshot SELECT</span>
+<span class="kw">SELECT</span>
+    customer_id,
+    CONVERT_TIMEZONE(<span class="str">'UTC'</span>, updated_at) <span class="kw">AS</span> updated_at
+<span class="kw">FROM</span> <span class="fn">{{</span> source(<span class="str">'ecommerce'</span>, <span class="str">'raw_customers'</span>) <span class="fn">}}</span></div>
+
+  <h3>Best Practices Checklist</h3>
+  <div class="card-grid">
+    <div class="card"><h4>1️⃣ source() not ref()</h4><p>Capture raw state, not transformed state.</p></div>
+    <div class="card blue"><h4>2️⃣ Run Daily+</h4><p>Changes between runs are lost forever.</p></div>
+    <div class="card green"><h4>3️⃣ Prefer timestamp</h4><p>Faster. Use check only when no reliable timestamp.</p></div>
+    <div class="card purple"><h4>4️⃣ Test dbt_scd_id</h4><p>Add unique + not_null tests on the surrogate key.</p></div>
+    <div class="card"><h4>5️⃣ Dedicated Schema</h4><p>Store snapshots in their own schema (e.g., <code>snapshots</code>).</p></div>
+    <div class="card blue"><h4>6️⃣ Monitor Growth</h4><p>SCD2 tables grow fast. Watch version counts per entity.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Common issues with dbt snapshots in production?"</strong> — "Four big ones: (1) Snapshotting a staging model instead of the raw source. (2) Timezone mismatches between <code>updated_at</code> and <code>dbt_valid_from</code>. (3) Not enabling <code>invalidate_hard_deletes</code>. (4) Running snapshots too infrequently. I also monitor version counts to detect false positives."</p>
+  </div>
+</section>
+
+<!-- Screen 9: Quiz -->
+<section class="screen" id="s9">
+  <h2>🧪 Quiz: <span class="accent">Module 5 Review</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: What SCD type do dbt snapshots implement?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) SCD Type 1 — overwrite old values</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) SCD Type 2 — add new row with validity timestamps</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) SCD Type 3 — add previous value column</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) SCD Type 6 — hybrid approach</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Your source table has no <code>updated_at</code> column. Which strategy?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) timestamp — it's always the best choice</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) check — compare specific column values for changes</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) append — just add new rows</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) Snapshots won't work without a timestamp</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: How do you identify the current version in a snapshot table?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) WHERE dbt_scd_id IS NOT NULL</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) WHERE dbt_valid_to IS NULL</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) WHERE dbt_updated_at = (SELECT MAX(...))</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) WHERE version_number = 1</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: With <code>invalidate_hard_deletes=False</code>, what happens when a source row is deleted?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) The row is deleted from the snapshot</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) The row remains with dbt_valid_to = NULL — looks current</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) The row gets dbt_valid_to = CURRENT_TIMESTAMP()</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) dbt raises an error</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: Why should snapshots query source() instead of ref()?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) ref() doesn't work in snapshot blocks</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) Staging models may transform data — snapshots should capture raw source state</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) source() is faster than ref()</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Snapshots require database-level access</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-04-testing-quality/index.html">← Module 4: Testing</a>
+  <a href="../module-06-macros-jinja/index.html">Next: Macros & Jinja →</a>
+</footer>
+
+<script>
+(function(){
+  var pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){var h=document.documentElement;var pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  window.checkQuiz=function(el,qid,correct){
+    var box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    var fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above and try to recall the correct answer.';}
+    box.querySelectorAll('.quiz-opt').forEach(function(o){o.style.pointerEvents='none';});
+  };
+})();
+</script>
+</body>
+</html>

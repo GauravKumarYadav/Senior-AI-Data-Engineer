@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 7: CI/CD &amp; dbt in Production | dbt Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-argin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+table.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+table.info-table th,table.info-table td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+table.info-table th{font-family:var(--font-heading);font-weight:700;background:var(--color-bg-warm)}
+table.info-table tr:hover{background:rgba(0,0,0,0.02)}
+.screen-alt{background:var(--color-bg-warm)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🔨 dbt Mastery</a><div class="nav-dots"><a href="../module-01-what-is-dbt/" class="nav-dot"></a><a href="../module-02-models-materializations/" class="nav-dot"></a><a href="../module-03-incremental-models/" class="nav-dot"></a><a href="../module-04-testing-quality/" class="nav-dot"></a><a href="../module-05-snapshots-scd/" class="nav-dot"></a><a href="../module-06-macros-jinja/" class="nav-dot"></a><a href="../module-07-cicd-production/" class="nav-dot active"></a><a href="../module-08-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: From dbt run to Production -->
+<section class="screen" id="s1">
+  <h2>From <code>dbt run</code> to <span class="accent">Production</span></h2>
+  <p>Running <code>dbt run</code> on your laptop is development. Running dbt reliably, on schedule, with tests, alerts, documentation, and rollback capability — that's <strong>production</strong>. This module covers everything between "it works on my machine" and "it runs at 4am and wakes someone up if it breaks."</p>
+
+  <h3>The Production dbt Stack</h3>
+  <div class="code-block"><span class="cm">Git Repo</span> ──▶ <span class="cm">CI/CD (Actions)</span> ──▶ <span class="cm">Orchestrator (Airflow)</span> ──▶ <span class="cm">Warehouse (Snowflake)</span>
+  │              │                   │                       │
+PR opened    Slim CI:            Scheduled:              Executes SQL
+↓            dbt build           dbt build
+Pre-commit   --select             (daily 4am)
+hooks:       state:modified+     ↓
+SQLFluff     ↓                   Alert on failure
+YAML valid   Artifacts:          ↓
+             manifest.json       dbt docs serve
+             run_results.json</div>
+
+  <h3>The Evolution of dbt Execution Commands</h3>
+  <table class="info-table">
+    <tr><th>Command</th><th>What It Does</th><th>Use When</th></tr>
+    <tr><td><code>dbt run</code></td><td>Build models only</td><td>Development (legacy)</td></tr>
+    <tr><td><code>dbt test</code></td><td>Run tests only</td><td>Ad-hoc validation</td></tr>
+    <tr><td><code>dbt snapshot</code></td><td>Run snapshots only</td><td>Standalone snapshot job</td></tr>
+    <tr><td><code>dbt seed</code></td><td>Load CSV seed files</td><td>Reference data loading</td></tr>
+    <tr><td><strong><code>dbt build</code></strong></td><td>Models + tests + snapshots + seeds in DAG order</td><td><strong>Production standard</strong></td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p><strong>"What command do you use in production and why?"</strong> — "<code>dbt build</code>. It executes models, tests, snapshots, and seeds in DAG order with <span class="tooltip-term" data-tip="If stg_orders tests fail, fct_orders is skipped — bad data never reaches marts. dbt build enforces this automatically.">test gating</span>. If <code>stg_orders</code> tests fail, <code>fct_orders</code> is skipped — bad data never reaches marts. This is superior to running <code>dbt run</code> + <code>dbt test</code> separately, which builds all models first (allowing bad data to propagate) and only then discovers test failures."</p>
+  </div>
+
+  <div class="code-block"><span class="cm"># Production run — the one command</span>
+$ dbt build
+
+<span class="cm"># Production run with selector</span>
+$ dbt build --select tag:daily
+
+<span class="cm"># CI run — only changed models and their downstream</span>
+$ dbt build --select state:modified+
+
+<span class="cm"># Full refresh (weekly maintenance)</span>
+$ dbt build --full-refresh</div>
+</section>
+
+<!-- Screen 2: Slim CI -->
+<section class="screen screen-alt" id="s2">
+  <h2>Slim CI: <span class="accent">state:modified+</span> &amp; Artifacts</h2>
+  <p>In a project with 500+ models, you don't want every PR to rebuild everything. <strong>Slim CI</strong> uses dbt <span class="tooltip-term" data-tip="Files generated in target/ after every dbt run — manifest.json (project graph) and run_results.json (execution results). They power Slim CI, docs, and monitoring.">artifacts</span> to identify which models changed and only builds those (plus their downstream dependents).</p>
+
+  <div class="code-block"><span class="cm">Slim CI Flow</span>
+
+1. Production run generates manifest.json (saved as artifact)
+2. Developer opens PR with changes to stg_orders.sql
+3. CI pipeline:
+   a. <span class="fn">dbt compile</span> (generates new manifest.json)
+   b. <span class="fn">dbt build --select state:modified+ --state ./prod-artifacts/</span>
+   c. Compares new manifest vs prod manifest
+   d. Finds: stg_orders was modified
+   e. Builds: stg_orders + all downstream (fct_orders, etc.)
+   f. Runs tests on those models
+
+<span class="str">Result: Only 5 models built instead of 500+</span>
+<span class="str">CI time: 2 minutes instead of 45 minutes</span></div>
+
+  <h3>State Comparison Selectors</h3>
+  <table class="info-table">
+    <tr><th>Selector</th><th>What It Matches</th></tr>
+    <tr><td><code>state:modified</code></td><td>Models that changed (SQL or YAML)</td></tr>
+    <tr><td><code>state:modified+</code></td><td>Changed models + downstream</td></tr>
+    <tr><td><code>state:new</code></td><td>Models that are new (not in state)</td></tr>
+    <tr><td><code>state:modified.body</code></td><td>Only SQL body changes</td></tr>
+    <tr><td><code>state:modified.configs</code></td><td>Only config/YAML changes</td></tr>
+    <tr><td><code>result:error</code></td><td>Models that errored last run</td></tr>
+    <tr><td><code>result:fail</code></td><td>Tests that failed last run</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Answer</div>
+    <p>"Slim CI using <code>dbt build --select state:modified+</code>. On every PR, the CI pipeline downloads the production <code>manifest.json</code>, compares it against the current branch, and only builds modified models plus their downstream dependencies. This turns a 45-minute full build into a 2-minute targeted build. The CI target uses an isolated schema (e.g., <code>ci_pr_123</code>) so PR builds don't affect production data."</p>
+  </div>
+</section>
+
+<!-- Screen 3: Artifacts Deep Dive -->
+<section class="screen" id="s3">
+  <h2>Artifacts: <span class="accent">manifest.json</span> &amp; <span class="accent">run_results.json</span></h2>
+  <p>dbt generates metadata artifacts in the <code>target/</code> directory after every run. These files are the foundation for Slim CI, documentation, and monitoring.</p>
+
+  <div class="code-block"><span class="cm"># target/ directory after a dbt run</span>
+target/
+├── <span class="fn">manifest.json</span>        <span class="cm"># Complete project graph (models, tests, sources, macros)</span>
+├── <span class="fn">run_results.json</span>     <span class="cm"># Results of the latest run (timing, status, rows)</span>
+├── <span class="fn">catalog.json</span>         <span class="cm"># Column-level metadata (after dbt docs generate)</span>
+├── <span class="fn">sources.json</span>         <span class="cm"># Source freshness results</span>
+└── compiled/            <span class="cm"># Compiled SQL for every model</span></div>
+
+  <h3>manifest.json — The Project Graph</h3>
+  <div class="code-block"><span class="cm">// manifest.json — each model's identity, dependencies, and checksum</span>
+{
+  <span class="str">"nodes"</span>: {
+    <span class="str">"model.ecommerce.fct_orders"</span>: {
+      <span class="str">"unique_id"</span>: <span class="str">"model.ecommerce.fct_orders"</span>,
+      <span class="str">"depends_on"</span>: {
+        <span class="str">"nodes"</span>: [<span class="str">"model.ecommerce.stg_orders"</span>, <span class="str">"model.ecommerce.stg_customers"</span>]
+      },
+      <span class="str">"config"</span>: { <span class="str">"materialized"</span>: <span class="str">"incremental"</span>, <span class="str">"unique_key"</span>: <span class="str">"order_id"</span> },
+      <span class="str">"checksum"</span>: { <span class="str">"name"</span>: <span class="str">"sha256"</span>, <span class="str">"checksum"</span>: <span class="str">"abc123..."</span> }
+    }
+  }
+}</div>
+
+  <h3>run_results.json — Execution Metrics</h3>
+  <div class="code-block"><span class="cm">// run_results.json — timing, status, row counts per model</span>
+{
+  <span class="str">"results"</span>: [
+    { <span class="str">"unique_id"</span>: <span class="str">"model.ecommerce.fct_orders"</span>,
+      <span class="str">"status"</span>: <span class="str">"success"</span>, <span class="str">"execution_time"</span>: <span class="fn">12.45</span>, <span class="str">"rows_affected"</span>: <span class="fn">245000</span> },
+    { <span class="str">"unique_id"</span>: <span class="str">"test.ecommerce.unique_fct_orders_order_id"</span>,
+      <span class="str">"status"</span>: <span class="str">"pass"</span>, <span class="str">"execution_time"</span>: <span class="fn">0.8</span>, <span class="str">"failures"</span>: <span class="fn">0</span> }
+  ],
+  <span class="str">"elapsed_time"</span>: <span class="fn">142.3</span>
+}</div>
+
+  <h3>Artifact Usage Matrix</h3>
+  <table class="info-table">
+    <tr><th>Artifact</th><th>Used For</th></tr>
+    <tr><td><code>manifest.json</code></td><td>Slim CI (state comparison), dbt docs (lineage graph), external tools</td></tr>
+    <tr><td><code>run_results.json</code></td><td>Post-run monitoring &amp; alerting, performance trending, retry failed models</td></tr>
+    <tr><td><code>catalog.json</code></td><td>Column-level documentation, schema change detection</td></tr>
+    <tr><td><code>sources.json</code></td><td>Source freshness monitoring, ingestion SLA tracking</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"<code>manifest.json</code> contains the full project graph — every model, test, source, and their dependencies. I use it for Slim CI and documentation. <code>run_results.json</code> captures execution results — timing, status, row counts. I parse it post-run to detect failures, alert on slow models, and track performance trends. In production, I upload both artifacts to S3 after every successful run."</p>
+  </div>
+</section>
+
+<!-- Screen 4: Airflow Orchestration -->
+<section class="screen screen-alt" id="s4">
+  <h2>dbt with <span class="accent">Airflow</span> — Orchestration Patterns</h2>
+  <p>dbt handles transformation, but it doesn't handle scheduling, dependencies on external systems, or alerting. That's where an orchestrator like <strong>Airflow</strong> comes in.</p>
+
+  <h3>Pattern 1: BashOperator (simple but brittle)</h3>
+  <div class="code-block"><span class="cm"># dags/dbt_daily.py — Basic approach</span>
+<span class="kw">from</span> airflow <span class="kw">import</span> DAG
+<span class="kw">from</span> airflow.operators.bash <span class="kw">import</span> BashOperator
+
+<span class="kw">with</span> DAG(dag_id=<span class="str">"dbt_daily_build"</span>, schedule_interval=<span class="str">"0 6 * * *"</span>) <span class="kw">as</span> dag:
+    dbt_build = BashOperator(
+        task_id=<span class="str">"dbt_build"</span>,
+        bash_command=<span class="str">"cd /opt/dbt/ecommerce && dbt build --target prod"</span>,
+    )
+    <span class="cm"># Problem: one opaque task — all-or-nothing retry</span></div>
+
+  <h3>Pattern 2: Cosmos (recommended)</h3>
+  <div class="code-block"><span class="cm"># dags/dbt_cosmos_daily.py — Production-grade approach</span>
+<span class="kw">from</span> cosmos <span class="kw">import</span> DbtTaskGroup, ProjectConfig, ProfileConfig
+
+<span class="kw">with</span> DAG(dag_id=<span class="str">"dbt_cosmos_daily"</span>, schedule_interval=<span class="str">"0 6 * * *"</span>) <span class="kw">as</span> dag:
+    <span class="cm"># Each dbt model becomes an Airflow task!</span>
+    dbt_tasks = DbtTaskGroup(
+        group_id=<span class="str">"dbt_build"</span>,
+        project_config=ProjectConfig(dbt_project_path=<span class="str">"/opt/dbt/ecommerce"</span>),
+        profile_config=profile_config,
+    )
+    <span class="cm"># Per-model visibility, retry, and parallelism in Airflow UI</span></div>
+
+  <h3>BashOperator vs Cosmos</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📦 BashOperator</h4>
+      <ul>
+        <li>⚠️ One task = entire <code>dbt build</code></li>
+        <li>⚠️ Retries rebuild everything</li>
+        <li>⚠️ One green/red box in UI</li>
+        <li>⚠️ All-or-nothing on failure</li>
+        <li>✅ Very simple setup</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>🚀 Cosmos</h4>
+      <ul>
+        <li>✅ One task = one model</li>
+        <li>✅ Retries just the failed model</li>
+        <li>✅ Full DAG visibility</li>
+        <li>✅ Partial success supported</li>
+        <li>⚠️ Medium setup complexity</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Production DAG flow</span>
+[wait_for_fivetran_sync]
+        │
+        ▼
+[dbt_source_freshness]
+        │
+        ▼
+[dbt_build_staging] ──→ [dbt_build_marts]
+        │                      │
+        ▼                      ▼
+[dbt_snapshot]          [dbt_build_reports]
+                               │
+                               ▼
+                        [upload_artifacts] → [notify_slack]</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Answer</div>
+    <p>"I use Airflow with Cosmos (<code>astronomer-cosmos</code>). Cosmos maps each dbt model to an individual Airflow task, giving per-model visibility, retry, and parallelism. The DAG flow is: wait for ingestion → check source freshness → <code>dbt build</code> staging → marts → reports → upload artifacts → notify. I store dbt artifacts after each successful run for Slim CI."</p>
+  </div>
+</section>
+
+<!-- Screen 5: SQLFluff -->
+<section class="screen" id="s5">
+  <h2><span class="accent">SQLFluff</span> — SQL Linting for dbt</h2>
+  <p>SQLFluff is the standard linter for dbt SQL files. It enforces consistent formatting, catches style violations, and integrates with CI pipelines and pre-commit hooks.</p>
+
+  <div class="code-block"><span class="cm"># .sqlfluff (project root)</span>
+[sqlfluff]
+templater = dbt
+dialect = snowflake
+max_line_length = <span class="fn">120</span>
+
+[sqlfluff:indentation]
+tab_space_size = <span class="fn">4</span>
+indented_ctes = <span class="kw">true</span>
+
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = lower
+
+[sqlfluff:rules:aliasing.table]
+aliasing = explicit
+
+[sqlfluff:rules:aliasing.length]
+min_alias_length = <span class="fn">2</span></div>
+
+  <h3>Common SQLFluff Rules</h3>
+  <table class="info-table">
+    <tr><th>Rule</th><th>What It Catches</th></tr>
+    <tr><td>LT01</td><td>Trailing whitespace</td></tr>
+    <tr><td>LT02</td><td>Indentation not a multiple of configured spaces</td></tr>
+    <tr><td>AM01</td><td>Non-ANSI-92 joins (implicit joins)</td></tr>
+    <tr><td>ST06</td><td><code>SELECT *</code> in production models</td></tr>
+    <tr><td>CP01–04</td><td>Capitalization (keywords, identifiers, functions)</td></tr>
+    <tr><td>AL01–03</td><td>Aliasing rules (explicit <code>AS</code>, min length)</td></tr>
+  </table>
+
+  <h3>Before &amp; After SQLFluff Fix</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Before</h4>
+      <div class="code-block" style="margin:0"><span class="kw">SELECT</span> o.Order_ID,
+       c.first_name,
+    <span class="fn">SUM</span>(o.amount) total
+<span class="kw">FROM</span> {{ ref(<span class="str">'stg_orders'</span>) }} o
+<span class="kw">join</span> {{ ref(<span class="str">'stg_customers'</span>) }} c
+<span class="kw">ON</span> o.customer_id = c.customer_id
+<span class="kw">GROUP BY</span> 1,2</div>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ After</h4>
+      <div class="code-block" style="margin:0"><span class="kw">select</span>
+    o.order_id,
+    c.first_name,
+    <span class="fn">sum</span>(o.amount) <span class="kw">as</span> total
+<span class="kw">from</span> {{ ref(<span class="str">'stg_orders'</span>) }} <span class="kw">as</span> o
+<span class="kw">join</span> {{ ref(<span class="str">'stg_customers'</span>) }} <span class="kw">as</span> c
+    <span class="kw">on</span> o.customer_id = c.customer_id
+<span class="kw">group by</span> 1, 2</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"SQLFluff with the dbt templater. I configure <code>.sqlfluff</code> at the project root — consistent keyword casing, explicit aliases with <code>AS</code>, 4-space indentation. It runs in CI as a PR check (fail on violations) and locally via pre-commit hooks. <code>sqlfluff fix</code> auto-corrects most violations. Consistent SQL style makes code reviews faster."</p>
+  </div>
+</section>
+
+<!-- Screen 6: Pre-commit Hooks -->
+<section class="screen screen-alt" id="s6">
+  <h2><span class="accent">Pre-commit Hooks</span> for dbt Projects</h2>
+  <p>Pre-commit hooks catch issues <strong>before</strong> code reaches the repo — linting, YAML validation, and dbt compilation happen automatically on every <code>git commit</code>.</p>
+
+  <div class="code-block"><span class="cm"># .pre-commit-config.yaml</span>
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    hooks:
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: no-commit-to-branch
+        args: [<span class="str">'--branch'</span>, <span class="str">'main'</span>]
+
+  - repo: https://github.com/sqlfluff/sqlfluff
+    hooks:
+      - id: sqlfluff-lint
+        args: [<span class="str">'--dialect'</span>, <span class="str">'snowflake'</span>]
+        files: ^models/
+
+  - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
+    hooks:
+      - id: check-model-has-tests
+        args: [<span class="str">'--test-cnt'</span>, <span class="str">'2'</span>, <span class="str">'--'</span>]
+      - id: check-model-has-description
+      - id: check-model-name-contract
+        args: [<span class="str">'--pattern'</span>, <span class="str">'(stg|int|fct|dim|rpt)_.*'</span>, <span class="str">'--'</span>]</div>
+
+  <h3>What dbt-checkpoint Validates</h3>
+  <table class="info-table">
+    <tr><th>Hook</th><th>What It Enforces</th></tr>
+    <tr><td><code>check-model-has-tests</code></td><td>Every model has ≥N tests</td></tr>
+    <tr><td><code>check-model-has-description</code></td><td>Every model has a description</td></tr>
+    <tr><td><code>check-source-has-freshness</code></td><td>Sources have freshness config</td></tr>
+    <tr><td><code>check-model-name-contract</code></td><td>Names match pattern (<code>stg_</code>, <code>fct_</code>…)</td></tr>
+    <tr><td><code>check-model-parents-schema</code></td><td>Marts don't ref sources directly</td></tr>
+    <tr><td><code>check-script-has-no-table-name</code></td><td>No hardcoded table references</td></tr>
+  </table>
+
+  <div class="code-block"><span class="cm"># Install hooks (one-time per clone)</span>
+$ pre-commit install
+
+<span class="cm"># Now every git commit runs these checks automatically</span>
+
+<span class="cm"># Run manually against all files</span>
+$ pre-commit run --all-files
+
+<span class="cm"># Skip hooks for emergency commits (use sparingly!)</span>
+$ git commit --no-verify -m <span class="str">"hotfix: emergency production fix"</span></div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Answer</div>
+    <p>"I use <code>pre-commit</code> with several hooks: SQLFluff for SQL linting, <code>dbt-checkpoint</code> for structural validation (every model has tests, descriptions, proper naming), YAML schema validation, and standard checks (trailing whitespace, no direct commits to main). This catches 90% of PR review issues before code even reaches GitHub."</p>
+  </div>
+</section>
+
+<!-- Screen 7: Documentation -->
+<section class="screen" id="s7">
+  <h2>Documentation: <span class="accent">dbt docs</span></h2>
+  <p>dbt auto-generates a documentation website from your project — model descriptions, column definitions, lineage graphs, and test coverage. It's one of dbt's most underrated features.</p>
+
+  <div class="code-block"><span class="cm"># Generate documentation</span>
+$ dbt docs generate
+
+<span class="cm"># Serve locally</span>
+$ dbt docs serve --port <span class="fn">8081</span>   <span class="cm"># Avoid port 8080 (Teams uses it)</span></div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📊 Lineage Graph</h4>
+      <p>Visual DAG showing all models and dependencies. Click any model to see upstream/downstream.</p>
+    </div>
+    <div class="card blue">
+      <h4>📋 Model Details</h4>
+      <p>Description, SQL, compiled code, columns, types, tests, and config per model.</p>
+    </div>
+    <div class="card green">
+      <h4>🔗 Source Details</h4>
+      <p>Database, schema, table names, freshness configuration, and column descriptions.</p>
+    </div>
+    <div class="card purple">
+      <h4>📈 Test Coverage</h4>
+      <p>Which models have tests, which columns are tested, and test types/severity.</p>
+    </div>
+  </div>
+
+  <h3>Exposures — End-to-End Lineage</h3>
+  <div class="code-block"><span class="cm"># models/exposures.yml</span>
+exposures:
+  - name: weekly_revenue_dashboard
+    type: dashboard
+    url: https://lookerstudio.google.com/your-dashboard
+    description: <span class="str">"Executive revenue dashboard. Refreshed daily at 7am."</span>
+    depends_on:
+      - ref(<span class="str">'fct_orders'</span>)
+      - ref(<span class="str">'dim_customers'</span>)
+    owner:
+      name: Analytics Team
+
+  - name: customer_churn_ml_model
+    type: ml
+    description: <span class="str">"ML model predicting customer churn risk"</span>
+    depends_on:
+      - ref(<span class="str">'fct_customer_activity'</span>)
+    owner:
+      name: Data Science Team</div>
+
+  <p>Exposures show up in the lineage graph, creating <strong>end-to-end visibility</strong> from source → staging → marts → dashboards/ML models.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"Every model and column gets descriptions in YAML — including grain, update frequency, business rules, and caveats. I use <code>{% docs %}</code> blocks for rich markdown descriptions. I define exposures for dashboards and ML models — this creates end-to-end lineage from source to consumer. <code>dbt docs generate</code> produces a browsable website with lineage graphs."</p>
+  </div>
+</section>
+
+<!-- Screen 8: Full Production Workflow -->
+<section class="screen screen-alt" id="s8">
+  <h2>Putting It All Together: <span class="accent">The Production Workflow</span></h2>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔨 Development</h4>
+      <p>Feature branch → write models/tests → <code>dbt build --select state:modified+</code> locally → commit → pre-commit hooks run</p>
+    </div>
+    <div class="card blue">
+      <h4>🔍 CI (Pull Request)</h4>
+      <p>GitHub Actions Slim CI → <code>dbt build --select state:modified+</code> → SQLFluff lint → PR comment with results</p>
+    </div>
+    <div class="card green">
+      <h4>🚀 Merge → Deploy</h4>
+      <p>PR merged to main → production <code>dbt build</code> → upload artifacts to S3 → deploy docs</p>
+    </div>
+    <div class="card purple">
+      <h4>⏰ Scheduled Production</h4>
+      <p>Airflow DAG at 6am: wait for ingestion → source freshness → <code>dbt build</code> → upload artifacts → Slack alert on failure</p>
+    </div>
+  </div>
+
+  <h3>Essential dbt_project.yml Configs</h3>
+  <div class="code-block"><span class="cm"># dbt_project.yml</span>
+name: ecommerce
+version: <span class="str">'1.0.0'</span>
+
+models:
+  ecommerce:
+    staging:
+      +materialized: <span class="str">view</span>
+      +schema: <span class="str">staging</span>
+      +tags: [<span class="str">'staging'</span>]
+    marts:
+      +materialized: <span class="str">table</span>
+      +schema: <span class="str">marts</span>
+      +tags: [<span class="str">'marts'</span>]
+    reports:
+      +materialized: <span class="str">table</span>
+      +schema: <span class="str">reports</span>
+      +tags: [<span class="str">'reports'</span>]
+
+on-run-end:
+  - <span class="str">"{{ grant_select_on_schemas(['staging','marts','reports'], 'analyst_role') }}"</span></div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Answer</div>
+    <p>"Development: feature branch → local <code>dbt build</code> → pre-commit hooks. CI: PR triggers Slim CI with <code>state:modified+</code> against the production manifest. On merge: production deploy runs full <code>dbt build</code>. Scheduled: Airflow DAG at 6am — waits for ingestion, checks source freshness, runs <code>dbt build</code>, uploads artifacts, alerts Slack on failures. Weekly: full refresh."</p>
+  </div>
+</section>
+
+<!-- Screen 9: Quiz -->
+<section class="screen" id="s9">
+  <h2>Quiz: <span class="accent">Module 7 Review</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: What is the main advantage of <code>dbt build</code> over <code>dbt run</code> + <code>dbt test</code>?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) <code>dbt build</code> is faster</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) <code>dbt build</code> runs tests in DAG order, gating downstream models on test results</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) <code>dbt build</code> supports more model types</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) <code>dbt build</code> generates documentation</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: What does <code>dbt build --select state:modified+ --state ./prod-artifacts/</code> do?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Builds all models in the modified state</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) Compares current project against prod manifest, builds only changed models and their downstream dependencies</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) Modifies the production state</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) Restores models to their production state</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: Which artifact is used for Slim CI state comparison?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) <code>run_results.json</code></div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) <code>manifest.json</code></div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) <code>catalog.json</code></div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) <code>sources.json</code></div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: What is the main advantage of Cosmos over BashOperator for dbt in Airflow?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Cosmos is faster</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) Cosmos maps each dbt model to an individual Airflow task, enabling per-model retry and visibility</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) Cosmos doesn't require Airflow</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Cosmos supports more databases</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: A pre-commit hook with <code>check-model-has-tests --test-cnt 2</code> fails on your commit. What does this mean?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Two of your tests are failing</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) At least one model in your commit has fewer than 2 tests defined</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) You have more than 2 tests per model</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Your test files have syntax errors</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-06-macros-jinja/index.html">← Module 6: Macros &amp; Jinja</a>
+  <a href="../module-08-interview-gauntlet/index.html">Next: Interview Gauntlet →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Look at the other options — the answer focuses on the core advantage.';}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>
