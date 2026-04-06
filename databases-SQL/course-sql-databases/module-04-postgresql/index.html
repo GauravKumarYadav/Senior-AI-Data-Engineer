@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 4: PostgreSQL Internals & Power Features | SQL & Databases Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+.info-table th{background:var(--color-bg-code);color:#CDD6F4;padding:0.6rem 0.8rem;text-align:left;font-family:var(--font-heading);font-weight:600;font-size:0.85rem}
+.info-table td{padding:0.6rem 0.8rem;border-bottom:1px solid rgba(0,0,0,0.06)}
+.info-table tr:last-child td{border-bottom:none}
+.info-table tr:hover td{background:rgba(0,0,0,0.02)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}.info-table{font-size:0.8rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🗄️ SQL & Databases Mastery</a><div class="nav-dots"><a href="../module-01-window-functions/" class="nav-dot"></a><a href="../module-02-ctes-advanced/" class="nav-dot"></a><a href="../module-03-query-optimization/" class="nav-dot"></a><a href="../module-04-postgresql/" class="nav-dot active"></a><a href="../module-05-nosql/" class="nav-dot"></a><a href="../module-06-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: JSONB -->
+<section class="screen" id="s1">
+  <h2>🗃️ JSONB — <span class="accent">The Best of Both Worlds</span></h2>
+  <p>Product attributes vary wildly — a laptop has RAM and screen size, a shirt has fabric and fit. Creating 200 nullable columns is ugly. An EAV table is a query nightmare. JSONB gives you <strong>schema flexibility inside a relational database</strong>.</p>
+
+  <div class="code-block"><span class="kw">CREATE TABLE</span> products (
+    product_id   <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+    name         <span class="fn">TEXT</span> <span class="kw">NOT NULL</span>,
+    category     <span class="fn">TEXT</span> <span class="kw">NOT NULL</span>,
+    price        <span class="fn">DECIMAL</span>(<span class="fn">10</span>,<span class="fn">2</span>) <span class="kw">NOT NULL</span>,
+    attributes   <span class="fn">JSONB</span> <span class="kw">DEFAULT</span> <span class="str">'{}'</span>
+);
+
+<span class="kw">INSERT INTO</span> products (name, category, price, attributes) <span class="kw">VALUES</span>
+(<span class="str">'MacBook Pro 16"'</span>, <span class="str">'Electronics'</span>, <span class="fn">2499.99</span>,
+ <span class="str">'{"ram_gb": 32, "storage_tb": 1, "color": "Space Gray"}'</span>),
+(<span class="str">'Wool Sweater'</span>, <span class="str">'Clothing'</span>, <span class="fn">89.99</span>,
+ <span class="str">'{"size": "L", "color": "Navy", "material": "Merino Wool"}'</span>);</div>
+
+  <h3>JSON vs JSONB — Always Use JSONB</h3>
+  <table class="info-table">
+    <tr><th>Feature</th><th>JSON</th><th>JSONB</th></tr>
+    <tr><td>Storage</td><td>Raw text (preserves whitespace)</td><td>Binary decomposed</td></tr>
+    <tr><td>Indexing (GIN)</td><td>❌ Not supported</td><td>✅ Full GIN support</td></tr>
+    <tr><td>Comparison ops</td><td>❌ No equality</td><td>✅ =, @>, <@, ?, ?&</td></tr>
+    <tr><td>Read/query speed</td><td>Slower (reparse each time)</td><td>Faster (pre-parsed)</td></tr>
+  </table>
+
+  <h3>JSONB Operators</h3>
+  <div class="code-block"><span class="cm">-- -> returns JSONB (with quotes)</span>
+<span class="kw">SELECT</span> attributes-><span class="str">'color'</span> <span class="kw">FROM</span> products;    <span class="cm">-- "Space Gray"</span>
+
+<span class="cm">-- ->> returns TEXT (no quotes)</span>
+<span class="kw">SELECT</span> attributes->><span class="str">'color'</span> <span class="kw">FROM</span> products;   <span class="cm">-- Space Gray</span>
+
+<span class="cm">-- @> "contains" — GIN indexable!</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> products
+<span class="kw">WHERE</span> attributes @> <span class="str">'{"color": "Navy"}'</span>;
+
+<span class="cm">-- ? "key exists"</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> products <span class="kw">WHERE</span> attributes ? <span class="str">'motor'</span>;</div>
+
+  <h3>Indexing JSONB</h3>
+  <div class="code-block"><span class="cm">-- GIN index: ALL keys and values (most flexible)</span>
+<span class="kw">CREATE INDEX</span> idx_attrs <span class="kw">ON</span> products <span class="kw">USING</span> <span class="fn">GIN</span> (attributes);
+
+<span class="cm">-- B-tree expression index: specific path (smaller, faster)</span>
+<span class="kw">CREATE INDEX</span> idx_color <span class="kw">ON</span> products ((attributes->><span class="str">'color'</span>));
+
+<span class="cm">-- Numeric range on JSONB field:</span>
+<span class="kw">CREATE INDEX</span> idx_ram <span class="kw">ON</span> products (((attributes->><span class="str">'ram_gb'</span>)::<span class="fn">int</span>));</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"I'd use JSONB for truly variable attributes where different rows have fundamentally different fields — like product specs across categories. I keep high-cardinality, JOIN-key columns as regular columns and put the 'long tail' in JSONB. Always index with GIN for containment, and expression indexes for specific paths. The anti-pattern is dumping everything into JSONB — you lose type safety, FK constraints, and optimizer insight."</p>
+  </div>
+</section>
+
+<!-- Screen 2: Partitioning -->
+<section class="screen screen-alt" id="s2">
+  <h2>🧩 Declarative Partitioning &amp; <span class="accent">Partition Pruning</span></h2>
+  <p>Partitioning shines when a table has <strong>hundreds of millions of rows</strong> and queries filter on a specific column — usually a date.</p>
+
+  <div class="code-block"><span class="cm">-- Step 1: Partitioned parent</span>
+<span class="kw">CREATE TABLE</span> orders (
+    order_id     <span class="fn">BIGINT</span> <span class="kw">NOT NULL</span>,
+    customer_id  <span class="fn">INT</span> <span class="kw">NOT NULL</span>,
+    order_date   <span class="fn">DATE</span> <span class="kw">NOT NULL</span>,
+    amount       <span class="fn">DECIMAL</span>(<span class="fn">10</span>,<span class="fn">2</span>)
+) <span class="kw">PARTITION BY RANGE</span> (order_date);
+
+<span class="cm">-- Step 2: Create quarterly partitions</span>
+<span class="kw">CREATE TABLE</span> orders_2024_q1 <span class="kw">PARTITION OF</span> orders
+    <span class="kw">FOR VALUES FROM</span> (<span class="str">'2024-01-01'</span>) <span class="kw">TO</span> (<span class="str">'2024-04-01'</span>);
+<span class="kw">CREATE TABLE</span> orders_2024_q2 <span class="kw">PARTITION OF</span> orders
+    <span class="kw">FOR VALUES FROM</span> (<span class="str">'2024-04-01'</span>) <span class="kw">TO</span> (<span class="str">'2024-07-01'</span>);
+
+<span class="cm">-- Step 3: DEFAULT partition catches strays</span>
+<span class="kw">CREATE TABLE</span> orders_default <span class="kw">PARTITION OF</span> orders <span class="kw">DEFAULT</span>;
+
+<span class="cm">-- Step 4: Indexes on parent → auto-created on children</span>
+<span class="kw">CREATE INDEX</span> idx_orders_date <span class="kw">ON</span> orders (order_date);</div>
+
+  <h3>Partition Pruning — Proof It Works</h3>
+  <div class="code-block"><span class="kw">EXPLAIN</span> (<span class="fn">ANALYZE</span>, <span class="fn">COSTS OFF</span>)
+<span class="kw">SELECT</span> <span class="fn">SUM</span>(amount) <span class="kw">FROM</span> orders
+<span class="kw">WHERE</span> order_date <span class="kw">BETWEEN</span> <span class="str">'2024-04-01'</span> <span class="kw">AND</span> <span class="str">'2024-06-30'</span>;
+
+<span class="cm">-- Output:</span>
+<span class="cm">-- Aggregate</span>
+<span class="cm">--   →  Append</span>
+<span class="cm">--         Subplans Removed: 3          ← 3 partitions pruned!</span>
+<span class="cm">--         →  Seq Scan on orders_2024_q2 ← only Q2 scanned</span></div>
+
+  <h3>Automated Partition Management</h3>
+  <div class="code-block"><span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="fn">create_monthly_partition</span>(target_date <span class="fn">DATE</span>)
+<span class="kw">RETURNS</span> <span class="fn">void</span> <span class="kw">AS</span> $$
+<span class="kw">DECLARE</span>
+    partition_name <span class="fn">TEXT</span>;
+    start_date <span class="fn">DATE</span>;
+    end_date <span class="fn">DATE</span>;
+<span class="kw">BEGIN</span>
+    start_date := <span class="fn">DATE_TRUNC</span>(<span class="str">'month'</span>, target_date);
+    end_date   := start_date + <span class="kw">INTERVAL</span> <span class="str">'1 month'</span>;
+    partition_name := <span class="str">'orders_'</span> || <span class="fn">TO_CHAR</span>(start_date, <span class="str">'YYYY_MM'</span>);
+    <span class="kw">EXECUTE</span> <span class="fn">format</span>(
+        <span class="str">'CREATE TABLE IF NOT EXISTS %I PARTITION OF orders
+         FOR VALUES FROM (%L) TO (%L)'</span>,
+        partition_name, start_date, end_date
+    );
+<span class="kw">END</span>;
+$$ <span class="kw">LANGUAGE</span> plpgsql;</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Partitioning's killer feature for data retention: detach and drop a partition — instantaneous regardless of row count. Compare to DELETE on millions of rows which generates dead tuples, bloats the table, and takes hours. I schedule cron jobs to create new partitions ahead of time and detach expired ones."</p>
+  </div>
+</section>
+
+<!-- Screen 3: VACUUM -->
+<section class="screen" id="s3">
+  <h2>🧹 VACUUM &amp; AUTOVACUUM — <span class="accent">Taming Dead Tuples</span></h2>
+
+  <h3>Why VACUUM Exists: MVCC</h3>
+  <p>PostgreSQL uses <span class="tooltip-term" data-tip="Multi-Version Concurrency Control: when you UPDATE or DELETE, PostgreSQL marks the old version as 'dead' and creates a new version. Readers never block writers.">MVCC</span>. UPDATEs don't modify rows in-place — they mark old versions as "dead" and create new ones. Dead tuples pile up.</p>
+
+  <div class="code-block"><span class="cm">-- What an UPDATE actually does in the heap:</span>
+<span class="cm">-- Page 42:</span>
+<span class="cm">-- │ order_id=1, status='pending'  [xmax=100] DEAD │  ← old, invisible</span>
+<span class="cm">-- │ order_id=1, status='shipped'  [xmin=100] LIVE │  ← new, visible</span></div>
+
+  <h3>What VACUUM Does</h3>
+  <div class="card-grid">
+    <div class="card"><h4>♻️ Reclaim Space</h4><p>Marks dead tuples as reusable so new inserts can use that space.</p></div>
+    <div class="card blue"><h4>👁️ Update Visibility Map</h4><p>Tells the planner which pages are "all-visible" — enables Index Only Scans.</p></div>
+    <div class="card green"><h4>❄️ Freeze Old Tuples</h4><p>Prevents transaction ID wraparound (PostgreSQL's XID is 32-bit ≈ 4 billion).</p></div>
+  </div>
+
+  <h3>VACUUM vs VACUUM FULL</h3>
+  <table class="info-table">
+    <tr><th>Feature</th><th>VACUUM</th><th>VACUUM FULL</th></tr>
+    <tr><td>Lock level</td><td>Does NOT block reads/writes</td><td><strong>Exclusive lock</strong> (blocks!)</td></tr>
+    <tr><td>Space reclaimed</td><td>Within existing pages</td><td>Returns space to OS</td></tr>
+    <tr><td>Table rewritten</td><td>No</td><td>Yes (full rewrite)</td></tr>
+    <tr><td>When to use</td><td>Regularly / autovacuum</td><td>Extreme bloat only</td></tr>
+  </table>
+
+  <h3>Monitoring Bloat</h3>
+  <div class="code-block"><span class="kw">SELECT</span>
+    schemaname, relname,
+    n_live_tup,
+    n_dead_tup,
+    <span class="fn">ROUND</span>(<span class="fn">100.0</span> * n_dead_tup / <span class="fn">NULLIF</span>(n_live_tup + n_dead_tup, <span class="fn">0</span>), <span class="fn">2</span>) <span class="kw">AS</span> dead_pct,
+    last_vacuum,
+    last_autovacuum
+<span class="kw">FROM</span> pg_stat_user_tables
+<span class="kw">ORDER BY</span> n_dead_tup <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="fn">10</span>;</div>
+
+  <h3>AUTOVACUUM Tuning</h3>
+  <div class="code-block"><span class="cm">-- Default: vacuum when dead tuples > 50 + 0.2 × table_size</span>
+<span class="cm">-- 10M row table: 50 + 0.2 × 10M = 2,000,050 dead tuples → 20% bloat!</span>
+
+<span class="cm">-- Tune for hot tables:</span>
+<span class="kw">ALTER TABLE</span> orders <span class="kw">SET</span> (
+    autovacuum_vacuum_threshold = <span class="fn">1000</span>,
+    autovacuum_vacuum_scale_factor = <span class="fn">0.01</span>,     <span class="cm">-- 1% instead of 20%</span>
+    autovacuum_analyze_threshold = <span class="fn">500</span>,
+    autovacuum_analyze_scale_factor = <span class="fn">0.005</span>
+);</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Bloat happens when dead tuples accumulate faster than VACUUM reclaims them. I diagnose by checking n_dead_tup in pg_stat_user_tables. For mild bloat, tune autovacuum more aggressively (lower scale_factor). For severe bloat, pg_repack rebuilds the table online without an exclusive lock — unlike VACUUM FULL. Prevention is key: tune autovacuum per-table for high-write workloads."</p>
+  </div>
+</section>
+
+<!-- Screen 4: Connection Pooling -->
+<section class="screen screen-alt" id="s4">
+  <h2>🔌 Connection Pooling with <span class="accent">PgBouncer</span></h2>
+
+  <h3>The Problem: PostgreSQL's Process Model</h3>
+  <p>PostgreSQL spawns a <strong>dedicated OS process</strong> per connection (~5–10 MB RAM each). 500 connections = 2.5–5 GB just for connection overhead.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Without Pooling</h4>
+      <ul>
+        <li>500 app threads → 500 backend processes</li>
+        <li>~5 GB RAM overhead</li>
+        <li>OS context-switching nightmare</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ With PgBouncer</h4>
+      <ul>
+        <li>500 app threads → PgBouncer → 20 backends</li>
+        <li>~200 MB RAM overhead</li>
+        <li>Time-shared connections</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Pool Modes</h3>
+  <table class="info-table">
+    <tr><th>Mode</th><th>Multiplexing</th><th>Session State</th><th>Use Case</th></tr>
+    <tr><td><strong>Session</strong></td><td>Low</td><td>✅ Full</td><td>Legacy apps</td></tr>
+    <tr><td><strong>Transaction</strong> ⭐</td><td>High</td><td>❌ Per-txn only</td><td>Most web apps</td></tr>
+    <tr><td><strong>Statement</strong></td><td>Maximum</td><td>❌ None</td><td>Simple read queries</td></tr>
+  </table>
+
+  <h3>Key Configuration</h3>
+  <div class="code-block"><span class="cm">; pgbouncer.ini</span>
+[pgbouncer]
+pool_mode = transaction
+max_client_conn = <span class="fn">1000</span>       <span class="cm">; max clients to PgBouncer</span>
+default_pool_size = <span class="fn">20</span>       <span class="cm">; backends per db/user pair</span>
+min_pool_size = <span class="fn">5</span>            <span class="cm">; keep 5 backends warm</span>
+reserve_pool_size = <span class="fn">5</span>        <span class="cm">; extra backends for burst</span>
+query_wait_timeout = <span class="fn">120</span>     <span class="cm">; max wait for a backend</span></div>
+
+  <h3>Monitoring</h3>
+  <div class="code-block"><span class="cm">-- Connect to PgBouncer admin console</span>
+<span class="kw">SHOW</span> POOLS;
+<span class="cm">-- cl_waiting > 0 → clients waiting! Increase pool_size</span>
+<span class="cm">-- sv_active maxed → pool saturated</span>
+<span class="cm">-- sv_idle high   → pool oversized, reduce to save resources</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"10K concurrent connections? Direct connections would OOM. PgBouncer in transaction mode with ~50-100 backends. Web requests hold a connection for milliseconds, so 50 backends serve 10K clients via time-sharing. Monitor cl_waiting — if clients queue, increase pool_size cautiously. For read-heavy workloads, add read replicas behind a separate pool."</p>
+  </div>
+</section>
+
+<!-- Screen 5: pg_stat_statements -->
+<section class="screen" id="s5">
+  <h2>📈 pg_stat_statements — <span class="accent">Finding Slow Queries</span></h2>
+
+  <h3>Enable It</h3>
+  <div class="code-block"><span class="cm">-- postgresql.conf:</span>
+<span class="cm">-- shared_preload_libraries = 'pg_stat_statements'</span>
+
+<span class="kw">CREATE EXTENSION IF NOT EXISTS</span> pg_stat_statements;</div>
+
+  <h3>The Query Performance Dashboard</h3>
+  <div class="code-block"><span class="cm">-- Top 10 queries by total execution time</span>
+<span class="kw">SELECT</span>
+    <span class="fn">LEFT</span>(query, <span class="fn">80</span>) <span class="kw">AS</span> query_preview,
+    calls,
+    <span class="fn">ROUND</span>(total_exec_time::<span class="fn">numeric</span>, <span class="fn">2</span>) <span class="kw">AS</span> total_time_ms,
+    <span class="fn">ROUND</span>(mean_exec_time::<span class="fn">numeric</span>, <span class="fn">2</span>) <span class="kw">AS</span> avg_time_ms,
+    rows,
+    <span class="fn">ROUND</span>((<span class="fn">100.0</span> * shared_blks_hit /
+        <span class="fn">NULLIF</span>(shared_blks_hit + shared_blks_read, <span class="fn">0</span>))::<span class="fn">numeric</span>, <span class="fn">2</span>)
+        <span class="kw">AS</span> cache_hit_pct
+<span class="kw">FROM</span> pg_stat_statements
+<span class="kw">ORDER BY</span> total_exec_time <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="fn">10</span>;</div>
+
+  <h3>Combining with pg_stat_user_tables</h3>
+  <div class="code-block"><span class="cm">-- Find tables with sequential scan problems</span>
+<span class="kw">SELECT</span>
+    relname,
+    seq_scan,
+    idx_scan,
+    <span class="fn">ROUND</span>(<span class="fn">100.0</span> * idx_scan / <span class="fn">NULLIF</span>(seq_scan + idx_scan, <span class="fn">0</span>), <span class="fn">1</span>) <span class="kw">AS</span> idx_pct,
+    n_live_tup
+<span class="kw">FROM</span> pg_stat_user_tables
+<span class="kw">WHERE</span> n_live_tup > <span class="fn">10000</span>
+<span class="kw">ORDER BY</span> seq_scan <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="fn">10</span>;
+<span class="cm">-- High seq_scan + low idx_pct = needs indexes!</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Step 1: Enable pg_stat_statements, sort by total_exec_time. Step 2: EXPLAIN ANALYZE each top offender. Step 3: Check pg_stat_user_tables for high seq_scan counts. Step 4: Check cache_hit_pct — if low, working set exceeds shared_buffers. I focus on total time, not just average, because a 1ms query called 10M times is worse than a 10s query called once."</p>
+  </div>
+</section>
+
+<!-- Screen 6: Locking -->
+<section class="screen screen-alt" id="s6">
+  <h2>🔒 Locking — <span class="accent">Advisory, Row-Level &amp; Deadlocks</span></h2>
+
+  <h3>Row-Level Locking with SELECT FOR UPDATE</h3>
+  <div class="code-block"><span class="cm">-- Two checkout processes grab the same inventory item</span>
+<span class="kw">BEGIN</span>;
+<span class="kw">SELECT</span> quantity <span class="kw">FROM</span> inventory <span class="kw">WHERE</span> product_id = <span class="fn">42</span> <span class="kw">FOR UPDATE</span>;
+<span class="cm">-- Locks row → other processes WAIT here</span>
+<span class="kw">UPDATE</span> inventory <span class="kw">SET</span> quantity = quantity - <span class="fn">1</span> <span class="kw">WHERE</span> product_id = <span class="fn">42</span>;
+<span class="kw">COMMIT</span>;
+
+<span class="cm">-- FOR UPDATE variants:</span>
+<span class="kw">FOR UPDATE</span>              <span class="cm">-- Exclusive lock, wait if locked</span>
+<span class="kw">FOR UPDATE NOWAIT</span>       <span class="cm">-- Error immediately if locked</span>
+<span class="kw">FOR UPDATE SKIP LOCKED</span>  <span class="cm">-- Skip locked rows (job queues!)</span>
+<span class="kw">FOR SHARE</span>               <span class="cm">-- Shared lock (allow other readers)</span></div>
+
+  <h3>SKIP LOCKED — Building a Job Queue</h3>
+  <div class="code-block"><span class="cm">-- Worker grabs next available job</span>
+<span class="kw">BEGIN</span>;
+<span class="kw">SELECT</span> job_id, payload
+<span class="kw">FROM</span> job_queue
+<span class="kw">WHERE</span> status = <span class="str">'pending'</span>
+<span class="kw">ORDER BY</span> created_at
+<span class="kw">LIMIT</span> <span class="fn">1</span>
+<span class="kw">FOR UPDATE SKIP LOCKED</span>;
+<span class="cm">-- If another worker locked a job, this skips it!</span>
+<span class="kw">COMMIT</span>;</div>
+
+  <h3>Advisory Locks</h3>
+  <p><span class="tooltip-term" data-tip="Voluntary locks that PostgreSQL doesn't enforce automatically. Your application decides when to acquire and check them — great for preventing duplicate cron jobs.">Advisory locks</span> are application-level coordination primitives.</p>
+  <div class="code-block"><span class="cm">-- Prevent duplicate cron job execution</span>
+<span class="kw">SELECT</span> <span class="fn">pg_try_advisory_lock</span>(<span class="fn">hashtext</span>(<span class="str">'nightly_report'</span>));
+<span class="cm">-- Returns false if another instance already running</span></div>
+
+  <h3>Deadlock Prevention</h3>
+  <div class="card-grid">
+    <div class="card"><h4>📋 Consistent Order</h4><p>Always lock rows in the same order (e.g., ascending PK) across all transactions.</p></div>
+    <div class="card blue"><h4>⏱️ Keep Txns Short</h4><p>Acquire locks late, release early. Less time holding = less chance of deadlock.</p></div>
+    <div class="card green"><h4>⚡ Fail Fast</h4><p>Use NOWAIT or SET lock_timeout = '5s' instead of waiting indefinitely.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"To prevent double-charging: SELECT ... FOR UPDATE on the inventory row for an exclusive lock before decrementing. For distributed systems, combine with an advisory lock on order ID hash to prevent duplicate submission. Set lock_timeout to fail fast. Key principle: pessimistic locking for inventory, idempotency keys for payments."</p>
+  </div>
+</section>
+
+<!-- Screen 7: COPY -->
+<section class="screen" id="s7">
+  <h2>📥 COPY — <span class="accent">Bulk Loading at Wire Speed</span></h2>
+
+  <h3>INSERT vs COPY Performance</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🐌 INSERT (row by row)</h4>
+      <p>10M rows ≈ 45 minutes. Per-statement parsing, planning, and executor overhead for every row.</p>
+    </div>
+    <div class="card green">
+      <h4>🚀 COPY (binary pipe)</h4>
+      <p>10M rows ≈ 45 seconds. Compact binary protocol with minimal per-row overhead. 60× faster.</p>
+    </div>
+  </div>
+
+  <h3>COPY Syntax</h3>
+  <div class="code-block"><span class="cm">-- Load from CSV</span>
+<span class="kw">COPY</span> orders (order_id, customer_id, order_date, amount, status)
+<span class="kw">FROM</span> <span class="str">'/data/exports/orders_2024.csv'</span>
+<span class="kw">WITH</span> (<span class="fn">FORMAT</span> csv, <span class="fn">HEADER</span> <span class="kw">true</span>, <span class="fn">DELIMITER</span> <span class="str">','</span>);
+
+<span class="cm">-- Export to CSV</span>
+<span class="kw">COPY</span> (<span class="kw">SELECT</span> * <span class="kw">FROM</span> orders <span class="kw">WHERE</span> order_date >= <span class="str">'2024-01-01'</span>)
+<span class="kw">TO</span> <span class="str">'/tmp/recent_orders.csv'</span>
+<span class="kw">WITH</span> (<span class="fn">FORMAT</span> csv, <span class="fn">HEADER</span> <span class="kw">true</span>);</div>
+
+  <h3>Optimization Checklist for Bulk Loads</h3>
+  <div class="code-block"><span class="cm">-- 1. Drop indexes before load</span>
+<span class="kw">DROP INDEX</span> idx_orders_date;
+
+<span class="cm">-- 2. Disable triggers</span>
+<span class="kw">ALTER TABLE</span> orders <span class="kw">DISABLE TRIGGER ALL</span>;
+
+<span class="cm">-- 3. Increase maintenance_work_mem</span>
+<span class="kw">SET</span> maintenance_work_mem = <span class="str">'1GB'</span>;
+
+<span class="cm">-- 4. Load the data</span>
+<span class="kw">COPY</span> orders <span class="kw">FROM</span> <span class="str">'/data/orders_bulk.csv'</span> <span class="kw">WITH</span> (<span class="fn">FORMAT</span> csv, <span class="fn">HEADER</span> <span class="kw">true</span>);
+
+<span class="cm">-- 5. Rebuild indexes (faster than incremental)</span>
+<span class="kw">CREATE INDEX</span> idx_orders_date <span class="kw">ON</span> orders (order_date);
+
+<span class="cm">-- 6. Re-enable triggers + update stats</span>
+<span class="kw">ALTER TABLE</span> orders <span class="kw">ENABLE TRIGGER ALL</span>;
+<span class="kw">ANALYZE</span> orders;</div>
+
+  <h3>COPY vs \copy</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>COPY (server-side)</h4>
+      <ul>
+        <li>File must be on the PostgreSQL server</li>
+        <li>Runs as the postgres OS user</li>
+        <li>Fastest option</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid #7B5EA7">
+      <h4>\copy (client-side)</h4>
+      <ul>
+        <li>File is on the client machine</li>
+        <li>Streams through psql connection</li>
+        <li>Slightly slower, more convenient</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"100M rows? COPY, not INSERT. Before: drop indexes, disable triggers, bump maintenance_work_mem. Split file and load partitions in parallel with multiple COPY sessions. After: rebuild indexes, re-enable triggers, ANALYZE. This achieves 500K+ rows/second. For one-time migrations, temporarily set wal_level=minimal and fsync=off (with crash-reload understanding)."</p>
+  </div>
+</section>
+
+<!-- Screen 8: Quiz -->
+<section class="screen screen-alt" id="s8">
+  <h2>🧪 Quiz: <span class="accent">Test Yourself</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: Which JSONB operator extracts a value as plain TEXT (not JSON)?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) -></div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) ->></div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) @></div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) #></div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: 50M row table, default autovacuum (threshold=50, scale_factor=0.2). How many dead tuples trigger vacuum?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) 50</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) 10,000</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">C) ~10,000,050 (that's 20% bloat!)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) 50,000,000</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: In PgBouncer transaction mode, which will NOT work correctly?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) BEGIN; SELECT ...; UPDATE ...; COMMIT;</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) SET search_path TO myschema; SELECT ...;</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) SELECT * FROM orders WHERE order_id = $1;</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) INSERT INTO orders (...) RETURNING order_id;</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: Which metric in pg_stat_statements best identifies queries worth optimizing?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Maximum execution time per call</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) Total execution time across all calls</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) Number of rows returned</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Number of shared blocks read</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: What is the primary advantage of COPY over INSERT for bulk loading?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) COPY supports transactions while INSERT does not</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">B) COPY bypasses all constraints and indexes</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">C) COPY uses a binary streaming protocol with minimal per-row overhead</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) COPY automatically parallelizes across CPU cores</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<!-- Screen 9: Key Takeaways -->
+<section class="screen" id="s9">
+  <h2>🎯 Key <span class="accent">Takeaways</span></h2>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🗃️ JSONB</h4>
+      <p>Document flexibility in PostgreSQL. Use -> for JSON, ->> for text, @> for containment. GIN index for flexible queries, expression index for specific paths.</p>
+    </div>
+    <div class="card blue">
+      <h4>🧩 Partitioning</h4>
+      <p>Declarative partitioning enables partition pruning. Range by date for time-series. Detach+drop for instant data purge. Always create a DEFAULT partition.</p>
+    </div>
+    <div class="card green">
+      <h4>🧹 VACUUM</h4>
+      <p>Reclaims dead tuples from MVCC. Autovacuum defaults are too conservative for hot tables — tune scale_factor to 0.01. Use pg_repack over VACUUM FULL.</p>
+    </div>
+    <div class="card purple">
+      <h4>🔌 PgBouncer</h4>
+      <p>Transaction mode multiplexes hundreds of connections onto a small pool. Session-level state (SET, prepared stmts) doesn't persist across transactions.</p>
+    </div>
+    <div class="card">
+      <h4>📈 pg_stat_statements</h4>
+      <p>Sort by total_exec_time for highest impact targets. Combine with pg_stat_user_tables for seq scan detection.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔒 Locking</h4>
+      <p>FOR UPDATE serializes concurrent access. SKIP LOCKED for job queues. Advisory locks for app-level coordination. Consistent lock ordering prevents deadlocks.</p>
+    </div>
+    <div class="card green">
+      <h4>📥 COPY</h4>
+      <p>10-100× faster than INSERT. Drop indexes before, rebuild after. \copy for client-side, COPY for server-side. Always ANALYZE after bulk loads.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-03-query-optimization/index.html">← Prev: Query Optimization</a>
+  <a href="../module-05-nosql/index.html">Next: NoSQL Databases →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Chat animation
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above and try to identify the core concept.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+
+  // Arrow key navigation
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowLeft'){const a=document.querySelector('footer.module-nav a:first-child');if(a)window.location=a.href;}
+    if(e.key==='ArrowRight'){const a=document.querySelector('footer.module-nav a:last-child');if(a)window.location=a.href;}
+  });
+})();
+</script>
+</body>
+</html>

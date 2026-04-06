@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 3: Query Performance & Optimization | SQL & Databases Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+.info-table th{background:var(--color-bg-code);color:#CDD6F4;padding:0.6rem 0.8rem;text-align:left;font-family:var(--font-heading);font-weight:600;font-size:0.85rem}
+.info-table td{padding:0.6rem 0.8rem;border-bottom:1px solid rgba(0,0,0,0.06)}
+.info-table tr:last-child td{border-bottom:none}
+.info-table tr:hover td{background:rgba(0,0,0,0.02)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}.info-table{font-size:0.8rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🗄️ SQL & Databases Mastery</a><div class="nav-dots"><a href="../module-01-window-functions/" class="nav-dot"></a><a href="../module-02-ctes-advanced/" class="nav-dot"></a><a href="../module-03-query-optimization/" class="nav-dot active"></a><a href="../module-04-postgresql/" class="nav-dot"></a><a href="../module-05-nosql/" class="nav-dot"></a><a href="../module-06-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: EXPLAIN ANALYZE -->
+<section class="screen" id="s1">
+  <h2>🔬 EXPLAIN ANALYZE — <span class="accent">Reading Query Plans</span></h2>
+  <p><code>EXPLAIN</code> shows you <strong>what the database plans to do</strong>. <code>EXPLAIN ANALYZE</code> actually <strong>runs the query</strong> and shows what it really did, with timing and row counts.</p>
+  <div class="code-block"><span class="cm">-- PostgreSQL syntax</span>
+<span class="kw">EXPLAIN ANALYZE</span>
+<span class="kw">SELECT</span> c.name, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> order_count, <span class="fn">SUM</span>(o.amount) <span class="kw">AS</span> total_spent
+<span class="kw">FROM</span> customers c
+<span class="kw">JOIN</span> orders o <span class="kw">ON</span> c.customer_id = o.customer_id
+<span class="kw">WHERE</span> o.order_date >= <span class="str">'2024-01-01'</span>
+<span class="kw">GROUP BY</span> c.name
+<span class="kw">ORDER BY</span> total_spent <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="fn">10</span>;</div>
+
+  <h3>Decoding the Key Elements</h3>
+  <div class="code-block"><span class="cm">Node Type  (cost=startup..total rows=estimated width=bytes) (actual time=start..end rows=actual loops=N)</span></div>
+
+  <table class="info-table">
+    <tr><th>Element</th><th>Meaning</th></tr>
+    <tr><td><code>cost=startup..total</code></td><td>Estimated cost in arbitrary units (lower = better)</td></tr>
+    <tr><td><code>rows=</code></td><td>Estimated rows (EXPLAIN) or actual (ANALYZE)</td></tr>
+    <tr><td><code>actual time=</code></td><td>Real wall-clock time in milliseconds</td></tr>
+    <tr><td><code>loops=</code></td><td>How many times this node executed</td></tr>
+    <tr><td><code>Rows Removed</code></td><td>Rows that didn't pass the filter</td></tr>
+    <tr><td><code>width=</code></td><td>Estimated row size in bytes</td></tr>
+  </table>
+
+  <h3>Common Scan Types</h3>
+  <div class="card-grid">
+    <div class="card"><h4>📖 Seq Scan</h4><p>Full table scan — reads every row. Fine for small tables or queries returning &gt;10-15% of rows.</p></div>
+    <div class="card blue"><h4>🔍 Index Scan</h4><p>B-tree lookup + table fetch. The workhorse for selective queries.</p></div>
+    <div class="card green"><h4>⚡ Index Only Scan</h4><p>Reads only from the index — no table access! Requires a covering index.</p></div>
+    <div class="card purple"><h4>🗺️ Bitmap Scan</h4><p>Index → bitmap → batch table fetch. Great for medium-selectivity queries.</p></div>
+  </div>
+
+  <p><strong>Red flags</strong>: Seq Scan on a large table with a selective WHERE, actual rows ≫ estimated rows (bad statistics), nested loops with high <code>loops=</code> count.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"I start with EXPLAIN ANALYZE to get the actual execution plan. I look for: (1) Seq Scans on large tables with selective filters — need indexes. (2) Big discrepancies between estimated and actual row counts — stale statistics, fix with ANALYZE. (3) The most expensive node — follow cost numbers and actual time to find the bottleneck."</p>
+  </div>
+</section>
+
+<!-- Screen 2: Index Types -->
+<section class="screen screen-alt" id="s2">
+  <h2>🌳 Index Types — <span class="accent">B-tree, Hash, GIN, GiST</span></h2>
+
+  <h3>B-tree — The Default Workhorse</h3>
+  <p>B-tree indexes support equality, range queries, sorting, and prefix matching. O(log n) lookup — for a 10M-row table, that's ~23 comparisons.</p>
+  <div class="code-block"><span class="kw">CREATE INDEX</span> idx_orders_date <span class="kw">ON</span> orders (order_date);
+
+<span class="cm">-- These ALL use the B-tree index:</span>
+<span class="kw">WHERE</span> order_date = <span class="str">'2024-01-15'</span>          <span class="cm">-- Equality</span>
+<span class="kw">WHERE</span> order_date > <span class="str">'2024-01-01'</span>          <span class="cm">-- Range</span>
+<span class="kw">WHERE</span> order_date <span class="kw">BETWEEN</span> <span class="str">'2024-01'</span> <span class="kw">AND</span> <span class="str">'2024-06'</span>  <span class="cm">-- Range</span>
+<span class="kw">ORDER BY</span> order_date                      <span class="cm">-- Sorting</span>
+<span class="kw">WHERE</span> order_date <span class="kw">IS NULL</span>                 <span class="cm">-- NULL lookup</span></div>
+
+  <h3>GIN — Generalized Inverted Index</h3>
+  <p>Designed for <strong>composite values</strong> — arrays, JSONB, and full-text search. Maps each element/key to the rows containing it.</p>
+  <div class="code-block"><span class="cm">-- Full-text search</span>
+<span class="kw">CREATE INDEX</span> idx_products_search <span class="kw">ON</span> products <span class="kw">USING</span> <span class="fn">GIN</span> (<span class="fn">to_tsvector</span>(<span class="str">'english'</span>, description));
+
+<span class="cm">-- JSONB containment</span>
+<span class="kw">CREATE INDEX</span> idx_orders_metadata <span class="kw">ON</span> orders <span class="kw">USING</span> <span class="fn">GIN</span> (metadata);
+
+<span class="cm">-- Array operations</span>
+<span class="kw">CREATE INDEX</span> idx_products_tags <span class="kw">ON</span> products <span class="kw">USING</span> <span class="fn">GIN</span> (tags);</div>
+
+  <h3>GiST — Generalized Search Tree</h3>
+  <p>Supports <strong>spatial data</strong>, range types, and nearest-neighbor (KNN) searches.</p>
+  <div class="code-block"><span class="cm">-- PostGIS spatial queries</span>
+<span class="kw">CREATE INDEX</span> idx_stores_location <span class="kw">ON</span> stores <span class="kw">USING</span> <span class="fn">GIST</span> (location);
+
+<span class="kw">SELECT</span> name, <span class="fn">ST_Distance</span>(location, <span class="fn">ST_MakePoint</span>(<span class="fn">-73.98</span>, <span class="fn">40.75</span>)) <span class="kw">AS</span> distance
+<span class="kw">FROM</span> stores
+<span class="kw">ORDER BY</span> location &lt;-&gt; <span class="fn">ST_MakePoint</span>(<span class="fn">-73.98</span>, <span class="fn">40.75</span>)  <span class="cm">-- KNN search</span>
+<span class="kw">LIMIT</span> <span class="fn">5</span>;</div>
+
+  <h3>Quick Reference</h3>
+  <table class="info-table">
+    <tr><th>Index Type</th><th>Best For</th><th>Equality</th><th>Range</th><th>Sort</th></tr>
+    <tr><td>B-tree</td><td>Most queries (default)</td><td>✅</td><td>✅</td><td>✅</td></tr>
+    <tr><td>Hash</td><td>Exact match only</td><td>✅</td><td>❌</td><td>❌</td></tr>
+    <tr><td>GIN</td><td>JSONB, arrays, full-text</td><td>✅</td><td>❌</td><td>❌</td></tr>
+    <tr><td>GiST</td><td>Spatial, ranges, KNN</td><td>✅</td><td>✅</td><td>❌</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"For a JSONB column storing product attributes, I'd use a GIN index. GIN maps each key-value pair to the rows containing it, enabling efficient containment queries with @>. For single-key lookups, a B-tree expression index like <code>CREATE INDEX ON products ((attributes->>'color'))</code> is smaller and faster."</p>
+  </div>
+</section>
+
+<!-- Screen 3: Composite Indexes -->
+<section class="screen" id="s3">
+  <h2>📐 Composite Indexes — <span class="accent">Column Order Matters</span></h2>
+
+  <h3>The Leftmost Prefix Rule</h3>
+  <p>A composite index on <code>(a, b, c)</code> can satisfy queries on <code>(a)</code>, <code>(a, b)</code>, or <code>(a, b, c)</code> — but <strong>never</strong> <code>(b)</code> or <code>(c)</code> alone. Think of a phone book sorted by (last, first, city).</p>
+  <div class="code-block"><span class="kw">CREATE INDEX</span> idx_orders_composite <span class="kw">ON</span> orders (customer_id, order_date, status);
+
+<span class="cm">-- ✅ Uses full index:</span>
+<span class="kw">WHERE</span> customer_id = <span class="fn">100</span> <span class="kw">AND</span> order_date = <span class="str">'2024-01-15'</span> <span class="kw">AND</span> status = <span class="str">'shipped'</span>
+
+<span class="cm">-- ✅ Uses first two columns:</span>
+<span class="kw">WHERE</span> customer_id = <span class="fn">100</span> <span class="kw">AND</span> order_date > <span class="str">'2024-01-01'</span>
+
+<span class="cm">-- ✅ Uses first column only:</span>
+<span class="kw">WHERE</span> customer_id = <span class="fn">100</span>
+
+<span class="cm">-- ❌ Cannot use this index:</span>
+<span class="kw">WHERE</span> order_date = <span class="str">'2024-01-15'</span>
+<span class="kw">WHERE</span> status = <span class="str">'shipped'</span></div>
+
+  <h3>Column Order Strategy — ERS</h3>
+  <p><strong>Rule</strong>: <strong>E</strong>quality columns first → <strong>R</strong>ange/inequality next → <strong>S</strong>ort columns last.</p>
+  <div class="code-block"><span class="cm">-- Query: WHERE status = 'active' AND created_at > '2024-01-01' ORDER BY amount DESC</span>
+<span class="cm">-- Optimal index:</span>
+<span class="kw">CREATE INDEX</span> idx_optimal <span class="kw">ON</span> orders (status, created_at, amount);
+<span class="cm">--                                   ^equality  ^range      ^sort</span></div>
+
+  <h3>Why Column Order Matters — 5000× Difference</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Index A: (order_date, customer_id)</h4>
+      <ul>
+        <li>Scans ALL orders for the date range</li>
+        <li>Then filters for the customer</li>
+        <li>Reads ~30,000 rows → filters to 6</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Index B: (customer_id, order_date)</h4>
+      <ul>
+        <li>Jumps straight to the customer</li>
+        <li>Then scans their date range</li>
+        <li>Reads ~6 rows directly</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>The Range Column Trap</h3>
+  <p>An index can efficiently handle <strong>at most one range condition</strong>. After the first range predicate, subsequent columns aren't used for seeking.</p>
+  <div class="code-block"><span class="kw">CREATE INDEX</span> idx_orders <span class="kw">ON</span> orders (amount, order_date);
+
+<span class="cm">-- ✅ Uses both columns (amount is equality):</span>
+<span class="kw">WHERE</span> amount = <span class="fn">100</span> <span class="kw">AND</span> order_date > <span class="str">'2024-01-01'</span>
+
+<span class="cm">-- ⚠️ Uses amount's range only (order_date becomes a filter):</span>
+<span class="kw">WHERE</span> amount > <span class="fn">50</span> <span class="kw">AND</span> order_date > <span class="str">'2024-01-01'</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"I follow the ERS principle: Equality first (maximally narrows search), Range next (B-tree handles one range scan), Sort last (avoids a separate sort step). I also consider query frequency — if 80% of queries filter by customer_id, it should be leftmost even if other orderings suit rare queries better."</p>
+  </div>
+</section>
+
+<!-- Screen 4: Covering Indexes -->
+<section class="screen screen-alt" id="s4">
+  <h2>📦 Covering Indexes & <span class="accent">Index-Only Scans</span></h2>
+
+  <h3>The Extra Trip Problem</h3>
+  <p>A regular index lookup is a <strong>two-step process</strong>: search the index → find row pointers, then fetch actual rows from the table (heap). The heap fetch is often the expensive part — scattered random I/O.</p>
+
+  <h3>Covering Indexes to the Rescue</h3>
+  <p>A <span class="tooltip-term" data-tip="An index that includes all columns a query needs, so the database can answer entirely from the index without touching the table.">covering index</span> includes all columns the query needs, eliminating the heap fetch entirely.</p>
+  <div class="code-block"><span class="cm">-- Regular index: still needs heap fetch for order_date and amount</span>
+<span class="kw">CREATE INDEX</span> idx_orders_customer <span class="kw">ON</span> orders (customer_id);
+
+<span class="cm">-- Covering index: includes everything the query needs!</span>
+<span class="kw">CREATE INDEX</span> idx_orders_covering <span class="kw">ON</span> orders (customer_id)
+    <span class="kw">INCLUDE</span> (order_date, amount);</div>
+
+  <h3>INCLUDE vs Composite</h3>
+  <table class="info-table">
+    <tr><th>Feature</th><th><code>(a, b, c)</code> composite</th><th><code>(a) INCLUDE (b, c)</code></th></tr>
+    <tr><td>Filter on b or c</td><td>✅ Yes</td><td>❌ No</td></tr>
+    <tr><td>Sort on b or c</td><td>✅ Yes</td><td>❌ No</td></tr>
+    <tr><td>Index-only scan</td><td>✅ Yes</td><td>✅ Yes</td></tr>
+    <tr><td>Index size</td><td>Larger (b,c in tree)</td><td>Smaller (b,c in leaf only)</td></tr>
+    <tr><td>Maintenance cost</td><td>Higher</td><td>Lower</td></tr>
+  </table>
+
+  <p><strong>Rule of thumb</strong>: Use <code>INCLUDE</code> for columns you SELECT but never filter/sort on. Use composite keys for columns you filter or sort on.</p>
+
+  <h3>Visibility Map &amp; VACUUM</h3>
+  <div class="code-block"><span class="cm">-- Check if your query gets an Index Only Scan</span>
+<span class="kw">EXPLAIN ANALYZE</span>
+<span class="kw">SELECT</span> order_date, amount <span class="kw">FROM</span> orders <span class="kw">WHERE</span> customer_id = <span class="fn">123</span>;
+
+<span class="cm">-- Look for: "Index Only Scan using idx_orders_covering"</span>
+<span class="cm">-- "Heap Fetches: 0" → pure index-only scan!</span>
+<span class="cm">-- "Heap Fetches: 500" → visibility map needs VACUUM</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"A covering index includes all columns a query needs — filter and output — so the database answers entirely from the index. I use the INCLUDE clause to add non-searchable columns to the leaf pages, keeping the tree small. The tradeoff is increased index size and write overhead, so I reserve them for high-frequency, performance-critical queries."</p>
+  </div>
+</section>
+
+<!-- Screen 5: Join Algorithms -->
+<section class="screen" id="s5">
+  <h2>🤝 Join Algorithms — <span class="accent">NL, Hash, Merge</span></h2>
+
+  <h3>Nested Loop Join</h3>
+  <div class="code-block"><span class="cm">FOR each row in outer_table:         ← "Driving" table</span>
+<span class="cm">    FOR each row in inner_table:     ← "Probe" table</span>
+<span class="cm">        IF join_condition matches:</span>
+<span class="cm">            output combined row</span></div>
+  <p><strong>Best when</strong>: Outer table is small, inner table has an index on the join column. 10 rows × index lookup = ~200 operations.</p>
+
+  <h3>Hash Join</h3>
+  <div class="code-block"><span class="cm">Step 1: Build hash table from SMALLER table (build side)</span>
+<span class="cm">Step 2: Probe hash table for each row of LARGER table (probe side)</span>
+<span class="cm">= O(n + m) total — fast when smaller table fits in work_mem</span></div>
+  <p><strong>Best when</strong>: No useful indexes, both tables moderately sized, equi-join. <strong>Worst</strong>: build table spills to disk.</p>
+
+  <h3>Merge Join (Sort-Merge)</h3>
+  <div class="code-block"><span class="cm">Step 1: Sort both tables on the join key (or use index order)</span>
+<span class="cm">Step 2: Walk both sorted lists simultaneously, matching rows</span>
+<span class="cm">If already sorted: just O(n + m) — the fastest possible!</span></div>
+  <p><strong>Best when</strong>: Both inputs are already sorted from an index or preceding ORDER BY.</p>
+
+  <h3>Comparison Matrix</h3>
+  <table class="info-table">
+    <tr><th>Algorithm</th><th>Time</th><th>Memory</th><th>Best Scenario</th></tr>
+    <tr><td>Nested Loop</td><td>O(n × m) worst</td><td>O(1)</td><td>Small outer + indexed inner</td></tr>
+    <tr><td>Hash Join</td><td>O(n + m)</td><td>O(smaller)</td><td>Large × large, no index, equi</td></tr>
+    <tr><td>Merge Join</td><td>O(n log n + m log m)</td><td>O(sort bufs)</td><td>Pre-sorted inputs</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Nested Loop is best for small-large joins with an index. Hash Join is optimal for large equi-joins without indexes — O(n+m). Merge Join excels when both inputs are already sorted. Non-equi joins (>, <, LIKE) can only use Nested Loop. The optimizer considers table sizes, indexes, join predicate type, and work_mem."</p>
+  </div>
+</section>
+
+<!-- Screen 6: Statistics & ANALYZE -->
+<section class="screen screen-alt" id="s6">
+  <h2>📊 Statistics, ANALYZE &amp; <span class="accent">Selectivity</span></h2>
+
+  <h3>Why the Optimizer Needs Statistics</h3>
+  <p>The query optimizer is a <strong>cost-based planner</strong>. It estimates the cost of different strategies and picks the cheapest. It needs: row counts, distinct values, data distribution, and selectivity.</p>
+
+  <h3>What ANALYZE Collects</h3>
+  <table class="info-table">
+    <tr><th>Statistic</th><th>What It Stores</th><th>Used For</th></tr>
+    <tr><td><code>n_distinct</code></td><td>Number of distinct values</td><td>GROUP BY size estimation</td></tr>
+    <tr><td><code>null_frac</code></td><td>Fraction of NULLs</td><td>NULL handling</td></tr>
+    <tr><td><code>most_common_vals</code></td><td>Frequent values + frequencies</td><td>Skewed data estimation</td></tr>
+    <tr><td><code>histogram_bounds</code></td><td>Evenly-spaced boundaries</td><td>Range query estimation</td></tr>
+    <tr><td><code>correlation</code></td><td>Physical vs logical order</td><td>Index scan vs bitmap choice</td></tr>
+  </table>
+
+  <h3>When Statistics Go Wrong</h3>
+  <div class="code-block"><span class="cm">-- Symptom: estimated rows = 100, actual rows = 500,000</span>
+<span class="cm">-- Cause: stale statistics after bulk load/delete</span>
+<span class="cm">-- Fix:</span>
+<span class="kw">ANALYZE</span> orders;
+
+<span class="cm">-- For unusual distributions, increase statistics target:</span>
+<span class="kw">ALTER TABLE</span> orders <span class="kw">ALTER COLUMN</span> status <span class="kw">SET STATISTICS</span> <span class="fn">1000</span>;  <span class="cm">-- default is 100</span>
+<span class="kw">ANALYZE</span> orders;</div>
+
+  <h3>Extended Statistics (PostgreSQL 10+)</h3>
+  <p>Standard stats are <strong>per-column</strong>. Correlated columns (city + zip) cause the optimizer to assume independence, leading to wildly wrong estimates.</p>
+  <div class="code-block"><span class="cm">-- Without extended stats, optimizer assumes independence:</span>
+<span class="cm">-- P(city='NYC' AND zip='10001') = 0.05 × 0.0001 = 0.000005</span>
+<span class="cm">-- Reality: 0.003 (600× higher!)</span>
+
+<span class="kw">CREATE STATISTICS</span> stat_city_zip (dependencies, ndistinct)
+    <span class="kw">ON</span> city, zip_code <span class="kw">FROM</span> addresses;
+<span class="kw">ANALYZE</span> addresses;</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"A query slow after a bulk load? The table statistics are stale. The optimizer uses old row counts and distributions, making bad plan choices — like Seq Scan instead of Index Scan. Fix: run ANALYZE. In production, configure autovacuum/autoanalyze more aggressively with per-table settings for autovacuum_analyze_threshold and scale_factor."</p>
+  </div>
+</section>
+
+<!-- Screen 7: Query Rewriting & Materialized Views -->
+<section class="screen" id="s7">
+  <h2>🔄 Query Rewriting &amp; <span class="accent">Materialized Views</span></h2>
+
+  <h3>Predicate Pushdown</h3>
+  <p>The optimizer pushes WHERE filters <strong>as early as possible</strong> — ideally into the scan layer so fewer rows flow through joins and aggregations.</p>
+  <div class="translate">
+    <div class="translate-code"><span class="cm">-- The optimizer rewrites this:</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> (
+    <span class="kw">SELECT</span> c.name, o.amount
+    <span class="kw">FROM</span> customers c
+    <span class="kw">JOIN</span> orders o <span class="kw">ON</span> c.customer_id = o.customer_id
+) sub
+<span class="kw">WHERE</span> order_date > <span class="str">'2024-01-01'</span>;</div>
+    <div class="translate-eng">
+      <div class="line">🔽 Pushes the filter down:</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Filter applied during scan,</div>
+      <div class="line">not after the join completes.</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">Fewer rows flow through</div>
+      <div class="line">the entire pipeline → faster.</div>
+    </div>
+  </div>
+
+  <h3>Join Reordering</h3>
+  <p>The optimizer rearranges join order to minimize intermediate result sizes — starting with the most selective filter produces smaller intermediates.</p>
+
+  <h3>Materialized Views</h3>
+  <p>A <span class="tooltip-term" data-tip="A cached query result stored as a physical table. Unlike regular views (just saved SQL), materialized views store actual data you must refresh.">materialized view</span> is a <strong>cached query result</strong> stored as a physical table.</p>
+  <div class="code-block"><span class="kw">CREATE MATERIALIZED VIEW</span> mv_daily_revenue <span class="kw">AS</span>
+<span class="kw">SELECT</span>
+    <span class="fn">DATE_TRUNC</span>(<span class="str">'day'</span>, order_date) <span class="kw">AS</span> day,
+    category,
+    <span class="fn">COUNT</span>(*) <span class="kw">AS</span> order_count,
+    <span class="fn">SUM</span>(amount) <span class="kw">AS</span> revenue
+<span class="kw">FROM</span> orders o
+<span class="kw">JOIN</span> products p <span class="kw">ON</span> o.product_id = p.product_id
+<span class="kw">GROUP BY</span> <span class="fn">DATE_TRUNC</span>(<span class="str">'day'</span>, order_date), category;
+
+<span class="cm">-- Concurrent refresh (no lock, needs unique index)</span>
+<span class="kw">CREATE UNIQUE INDEX</span> idx_mv_unique <span class="kw">ON</span> mv_daily_revenue (day, category);
+<span class="kw">REFRESH MATERIALIZED VIEW CONCURRENTLY</span> mv_daily_revenue;</div>
+
+  <h3>When to Use Materialized Views</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Good Use Cases</h4>
+      <ul>
+        <li>Dashboard aggregations over millions of rows</li>
+        <li>Complex joins that rarely change</li>
+        <li>Pre-computed rollups for BI tools</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Bad Use Cases</h4>
+      <ul>
+        <li>Data that must be real-time</li>
+        <li>High-write-rate tables</li>
+        <li>Simple queries that are already fast</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"For a dashboard querying billions of rows, I'd create materialized views for common aggregation patterns — daily/weekly rollups — refreshed on a schedule with CONCURRENTLY to avoid blocking reads. This turns a 30-second aggregation into a 10ms lookup. For real-time needs, I'd layer a live query over recent data on top."</p>
+  </div>
+</section>
+
+<!-- Screen 8: Table Partitioning -->
+<section class="screen screen-alt" id="s8">
+  <h2>🧩 Table Partitioning — <span class="accent">Range, List, Hash</span></h2>
+
+  <h3>Why Partition?</h3>
+  <p>Partitioning splits a logical table into physical sub-tables. The database <strong>prunes</strong> partitions that don't match query filters — scanning 10M rows instead of 500M.</p>
+
+  <h3>Range Partitioning (Time-Series)</h3>
+  <div class="code-block"><span class="kw">CREATE TABLE</span> orders (
+    order_id    <span class="fn">BIGINT</span>,
+    customer_id <span class="fn">INT</span>,
+    order_date  <span class="fn">DATE</span>,
+    amount      <span class="fn">DECIMAL</span>(<span class="fn">10</span>,<span class="fn">2</span>)
+) <span class="kw">PARTITION BY RANGE</span> (order_date);
+
+<span class="kw">CREATE TABLE</span> orders_2024_01 <span class="kw">PARTITION OF</span> orders
+    <span class="kw">FOR VALUES FROM</span> (<span class="str">'2024-01-01'</span>) <span class="kw">TO</span> (<span class="str">'2024-02-01'</span>);
+<span class="kw">CREATE TABLE</span> orders_2024_02 <span class="kw">PARTITION OF</span> orders
+    <span class="kw">FOR VALUES FROM</span> (<span class="str">'2024-02-01'</span>) <span class="kw">TO</span> (<span class="str">'2024-03-01'</span>);</div>
+
+  <h3>List &amp; Hash Partitioning</h3>
+  <div class="card-grid">
+    <div class="card blue">
+      <h4>📋 List Partitioning</h4>
+      <p>Best for categorical data — regions, statuses. <code>PARTITION BY LIST (region)</code> with <code>FOR VALUES IN ('east', 'west')</code>.</p>
+    </div>
+    <div class="card green">
+      <h4>#️⃣ Hash Partitioning</h4>
+      <p>Guarantees even distribution. <code>PARTITION BY HASH (customer_id)</code> with <code>MODULUS 4, REMAINDER 0</code>.</p>
+    </div>
+  </div>
+
+  <h3>Partitioning Comparison</h3>
+  <table class="info-table">
+    <tr><th>Type</th><th>Best For</th><th>Pruning On</th><th>Even Distribution</th></tr>
+    <tr><td>Range</td><td>Time-series, dates</td><td>Range predicates</td><td>Depends on data</td></tr>
+    <tr><td>List</td><td>Regions, categories</td><td>IN / = predicates</td><td>Depends on data</td></tr>
+    <tr><td>Hash</td><td>Even distribution needed</td><td>= predicates</td><td>✅ Guaranteed</td></tr>
+  </table>
+
+  <h3>Pitfalls</h3>
+  <p>⚠️ Partition key must be in every unique/PK constraint. Cross-partition queries (no filter on partition key) scan ALL partitions. Too many partitions (&gt;1000) slow planning.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"I'd partition when a table exceeds tens of millions of rows and queries filter on a specific column. Range by month for time-series — enables partition pruning. Dropping old partitions is instantaneous vs DELETE on millions of rows. Key: partition key must be in all unique constraints, keep count reasonable."</p>
+  </div>
+</section>
+
+<!-- Screen 9: Quiz -->
+<section class="screen" id="s9">
+  <h2>🧪 Quiz: <span class="accent">Test Yourself</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: EXPLAIN ANALYZE shows estimated rows=100, actual rows=750,000. Most likely cause and fix?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) The query is missing a LIMIT clause</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">B) The index is corrupted and needs to be rebuilt</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">C) Table statistics are stale; run ANALYZE on the table</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) The table needs to be partitioned</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Composite index on orders(status, order_date, customer_id). Which query can NOT use it efficiently?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) WHERE status = 'active' AND order_date > '2024-01-01'</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) WHERE status = 'active'</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">C) WHERE order_date > '2024-01-01' AND customer_id = 42</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) WHERE status = 'active' AND order_date = '2024-01-15' AND customer_id = 42</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: When does the optimizer choose a Hash Join over Nested Loop?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) When both tables are small and have indexes</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) When one table is small with an index on the join column</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">C) When both tables are large, no index, and equi-join</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) When the query includes ORDER BY on the join column</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: What is the purpose of the INCLUDE clause in an index?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) To add columns for filtering in WHERE clauses</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) To store additional columns in leaf pages for index-only scans</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) To include NULL values in the index</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) To create a partial index on specific rows</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: Range-partitioned orders by month. Which query benefits MOST from partition pruning?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) SELECT * FROM orders WHERE customer_id = 42</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">B) SELECT COUNT(*) FROM orders</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">C) SELECT * FROM orders WHERE order_date BETWEEN '2024-03-01' AND '2024-03-31'</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) SELECT * FROM orders ORDER BY amount DESC LIMIT 10</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<!-- Screen 10: Key Takeaways -->
+<section class="screen screen-alt" id="s10">
+  <h2>🎯 Key <span class="accent">Takeaways</span></h2>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔬 EXPLAIN ANALYZE</h4>
+      <p>Your #1 diagnostic tool. Read bottom-up, compare estimated vs actual rows, look for Seq Scans on large tables with selective filters.</p>
+    </div>
+    <div class="card blue">
+      <h4>🌳 Index Types</h4>
+      <p>B-tree handles 90% of cases. GIN for JSONB/arrays/full-text. GiST for spatial. Hash almost never. Know what each supports.</p>
+    </div>
+    <div class="card green">
+      <h4>📐 Composite Index Order</h4>
+      <p>ERS rule: Equality → Range → Sort. Leftmost prefix rule: (A, B, C) helps A, A+B, A+B+C — never B or C alone.</p>
+    </div>
+    <div class="card purple">
+      <h4>📦 Covering Indexes</h4>
+      <p>INCLUDE eliminates heap fetches for high-frequency queries. Query answered entirely from the index.</p>
+    </div>
+    <div class="card">
+      <h4>🤝 Join Algorithms</h4>
+      <p>NL (small × indexed-large), Hash (large × large, no index), Merge (pre-sorted). Non-equi joins → Nested Loop only.</p>
+    </div>
+    <div class="card blue">
+      <h4>📊 Statistics & ANALYZE</h4>
+      <p>Stale stats = bad plans. Run ANALYZE after bulk changes. Extended stats for correlated columns.</p>
+    </div>
+    <div class="card green">
+      <h4>🔄 Materialized Views</h4>
+      <p>Pre-computed results for dashboards. REFRESH CONCURRENTLY avoids blocking. Trade freshness for speed.</p>
+    </div>
+    <div class="card purple">
+      <h4>🧩 Partitioning</h4>
+      <p>Range for time-series, List for categories, Hash for even distribution. Pruning only helps when filtering on partition key.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-02-ctes-advanced/index.html">← Prev: CTEs & Advanced SQL</a>
+  <a href="../module-04-postgresql/index.html">Next: PostgreSQL Internals →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Chat animation
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above and try to identify the core concept.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+
+  // Arrow key navigation
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowLeft'){const a=document.querySelector('footer.module-nav a:first-child');if(a)window.location=a.href;}
+    if(e.key==='ArrowRight'){const a=document.querySelector('footer.module-nav a:last-child');if(a)window.location=a.href;}
+  });
+})();
+</script>
+</body>
+</html>

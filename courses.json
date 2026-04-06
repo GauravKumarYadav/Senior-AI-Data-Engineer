@@ -46,5 +46,13 @@
     "href": "./cost-optmization/course-cost-optimization/",
     "desc": "Partitioning, shuffle reduction, small files problem, backfill estimation, FinOps metrics, join optimization, and cluster management.",
     "tags": ["6 Modules", "Interactive", "Scenario Quizzes"]
+  },
+  {
+    "title": "SQL & Databases Mastery",
+    "icon": "🗄️",
+    "color": "#2A7B9B",
+    "href": "./databases-SQL/course-sql-databases/",
+    "desc": "Window functions, CTEs, recursive queries, query optimization, PostgreSQL internals, NoSQL essentials — from fundamentals to interview-ready.",
+    "tags": ["6 Modules", "80+ Questions", "20+ Quizzes"]
   }
 ]

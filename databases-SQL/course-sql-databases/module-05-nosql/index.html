@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 5: NoSQL Essentials | SQL & Databases Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🗄️ SQL & Databases Mastery</a><div class="nav-dots"><a href="../module-01-window-functions/" class="nav-dot"></a><a href="../module-02-ctes-advanced/" class="nav-dot"></a><a href="../module-03-query-optimization/" class="nav-dot"></a><a href="../module-04-postgresql/" class="nav-dot"></a><a href="../module-05-nosql/" class="nav-dot active"></a><a href="../module-06-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: DynamoDB -->
+<section class="screen" id="s1">
+  <h2>🔑 DynamoDB — <span class="accent">Key-Value at Planet Scale</span></h2>
+  <p>DynamoDB is a fully managed key-value + document database from AWS. Think of it as a <strong>distributed hash map</strong> where every item is identified by a primary key and stored across partitions based on that key.</p>
+
+  <h3>Partition Key + Sort Key</h3>
+  <p>The <span class="tooltip-term" data-tip="The hash key that determines which physical partition stores the item. Choose high-cardinality values for even distribution.">partition key</span> (PK) determines data distribution. The <span class="tooltip-term" data-tip="Orders items WITHIN a partition. Enables range queries like begins_with, between, >, < on items sharing the same partition key.">sort key</span> (SK) enables range queries within a partition.</p>
+
+  <div class="code-block"><span class="cm">Table: orders</span>
+<span class="cm">PK: customer_id    SK: order_date#order_id</span>
+
+┌─────────────┬────────────────────┬─────────┬──────────┐
+│ customer_id │ order_date#oid     │ amount  │ status   │
+│ (PK)        │ (SK)               │         │          │
+├─────────────┼────────────────────┼─────────┼──────────┤
+│ CUST#001    │ 2024-01-15#ORD-101 │ 59.99   │ shipped  │
+│ CUST#001    │ 2024-02-20#ORD-205 │ 124.50  │ pending  │
+│ CUST#001    │ 2024-03-08#ORD-312 │ 89.00   │ shipped  │
+│ CUST#002    │ 2024-01-03#ORD-055 │ 250.00  │ delivered│
+│ CUST#002    │ 2024-04-11#ORD-401 │ 34.99   │ pending  │
+└─────────────┴────────────────────┴─────────┴──────────┘</div>
+
+  <h3>Query Capabilities</h3>
+  <div class="code-block"><span class="cm"># Get all orders for a customer (efficient — queries ONE partition)</span>
+table.query(
+    KeyConditionExpression=Key(<span class="str">'customer_id'</span>).eq(<span class="str">'CUST#001'</span>)
+)
+
+<span class="cm"># Get orders for a customer in a date range (sort key range)</span>
+table.query(
+    KeyConditionExpression=(
+        Key(<span class="str">'customer_id'</span>).eq(<span class="str">'CUST#001'</span>) &amp;
+        Key(<span class="str">'order_date_oid'</span>).between(<span class="str">'2024-01-01'</span>, <span class="str">'2024-03-31'</span>)
+    )
+)
+
+<span class="cm"># ❌ This is a SCAN (reads entire table — expensive!):</span>
+<span class="cm"># "Find all orders with status = 'pending'" without an index</span></div>
+
+  <h3>Global Secondary Indexes (GSIs)</h3>
+  <p>A GSI is a <strong>full copy of the table</strong> with a different key schema, maintained automatically by DynamoDB.</p>
+  <div class="code-block">Base Table:           PK=customer_id, SK=order_date#order_id
+GSI-1 (by status):   PK=status,      SK=order_date
+GSI-2 (by product):  PK=product_id,  SK=order_date
+
+<span class="str">"All pending orders"</span>    → Query GSI-1 where PK=<span class="str">'pending'</span> ✅
+<span class="str">"Orders for product Y"</span> → Query GSI-2 ✅</div>
+
+  <div class="aha">
+    <div class="aha-title">⚠️ GSI Gotchas</div>
+    <p>Each GSI <strong>doubles your write cost</strong> (DynamoDB replicates writes). GSIs are eventually consistent. Max 20 per table. A hot partition on a GSI can throttle writes to the base table.</p>
+  </div>
+
+  <h3>Single-Table Design Pattern</h3>
+  <p>Instead of multiple tables, DynamoDB experts put <strong>everything in one table</strong> using prefixed keys:</p>
+  <div class="code-block">┌────────────┬───────────────────┬───────────────────────────┐
+│ PK         │ SK                │ Attributes                │
+├────────────┼───────────────────┼───────────────────────────┤
+│ CUST#001   │ PROFILE           │ name, email, created_at   │
+│ CUST#001   │ ORD#2024-01-15    │ amount, status, items     │
+│ PROD#A100  │ METADATA          │ name, price, category     │
+│ PROD#A100  │ REVIEW#2024-01-20 │ rating, comment, user_id  │
+└────────────┴───────────────────┴───────────────────────────┘
+
+Customer profile:  PK=<span class="str">'CUST#001'</span>, SK=<span class="str">'PROFILE'</span>
+Customer orders:   PK=<span class="str">'CUST#001'</span>, SK begins_with(<span class="str">'ORD#'</span>)
+Product reviews:   PK=<span class="str">'PROD#A100'</span>, SK begins_with(<span class="str">'REVIEW#'</span>)</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"DynamoDB design is <strong>access-pattern-first</strong> — the opposite of SQL where you normalize first and query later. I start by listing every access pattern, then work backward to design keys. The partition key should distribute data evenly, and the sort key enables the range queries I need. The cardinal sin is designing DynamoDB like a relational database — you'll end up with scans everywhere."</p>
+  </div>
+</section>
+
+<!-- Screen 2: MongoDB -->
+<section class="screen screen-alt" id="s2">
+  <h2>📄 MongoDB — <span class="accent">Documents & Aggregation</span></h2>
+  <p>MongoDB stores data as <strong>BSON documents</strong> (binary JSON). Each document is schema-flexible — different documents in the same collection can have different fields.</p>
+
+  <div class="code-block"><span class="cm">// orders collection</span>
+{
+  _id: ObjectId(<span class="str">"65a1b2c3d4e5f6a7b8c9d0e1"</span>),
+  customer: {
+    id: <span class="str">"CUST-001"</span>,
+    name: <span class="str">"Alice Chen"</span>,
+    email: <span class="str">"alice@example.com"</span>
+  },
+  items: [
+    { product_id: <span class="str">"PROD-A100"</span>, name: <span class="str">"Wireless Mouse"</span>, qty: <span class="fn">2</span>, price: <span class="fn">29.99</span> },
+    { product_id: <span class="str">"PROD-B200"</span>, name: <span class="str">"USB-C Hub"</span>, qty: <span class="fn">1</span>, price: <span class="fn">49.99</span> }
+  ],
+  total: <span class="fn">109.97</span>,
+  status: <span class="str">"shipped"</span>,
+  order_date: ISODate(<span class="str">"2024-03-15T14:30:00Z"</span>)
+}</div>
+
+  <p><strong>Key difference from SQL</strong>: Related data (customer info, line items, shipping) is <strong>embedded</strong> in a single document — no JOINs needed.</p>
+
+  <h3>When to Embed vs Reference</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Embed (denormalize)</h4>
+      <ul>
+        <li>1:1 or 1:few relationships</li>
+        <li>Data always read together</li>
+        <li>Rarely changes after creation</li>
+        <li>Under 16 MB document limit</li>
+        <li>Ex: Order ← embed → line items</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🔗 Reference (normalize)</h4>
+      <ul>
+        <li>1:many or many:many relationships</li>
+        <li>Data read independently</li>
+        <li>Changes frequently</li>
+        <li>Risk of exceeding 16 MB limit</li>
+        <li>Ex: Product ← reference → reviews</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Aggregation Pipeline</h3>
+  <p>A sequence of <strong>stages</strong> that transform documents — conceptually like Unix pipes.</p>
+  <div class="translate">
+    <div class="translate-code"><span class="cm">// Top 5 customers by spend in Q1 2024</span>
+db.orders.aggregate([
+  { <span class="fn">$match</span>: {
+      order_date: {
+        $gte: ISODate(<span class="str">"2024-01-01"</span>),
+        $lt:  ISODate(<span class="str">"2024-04-01"</span>)
+      }
+  }},
+  { <span class="fn">$group</span>: {
+      _id: <span class="str">"$customer.id"</span>,
+      total_spend: { $sum: <span class="str">"$total"</span> },
+      order_count: { $sum: <span class="fn">1</span> }
+  }},
+  { <span class="fn">$sort</span>: { total_spend: <span class="fn">-1</span> } },
+  { <span class="fn">$limit</span>: <span class="fn">5</span> }
+]);</div>
+    <div class="translate-eng">
+      <div class="line">📝 "Top 5 customers by total spend"</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔍 Stage 1: Filter to Q1 2024 only</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📊 Stage 2: Group by customer, sum totals</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📈 Stage 3: Sort by spend descending</div>
+      <div class="line">✂️ Stage 4: Take top 5</div>
+    </div>
+  </div>
+
+  <h3>$unwind — Exploding Arrays</h3>
+  <div class="code-block"><span class="cm">// Which products generate the most revenue?</span>
+db.orders.aggregate([
+  { <span class="fn">$unwind</span>: <span class="str">"$items"</span> },     <span class="cm">// One doc per item (like UNNEST)</span>
+  { <span class="fn">$group</span>: {
+      _id: <span class="str">"$items.product_id"</span>,
+      product_name: { $first: <span class="str">"$items.name"</span> },
+      total_revenue: { $sum: { $multiply: [<span class="str">"$items.qty"</span>, <span class="str">"$items.price"</span>] } }
+  }},
+  { <span class="fn">$sort</span>: { total_revenue: <span class="fn">-1</span> } },
+  { <span class="fn">$limit</span>: <span class="fn">10</span> }
+]);</div>
+
+  <h3>MongoDB Indexes</h3>
+  <div class="code-block"><span class="cm">// Single-field index</span>
+db.orders.createIndex({ <span class="str">"customer.id"</span>: <span class="fn">1</span> });
+
+<span class="cm">// Compound index (same leftmost-prefix rules as SQL!)</span>
+db.orders.createIndex({ status: <span class="fn">1</span>, order_date: <span class="fn">-1</span> });
+
+<span class="cm">// Multikey index (auto-indexes array elements)</span>
+db.orders.createIndex({ <span class="str">"items.product_id"</span>: <span class="fn">1</span> });
+
+<span class="cm">// TTL index (auto-delete after expiration — perfect for sessions!)</span>
+db.sessions.createIndex({ created_at: <span class="fn">1</span> }, { expireAfterSeconds: <span class="fn">3600</span> });</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"I'd choose MongoDB when data is naturally document-shaped and varies across records — product catalogs, user-generated content, IoT events. Embedded documents eliminate JOINs for read-heavy patterns. But I'd stick with PostgreSQL when I need ACID transactions across entities, complex joins, or strong schema enforcement. With PostgreSQL's JSONB, many document use cases can be handled without leaving the relational world."</p>
+  </div>
+</section>
+
+<!-- Screen 3: Redis Data Structures -->
+<section class="screen" id="s3">
+  <h2>⚡ Redis — <span class="accent">The In-Memory Swiss Army Knife</span></h2>
+  <p>Redis is an <strong>in-memory data structure store</strong>. The "value" in each key-value pair can be one of several rich data structures.</p>
+
+  <div class="card-grid">
+    <div class="card"><h4>📝 STRING</h4><p>Simple key→value. Caching, counters, distributed locks. <code>SET</code>, <code>GET</code>, <code>INCR</code>.</p></div>
+    <div class="card blue"><h4>📋 HASH</h4><p>Field→value maps (like a row). <code>HSET</code>, <code>HGET</code>, <code>HGETALL</code>. More memory-efficient than serialized JSON.</p></div>
+    <div class="card green"><h4>📜 LIST</h4><p>Ordered sequence. Queues, activity feeds. <code>LPUSH</code>, <code>RPOP</code>, <code>BRPOP</code> (blocking pop).</p></div>
+    <div class="card purple"><h4>🎯 SET</h4><p>Unique members. Intersections, unions, membership tests. <code>SADD</code>, <code>SINTER</code>, <code>SUNION</code>.</p></div>
+    <div class="card"><h4>🏆 SORTED SET</h4><p>Members ordered by score. Leaderboards, rankings, rate limiting. <code>ZADD</code>, <code>ZREVRANGE</code>, <code>ZINCRBY</code>.</p></div>
+    <div class="card blue"><h4>📡 STREAM</h4><p>Append-only event log with consumer groups. Like lightweight Kafka. <code>XADD</code>, <code>XREADGROUP</code>.</p></div>
+  </div>
+
+  <h3>Strings — Caching &amp; Counters</h3>
+  <div class="code-block"><span class="cm">-- Cache a serialized object with TTL</span>
+<span class="kw">SET</span> product:42:details <span class="str">'{"name":"Wireless Mouse","price":29.99}'</span> <span class="fn">EX 3600</span>
+<span class="kw">GET</span> product:42:details
+
+<span class="cm">-- Atomic counter (page views, inventory)</span>
+<span class="kw">INCR</span> product:42:view_count          <span class="cm">-- 1, 2, 3, ...</span>
+<span class="kw">INCRBY</span> product:42:stock <span class="fn">-1</span>          <span class="cm">-- decrement stock atomically</span>
+
+<span class="cm">-- Distributed lock (simplified)</span>
+<span class="kw">SET</span> lock:checkout:order-789 <span class="str">"worker-3"</span> <span class="fn">NX EX 30</span>
+<span class="cm">-- NX = only set if not exists, EX 30 = expire in 30 seconds</span></div>
+
+  <h3>Sorted Sets — Leaderboards &amp; Rate Limiting</h3>
+  <div class="code-block"><span class="cm">-- Leaderboard: members ordered by score</span>
+<span class="kw">ZADD</span> leaderboard <span class="fn">9500</span> <span class="str">"alice"</span> <span class="fn">8200</span> <span class="str">"bob"</span> <span class="fn">7800</span> <span class="str">"charlie"</span>
+<span class="kw">ZREVRANGE</span> leaderboard <span class="fn">0 2</span> WITHSCORES   <span class="cm">-- top 3</span>
+<span class="kw">ZINCRBY</span> leaderboard <span class="fn">500</span> <span class="str">"charlie"</span>       <span class="cm">-- charlie now 8300, overtakes bob!</span>
+
+<span class="cm">-- Rate limiting: score = timestamp, member = request ID</span>
+<span class="kw">ZADD</span> ratelimit:user:1001 <span class="fn">1711987200</span> <span class="str">"req-abc"</span>
+<span class="kw">ZCOUNT</span> ratelimit:user:1001 (NOW-60) +inf  <span class="cm">-- requests in last 60s</span>
+<span class="kw">ZREMRANGEBYSCORE</span> ratelimit:user:1001 <span class="fn">0</span> (NOW-60) <span class="cm">-- cleanup old</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"For a real-time leaderboard, Redis Sorted Sets are perfect. On each sale: <code>ZINCRBY leaderboard:daily &lt;revenue&gt; &lt;seller_id&gt;</code>. Top 10: <code>ZREVRANGE leaderboard:daily 0 9 WITHSCORES</code>. O(log N) updates, O(log N + M) ranges — sub-millisecond with millions of sellers."</p>
+  </div>
+</section>
+
+<!-- Screen 4: Redis Patterns -->
+<section class="screen screen-alt" id="s4">
+  <h2>🧩 Redis Patterns — <span class="accent">Caching, Pub/Sub & Streams</span></h2>
+
+  <h3>Cache-Aside (Lazy Loading)</h3>
+  <div class="code-block"><span class="cm">        Request for product:42</span>
+┌──────────┐   1. GET product:42    ┌──────────┐
+│          │ ◄──────────────────────│          │
+│   App    │     Cache MISS (nil)   │  Redis   │
+│  Server  │                        │  Cache   │
+│          │   2. SELECT * FROM     ┌──────────┐
+│          │ ─────────────────────→ │PostgreSQL│
+│          │   ← result ───────────│          │
+│          │   3. SET product:42    └──────────┘
+│          │ ─────────────────────→ Redis (EX 3600)
+└──────────┘
+Next request → Cache HIT → skip database entirely!</div>
+
+  <div class="code-block"><span class="kw">def</span> <span class="fn">get_product</span>(product_id: <span class="fn">int</span>) -> dict:
+    cache_key = <span class="str">f"product:{product_id}"</span>
+
+    <span class="cm"># 1. Try cache first</span>
+    cached = redis.get(cache_key)
+    <span class="kw">if</span> cached:
+        <span class="kw">return</span> json.loads(cached)
+
+    <span class="cm"># 2. Cache miss — query database</span>
+    product = db.execute(<span class="str">"SELECT * FROM products WHERE id = %s"</span>, product_id)
+
+    <span class="cm"># 3. Populate cache with TTL</span>
+    redis.set(cache_key, json.dumps(product), ex=<span class="fn">3600</span>)
+    <span class="kw">return</span> product</div>
+
+  <h3>Eviction Policies</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🔥 Common Policies</h4>
+      <ul>
+        <li><strong>allkeys-lru</strong> — evict least recently used (general caching)</li>
+        <li><strong>allkeys-lfu</strong> — evict least frequently used</li>
+        <li><strong>volatile-lru</strong> — LRU only among keys with TTL</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📋 Others</h4>
+      <ul>
+        <li><strong>noeviction</strong> — reject writes (critical data)</li>
+        <li><strong>volatile-ttl</strong> — evict closest to expiration</li>
+        <li><strong>allkeys-random</strong> — random eviction</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Pub/Sub vs Streams</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid #7B5EA7">
+      <h4>📢 Pub/Sub</h4>
+      <ul>
+        <li>Fire-and-forget broadcasting</li>
+        <li>⚠️ Messages LOST if no subscriber listening</li>
+        <li>No persistence or replay</li>
+        <li>No consumer groups</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>📡 Streams</h4>
+      <ul>
+        <li>Append-only log (like lightweight Kafka)</li>
+        <li>✅ Messages persist until deleted</li>
+        <li>Consumer groups + load balancing</li>
+        <li>Message acknowledgement (XACK)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"Cache invalidation strategies: (1) <strong>TTL-based</strong> — simple, for slightly-stale-OK data. (2) <strong>Write-through</strong> — delete cache key on every DB write. (3) <strong>Event-driven</strong> — CDC emits events, consumer refreshes cache. I prevent cache stampedes with mutex locks or probabilistic early expiration."</p>
+  </div>
+</section>
+
+<!-- Screen 5: Neo4j -->
+<section class="screen" id="s5">
+  <h2>🕸️ Neo4j — <span class="accent">Graphs & Cypher</span></h2>
+  <p>Relational databases handle graphs poorly — recursive self-joins with unknown depth, exponential query complexity. Graph databases store relationships as <strong>first-class citizens</strong>.</p>
+
+  <div class="card-grid">
+    <div class="card"><h4>👥 Social Networks</h4><p>"Friends of friends who bought X"</p></div>
+    <div class="card blue"><h4>🎯 Recommendations</h4><p>"Customers who bought A also bought B"</p></div>
+    <div class="card green"><h4>🔍 Fraud Detection</h4><p>"Find circular money flows"</p></div>
+    <div class="card purple"><h4>🌐 Knowledge Graphs</h4><p>"What entities are related to X?"</p></div>
+  </div>
+
+  <h3>The Property Graph Model</h3>
+  <div class="code-block"><span class="cm">Nodes (entities) have labels and properties:</span>
+  (:Customer {id: <span class="str">"C001"</span>, name: <span class="str">"Alice"</span>, tier: <span class="str">"gold"</span>})
+  (:Product  {id: <span class="str">"P100"</span>, name: <span class="str">"Wireless Mouse"</span>, price: <span class="fn">29.99</span>})
+
+<span class="cm">Relationships have types, direction, and properties:</span>
+  (:Customer)-[:<span class="kw">PURCHASED</span> {date: <span class="str">"2024-03-15"</span>, qty: <span class="fn">2</span>}]->(:Product)
+  (:Customer)-[:<span class="kw">REVIEWED</span> {rating: <span class="fn">5</span>}]->(:Product)
+
+<span class="cm">Visual:</span>
+  (Alice)──<span class="kw">PURCHASED</span>──→(Wireless Mouse)──<span class="kw">BELONGS_TO</span>──→(Electronics)
+     │                        ↑
+     └──<span class="kw">REVIEWED</span> {★★★★★}──────┘</div>
+
+  <h3>Cypher Query Language</h3>
+  <div class="translate">
+    <div class="translate-code"><span class="cm">// Find all products Alice purchased</span>
+<span class="kw">MATCH</span> (c:Customer {name: <span class="str">"Alice"</span>})
+      -[:<span class="fn">PURCHASED</span>]->(p:Product)
+<span class="kw">RETURN</span> p.name, p.price;
+
+<span class="cm">// "Customers who bought X also bought..."</span>
+<span class="kw">MATCH</span> (target:Product {name: <span class="str">"Wireless Mouse"</span>})
+      &lt;-[:<span class="fn">PURCHASED</span>]-(cust)
+      -[:<span class="fn">PURCHASED</span>]->(rec:Product)
+<span class="kw">WHERE</span> rec &lt;&gt; target
+<span class="kw">RETURN</span> rec.name, COUNT(cust) <span class="kw">AS</span> co_purchases
+<span class="kw">ORDER BY</span> co_purchases <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="fn">5</span>;</div>
+    <div class="translate-eng">
+      <div class="line">📦 Find Alice's purchases</div>
+      <div class="line">🔗 Traverse PURCHASED edges</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📋 Return product name &amp; price</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🎯 Collaborative filtering!</div>
+      <div class="line">← who bought the mouse?</div>
+      <div class="line">→ what else did they buy?</div>
+      <div class="line">🚫 Exclude the mouse itself</div>
+      <div class="line">📊 Rank by co-purchase count</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">✂️ Top 5 recommendations</div>
+    </div>
+  </div>
+
+  <h3>Cypher vs SQL — Variable Depth</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🐘 SQL (friends-of-friends)</h4>
+      <ul>
+        <li>Requires recursive CTEs or N self-joins</li>
+        <li>Gets ugly at 3+ hops, impossible at 6+</li>
+        <li>Each hop = full-table join</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>🕸️ Cypher</h4>
+      <ul>
+        <li><code>-[:KNOWS*2]->(fof)</code> — 2 hops</li>
+        <li>Change <code>*2</code> to <code>*6</code> — same simplicity!</li>
+        <li>O(1) per hop via pointer traversal</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"I'd use a graph database when the core value is in the <strong>relationships</strong>, not the entities — and queries need variable-depth traversals. Classic examples: social networks, recommendations, fraud detection. The key indicator is when SQL needs recursive CTEs or multiple self-joins. Graph databases make multi-hop traversals O(1) per hop. But for CRUD, aggregations, and reporting — SQL is still king."</p>
+  </div>
+</section>
+
+<!-- Screen 6: SQL vs NoSQL Decision Framework -->
+<section class="screen screen-alt" id="s6">
+  <h2>🧭 SQL vs NoSQL — <span class="accent">The Decision Framework</span></h2>
+  <p>It's not SQL <em>or</em> NoSQL — it's SQL <em>and</em> NoSQL. Most production systems use <strong>polyglot persistence</strong>.</p>
+
+  <div class="code-block"><span class="cm">Typical e-commerce architecture:</span>
+
+┌────────────────────────────────────────────────────┐
+│                Application Layer                    │
+└──┬──────────┬──────────┬──────────┬───────────┬────┘
+   │          │          │          │           │
+   ▼          ▼          ▼          ▼           ▼
+┌──────┐  ┌──────┐  ┌──────┐  ┌──────────┐  ┌─────┐
+│Postgre│  │Redis │  │Dynamo│  │Elastic   │  │Neo4j│
+│SQL    │  │      │  │DB    │  │Search    │  │     │
+├───────┤  ├──────┤  ├──────┤  ├──────────┤  ├─────┤
+│Orders │  │Cache │  │User  │  │Product   │  │Reco-│
+│Payments│ │Sessions│ │Prefs │  │Search    │  │mmen-│
+│Users  │  │Rate  │  │Cart  │  │Logs      │  │datio│
+│       │  │Limit │  │      │  │          │  │ns   │
+└───────┘  └──────┘  └──────┘  └──────────┘  └─────┘
+<span class="str">Source     Speed     Scale     Full-text    Graphs</span>
+<span class="str">of Truth   Layer     Layer     Layer        Layer</span></div>
+
+  <h3>Decision Flowchart</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🔍 Complex queries, JOINs, ad-hoc analysis?</h4><p>→ <strong>PostgreSQL</strong>. No question.</p></div>
+    <div class="card blue"><h4>🚀 Simple key lookups at 100K+ req/s?</h4><p>→ <strong>DynamoDB / Cassandra</strong>. Design keys carefully.</p></div>
+    <div class="card green"><h4>📄 Flexible documents, varying schemas?</h4><p>→ <strong>MongoDB</strong> (or PostgreSQL JSONB if you also need ACID).</p></div>
+    <div class="card purple"><h4>⚡ Sub-ms latency for hot data?</h4><p>→ <strong>Redis</strong> as a cache in front of your primary DB.</p></div>
+    <div class="card"><h4>🕸️ Relationship traversals?</h4><p>→ <strong>Neo4j / Neptune</strong>. Friends-of-friends, recommendations, fraud.</p></div>
+    <div class="card blue"><h4>🔎 Full-text search with relevance?</h4><p>→ <strong>Elasticsearch</strong> (or PostgreSQL full-text for simpler needs).</p></div>
+  </div>
+
+  <h3>Common Anti-Patterns</h3>
+  <div class="card-grid">
+    <div class="card" style="border-top-color:var(--color-error)"><h4>❌ "We chose MongoDB because it's web-scale"</h4><p>Then needed JOINs, transactions, complex reports. Should have used PostgreSQL.</p></div>
+    <div class="card" style="border-top-color:var(--color-error)"><h4>❌ "Everything in Redis for speed"</h4><p>Redis is RAM-bound. 500GB in Redis costs a fortune. Use it as a CACHE, not primary storage.</p></div>
+    <div class="card" style="border-top-color:var(--color-error)"><h4>❌ "Normalized DynamoDB"</h4><p>12 tables with "joins" in app code = slow &amp; expensive. Use single-table design or switch to SQL.</p></div>
+    <div class="card" style="border-top-color:var(--color-error)"><h4>❌ "Time-series in a regular SQL table"</h4><p>10B rows, queries timing out. Use TimescaleDB, InfluxDB, or partitioned tables.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"I default to <strong>PostgreSQL</strong> — it handles 90% of use cases including JSONB for documents. I add specialized stores only when PostgreSQL becomes a bottleneck for specific access patterns. Three questions guide my choice: (1) Access patterns — ad-hoc or predefined? (2) Consistency — strict ACID or eventual OK? (3) Scale profile — read-heavy, write-heavy, or both?"</p>
+  </div>
+</section>
+
+<!-- Screen 7: Quiz -->
+<section class="screen" id="s7">
+  <h2>🧪 Quiz: <span class="accent">Test Yourself</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: In DynamoDB, what determines which physical partition stores an item?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) The sort key</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) The partition key</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) The Global Secondary Index</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) The table's region setting</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Which MongoDB aggregation stage is equivalent to SQL's UNNEST?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) $group</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) $lookup</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">C) $unwind</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) $project</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: Which Redis data structure is best for a real-time leaderboard with top-N rankings?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Hash</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) List</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) Set</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">D) Sorted Set</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: What's the main limitation of Redis Pub/Sub vs Streams?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Pub/Sub is slower than Streams</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) Pub/Sub messages are lost if no subscriber is listening</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) Pub/Sub doesn't support pattern matching</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Pub/Sub can only send string messages</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: In Cypher, what does <code>MATCH (a)-[:KNOWS*2..4]->(b)</code> mean?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Find nodes where a knows exactly 2 to 4 people</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) Traverse 2 to 4 hops along KNOWS relationships from a to b</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) Find the 2nd through 4th KNOWS relationships in the DB</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Return paths where KNOWS has a weight between 2 and 4</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<!-- Screen 8: Key Takeaways -->
+<section class="screen screen-alt" id="s8">
+  <h2>🎯 Key <span class="accent">Takeaways</span></h2>
+
+  <div class="card-grid">
+    <div class="card"><h4>🔑 DynamoDB</h4><p>Access-pattern-first design. Partition key for distribution, sort key for range queries. GSIs for additional patterns. Single-table design packs related entities with prefixed keys.</p></div>
+    <div class="card blue"><h4>📄 MongoDB</h4><p>Embed related data to avoid JOINs. Embed for 1:few read-together; reference for 1:many or frequently-updated. Aggregation pipeline maps to SQL concepts on documents.</p></div>
+    <div class="card green"><h4>⚡ Redis</h4><p>A data structure server, not just cache. Strings for caching, Hashes for objects, Lists for queues, Sets for membership, Sorted Sets for leaderboards. Choose the right structure.</p></div>
+    <div class="card purple"><h4>🕸️ Neo4j</h4><p>Excels at relationship-heavy queries. Cypher makes variable-depth traversals trivial (*2..6) compared to recursive CTEs in SQL.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🏗️ The Golden Rule</div>
+    <p><strong>Default to PostgreSQL</strong> for new projects — it handles relational data, JSONB documents, full-text search, and even time-series. Add specialized NoSQL stores only when you hit a specific bottleneck. <strong>Polyglot persistence is the norm</strong> in production: PostgreSQL as source of truth, Redis for caching, and maybe DynamoDB or Elasticsearch for specific high-scale access patterns.</p>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-04-postgresql/index.html">← Module 4: PostgreSQL</a>
+  <a href="../module-06-interview-gauntlet/index.html">Next: Interview Gauntlet 🔥 →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Chat animation
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Look at the other options — the answer focuses on the core concept.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+
+  // Arrow key navigation
+  const screens=document.querySelectorAll('.screen');
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();const curr=Math.round(window.scrollY/window.innerHeight);if(curr<screens.length-1)screens[curr+1].scrollIntoView({behavior:'smooth'});}
+    if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();const curr=Math.round(window.scrollY/window.innerHeight);if(curr>0)screens[curr-1].scrollIntoView({behavior:'smooth'});}
+  });
+})();
+</script>
+</body>
+</html>

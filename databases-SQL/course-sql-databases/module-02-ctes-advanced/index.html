@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 2: CTEs & Advanced Query Patterns | SQL & Databases Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+table th{background:var(--color-bg-warm);font-family:var(--font-heading);font-weight:700;text-align:left;padding:0.7rem 1rem;border-bottom:2px solid rgba(0,0,0,0.08)}
+table td{padding:0.6rem 1rem;border-bottom:1px solid rgba(0,0,0,0.04)}
+table tr:last-child td{border-bottom:none}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🗄️ SQL & Databases Mastery</a><div class="nav-dots"><a href="../module-01-window-functions/" class="nav-dot" aria-label="Module 1"></a><a href="../module-02-ctes-advanced/" class="nav-dot active" aria-label="Module 2"></a><a href="../module-03-query-optimization/" class="nav-dot" aria-label="Module 3"></a><a href="../module-04-postgresql/" class="nav-dot" aria-label="Module 4"></a><a href="../module-05-nosql/" class="nav-dot" aria-label="Module 5"></a><a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a></div></div></nav>
+
+<!-- Screen 1: Common Table Expressions -->
+<section class="screen" id="s1">
+  <h2>📝 Common Table Expressions: <span class="accent">Your Query's Outline</span></h2>
+  <p>A Common Table Expression (CTE) is a <strong>named temporary result set</strong> that exists only for the duration of a single query. Think of it as giving a name to a subquery and placing it at the top of your SQL — like defining variables before using them.</p>
+
+  <div class="code-block"><span class="kw">WITH</span> monthly_revenue <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> 
+        <span class="fn">DATE_TRUNC</span>(<span class="str">'month'</span>, order_date) <span class="kw">AS</span> month,
+        <span class="fn">SUM</span>(amount) <span class="kw">AS</span> revenue
+    <span class="kw">FROM</span> orders
+    <span class="kw">GROUP BY</span> <span class="fn">DATE_TRUNC</span>(<span class="str">'month'</span>, order_date)
+)
+<span class="kw">SELECT</span> month, revenue,
+       revenue - <span class="fn">LAG</span>(revenue) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> month) <span class="kw">AS</span> mom_change
+<span class="kw">FROM</span> monthly_revenue;</div>
+
+  <h3>Why CTEs Beat Nested Subqueries</h3>
+  <p>Without CTEs, complex queries become "Russian nesting dolls" — subqueries inside subqueries. Compare:</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Nested Subqueries</h4>
+      <ul>
+        <li>Reads inside-out (unnatural)</li>
+        <li>Can't reuse intermediate results</li>
+        <li>Indentation hell</li>
+        <li>Hard to debug step-by-step</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Chained CTEs</h4>
+      <ul>
+        <li>Reads top-to-bottom like a story</li>
+        <li>Each CTE references prior ones</li>
+        <li>Clean, flat indentation</li>
+        <li>Comment out steps to debug</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Chaining Multiple CTEs</h3>
+  <div class="code-block"><span class="kw">WITH</span> 
+step1 <span class="kw">AS</span> (...),
+step2 <span class="kw">AS</span> (<span class="kw">SELECT</span> ... <span class="kw">FROM</span> step1 ...),   <span class="cm">-- Can reference step1</span>
+step3 <span class="kw">AS</span> (<span class="kw">SELECT</span> ... <span class="kw">FROM</span> step1, step2)  <span class="cm">-- Can reference step1 AND step2</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> step3;</div>
+
+  <h3>CTE vs Subquery vs Temp Table</h3>
+  <table>
+    <tr><th>Feature</th><th>CTE</th><th>Subquery</th><th>Temp Table</th></tr>
+    <tr><td>Scope</td><td>Single statement</td><td>Single use (inline)</td><td>Entire session</td></tr>
+    <tr><td>Readability</td><td>⭐⭐⭐ Excellent</td><td>⭐ Poor when nested</td><td>⭐⭐ Good</td></tr>
+    <tr><td>Reusable in query</td><td>Yes (ref multiple×)</td><td>No (must repeat)</td><td>Yes</td></tr>
+    <tr><td>Materialized?</td><td>Optimizer decides*</td><td>Optimizer decides</td><td>Yes (on disk)</td></tr>
+    <tr><td>Recursive?</td><td>Yes!</td><td>No</td><td>N/A</td></tr>
+  </table>
+  <p><em>*In PostgreSQL &lt; 12, CTEs were always materialized. Since v12, non-recursive CTEs are inlined by default. In MySQL, CTEs referenced multiple times may be materialized.</em></p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Are CTEs materialized or inlined?"</strong> — "It depends on the engine. PostgreSQL &lt; 12 always materialized CTEs — creating an optimization barrier. Since v12, non-recursive CTEs are inlined by default, but you can force materialization with <code>AS MATERIALIZED</code>. In MySQL 8.0+, CTEs referenced multiple times are materialized. Key takeaway: don't assume CTE = materialization, and test with EXPLAIN."</p>
+  </div>
+</section>
+
+<!-- Screen 2: Recursive CTEs -->
+<section class="screen screen-alt" id="s2">
+  <h2>🔄 Recursive CTEs: <span class="accent">Trees, Graphs, Sequences</span></h2>
+  <p>A recursive CTE references <strong>itself</strong>. It has two parts connected by <code>UNION ALL</code>:</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🌱 Base Case (Anchor)</h4>
+      <p>The starting point — doesn't reference the CTE. Seeds the first rows.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔁 Recursive Step</h4>
+      <p>References the CTE itself to build upon previous results. Must have a termination condition.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="kw">WITH RECURSIVE</span> cte_name <span class="kw">AS</span> (
+    <span class="cm">-- Base case: seed rows</span>
+    <span class="kw">SELECT</span> ... 
+    
+    <span class="kw">UNION ALL</span>
+    
+    <span class="cm">-- Recursive step: join CTE to itself</span>
+    <span class="kw">SELECT</span> ... 
+    <span class="kw">FROM</span> cte_name
+    <span class="kw">JOIN</span> some_table <span class="kw">ON</span> ...
+    <span class="kw">WHERE</span> termination_condition
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> cte_name;</div>
+
+  <h3>Example: Organizational Hierarchy</h3>
+  <p><em>"Given an employees table with a manager_id column, show the full reporting chain."</em></p>
+  <div class="code-block"><span class="kw">WITH RECURSIVE</span> org_chart <span class="kw">AS</span> (
+    <span class="cm">-- Base case: top-level executives (no manager)</span>
+    <span class="kw">SELECT</span> employee_id, name, title, manager_id,
+           <span class="fn">1</span> <span class="kw">AS</span> level,
+           name::<span class="kw">TEXT</span> <span class="kw">AS</span> reporting_chain
+    <span class="kw">FROM</span> employees
+    <span class="kw">WHERE</span> manager_id <span class="kw">IS NULL</span>
+    
+    <span class="kw">UNION ALL</span>
+    
+    <span class="cm">-- Recursive: find direct reports of known employees</span>
+    <span class="kw">SELECT</span> e.employee_id, e.name, e.title, e.manager_id,
+           oc.level + <span class="fn">1</span>,
+           oc.reporting_chain || <span class="str">' → '</span> || e.name
+    <span class="kw">FROM</span> employees e
+    <span class="kw">JOIN</span> org_chart oc <span class="kw">ON</span> e.manager_id = oc.employee_id
+)
+<span class="kw">SELECT</span> employee_id, name, title, level, reporting_chain
+<span class="kw">FROM</span> org_chart
+<span class="kw">ORDER BY</span> reporting_chain;</div>
+
+  <div class="code-block"><span class="cm">-- Output:</span>
+employee_id | name    | title     | level | reporting_chain
+1           | Alice   | CEO       | 1     | Alice
+2           | Bob     | VP Eng    | 2     | Alice → Bob
+4           | Diana   | Sr Eng    | 3     | Alice → Bob → Diana
+3           | Charlie | VP Sales  | 2     | Alice → Charlie</div>
+
+  <h3>Example: Date Series Generation</h3>
+  <div class="code-block"><span class="cm">-- Generate dates for the last 30 days (useful for gap-filling)</span>
+<span class="kw">WITH RECURSIVE</span> date_series <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> <span class="fn">CURRENT_DATE</span> - <span class="kw">INTERVAL</span> <span class="str">'30 days'</span> <span class="kw">AS</span> dt
+    <span class="kw">UNION ALL</span>
+    <span class="kw">SELECT</span> dt + <span class="kw">INTERVAL</span> <span class="str">'1 day'</span>
+    <span class="kw">FROM</span> date_series
+    <span class="kw">WHERE</span> dt &lt; <span class="fn">CURRENT_DATE</span>
+)
+<span class="kw">SELECT</span> dt::<span class="kw">DATE</span> <span class="kw">FROM</span> date_series;</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"When would you use a recursive CTE?"</strong> — "For hierarchical or graph-like data: org charts, category trees, bill-of-materials, file paths, friend-of-friend queries. Also great for generating sequences like date series for gap-filling. The pattern is always: anchor seeds rows, recursive step extends by one level, WHERE clause prevents infinite recursion. For deep hierarchies (1000+ levels), I'd consider a materialized path or nested set model."</p>
+  </div>
+</section>
+
+<!-- Screen 3: Lateral Joins -->
+<section class="screen" id="s3">
+  <h2>↕️ Lateral Joins: <span class="accent">Correlated Subqueries Done Right</span></h2>
+  <p>You want to find the <strong>3 most recent orders for each customer</strong>. A <code>LATERAL</code> join (PostgreSQL, MySQL 8+) or <code>CROSS APPLY</code> (SQL Server) lets a subquery <strong>reference columns from preceding tables</strong> in the FROM clause.</p>
+
+  <div class="code-block"><span class="cm">-- PostgreSQL: LATERAL</span>
+<span class="kw">SELECT</span> c.customer_id, c.name, recent.order_id, recent.amount, recent.order_date
+<span class="kw">FROM</span> customers c
+<span class="kw">CROSS JOIN LATERAL</span> (
+    <span class="kw">SELECT</span> o.order_id, o.amount, o.order_date
+    <span class="kw">FROM</span> orders o
+    <span class="kw">WHERE</span> o.customer_id = c.customer_id
+    <span class="kw">ORDER BY</span> o.order_date <span class="kw">DESC</span>
+    <span class="kw">LIMIT</span> <span class="fn">3</span>
+) <span class="kw">AS</span> recent;</div>
+
+  <div class="code-block"><span class="cm">-- SQL Server: CROSS APPLY (same semantics)</span>
+<span class="kw">SELECT</span> c.customer_id, c.name, recent.order_id, recent.amount, recent.order_date
+<span class="kw">FROM</span> customers c
+<span class="kw">CROSS APPLY</span> (
+    <span class="kw">SELECT TOP</span> <span class="fn">3</span> o.order_id, o.amount, o.order_date
+    <span class="kw">FROM</span> orders o
+    <span class="kw">WHERE</span> o.customer_id = c.customer_id
+    <span class="kw">ORDER BY</span> o.order_date <span class="kw">DESC</span>
+) <span class="kw">AS</span> recent;</div>
+
+  <h3>CROSS JOIN LATERAL vs LEFT JOIN LATERAL</h3>
+  <div class="code-block"><span class="kw">CROSS JOIN LATERAL</span> = <span class="kw">CROSS APPLY</span>  → Excludes customers with 0 matches
+<span class="kw">LEFT  JOIN LATERAL</span> = <span class="kw">OUTER APPLY</span>  → Includes all customers, NULLs if no matches</div>
+
+  <div class="code-block"><span class="cm">-- Include customers even if they have no orders</span>
+<span class="kw">SELECT</span> c.customer_id, c.name, recent.order_id, recent.amount
+<span class="kw">FROM</span> customers c
+<span class="kw">LEFT JOIN LATERAL</span> (
+    <span class="kw">SELECT</span> o.order_id, o.amount
+    <span class="kw">FROM</span> orders o
+    <span class="kw">WHERE</span> o.customer_id = c.customer_id
+    <span class="kw">ORDER BY</span> o.order_date <span class="kw">DESC</span>
+    <span class="kw">LIMIT</span> <span class="fn">3</span>
+) <span class="kw">AS</span> recent <span class="kw">ON TRUE</span>;  <span class="cm">-- ON TRUE required for LEFT JOIN LATERAL in PG</span></div>
+
+  <table>
+    <tr><th>Approach</th><th>Limitation</th></tr>
+    <tr><td>Window function + filter</td><td>Can't LIMIT per group easily</td></tr>
+    <tr><td>Correlated subquery</td><td>Returns only 1 value</td></tr>
+    <tr><td>Self-join + ROW_NUMBER CTE</td><td>More verbose, full sort required</td></tr>
+    <tr><td><strong>LATERAL subquery</strong></td><td>Clean, efficient, supports LIMIT</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"What is a lateral join, and when would you use one?"</strong> — "A LATERAL join allows a subquery in FROM to reference columns from preceding tables — essentially a correlated subquery that can return multiple rows. I'd use it for top-N-per-group with LIMIT, table-valued functions per row, or unnesting arrays. In PostgreSQL it's <code>JOIN LATERAL</code>, in SQL Server it's <code>CROSS APPLY</code>. Often more efficient than ROW_NUMBER CTE because the optimizer can use index seek + limit per group."</p>
+  </div>
+</section>
+
+<!-- Screen 4: GROUPING SETS, CUBE, ROLLUP -->
+<section class="screen screen-alt" id="s4">
+  <h2>🧮 GROUPING SETS, <span class="accent">CUBE & ROLLUP</span></h2>
+  <p>Sometimes you need <strong>multiple levels of aggregation</strong> in a single query — totals by product, by category, by region, and a grand total.</p>
+
+  <h3>GROUPING SETS — Pick Your Levels</h3>
+  <div class="code-block"><span class="cm">-- All levels in one pass</span>
+<span class="kw">SELECT</span> category, region, <span class="fn">SUM</span>(revenue) <span class="kw">AS</span> total_revenue
+<span class="kw">FROM</span> sales
+<span class="kw">GROUP BY GROUPING SETS</span> (
+    (category),           <span class="cm">-- Subtotal per category</span>
+    (region),             <span class="cm">-- Subtotal per region</span>
+    (category, region),   <span class="cm">-- Detail per category+region</span>
+    ()                    <span class="cm">-- Grand total</span>
+);</div>
+
+  <p>NULLs indicate "all values" at that level. Use <code>GROUPING()</code> to distinguish aggregated NULLs from real NULLs:</p>
+  <div class="code-block"><span class="kw">SELECT</span> 
+    <span class="kw">CASE WHEN</span> <span class="fn">GROUPING</span>(category) = <span class="fn">1</span> <span class="kw">THEN</span> <span class="str">'ALL'</span> <span class="kw">ELSE</span> category <span class="kw">END AS</span> category,
+    <span class="kw">CASE WHEN</span> <span class="fn">GROUPING</span>(region) = <span class="fn">1</span> <span class="kw">THEN</span> <span class="str">'ALL'</span> <span class="kw">ELSE</span> region <span class="kw">END AS</span> region,
+    <span class="fn">SUM</span>(revenue) <span class="kw">AS</span> total_revenue
+<span class="kw">FROM</span> sales
+<span class="kw">GROUP BY GROUPING SETS</span> ((category), (region), (category, region), ());</div>
+
+  <h3>ROLLUP — Hierarchical Subtotals</h3>
+  <div class="code-block"><span class="cm">-- ROLLUP(a, b, c) = GROUPING SETS ((a,b,c), (a,b), (a), ())</span>
+<span class="kw">SELECT</span> 
+    <span class="fn">EXTRACT</span>(<span class="kw">YEAR FROM</span> order_date) <span class="kw">AS</span> yr,
+    <span class="fn">EXTRACT</span>(<span class="kw">QUARTER FROM</span> order_date) <span class="kw">AS</span> qtr,
+    <span class="fn">EXTRACT</span>(<span class="kw">MONTH FROM</span> order_date) <span class="kw">AS</span> mo,
+    <span class="fn">SUM</span>(amount) <span class="kw">AS</span> revenue
+<span class="kw">FROM</span> orders
+<span class="kw">GROUP BY ROLLUP</span> (
+    <span class="fn">EXTRACT</span>(<span class="kw">YEAR FROM</span> order_date),
+    <span class="fn">EXTRACT</span>(<span class="kw">QUARTER FROM</span> order_date),
+    <span class="fn">EXTRACT</span>(<span class="kw">MONTH FROM</span> order_date)
+);</div>
+
+  <h3>CUBE — All Possible Combinations</h3>
+  <div class="code-block"><span class="cm">-- CUBE(a, b) = GROUPING SETS ((a,b), (a), (b), ())</span>
+<span class="kw">SELECT</span> category, region, <span class="fn">SUM</span>(revenue) <span class="kw">AS</span> total_revenue
+<span class="kw">FROM</span> sales
+<span class="kw">GROUP BY CUBE</span> (category, region);</div>
+
+  <h3>Quick Reference</h3>
+  <table>
+    <tr><th>Syntax</th><th>Generates</th><th># Sets (n cols)</th></tr>
+    <tr><td><code>GROUPING SETS</code></td><td>Exactly what you specify</td><td>Explicit</td></tr>
+    <tr><td><code>ROLLUP (a, b, c)</code></td><td>(a,b,c), (a,b), (a), ()</td><td>n + 1</td></tr>
+    <tr><td><code>CUBE (a, b, c)</code></td><td>All subsets of {a, b, c}</td><td>2^n</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"When would you use ROLLUP vs CUBE?"</strong> — "ROLLUP is for hierarchical dimensions — geographic (city → state → country) or time (day → month → year) where there's a natural parent-child relationship. CUBE is for cross-tabulation where every combination matters — like revenue by both category AND region independently. Both are more efficient than multiple GROUP BY + UNION ALL queries because the database scans data once."</p>
+  </div>
+</section>
+
+<!-- Screen 5: UNION ALL vs UNION -->
+<section class="screen" id="s5">
+  <h2>⚡ UNION ALL vs UNION: <span class="accent">The Performance Trap</span></h2>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ UNION ALL</h4>
+      <ul>
+        <li>Simple concatenation — no overhead</li>
+        <li>Keeps all rows including duplicates</li>
+        <li>Streaming — fast on any size</li>
+        <li>~2 sec on 20M rows</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>⚠️ UNION</h4>
+      <ul>
+        <li>Hash/sort to deduplicate — expensive</li>
+        <li>Removes duplicate rows</li>
+        <li>Must process entire result set</li>
+        <li>~15+ sec on 20M rows</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm">-- Under the hood:</span>
+UNION ALL:
+  Table A rows ──┐
+                  ├──→ Result <span class="str">(fast, streaming)</span>
+  Table B rows ──┘
+
+UNION:
+  Table A rows ──┐
+                  ├──→ [Hash/Sort to deduplicate] ──→ Result <span class="str">(slower)</span>
+  Table B rows ──┘</div>
+
+  <h3>Rules of Thumb</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>1️⃣ Default to UNION ALL</h4>
+      <p>Unless you specifically need deduplication.</p>
+    </div>
+    <div class="card blue">
+      <h4>2️⃣ Check Disjointness</h4>
+      <p>If sources are partitioned by date range, UNION's dedup is wasted work.</p>
+    </div>
+    <div class="card green">
+      <h4>3️⃣ Types Must Match</h4>
+      <p>Column count and types must match. Names come from the first branch.</p>
+    </div>
+  </div>
+
+  <h3>Common Pattern: Combining Event Tables</h3>
+  <div class="code-block"><span class="cm">-- Events are unique — definitely use UNION ALL</span>
+<span class="kw">SELECT</span> event_id, user_id, <span class="str">'click'</span> <span class="kw">AS</span> event_type, created_at <span class="kw">FROM</span> click_events
+<span class="kw">UNION ALL</span>
+<span class="kw">SELECT</span> event_id, user_id, <span class="str">'purchase'</span>, created_at <span class="kw">FROM</span> purchase_events
+<span class="kw">UNION ALL</span>
+<span class="kw">SELECT</span> event_id, user_id, <span class="str">'refund'</span>, created_at <span class="kw">FROM</span> refund_events
+<span class="kw">ORDER BY</span> created_at;</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"When should you use UNION vs UNION ALL?"</strong> — "UNION ALL should be the default — it's a simple concatenation with no overhead. UNION adds a deduplication step (hash or sort) that can be very expensive on large datasets. I only use UNION when I specifically need to eliminate duplicates, and even then I ask: could the sources already be disjoint? If combining partitioned tables or event streams with unique IDs, UNION's dedup is pure waste."</p>
+  </div>
+</section>
+
+<!-- Screen 6: Correlated vs Non-Correlated Subqueries -->
+<section class="screen screen-alt" id="s6">
+  <h2>🔍 Correlated vs <span class="accent">Non-Correlated</span> Subqueries</h2>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📋 Non-Correlated</h4>
+      <ul>
+        <li>Runs <strong>once</strong>, independently</li>
+        <li>Produces a fixed result</li>
+        <li>No reference to outer query</li>
+        <li>Generally fast</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🔗 Correlated</h4>
+      <ul>
+        <li>Runs <strong>once per outer row</strong></li>
+        <li>References outer query columns</li>
+        <li>Dependent on outer query</li>
+        <li>Can be slow (but optimizers help)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm">-- Non-correlated: runs once, returns a single value</span>
+<span class="kw">SELECT</span> customer_id, name, total_spend
+<span class="kw">FROM</span> customers
+<span class="kw">WHERE</span> total_spend > (
+    <span class="kw">SELECT</span> <span class="fn">AVG</span>(total_spend) <span class="kw">FROM</span> customers
+);</div>
+
+  <div class="code-block"><span class="cm">-- Correlated: references c.customer_id from outer query</span>
+<span class="kw">SELECT</span> c.customer_id, c.name,
+    (<span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) 
+     <span class="kw">FROM</span> orders o 
+     <span class="kw">WHERE</span> o.customer_id = c.customer_id) <span class="kw">AS</span> order_count  <span class="cm">-- Runs per customer</span>
+<span class="kw">FROM</span> customers c;</div>
+
+  <div class="code-block"><span class="cm">-- Visual comparison:</span>
+Non-Correlated:                    Correlated:
+┌──────────────────┐               ┌──────────────────┐
+│   Outer Query    │               │   Outer Query    │
+│   ┌──────────┐   │               │   Row 1 → ┌────┐ │
+│   │ Subquery │───┼─ Runs ONCE    │           │ SQ │─┼─ Run
+│   └──────────┘   │               │   Row 2 → │    │─┼─ Run
+│                  │               │   Row 3 → │    │─┼─ Run
+│                  │               │           └────┘ │
+└──────────────────┘               └──────────────────┘</div>
+
+  <h3>Correlated Subquery with EXISTS</h3>
+  <p>The most efficient use of correlated subqueries — <code>EXISTS</code> <strong>short-circuits</strong> as soon as it finds one match:</p>
+  <div class="code-block"><span class="cm">-- "Find customers with at least one order over $500"</span>
+<span class="kw">SELECT</span> c.customer_id, c.name
+<span class="kw">FROM</span> customers c
+<span class="kw">WHERE EXISTS</span> (
+    <span class="kw">SELECT</span> <span class="fn">1</span> <span class="kw">FROM</span> orders o
+    <span class="kw">WHERE</span> o.customer_id = c.customer_id
+    <span class="kw">AND</span> o.amount > <span class="fn">500</span>
+);</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"What's the difference, and which is faster?"</strong> — "Non-correlated runs once and produces a fixed result. Correlated references the outer query, so conceptually it runs once per outer row. Performance-wise, non-correlated is generally faster, but modern optimizers can decorrelate many correlated subqueries into joins. The exception: <code>EXISTS</code> with short-circuit evaluation is very efficient for semi-join patterns."</p>
+  </div>
+</section>
+
+<!-- Screen 7: EXISTS vs IN vs JOIN -->
+<section class="screen" id="s7">
+  <h2>⚔️ EXISTS vs IN vs JOIN: <span class="accent">The Showdown</span></h2>
+  <p><em>"Find customers who have placed orders"</em> — three ways to do it:</p>
+
+  <div class="code-block"><span class="cm">-- Method 1: IN</span>
+<span class="kw">SELECT</span> customer_id, name <span class="kw">FROM</span> customers
+<span class="kw">WHERE</span> customer_id <span class="kw">IN</span> (<span class="kw">SELECT</span> customer_id <span class="kw">FROM</span> orders);
+
+<span class="cm">-- Method 2: EXISTS</span>
+<span class="kw">SELECT</span> c.customer_id, c.name <span class="kw">FROM</span> customers c
+<span class="kw">WHERE EXISTS</span> (<span class="kw">SELECT</span> <span class="fn">1</span> <span class="kw">FROM</span> orders o <span class="kw">WHERE</span> o.customer_id = c.customer_id);
+
+<span class="cm">-- Method 3: JOIN</span>
+<span class="kw">SELECT DISTINCT</span> c.customer_id, c.name
+<span class="kw">FROM</span> customers c <span class="kw">JOIN</span> orders o <span class="kw">ON</span> c.customer_id = o.customer_id;</div>
+
+  <table>
+    <tr><th>Scenario</th><th>IN</th><th>EXISTS</th><th>JOIN</th></tr>
+    <tr><td>Subquery returns NULLs</td><td>⚠️ Three-valued logic</td><td>✅ Ignores NULLs</td><td>✅ NULLs don't match</td></tr>
+    <tr><td>Duplicates in subquery</td><td>Handled internally</td><td>Short-circuits</td><td>Creates duplicates!</td></tr>
+    <tr><td>Need both tables' data</td><td>❌ Only outer cols</td><td>❌ Only outer cols</td><td>✅ Both tables</td></tr>
+  </table>
+
+  <h3>🚨 The NULL Trap with NOT IN</h3>
+  <div class="code-block"><span class="cm">-- ❌ DANGER: Returns NO ROWS if subquery contains any NULL!</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> customers
+<span class="kw">WHERE</span> customer_id <span class="kw">NOT IN</span> (<span class="kw">SELECT</span> manager_id <span class="kw">FROM</span> employees);
+<span class="cm">-- x NOT IN (1, 2, NULL) → x!=1 AND x!=2 AND x!=NULL → always UNKNOWN</span>
+
+<span class="cm">-- ✅ SAFE: Always use NOT EXISTS instead</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> customers c
+<span class="kw">WHERE NOT EXISTS</span> (
+    <span class="kw">SELECT</span> <span class="fn">1</span> <span class="kw">FROM</span> employees e <span class="kw">WHERE</span> e.manager_id = c.customer_id
+);</div>
+
+  <h3>Performance Guide</h3>
+  <div class="code-block">Small subquery, large outer table:
+  IN ≈ EXISTS ≈ JOIN  <span class="cm">(optimizer converts to similar plans)</span>
+
+Large subquery, small outer table:
+  EXISTS > IN > JOIN  <span class="cm">(EXISTS short-circuits)</span>
+
+Both tables large:
+  JOIN with hash ≈ EXISTS with hash  <span class="cm">(optimizer chooses hash semi-join)</span>
+
+General advice:
+  EXISTS  → semi-joins (especially NOT)
+  JOIN    → need columns from both tables
+  IN      → small, known-no-NULLs lists</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"When do you choose EXISTS over IN or JOIN?"</strong> — "I default to EXISTS for semi-join patterns and especially NOT EXISTS over NOT IN — because NOT IN with NULLs in the subquery returns no rows due to three-valued logic, which is a subtle but devastating bug. I use JOIN when I need columns from both tables. In modern PostgreSQL, the optimizer often converts all three to the same plan, but EXISTS with NOT is the only one that's always NULL-safe."</p>
+  </div>
+</section>
+
+<!-- Screen 8: Quiz -->
+<section class="screen screen-alt" id="s8">
+  <h2>🧪 Quiz: <span class="accent">Test Yourself</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: Which is TRUE about CTEs in PostgreSQL 12+?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) CTEs are always materialized as temporary tables</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) Non-recursive CTEs are inlined by default and can be optimized</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) CTEs cannot reference other CTEs in the same WITH block</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Recursive CTEs don't require UNION ALL</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: What prevents infinite recursion in a recursive CTE?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) The database automatically stops after 100 iterations</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) The UNION keyword deduplicates rows, preventing cycles</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">C) A WHERE clause in the recursive step that eventually produces no new rows</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) The RECURSIVE keyword sets a default maximum depth</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: What does CROSS JOIN LATERAL do differently from a regular CROSS JOIN?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) It performs a Cartesian product of all rows</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) It allows the right side to reference columns from the left side</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) It automatically limits results to 1 row per left-side row</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) It's just an alias for INNER JOIN</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: NOT IN (subquery) is dangerous because:</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) It's always slower than NOT EXISTS</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) If the subquery returns any NULL, the entire NOT IN evaluates to empty</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) It can't use indexes</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) It doesn't work with correlated subqueries</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: ROLLUP(year, quarter, month) generates how many grouping levels?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) 3 (one per column)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) 4 (each column plus grand total)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) 8 (all combinations, like CUBE)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) 7 (all combinations minus one)</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<!-- Screen 9: Key Takeaways -->
+<section class="screen" id="s9">
+  <h2>🎯 Key <span class="accent">Takeaways</span></h2>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📝 CTEs = Readability</h4>
+      <p>Transform nested subqueries into sequential, named steps. Chain with commas; each references the ones above it.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔄 Recursive CTEs</h4>
+      <p>Anchor → UNION ALL → recursive step with termination. Use for hierarchies, graph traversal, and sequence generation.</p>
+    </div>
+    <div class="card green">
+      <h4>↕️ LATERAL Joins</h4>
+      <p>Correlated subquery in FROM that returns multiple rows. Perfect for top-N-per-group with LIMIT. Use <code>LEFT JOIN LATERAL ... ON TRUE</code> to keep unmatched rows.</p>
+    </div>
+    <div class="card purple">
+      <h4>🧮 GROUPING SETS</h4>
+      <p>Multi-level aggregation in one pass. ROLLUP = hierarchical (n+1 levels). CUBE = all combinations (2^n levels). Way faster than UNION ALL.</p>
+    </div>
+    <div class="card">
+      <h4>⚡ UNION ALL First</h4>
+      <p>Default to UNION ALL. UNION's deduplication requires hash/sort of entire result — skip it unless you genuinely need dedup.</p>
+    </div>
+    <div class="card blue">
+      <h4>🚨 NOT IN = NULL Trap</h4>
+      <p>If the subquery returns even one NULL, NOT IN gives empty results. Always prefer <code>NOT EXISTS</code> for anti-semi-joins. Top-tier interview gotcha.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-01-window-functions/index.html">← Prev: Window Functions</a>
+  <a href="../module-03-query-optimization/index.html">Next: Query Optimization →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Chat animation
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above and try to understand why the correct answer works.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+
+  // Arrow key navigation
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'){const next=document.querySelector('footer.module-nav a:last-child');if(next)next.click();}
+    if(e.key==='ArrowLeft'){const prev=document.querySelector('footer.module-nav a:first-child');if(prev)prev.click();}
+  });
+})();
+</script>
+</body>
+</html>

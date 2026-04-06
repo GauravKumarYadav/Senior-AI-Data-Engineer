@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 1: Window Functions Deep Dive | SQL & Databases Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+table th{background:var(--color-bg-warm);font-family:var(--font-heading);font-weight:700;text-align:left;padding:0.7rem 1rem;border-bottom:2px solid rgba(0,0,0,0.08)}
+table td{padding:0.6rem 1rem;border-bottom:1px solid rgba(0,0,0,0.04)}
+table tr:last-child td{border-bottom:none}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🗄️ SQL & Databases Mastery</a><div class="nav-dots"><a href="../module-01-window-functions/" class="nav-dot active" aria-label="Module 1"></a><a href="../module-02-ctes-advanced/" class="nav-dot" aria-label="Module 2"></a><a href="../module-03-query-optimization/" class="nav-dot" aria-label="Module 3"></a><a href="../module-04-postgresql/" class="nav-dot" aria-label="Module 4"></a><a href="../module-05-nosql/" class="nav-dot" aria-label="Module 5"></a><a href="../module-06-interview-gauntlet/" class="nav-dot" aria-label="Module 6"></a></div></div></nav>
+
+<!-- Screen 1: What Are Window Functions -->
+<section class="screen" id="s1">
+  <h2>🪟 What Are <span class="accent">Window Functions</span>?</h2>
+  <p>Imagine you work at an e-commerce company. Your manager asks: <em>"Show me each order alongside the customer's total lifetime spend."</em> Without window functions, you'd write something ugly — a subquery or a self-join:</p>
+  <div class="code-block"><span class="cm">-- The painful way (correlated subquery)</span>
+<span class="kw">SELECT</span> o.order_id, o.customer_id, o.amount,
+       (<span class="kw">SELECT</span> <span class="fn">SUM</span>(o2.amount) <span class="kw">FROM</span> orders o2 <span class="kw">WHERE</span> o2.customer_id = o.customer_id) <span class="kw">AS</span> lifetime_spend
+<span class="kw">FROM</span> orders o;</div>
+  <p>This fires a subquery <strong>for every single row</strong>. On a million-row table, that's a million subqueries. Window functions solve this elegantly:</p>
+  <div class="code-block"><span class="cm">-- The window function way</span>
+<span class="kw">SELECT</span> order_id, customer_id, amount,
+       <span class="fn">SUM</span>(amount) <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> customer_id) <span class="kw">AS</span> lifetime_spend
+<span class="kw">FROM</span> orders;</div>
+
+  <h3>The Mental Model: A Window Into Your Data</h3>
+  <p>Think of a window function as a <strong>sliding glass panel</strong> that you hold up against your result set. Each row can "see" other rows — its neighbors, its group, or the entire table — and compute something based on what it sees. Crucially, <strong>the row count never changes</strong>. Unlike <code>GROUP BY</code>, which collapses rows, window functions <strong>add columns</strong> to existing rows.</p>
+  <div class="code-block">┌─────────────────────────────────────────────────────┐
+│  Regular Query Result Set (all rows preserved)       │
+│  ┌─────────┐                                         │
+│  │ Window  │  ← Each row peeks through its window    │
+│  │ Frame   │    to see neighboring rows and compute  │
+│  └─────────┘    aggregates WITHOUT collapsing them   │
+└─────────────────────────────────────────────────────┘</div>
+
+  <h3>Anatomy of a Window Function Call</h3>
+  <div class="code-block"><span class="fn">function_name</span>(args) <span class="kw">OVER</span> (
+    [<span class="kw">PARTITION BY</span> column1, column2, ...]   <span class="cm">-- Defines groups (like GROUP BY but no collapse)</span>
+    [<span class="kw">ORDER BY</span> column3 <span class="kw">ASC</span>/<span class="kw">DESC</span>, ...]       <span class="cm">-- Defines ordering within each partition</span>
+    [frame_clause]                         <span class="cm">-- Defines which rows in the partition to consider</span>
+)</div>
+  <table>
+    <tr><th>Component</th><th>Purpose</th><th>Required?</th></tr>
+    <tr><td><code>PARTITION BY</code></td><td>Splits rows into groups</td><td>Optional</td></tr>
+    <tr><td><code>ORDER BY</code></td><td>Orders rows within partition</td><td>Depends</td></tr>
+    <tr><td>Frame clause</td><td>Narrows visible rows further</td><td>Optional</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"What's the difference between GROUP BY and window functions?"</strong> — "GROUP BY collapses rows into groups and returns one row per group. Window functions compute across a set of rows related to the current row but preserve every row in the output. This means I can show per-row detail alongside aggregate calculations — like showing each order's amount next to the customer's average order value — without self-joining or subquerying."</p>
+  </div>
+</section>
+
+<!-- Screen 2: ROW_NUMBER, RANK, DENSE_RANK -->
+<section class="screen screen-alt" id="s2">
+  <h2>🏅 ROW_NUMBER, RANK, and <span class="accent">DENSE_RANK</span></h2>
+  <p>These three ranking functions are the <strong>bread and butter</strong> of SQL interviews. They all assign numbers to rows within a partition, but handle ties differently.</p>
+
+  <div class="code-block"><span class="kw">SELECT</span> product_id, category, revenue,
+       <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> category <span class="kw">ORDER BY</span> revenue <span class="kw">DESC</span>) <span class="kw">AS</span> row_num,
+       <span class="fn">RANK</span>()       <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> category <span class="kw">ORDER BY</span> revenue <span class="kw">DESC</span>) <span class="kw">AS</span> rank_val,
+       <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> category <span class="kw">ORDER BY</span> revenue <span class="kw">DESC</span>) <span class="kw">AS</span> dense_rank_val
+<span class="kw">FROM</span> product_sales;</div>
+
+  <table>
+    <tr><th>product_id</th><th>category</th><th>revenue</th><th>row_num</th><th>rank_val</th><th>dense_rank_val</th></tr>
+    <tr><td>101</td><td>Electronics</td><td>5000</td><td>1</td><td>1</td><td>1</td></tr>
+    <tr><td>102</td><td>Electronics</td><td>5000</td><td>2</td><td>1</td><td>1</td></tr>
+    <tr><td>103</td><td>Electronics</td><td>3000</td><td>3</td><td>3</td><td>2</td></tr>
+    <tr><td>201</td><td>Clothing</td><td>4000</td><td>1</td><td>1</td><td>1</td></tr>
+    <tr><td>202</td><td>Clothing</td><td>4000</td><td>2</td><td>1</td><td>1</td></tr>
+    <tr><td>203</td><td>Clothing</td><td>2000</td><td>3</td><td>3</td><td>2</td></tr>
+  </table>
+
+  <h3>The Analogy: A Race Finish</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🏁 ROW_NUMBER()</h4>
+      <p>The <strong>bib number</strong> at the finish line. Even if two runners cross at the same time, one gets #1 and the other #2. No ties, ever. Non-deterministic for ties.</p>
+    </div>
+    <div class="card blue">
+      <h4>🥇 RANK()</h4>
+      <p>The <strong>Olympic medal</strong> system. Two tie for gold? Both get rank 1, next gets rank 3. Gaps appear after ties.</p>
+    </div>
+    <div class="card green">
+      <h4>🏆 DENSE_RANK()</h4>
+      <p>The <strong>podium step</strong> system. Two tie for 1st? They share step 1, next gets step 2. No gaps, ever.</p>
+    </div>
+  </div>
+
+  <div class="code-block">Values:   100  100  90  80  80  70
+           │    │   │   │    │   │
+ROW_NUM:   1    2   3   4    5   6   ← Always sequential, no gaps, no ties
+RANK:      1    1   3   4    4   6   ← Ties share rank, gaps after ties
+DENSE_RANK:1    1   2   3    3   4   ← Ties share rank, NO gaps</div>
+
+  <h3>Classic Interview Pattern: Top-N Per Group</h3>
+  <p><em>"Find the top 2 highest-revenue products per category."</em></p>
+  <div class="code-block"><span class="kw">WITH</span> ranked <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> product_id, category, revenue,
+           <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> category <span class="kw">ORDER BY</span> revenue <span class="kw">DESC</span>) <span class="kw">AS</span> rn
+    <span class="kw">FROM</span> product_sales
+)
+<span class="kw">SELECT</span> product_id, category, revenue
+<span class="kw">FROM</span> ranked
+<span class="kw">WHERE</span> rn &lt;= <span class="fn">2</span>;</div>
+  <p><strong>Why ROW_NUMBER here and not RANK?</strong> If two products tie for #2, RANK would return both (giving you 3 results). ROW_NUMBER guarantees exactly 2 rows per category. The choice depends on the business requirement — ask your interviewer!</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"When would you choose DENSE_RANK over RANK?"</strong> — "I'd use DENSE_RANK when I care about the number of distinct ranking levels rather than positions. For example, if asked 'find products with the 3rd highest revenue,' DENSE_RANK ensures I find that 3rd tier even when ties push RANK's values past 3."</p>
+  </div>
+</section>
+
+<!-- Screen 3: LEAD, LAG, and Gap Analysis -->
+<section class="screen" id="s3">
+  <h2>↔️ LEAD, LAG, and <span class="accent">Gap Analysis</span></h2>
+  <p><code>LAG()</code> and <code>LEAD()</code> let each row reach out and grab values from <strong>adjacent rows</strong> in the ordered partition. Think of standing in a line and glancing at the person ahead or behind you.</p>
+  <div class="code-block"><span class="fn">LAG</span>(column, offset, default)  <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> ... <span class="kw">ORDER BY</span> ...)
+<span class="fn">LEAD</span>(column, offset, default) <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> ... <span class="kw">ORDER BY</span> ...)
+
+<span class="cm">-- offset:  how many rows back (LAG) or forward (LEAD). Default: 1</span>
+<span class="cm">-- default: value when no row exists (first/last row). Default: NULL</span></div>
+
+  <h3>Month-over-Month Revenue Change</h3>
+  <div class="code-block"><span class="kw">SELECT</span> 
+    month,
+    revenue,
+    <span class="fn">LAG</span>(revenue, <span class="fn">1</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> month)  <span class="kw">AS</span> prev_month_revenue,
+    revenue - <span class="fn">LAG</span>(revenue, <span class="fn">1</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> month) <span class="kw">AS</span> mom_change,
+    <span class="fn">ROUND</span>(
+        <span class="fn">100.0</span> * (revenue - <span class="fn">LAG</span>(revenue, <span class="fn">1</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> month)) 
+        / <span class="fn">LAG</span>(revenue, <span class="fn">1</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> month), <span class="fn">2</span>
+    ) <span class="kw">AS</span> mom_pct_change
+<span class="kw">FROM</span> monthly_revenue;</div>
+
+  <table>
+    <tr><th>month</th><th>revenue</th><th>prev_month</th><th>mom_change</th><th>mom_pct</th></tr>
+    <tr><td>2024-01</td><td>10000</td><td>NULL</td><td>NULL</td><td>NULL</td></tr>
+    <tr><td>2024-02</td><td>12000</td><td>10000</td><td>2000</td><td>20.00</td></tr>
+    <tr><td>2024-03</td><td>11500</td><td>12000</td><td>-500</td><td>-4.17</td></tr>
+    <tr><td>2024-04</td><td>15000</td><td>11500</td><td>3500</td><td>30.43</td></tr>
+  </table>
+
+  <h3>YoY Comparison</h3>
+  <div class="code-block"><span class="kw">SELECT</span> 
+    month, revenue,
+    <span class="fn">LAG</span>(revenue, <span class="fn">12</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> month) <span class="kw">AS</span> same_month_last_year,
+    <span class="fn">ROUND</span>(
+        <span class="fn">100.0</span> * (revenue - <span class="fn">LAG</span>(revenue, <span class="fn">12</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> month)) 
+        / <span class="fn">NULLIF</span>(<span class="fn">LAG</span>(revenue, <span class="fn">12</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> month), <span class="fn">0</span>), <span class="fn">2</span>
+    ) <span class="kw">AS</span> yoy_pct_change
+<span class="kw">FROM</span> monthly_revenue;</div>
+  <p><strong>Pro tip</strong>: Always wrap the denominator in <code>NULLIF(..., 0)</code> to avoid division-by-zero errors. Interviewers love to see that defensive coding habit.</p>
+
+  <h3>Gap Analysis: Finding Missing Sequences</h3>
+  <p><em>"Find gaps in order IDs (missing order numbers)."</em></p>
+  <div class="code-block"><span class="cm">-- ❌ WRONG: Can't use window functions in WHERE!</span>
+<span class="kw">SELECT</span> order_id,
+    <span class="fn">LEAD</span>(order_id) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> order_id) - order_id <span class="kw">AS</span> gap_size
+<span class="kw">FROM</span> orders
+<span class="kw">WHERE</span> <span class="fn">LEAD</span>(order_id) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> order_id) - order_id > <span class="fn">1</span>;</div>
+  <div class="code-block"><span class="cm">-- ✅ CORRECT: Wrap in CTE, then filter</span>
+<span class="kw">WITH</span> order_gaps <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> order_id,
+           <span class="fn">LEAD</span>(order_id) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> order_id) <span class="kw">AS</span> next_order_id
+    <span class="kw">FROM</span> orders
+)
+<span class="kw">SELECT</span> order_id, next_order_id, (next_order_id - order_id) <span class="kw">AS</span> gap_size
+<span class="kw">FROM</span> order_gaps
+<span class="kw">WHERE</span> next_order_id - order_id > <span class="fn">1</span>;</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Can you use a window function in a WHERE clause?"</strong> — "No. Window functions are evaluated after WHERE, HAVING, and GROUP BY — they're in the same phase as SELECT. To filter on a window function result, I wrap the query in a CTE or subquery. The SQL logical processing order is: FROM → WHERE → GROUP BY → HAVING → SELECT (window functions here) → ORDER BY → LIMIT."</p>
+  </div>
+</section>
+
+<!-- Screen 4: FIRST_VALUE, LAST_VALUE, NTH_VALUE -->
+<section class="screen screen-alt" id="s4">
+  <h2>🎯 FIRST_VALUE, LAST_VALUE, <span class="accent">NTH_VALUE</span></h2>
+
+  <h3>The Trap: Default Frame Specification</h3>
+  <p>These functions return a specific row's value from the window frame. But here's where most people get burned — <strong>the default frame</strong>.</p>
+  <p>When <code>ORDER BY</code> is specified, the default frame is <code>ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code>. This means <code>LAST_VALUE()</code> doesn't give you the last value in the partition — it gives you the <strong>current row</strong>. This is the single most common window function bug.</p>
+
+  <div class="code-block"><span class="cm">-- ❌ BUGGY: LAST_VALUE sees only up to current row</span>
+<span class="kw">SELECT</span> order_id, customer_id, order_date, amount,
+    <span class="fn">FIRST_VALUE</span>(amount) <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> customer_id <span class="kw">ORDER BY</span> order_date) <span class="kw">AS</span> first_order_amt,
+    <span class="fn">LAST_VALUE</span>(amount)  <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> customer_id <span class="kw">ORDER BY</span> order_date) <span class="kw">AS</span> last_order_amt  <span class="cm">-- BUG!</span>
+<span class="kw">FROM</span> orders;</div>
+
+  <div class="code-block"><span class="cm">-- ✅ FIXED: Extend the frame to the entire partition</span>
+<span class="kw">SELECT</span> order_id, customer_id, order_date, amount,
+    <span class="fn">FIRST_VALUE</span>(amount) <span class="kw">OVER</span> (
+        <span class="kw">PARTITION BY</span> customer_id <span class="kw">ORDER BY</span> order_date
+    ) <span class="kw">AS</span> first_order_amt,
+    <span class="fn">LAST_VALUE</span>(amount) <span class="kw">OVER</span> (
+        <span class="kw">PARTITION BY</span> customer_id <span class="kw">ORDER BY</span> order_date
+        <span class="kw">ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING</span>
+    ) <span class="kw">AS</span> last_order_amt
+<span class="kw">FROM</span> orders;</div>
+
+  <table>
+    <tr><th>Function</th><th>Returns</th><th>Frame Matters?</th><th>Common Gotcha</th></tr>
+    <tr><td><code>FIRST_VALUE()</code></td><td>Value from first row in frame</td><td>Less so*</td><td>Usually works with default</td></tr>
+    <tr><td><code>LAST_VALUE()</code></td><td>Value from last row in frame</td><td><strong>YES</strong></td><td>Must extend frame!</td></tr>
+    <tr><td><code>NTH_VALUE(n)</code></td><td>Value from nth row in frame</td><td><strong>YES</strong></td><td>Returns NULL if &lt; n rows</td></tr>
+  </table>
+  <p><em>*FIRST_VALUE usually works because the default frame starts at UNBOUNDED PRECEDING, which includes the first row.</em></p>
+
+  <h3>Named Windows — DRY Principle</h3>
+  <div class="code-block"><span class="kw">SELECT DISTINCT</span>
+    customer_id,
+    <span class="fn">FIRST_VALUE</span>(product_name) <span class="kw">OVER</span> w <span class="kw">AS</span> first_product_bought,
+    <span class="fn">LAST_VALUE</span>(product_name)  <span class="kw">OVER</span> w <span class="kw">AS</span> latest_product_bought,
+    <span class="fn">FIRST_VALUE</span>(order_date)   <span class="kw">OVER</span> w <span class="kw">AS</span> first_purchase_date,
+    <span class="fn">LAST_VALUE</span>(order_date)    <span class="kw">OVER</span> w <span class="kw">AS</span> latest_purchase_date
+<span class="kw">FROM</span> orders
+<span class="kw">JOIN</span> products <span class="kw">USING</span> (product_id)
+<span class="kw">WINDOW</span> w <span class="kw">AS</span> (
+    <span class="kw">PARTITION BY</span> customer_id 
+    <span class="kw">ORDER BY</span> order_date
+    <span class="kw">ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING</span>
+);</div>
+  <p><strong>Pro tip</strong>: Use the <code>WINDOW</code> clause to define a named window and reuse it. Avoids repeating the same OVER(...) five times — cleaner and less error-prone.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"What's the default frame when ORDER BY is present?"</strong> — "RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW. This means aggregate window functions compute a running total by default, and LAST_VALUE() will just return the current row's value — not the actual last row. To fix this, I explicitly specify ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING."</p>
+  </div>
+</section>
+
+<!-- Screen 5: Frame Specification -->
+<section class="screen" id="s5">
+  <h2>🖼️ Frame Specification: <span class="accent">ROWS vs RANGE vs GROUPS</span></h2>
+  <p>The frame clause defines <strong>exactly which rows</strong> the window function considers. This separates good SQL engineers from great ones.</p>
+  <div class="code-block"><span class="kw">ROWS</span> | <span class="kw">RANGE</span> | <span class="kw">GROUPS</span> <span class="kw">BETWEEN</span>
+    { <span class="kw">UNBOUNDED PRECEDING</span> | n <span class="kw">PRECEDING</span> | <span class="kw">CURRENT ROW</span> }
+    <span class="kw">AND</span>
+    { <span class="kw">UNBOUNDED FOLLOWING</span> | n <span class="kw">FOLLOWING</span> | <span class="kw">CURRENT ROW</span> }</div>
+
+  <h3>ROWS — Physical Row Count</h3>
+  <div class="code-block"><span class="cm">-- 3-day moving average (exactly 3 rows)</span>
+<span class="kw">SELECT</span> order_date, daily_revenue,
+    <span class="fn">AVG</span>(daily_revenue) <span class="kw">OVER</span> (
+        <span class="kw">ORDER BY</span> order_date
+        <span class="kw">ROWS BETWEEN</span> <span class="fn">2</span> <span class="kw">PRECEDING AND CURRENT ROW</span>
+    ) <span class="kw">AS</span> moving_avg_3day
+<span class="kw">FROM</span> daily_sales;</div>
+  <div class="code-block">Row 1: AVG of [Row 1]                         = Row 1 value
+Row 2: AVG of [Row 1, Row 2]                  = average of 2
+Row 3: AVG of [Row 1, Row 2, Row 3]           = average of 3  ← full window
+Row 4: AVG of [Row 2, Row 3, Row 4]           = average of 3  ← slides forward</div>
+
+  <h3>RANGE — Logical Value Range</h3>
+  <div class="code-block"><span class="cm">-- Include all rows with revenue within ±100 of current value</span>
+<span class="kw">SELECT</span> order_id, revenue,
+    <span class="fn">COUNT</span>(*) <span class="kw">OVER</span> (
+        <span class="kw">ORDER BY</span> revenue
+        <span class="kw">RANGE BETWEEN</span> <span class="fn">100</span> <span class="kw">PRECEDING AND</span> <span class="fn">100</span> <span class="kw">FOLLOWING</span>
+    ) <span class="kw">AS</span> nearby_count
+<span class="kw">FROM</span> orders;</div>
+
+  <h3>Side-by-Side Comparison</h3>
+  <div class="code-block">Data (<span class="kw">ORDER BY</span> value):  10, 20, 20, 20, 30, 40
+
+Current row: 20 (second occurrence), frame = <span class="str">"1 PRECEDING AND 1 FOLLOWING"</span>
+
+<span class="fn">ROWS</span>:   [20, <strong>20</strong>, 20]           ← 1 physical row before + current + 1 after
+<span class="fn">RANGE</span>:  [20, 20, 20]             ← all values within 19..21
+<span class="fn">GROUPS</span>: [10, 20, 20, 20, 30]     ← 1 peer group before + current group + 1 after</div>
+
+  <table>
+    <tr><th>Frame Type</th><th>Best For</th><th>Handles Ties</th></tr>
+    <tr><td><code>ROWS</code></td><td>Fixed-size sliding windows</td><td>Ignores ties</td></tr>
+    <tr><td><code>RANGE</code></td><td>Value-based ranges, date intervals</td><td>Groups peers</td></tr>
+    <tr><td><code>GROUPS</code></td><td>Peer-group-based windows</td><td>Groups peers</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"What's the difference between ROWS and RANGE?"</strong> — "ROWS counts physical rows — <code>2 PRECEDING</code> means exactly 2 rows before. RANGE operates on logical values — <code>2 PRECEDING</code> means all rows whose ORDER BY value is within 2 of the current row's. The key difference shows up with duplicates: RANGE treats all peers as a single unit, while ROWS treats each as individual. For moving averages with date gaps, use RANGE; for fixed-size sliding windows, use ROWS."</p>
+  </div>
+</section>
+
+<!-- Screen 6: Running Aggregates -->
+<section class="screen screen-alt" id="s6">
+  <h2>📊 Running Aggregates: <span class="accent">SUM, AVG, COUNT</span> OVER</h2>
+
+  <h3>Running Totals</h3>
+  <p>The most common analytics interview question: <em>"Calculate a running total of revenue by date."</em></p>
+  <div class="code-block"><span class="kw">SELECT</span> 
+    order_date, daily_revenue,
+    <span class="fn">SUM</span>(daily_revenue) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> order_date) <span class="kw">AS</span> running_total,
+    <span class="fn">SUM</span>(daily_revenue) <span class="kw">OVER</span> (
+        <span class="kw">ORDER BY</span> order_date 
+        <span class="kw">ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</span>
+    ) <span class="kw">AS</span> running_total_explicit  <span class="cm">-- Same thing, just explicit</span>
+<span class="kw">FROM</span> daily_sales;</div>
+
+  <table>
+    <tr><th>order_date</th><th>daily_revenue</th><th>running_total</th></tr>
+    <tr><td>2024-01-01</td><td>1000</td><td>1000</td></tr>
+    <tr><td>2024-01-02</td><td>1500</td><td>2500</td></tr>
+    <tr><td>2024-01-03</td><td>800</td><td>3300</td></tr>
+    <tr><td>2024-01-04</td><td>2000</td><td>5300</td></tr>
+  </table>
+
+  <h3>Moving Averages</h3>
+  <div class="code-block"><span class="cm">-- 7-day moving average</span>
+<span class="kw">SELECT</span> order_date, daily_revenue,
+    <span class="fn">ROUND</span>(<span class="fn">AVG</span>(daily_revenue) <span class="kw">OVER</span> (
+        <span class="kw">ORDER BY</span> order_date
+        <span class="kw">ROWS BETWEEN</span> <span class="fn">6</span> <span class="kw">PRECEDING AND CURRENT ROW</span>
+    ), <span class="fn">2</span>) <span class="kw">AS</span> moving_avg_7day,
+    <span class="fn">MIN</span>(daily_revenue) <span class="kw">OVER</span> (
+        <span class="kw">ORDER BY</span> order_date
+        <span class="kw">ROWS BETWEEN</span> <span class="fn">6</span> <span class="kw">PRECEDING AND CURRENT ROW</span>
+    ) <span class="kw">AS</span> rolling_min_7day
+<span class="kw">FROM</span> daily_sales;</div>
+
+  <h3>Cumulative Percentage</h3>
+  <p><em>"What percentage of total revenue has been earned by each date?"</em></p>
+  <div class="code-block"><span class="kw">SELECT</span> 
+    order_date, daily_revenue,
+    <span class="fn">SUM</span>(daily_revenue) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> order_date) <span class="kw">AS</span> running_total,
+    <span class="fn">ROUND</span>(
+        <span class="fn">100.0</span> * <span class="fn">SUM</span>(daily_revenue) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> order_date)
+        / <span class="fn">SUM</span>(daily_revenue) <span class="kw">OVER</span> (), <span class="cm">-- Empty OVER = grand total</span>
+        <span class="fn">2</span>
+    ) <span class="kw">AS</span> cumulative_pct
+<span class="kw">FROM</span> daily_sales;</div>
+  <p>The trick: <code>SUM(...) OVER ()</code> with an <strong>empty</strong> OVER clause gives the grand total across the entire result set — perfect for computing percentages without a self-join.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How do you compute a running total that resets each month?"</strong> — "I'd partition by the month and order by date within each partition. The running total automatically resets at each partition boundary: <code>SUM(amount) OVER (PARTITION BY DATE_TRUNC('month', order_date) ORDER BY order_date)</code>"</p>
+  </div>
+</section>
+
+<!-- Screen 7: Statistical Window Functions -->
+<section class="screen" id="s7">
+  <h2>📈 PERCENT_RANK, CUME_DIST, <span class="accent">NTILE</span></h2>
+
+  <h3>PERCENT_RANK — Relative Standing</h3>
+  <p><code>PERCENT_RANK()</code> returns the relative rank as a percentage: <code>(rank - 1) / (total_rows - 1)</code>. First row = 0, last row = 1.</p>
+  <div class="code-block"><span class="kw">SELECT</span> customer_id, total_spend,
+    <span class="fn">PERCENT_RANK</span>() <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> total_spend) <span class="kw">AS</span> pct_rank
+<span class="kw">FROM</span> customer_lifetime_value;</div>
+
+  <h3>CUME_DIST — Cumulative Distribution</h3>
+  <p><code>CUME_DIST()</code> returns the fraction of rows ≤ the current row: <code>count(values ≤ current) / total_rows</code>. Always > 0, last row = 1.</p>
+
+  <h3>Key Difference</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📊 PERCENT_RANK</h4>
+      <ul>
+        <li>Formula: <code>(rank-1)/(n-1)</code></li>
+        <li>Min value: 0</li>
+        <li>Meaning: "% of rows ranked lower"</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📈 CUME_DIST</h4>
+      <ul>
+        <li>Formula: <code>count(≤ current)/n</code></li>
+        <li>Min value: 1/n (never 0)</li>
+        <li>Meaning: "% of rows ≤ this value"</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>NTILE — Divide Into Buckets</h3>
+  <p><code>NTILE(n)</code> divides the ordered partition into <code>n</code> roughly equal buckets. Perfect for percentiles and segments.</p>
+  <div class="code-block"><span class="cm">-- Segment customers for marketing</span>
+<span class="kw">SELECT</span> customer_id, total_spend,
+    <span class="kw">CASE</span> <span class="fn">NTILE</span>(<span class="fn">4</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> total_spend <span class="kw">DESC</span>)
+        <span class="kw">WHEN</span> <span class="fn">1</span> <span class="kw">THEN</span> <span class="str">'VIP (Top 25%)'</span>
+        <span class="kw">WHEN</span> <span class="fn">2</span> <span class="kw">THEN</span> <span class="str">'High Value'</span>
+        <span class="kw">WHEN</span> <span class="fn">3</span> <span class="kw">THEN</span> <span class="str">'Medium Value'</span>
+        <span class="kw">WHEN</span> <span class="fn">4</span> <span class="kw">THEN</span> <span class="str">'Low Value'</span>
+    <span class="kw">END AS</span> customer_segment
+<span class="kw">FROM</span> customer_lifetime_value;</div>
+  <p><strong>Caveat</strong>: NTILE distributes rows as evenly as possible, but 10 rows in 4 buckets gives sizes 3, 3, 2, 2. For precise percentiles, prefer <code>PERCENT_RANK</code> or <code>CUME_DIST</code>.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How would you find the median using window functions?"</strong> — "I'd use <code>PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY value)</code> if available. Otherwise, I can use ROW_NUMBER: rank all values, then pick the middle one(s) with <code>WHERE rn IN (FLOOR((total+1)/2.0), CEIL((total+1)/2.0))</code> and average them — handles both odd and even row counts."</p>
+  </div>
+</section>
+
+<!-- Screen 8: Sessionization -->
+<section class="screen screen-alt" id="s8">
+  <h2>🔗 Practical: <span class="accent">Sessionization</span> with Window Functions</h2>
+  <p>You have a <code>user_events</code> table with timestamped page views. A "session" is a sequence of events where no gap exceeds 30 minutes. Assign a session ID to each event. This is a <strong>classic interview question</strong> at Google, Meta, and Amazon.</p>
+
+  <h3>Step-by-Step Approach</h3>
+  <div class="code-block"><span class="cm">-- Step 1: Calculate gap from previous event</span>
+<span class="kw">WITH</span> event_gaps <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> user_id, event_time, page_url,
+        <span class="fn">LAG</span>(event_time) <span class="kw">OVER</span> (
+            <span class="kw">PARTITION BY</span> user_id <span class="kw">ORDER BY</span> event_time
+        ) <span class="kw">AS</span> prev_event_time,
+        <span class="fn">EXTRACT</span>(<span class="kw">EPOCH FROM</span> (
+            event_time - <span class="fn">LAG</span>(event_time) <span class="kw">OVER</span> (
+                <span class="kw">PARTITION BY</span> user_id <span class="kw">ORDER BY</span> event_time
+            )
+        )) / <span class="fn">60</span> <span class="kw">AS</span> gap_minutes
+    <span class="kw">FROM</span> user_events
+),
+
+<span class="cm">-- Step 2: Flag session boundaries (gap > 30 min or first event)</span>
+session_boundaries <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> *,
+        <span class="kw">CASE WHEN</span> gap_minutes > <span class="fn">30</span> <span class="kw">OR</span> gap_minutes <span class="kw">IS NULL THEN</span> <span class="fn">1</span> <span class="kw">ELSE</span> <span class="fn">0</span> <span class="kw">END AS</span> is_new_session
+    <span class="kw">FROM</span> event_gaps
+),
+
+<span class="cm">-- Step 3: Running SUM of boundary flags = session ID</span>
+sessions <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> *,
+        <span class="fn">SUM</span>(is_new_session) <span class="kw">OVER</span> (
+            <span class="kw">PARTITION BY</span> user_id <span class="kw">ORDER BY</span> event_time
+        ) <span class="kw">AS</span> session_id
+    <span class="kw">FROM</span> session_boundaries
+)
+
+<span class="kw">SELECT</span> user_id, event_time, page_url, session_id
+<span class="kw">FROM</span> sessions
+<span class="kw">ORDER BY</span> user_id, event_time;</div>
+
+  <h3>How It Works — Visually</h3>
+  <div class="code-block">User A's events:
+
+Time:        10:00   10:05   10:20   11:15   11:18   11:25
+Gap (min):    NULL     5       15      55       3       7
+New session?  1        0       0       1        0       0
+SUM flags:    1        1       1       2        2       2
+              └── Session 1 ──┘       └── Session 2 ──┘</div>
+  <p>The trick is brilliant: converting boolean flags (0/1) into a running sum. Each new session increments the counter, and all events within share the same sum value.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Walk me through how you'd sessionize clickstream data."</strong> — "Three-step window function approach: 1) LAG to compute time gaps per user, 2) Flag rows where gap exceeds 30 min or no previous event, 3) Running SUM of flags creates a monotonically increasing session counter. This is O(n log n) for the sort and O(n) for the scan — much more efficient than self-joins."</p>
+  </div>
+</section>
+
+<!-- Screen 9: Quiz -->
+<section class="screen" id="s9">
+  <h2>🧪 Quiz: <span class="accent">Test Yourself</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: What does ROW_NUMBER() do when two rows have the same ORDER BY value?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Returns the same number for both rows</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">B) Returns NULL for the duplicate</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">C) Assigns arbitrary but distinct numbers to each row</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Throws an error</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: What is the default frame when ORDER BY is present in a window function?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) RANGE BETWEEN 1 PRECEDING AND 1 FOLLOWING</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: You want the top 3 products by revenue per category, but if products tie, you want ALL tied products included. Which function?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) ROW_NUMBER() — filter WHERE rn &lt;= 3</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) RANK() — filter WHERE rank &lt;= 3</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) DENSE_RANK() — filter WHERE dense_rank &lt;= 3</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) NTILE(3) — filter WHERE ntile = 1</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: How do you calculate a 7-day moving average of daily revenue?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) AVG(revenue) OVER (ORDER BY date ROWS BETWEEN 7 PRECEDING AND CURRENT ROW)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) AVG(revenue) OVER (ORDER BY date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) AVG(revenue) OVER (PARTITION BY date ROWS BETWEEN 7 PRECEDING AND CURRENT ROW)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) AVG(revenue) OVER (ORDER BY date RANGE BETWEEN 7 PRECEDING AND CURRENT ROW)</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: In the sessionization pattern, what technique creates the session IDs?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) ROW_NUMBER() partitioned by user</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">B) DENSE_RANK() on the timestamp</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">C) Running SUM() of a boolean flag indicating session boundaries</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) NTILE() to divide events into buckets</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<!-- Screen 10: Key Takeaways -->
+<section class="screen screen-alt" id="s10">
+  <h2>🎯 Key <span class="accent">Takeaways</span></h2>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🏅 Ranking Functions</h4>
+      <p><strong>ROW_NUMBER</strong> = unique sequential (no ties). <strong>RANK</strong> = ties with gaps. <strong>DENSE_RANK</strong> = ties without gaps. Choose based on whether you want exactly N results or inclusive-of-ties.</p>
+    </div>
+    <div class="card blue">
+      <h4>↔️ LAG/LEAD</h4>
+      <p>Access adjacent rows for period-over-period comparisons, gap analysis, and change detection. Always handle NULLs for first/last rows.</p>
+    </div>
+    <div class="card green">
+      <h4>⚠️ LAST_VALUE Trap</h4>
+      <p>The default frame <code>RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code> means LAST_VALUE returns the current row. Always specify <code>ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING</code>.</p>
+    </div>
+    <div class="card purple">
+      <h4>🖼️ Frame Types</h4>
+      <p><strong>ROWS</strong> = physical row count. <strong>RANGE</strong> = logical values. <strong>GROUPS</strong> = peer groups. Use ROWS for sliding windows, RANGE for value ranges.</p>
+    </div>
+    <div class="card">
+      <h4>🚫 No WHERE Filtering</h4>
+      <p>Window functions execute in the SELECT phase — after WHERE, GROUP BY, HAVING. Wrap in a CTE to filter on window function results.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔗 Sessionization Pattern</h4>
+      <p>LAG → flag boundaries → running SUM. Applies to sessions, islands, streaks, and any consecutive-row grouping problem.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../index.html">← Course Home</a>
+  <a href="../module-02-ctes-advanced/index.html">Next: CTEs & Advanced Patterns →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Chat animation
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above and try to understand why the correct answer works.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+
+  // Arrow key navigation
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'){const next=document.querySelector('footer.module-nav a:last-child');if(next)next.click();}
+    if(e.key==='ArrowLeft'){const prev=document.querySelector('footer.module-nav a:first-child');if(prev)prev.click();}
+  });
+})();
+</script>
+</body>
+</html>
