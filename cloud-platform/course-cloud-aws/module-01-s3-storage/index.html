@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 1: Amazon S3 — The Foundation of Data Lakes | Cloud AWS Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+table.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+table.info-table th,table.info-table td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+table.info-table th{font-family:var(--font-heading);font-weight:700;background:rgba(0,0,0,0.03);font-size:0.85rem}
+table.info-table tr:last-child td{border-bottom:none}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}table.info-table{font-size:0.8rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">☁️ Cloud AWS Mastery</a><div class="nav-dots"><a href="../module-01-s3-storage/" class="nav-dot active"></a><a href="../module-02-glue-athena/" class="nav-dot"></a><a href="../module-03-emr-compute/" class="nav-dot"></a><a href="../module-04-kinesis-redshift/" class="nav-dot"></a><a href="../module-05-governance-orchestration/" class="nav-dot"></a><a href="../module-06-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: S3 Storage Classes -->
+<section class="screen" id="s1">
+  <h2>☁️ Amazon <span class="accent">S3 Storage</span> Classes</h2>
+  <p><strong>Scenario:</strong> RetailMart, a national retail chain with 4,000+ stores, is building a cloud-native data lake on AWS. Every day, 2.3 TB of POS transactions, inventory snapshots, clickstream logs, and supplier feeds land in S3. Your job: architect the storage layer.</p>
+  <p>S3 offers a spectrum of storage classes that trade <strong>retrieval speed</strong> for <strong>cost per GB</strong>. Choosing correctly is the difference between a $4K/month bill and a $40K/month bill.</p>
+
+  <table class="info-table">
+    <tr><th>Storage Class</th><th>Use Case</th><th>Min Duration</th><th>Retrieval</th><th>$/GB/mo</th></tr>
+    <tr><td>S3 Standard</td><td>Hot data, frequent access</td><td>None</td><td>Instant</td><td>$0.023</td></tr>
+    <tr><td>Intelligent-Tiering</td><td>Unknown access patterns</td><td>30 days</td><td>Instant</td><td>$0.023→$0.0125</td></tr>
+    <tr><td>Standard-IA</td><td>Infrequent but rapid</td><td>30 days</td><td>Instant</td><td>$0.0125</td></tr>
+    <tr><td>One Zone-IA</td><td>Reproducible infrequent</td><td>30 days</td><td>Instant</td><td>$0.010</td></tr>
+    <tr><td>Glacier Instant</td><td>Archive, ms access</td><td>90 days</td><td>Instant</td><td>$0.004</td></tr>
+    <tr><td>Glacier Flexible</td><td>Archive, min-to-hours</td><td>90 days</td><td>1-12 hours</td><td>$0.0036</td></tr>
+    <tr><td>Glacier Deep Archive</td><td>Long-term compliance</td><td>180 days</td><td>12-48 hours</td><td>$0.00099</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>Use <span class="tooltip-term" data-tip="Automatically moves objects between access tiers based on usage. No retrieval fees, but charges $0.0025/1,000 objects/month for monitoring.">Intelligent-Tiering</span> when access patterns are <strong>unpredictable</strong>. For millions of tiny files (like clickstream JSON), manual lifecycle rules to Standard-IA are cheaper. For ad-hoc analyst uploads with unknown frequency, Intelligent-Tiering wins.</p>
+  </div>
+</section>
+
+<!-- Screen 2: Lifecycle Policies -->
+<section class="screen screen-alt" id="s2">
+  <h2>Lifecycle <span class="accent">Policies</span> — Automating Data Movement</h2>
+  <p>Lifecycle policies define <strong>rules</strong> that automatically transition objects between storage classes or expire (delete) them. This is how you avoid the #1 S3 cost mistake: forgetting data exists.</p>
+
+  <div class="code-block"><span class="cm">// Lifecycle policy for POS transactions</span>
+{
+  <span class="str">"Rules"</span>: [{
+    <span class="str">"ID"</span>: <span class="str">"retailmart-pos-lifecycle"</span>,
+    <span class="str">"Status"</span>: <span class="str">"Enabled"</span>,
+    <span class="str">"Filter"</span>: { <span class="str">"Prefix"</span>: <span class="str">"raw/pos-transactions/"</span> },
+    <span class="str">"Transitions"</span>: [
+      { <span class="str">"Days"</span>: <span class="fn">30</span>,  <span class="str">"StorageClass"</span>: <span class="str">"STANDARD_IA"</span> },
+      { <span class="str">"Days"</span>: <span class="fn">90</span>,  <span class="str">"StorageClass"</span>: <span class="str">"GLACIER_IR"</span> },
+      { <span class="str">"Days"</span>: <span class="fn">365</span>, <span class="str">"StorageClass"</span>: <span class="str">"DEEP_ARCHIVE"</span> }
+    ],
+    <span class="str">"Expiration"</span>: { <span class="str">"Days"</span>: <span class="fn">2555</span> }
+  }]
+}</div>
+
+  <h3>Key Transition Rules</h3>
+  <div class="code-block"><span class="cm">Day 0          Day 30           Day 90            Day 365        Day 2555</span>
+  │              │                │                  │               │
+  ▼              ▼                ▼                  ▼               ▼
+Standard ──► Standard-IA ──► Glacier Instant ──► Deep Archive ──► DELETE
+                                                                     │
+                                                              7-year retention
+                                                              (tax compliance)</div>
+
+  <p><strong>Important:</strong> You cannot transition from a colder class to a warmer one. Minimum object size for IA is 128 KB. Transitions only go one direction.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Q: "How do you handle the 128 KB minimum for Standard-IA with millions of small log files?"</strong> — Two strategies: (1) <strong>Aggregate before transitioning</strong> — compact small files into larger Parquet files. (2) Use <strong>Intelligent-Tiering</strong> instead — no minimum object size charge.</p>
+  </div>
+</section>
+
+<!-- Screen 3: Event Notifications -->
+<section class="screen" id="s3">
+  <h2>Event <span class="accent">Notifications</span> — Triggering Pipelines</h2>
+  <p>S3 Event Notifications are the <strong>nervous system</strong> of an event-driven data lake. When a file lands, S3 fires to Lambda, SQS, SNS, or EventBridge — kicking off ETL, validation, or alerting.</p>
+
+  <div class="code-block"><span class="cm"># Event-Driven Architecture for RetailMart</span>
+
+                      S3 Event Notifications
+                              │
+         ┌──────────────────┼──────────────────┐
+         │                  │                  │
+         ▼                  ▼                  ▼
+    ┌──────────┐      ┌──────────┐      ┌──────────┐
+    │  Lambda   │      │   SQS    │      │   SNS    │
+    │ Validator │      │  Queue   │      │  Topic   │
+    └────┬─────┘      └────┬─────┘      └────┬─────┘
+         │                  │                  │
+         ▼                  ▼                  ▼
+     Validates          Glue ETL job      Email alert
+     schema +           picks up files    to data ops
+     file size          in batches        on failure</div>
+
+  <h3>EventBridge vs. Native S3 Notifications</h3>
+  <table class="info-table">
+    <tr><th>Feature</th><th>S3 Notifications</th><th>EventBridge</th></tr>
+    <tr><td>Targets</td><td>Lambda, SQS, SNS</td><td>20+ services</td></tr>
+    <tr><td>Filtering</td><td>Prefix + suffix only</td><td>JSON content filtering</td></tr>
+    <tr><td>Fan-out</td><td>1 target per event type</td><td>Multiple rules per event</td></tr>
+    <tr><td>Replay</td><td>No</td><td>Yes (event archive)</td></tr>
+    <tr><td>Cost</td><td>Free</td><td>$1/million events</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p><strong>Q: "You need to trigger both a Lambda validator AND a Glue ETL job when a file lands."</strong> — Use <span class="tooltip-term" data-tip="Amazon EventBridge routes events to 20+ targets, supports content-based filtering, and has event replay for debugging.">EventBridge</span> — it supports multiple targets directly, content-based filtering, and event replay for observability.</p>
+  </div>
+</section>
+
+<!-- Screen 4: S3 Select & Glacier Select -->
+<section class="screen screen-alt" id="s4">
+  <h2>S3 <span class="accent">Select</span> — Query in Place</h2>
+  <p>S3 Select lets you run <strong>SQL expressions</strong> directly against objects in S3 without downloading the entire file. Transformative when you need a needle from a haystack.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span class="cm"># S3 Select: Extract high-value txns</span>
+aws s3api select-object-content \
+  --bucket retailmart-data-lake-prod \
+  --key <span class="str">"raw/pos/2026/04/05/store-0042.csv"</span> \
+  --expression <span class="str">"SELECT s.transaction_id,
+                s.total_amount
+                FROM s3object s
+                WHERE CAST(s.total_amount
+                      AS FLOAT) > 500.00"</span> \
+  --expression-type SQL \
+  --input-serialization \
+    <span class="str">'{"CSV": {"FileHeaderInfo": "USE"}}'</span> \
+  --output-serialization <span class="str">'{"JSON": {}}'</span> \
+  output.json</div>
+    <div class="translate-eng">
+      <div class="line">📦 Run SQL directly on a single S3 object</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🎯 Target a specific CSV file in the bucket</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔍 SQL filter: only txns over $500</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📋 Input is CSV with headers</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📤 Output as JSON to a local file</div>
+    </div>
+  </div>
+
+  <h3>S3 Select vs. Athena</h3>
+  <table class="info-table">
+    <tr><th>Criteria</th><th>S3 Select</th><th>Athena</th></tr>
+    <tr><td>Scope</td><td>Single object</td><td>Entire dataset</td></tr>
+    <tr><td>Query complexity</td><td>Simple filter/project</td><td>Complex joins, CTEs</td></tr>
+    <tr><td>Cost model</td><td>Per byte scanned</td><td>$5/TB scanned</td></tr>
+    <tr><td>Latency</td><td>Milliseconds</td><td>Seconds</td></tr>
+    <tr><td>Best for</td><td>Lambda preprocessing</td><td>Ad-hoc analytics</td></tr>
+  </table>
+
+  <div class="code-block"><span class="cm"># Cost comparison: Lambda with vs. without S3 Select</span>
+
+Without S3 Select:                With S3 Select:
+┌──────────┐   2 GB    ┌──────┐   ┌──────────┐  SQL query  ┌──────┐
+│  S3      │──────────►│Lambda│   │  S3      │────────────►│Lambda│
+│  (2 GB)  │           │(2 GB │   │  (2 GB)  │  5 MB resp  │(256MB│
+│          │           │ mem) │   │          │◄────────────│ mem) │
+└──────────┘           └──────┘   └──────────┘             └──────┘
+
+Total: ~$0.033/invocation         Total: ~$0.004 (<span class="str">88% savings</span>)</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>Think of S3 Select as <code>grep</code> for S3 — single-object, simple SQL. Athena is a full database engine for dataset-wide analytics. They complement, not compete.</p>
+  </div>
+</section>
+
+<!-- Screen 5: Versioning -->
+<section class="screen" id="s5">
+  <h2>S3 <span class="accent">Versioning</span> — Protecting Your Data Lake</h2>
+  <p>S3 Versioning keeps <strong>every version</strong> of every object. Combined with MFA Delete, it's your last line of defense against accidental deletions and overwrites.</p>
+
+  <div class="code-block"><span class="cm"># Enable versioning + MFA Delete</span>
+aws s3api put-bucket-versioning \
+  --bucket retailmart-data-lake-prod \
+  --versioning-configuration <span class="str">Status=Enabled</span>
+
+<span class="cm"># MFA Delete (requires root credentials)</span>
+aws s3api put-bucket-versioning \
+  --bucket retailmart-data-lake-prod \
+  --versioning-configuration <span class="str">Status=Enabled,MFADelete=Enabled</span> \
+  --mfa <span class="str">"arn:aws:iam::123456789:mfa/root-device 123456"</span></div>
+
+  <div class="code-block"><span class="cm"># How versioning handles deletes and overwrites</span>
+
+Object: raw/pos-transactions/2026/04/05/store-0042.parquet
+
+ t=1: PUT (v1)     ──► Version ID: abc111  ◄── Original upload
+ t=2: PUT (v2)     ──► Version ID: abc222  ◄── Schema change re-upload
+ t=3: DELETE        ──► Delete Marker added ◄── "Deleted" (v1, v2 remain!)
+ t=4: DELETE v-abc222 ► Permanently removes v2</div>
+
+  <h3>Noncurrent Version Lifecycle</h3>
+  <p>Every version is a <strong>full copy</strong>. Without lifecycle rules, storage costs grow unbounded. Always pair versioning with noncurrent version expiration:</p>
+
+  <div class="code-block"><span class="cm">// Keep 3 most recent noncurrent versions, delete after 30 days</span>
+{
+  <span class="str">"NoncurrentVersionExpiration"</span>: {
+    <span class="str">"NoncurrentDays"</span>: <span class="fn">30</span>,
+    <span class="str">"NewerNoncurrentVersions"</span>: <span class="fn">3</span>
+  }
+}</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p><strong>Q: "A junior engineer deleted the entire <code>curated/</code> prefix. How do you recover?"</strong> — If versioning is on, S3 added <strong>delete markers</strong>. List all delete markers, remove them, and previous versions become current again. Script with <code>list-object-versions</code> + <code>jq</code> + batch delete. Prevention: MFA Delete + restrict <code>s3:DeleteObject</code> via IAM.</p>
+  </div>
+</section>
+
+<!-- Screen 6: CRR & Transfer Acceleration -->
+<section class="screen screen-alt" id="s6">
+  <h2>Cross-Region <span class="accent">Replication</span> & Transfer Acceleration</h2>
+  <p>CRR asynchronously copies objects to a bucket in a <strong>different AWS region</strong>. Use cases: disaster recovery, data sovereignty, latency reduction.</p>
+
+  <div class="code-block"><span class="cm"># Cross-Region Replication Architecture</span>
+
+┌─────────────────┐     Async Replication      ┌─────────────────┐
+│   us-east-1     │ ──────────────────────────► │   eu-west-1     │
+│   (Primary)     │     ~15 min SLA (99.99%     │   (DR Replica)  │
+│ retailmart-     │      of objects in 15min)   │ retailmart-     │
+│ data-lake-prod  │                             │ data-lake-dr    │
+└─────────────────┘                             └─────────────────┘</div>
+
+  <h3>S3 Transfer Acceleration</h3>
+  <p>Uses <span class="tooltip-term" data-tip="CloudFront has 400+ edge locations worldwide. Transfer Acceleration routes uploads through the nearest edge, then uses AWS's optimized backbone network to the destination region.">CloudFront edge locations</span> to accelerate uploads over long distances — 40-60% faster for remote stores.</p>
+
+  <div class="code-block"><span class="cm"># Enable Transfer Acceleration</span>
+aws s3api put-bucket-accelerate-configuration \
+  --bucket retailmart-data-lake-prod \
+  --accelerate-configuration <span class="str">Status=Enabled</span>
+
+<span class="cm"># Upload using the accelerated endpoint</span>
+aws s3 cp store-recon-0042.parquet \
+  s3://retailmart-data-lake-prod/raw/store-recon/ \
+  --endpoint-url <span class="str">https://retailmart-data-lake-prod.s3-accelerate.amazonaws.com</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Q: "Does CRR replicate existing objects?"</strong> — <strong>No!</strong> CRR only replicates objects uploaded <em>after</em> the rule is enabled. Use <strong>S3 Batch Replication</strong> for existing objects. Also: delete markers can be replicated, but <strong>permanent deletes are NOT</strong> — a safety feature against cascade deletion.</p>
+  </div>
+</section>
+
+<!-- Screen 7: S3 Performance -->
+<section class="screen" id="s7">
+  <h2>S3 <span class="accent">Performance</span> — Maximizing Throughput</h2>
+  <p>S3 supports <strong>5,500 GET/HEAD</strong> and <strong>3,500 PUT/POST/DELETE</strong> requests per second <strong>per prefix</strong>. Prefix design is critical.</p>
+
+  <div class="code-block"><span class="cm"># Prefix design matters!</span>
+
+<span class="cm">❌ BAD — All files under one prefix (bottleneck):</span>
+  s3://retailmart/data/2026-04-05-store-0042-txn-0001.parquet
+
+<span class="cm">✅ GOOD — Distributed across prefixes:</span>
+  s3://retailmart/raw/pos-transactions/2026/04/05/store=0042/part-0001.parquet
+  s3://retailmart/raw/clickstream/2026/04/05/session=abc123/part-0001.json
+
+<span class="cm">Each unique prefix path gets its own 5,500/3,500 RPS budget.</span></div>
+
+  <h3>Multipart Upload</h3>
+  <p>Objects > 100 MB <strong>should</strong> use multipart. Objects > 5 GB <strong>must</strong> use multipart.</p>
+
+  <div class="code-block"><span class="cm"># Python multipart upload with TransferConfig</span>
+<span class="kw">import</span> boto3
+<span class="kw">from</span> boto3.s3.transfer <span class="kw">import</span> TransferConfig
+
+s3 = boto3.client(<span class="str">"s3"</span>)
+
+config = TransferConfig(
+    multipart_threshold=<span class="fn">64</span> * <span class="fn">1024</span> * <span class="fn">1024</span>,   <span class="cm"># 64 MB</span>
+    max_concurrency=<span class="fn">20</span>,
+    multipart_chunksize=<span class="fn">16</span> * <span class="fn">1024</span> * <span class="fn">1024</span>,   <span class="cm"># 16 MB</span>
+    use_threads=<span class="fn">True</span>,
+)
+
+s3.upload_file(
+    <span class="str">"daily-pos-aggregate.parquet"</span>,
+    <span class="str">"retailmart-data-lake-prod"</span>,
+    <span class="str">"curated/daily-pos/2026/04/05/aggregate.parquet"</span>,
+    Config=config,
+)</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p><strong>Q: "Your Spark job reading from S3 is slow. Diagnose it."</strong> — (1) Shared prefix bottleneck → distribute paths. (2) Small file problem → compact into 128 MB–1 GB files. (3) Check CloudWatch for 503 SlowDown errors. (4) Use <code>s3a://</code> with <code>fs.s3a.connection.maximum=100</code>. (5) Enable Transfer Acceleration if cross-region.</p>
+  </div>
+</section>
+
+<!-- Screen 8: Access Points & Object Lambda -->
+<section class="screen screen-alt" id="s8">
+  <h2>S3 Access Points & <span class="accent">Object Lambda</span></h2>
+  <p>As the data lake grows, managing one bucket policy with dozens of conditions becomes unmanageable. <strong>S3 Access Points</strong> create named endpoints with dedicated access policies — one per team.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔧 Data Engineering</h4>
+      <p>Full R/W to raw/ and curated/. VPC-restricted to vpc-prod-123.</p>
+    </div>
+    <div class="card blue">
+      <h4>📊 Analysts</h4>
+      <p>Read-only on curated/ and analytics/. VPC-restricted to vpc-analytics.</p>
+    </div>
+    <div class="card green">
+      <h4>🧠 ML Team</h4>
+      <p>Read curated/, write ml-features/. VPC-restricted to vpc-ml-123.</p>
+    </div>
+    <div class="card purple">
+      <h4>📦 Vendor Feed</h4>
+      <p>Write-only to raw/supplier-feeds/. Internet-facing with IAM auth.</p>
+    </div>
+  </div>
+
+  <h3>S3 Object Lambda</h3>
+  <p>Transform data <strong>on the fly</strong> as it's retrieved — no copy needed. RetailMart uses this to redact PII from customer records when the analytics team reads them.</p>
+
+  <div class="code-block"><span class="cm"># Object Lambda flow — PII redaction on read</span>
+
+Analyst GET ──► S3 Object Lambda Access Point ──► Lambda (redact PII) ──► Sanitized data
+                        │
+                        ▼
+                S3 (original data with PII intact)</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Q: "How do you give 15 teams access to the same bucket without a 500-line policy?"</strong> — <strong>S3 Access Points.</strong> Each team gets a dedicated access point with its own IAM policy, VPC restriction, and prefix scope. The bucket policy delegates to access points. Adding a team = new access point, not editing a monolithic policy.</p>
+  </div>
+</section>
+
+<!-- Screen 9: Encryption -->
+<section class="screen" id="s9">
+  <h2>S3 <span class="accent">Encryption</span> — Data at Rest & in Transit</h2>
+  <p>All data in RetailMart's lake contains PII. Encryption is <strong>mandatory</strong>.</p>
+
+  <table class="info-table">
+    <tr><th>Method</th><th>Key Management</th><th>Performance</th><th>Use Case</th></tr>
+    <tr><td>SSE-S3 (AES-256)</td><td>AWS manages keys</td><td>Fastest</td><td>Default, no compliance req</td></tr>
+    <tr><td>SSE-KMS</td><td>AWS KMS (your CMK)</td><td>Slight overhead</td><td>Audit trail, key rotation</td></tr>
+    <tr><td>SSE-KMS + Bucket Key</td><td>KMS with caching</td><td>Near SSE-S3</td><td>High-volume + compliance</td></tr>
+    <tr><td>SSE-C</td><td>Customer-provided</td><td>Same as SSE-S3</td><td>Keys never in AWS</td></tr>
+    <tr><td>Client-side</td><td>You encrypt pre-upload</td><td>Varies</td><td>Zero-trust, end-to-end</td></tr>
+  </table>
+
+  <h3>SSE-KMS Bucket Key — Why It Matters</h3>
+  <div class="code-block"><span class="cm"># KMS API call reduction with Bucket Key</span>
+
+Without Bucket Key:                With Bucket Key:
+PUT obj-1 → KMS call               PUT obj-1 ──┐
+PUT obj-2 → KMS call                            ├──► KMS call (1x)
+PUT obj-3 → KMS call               PUT obj-2 ──┤    → Bucket Key generated
+PUT obj-4 → KMS call               PUT obj-3 ──┤    → Reused for all objects
+...10,000 objects = 10,000 calls    PUT obj-4 ──┘
+                                    ...10,000 objects ≈ <span class="str">1 KMS call</span></div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p><strong>Q: "You're hitting KMS throttling during a bulk load."</strong> — (1) <strong>Enable Bucket Key</strong> — 99% fewer KMS calls. (2) Request KMS quota increase. (3) Verify KMS key policy grants <code>kms:GenerateDataKey</code> and <code>kms:Decrypt</code>. (4) Consider SSE-S3 if you don't need per-key audit trails.</p>
+  </div>
+</section>
+
+<!-- Screen 10: Quiz & Takeaways -->
+<section class="screen screen-alt" id="s10">
+  <h2>Module 1: <span class="accent">Quiz</span> & Key Takeaways</h2>
+
+  <h3>Bonus: S3 Policy Comparison</h3>
+  <table class="info-table">
+    <tr><th>Mechanism</th><th>Scope</th><th>Attached To</th><th>Use Case</th></tr>
+    <tr><td>IAM Policy</td><td>User/role</td><td>IAM principal</td><td>"User X can access bucket Y"</td></tr>
+    <tr><td>Bucket Policy</td><td>Bucket</td><td>S3 bucket</td><td>"This bucket allows account Z"</td></tr>
+    <tr><td>ACL</td><td>Object/bucket</td><td>Object or bucket</td><td>Legacy — avoid</td></tr>
+    <tr><td>Access Point</td><td>Application</td><td>Virtual endpoint</td><td>Per-app permissions at scale</td></tr>
+    <tr><td>VPC Endpoint</td><td>Network</td><td>VPC endpoint</td><td>Restrict S3 to specific VPC</td></tr>
+  </table>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: 500 TB of raw POS data — frequently accessed for 7 days, rarely for 6 months, retained 7 years. Best lifecycle?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Standard → Deep Archive (Day 7) → Delete (Year 7)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) Standard → Standard-IA (Day 30) → Glacier Instant (Day 90) → Deep Archive (Day 180) → Delete (Year 7)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) Intelligent-Tiering for everything, delete at Year 7</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Standard → Standard-IA (Day 7) → Glacier Flexible (Day 90) → Deep Archive (Day 180) → Delete (Year 7)</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Versioning is enabled. A user runs <code>aws s3 rm s3://bucket/important-file.parquet</code>. What happens?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) The file is permanently deleted</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) A delete marker is placed; all versions are retained</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) The latest version is deleted; previous versions remain</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) The operation fails because versioning is enabled</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: 50,000 small CSV files (avg 200 KB) from a single S3 prefix — Spark jobs are slow. PRIMARY fix?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Enable Transfer Acceleration</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) Compact the files into larger Parquet files</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) Add more prefixes by hashing file names</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Switch to Glacier to reduce costs</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: Which encryption method provides an audit trail of every key usage in CloudTrail?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) SSE-S3</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) SSE-KMS</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) SSE-C</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Client-side encryption</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: You configure CRR from us-east-1 to eu-west-1. The bucket already has 2 PB. What happens to existing data?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) It begins replicating immediately</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) Nothing — only new objects are replicated</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) It replays all PUT events and replicates</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) AWS automatically creates a Batch Replication job</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+
+  <h3>🔑 Key Takeaways</h3>
+  <div class="card-grid">
+    <div class="card"><h4>💰 Storage Classes</h4><p>Right tiering cuts costs 70%+. Know the minimum duration charges cold.</p></div>
+    <div class="card blue"><h4>🔄 Lifecycle Policies</h4><p>Automate what humans forget. Always pair versioning with noncurrent version expiration.</p></div>
+    <div class="card green"><h4>⚡ Event Notifications</h4><p>EventBridge is the modern choice for fan-out and complex routing.</p></div>
+    <div class="card purple"><h4>🔍 S3 Select</h4><p>grep for S3 (single object). Athena for dataset-wide analytics.</p></div>
+    <div class="card"><h4>🛡️ Versioning + MFA</h4><p>Ransomware protection — but manage costs with noncurrent policies.</p></div>
+    <div class="card blue"><h4>🔐 SSE-KMS + Bucket Key</h4><p>Enterprise standard: audit trail without KMS throttling.</p></div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../index.html">← Course Home</a>
+  <a href="../module-02-glue-athena/index.html">Next: Glue & Athena →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Chat animation
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above — the answer focuses on AWS constraints and best practices.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

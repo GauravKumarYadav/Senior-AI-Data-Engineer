@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 2: AWS Glue & Athena — Serverless ETL & Queries | Cloud AWS Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+table.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+table.info-table th,table.info-table td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+table.info-table th{font-family:var(--font-heading);font-weight:700;background:rgba(0,0,0,0.03);font-size:0.85rem}
+table.info-table tr:last-child td{border-bottom:none}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}table.info-table{font-size:0.8rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">☁️ Cloud AWS Mastery</a><div class="nav-dots"><a href="../module-01-s3-storage/" class="nav-dot"></a><a href="../module-02-glue-athena/" class="nav-dot active"></a><a href="../module-03-emr-compute/" class="nav-dot"></a><a href="../module-04-kinesis-redshift/" class="nav-dot"></a><a href="../module-05-governance-orchestration/" class="nav-dot"></a><a href="../module-06-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Glue Data Catalog -->
+<section class="screen" id="s1">
+  <h2>Glue <span class="accent">Data Catalog</span> — The Central Nervous System</h2>
+  <p><strong>Scenario:</strong> RetailMart's S3 data lake is filling up with raw POS transactions, clickstream logs, and inventory feeds. Now you need to <strong>catalog</strong> it, <strong>transform</strong> it, and let business users <strong>query</strong> it with SQL — all serverless.</p>
+  <p>The Glue Data Catalog is a <span class="tooltip-term" data-tip="A fully managed, Hive-compatible metastore that stores table definitions, column schemas, partition metadata, and data locations. Shared by Athena, EMR, Redshift Spectrum, and Glue ETL.">fully managed metastore</span>. Every service reads from this single source of truth.</p>
+
+  <div class="code-block"><span class="cm"># Glue Data Catalog — Single source of truth</span>
+
+┌──────────────────────────────────────────────────────────┐
+│                   AWS Glue Data Catalog                   │
+│                                                          │
+│  Database:       Database:        Database:              │
+│  raw_zone        curated          analytics              │
+│  ├ pos_txns      ├ daily_sales    ├ store_perf           │
+│  ├ clickstream   ├ inventory      ├ customer_360         │
+│  └ supplier_feed └ product_dim    └ forecast             │
+└──────────┬───────────┬───────────────┬───────────────────┘
+           │           │               │
+     ┌─────▼───┐ ┌─────▼───┐ ┌───────▼──┐ ┌────────┐
+     │ Athena  │ │  EMR    │ │ Redshift │ │  Glue  │
+     │         │ │  Spark  │ │ Spectrum │ │  ETL   │
+     └─────────┘ └─────────┘ └──────────┘ └────────┘
+              All query the same catalog</div>
+
+  <div class="code-block"><span class="cm"># Create a database in the catalog</span>
+aws glue create-database \
+  --database-input <span class="str">'{
+    "Name": "curated",
+    "Description": "Cleaned, partitioned, Parquet-formatted retail data",
+    "LocationUri": "s3://retailmart-data-lake-prod/curated/"
+  }'</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Q: "How does Glue Data Catalog compare to a standalone Hive metastore?"</strong> — It's API-compatible with HMS (drop-in replacement for EMR). Key wins: (1) <strong>Serverless</strong> — no EC2/RDS to manage. (2) <strong>Cross-service</strong> — Athena, Redshift Spectrum, EMR share one catalog. (3) <strong>IAM-based access control</strong>. (4) <strong>Schema versioning</strong> built in. Limit: soft cap of 1M tables/account.</p>
+  </div>
+</section>
+
+<!-- Screen 2: Crawlers -->
+<section class="screen screen-alt" id="s2">
+  <h2>Crawlers — <span class="accent">Automatic</span> Schema Discovery</h2>
+  <p>Crawlers scan data sources (S3, JDBC, DynamoDB), infer schemas, and register or update tables in the Data Catalog. They're the "auto-discovery" engine that saves you from writing DDL by hand.</p>
+
+  <div class="code-block"><span class="cm"># How a Crawler Works</span>
+
+Step 1: CLASSIFY              Step 2: INFER SCHEMA        Step 3: REGISTER
+┌──────────────────┐          ┌──────────────────┐        ┌──────────────┐
+│ Read file samples │         │ Detect columns,  │        │ Create/update │
+│ from S3 path      │────────►│ types, partitions│───────►│ table in Data │
+│                   │         │ from data content│        │ Catalog       │
+│ Detect format:    │         │                  │        │               │
+│ Parquet/CSV/JSON  │         │ Handle evolution: │        │ Add new       │
+│ Avro/ORC/...      │         │ new col, type chg│        │ partitions    │
+└──────────────────┘          └──────────────────┘        └──────────────┘</div>
+
+  <h3>Crawler Best Practices</h3>
+  <table class="info-table">
+    <tr><th>Practice</th><th>Why</th></tr>
+    <tr><td>Use <code>CRAWL_NEW_FOLDERS_ONLY</code></td><td>Avoids re-scanning the entire bucket</td></tr>
+    <tr><td>Set exclusions for temp files</td><td><code>_SUCCESS</code>, <code>_temporary</code>, <code>_committed</code></td></tr>
+    <tr><td>Separate crawlers per table</td><td>One crawler per distinct schema</td></tr>
+    <tr><td>Use <code>LOG</code> delete behavior</td><td>Don't auto-delete tables on data removal</td></tr>
+    <tr><td>Run on schedule after ETL</td><td>Crawl after data lands, not before</td></tr>
+    <tr><td>Set table prefixes</td><td>Avoid naming collisions</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p><strong>Q: "Your crawler keeps creating new tables instead of updating the existing one. Why?"</strong> — Most common cause: <strong>schema changes</strong> interpreted as a new table. Fix: (1) Set <code>UpdateBehavior = UPDATE_IN_DATABASE</code>. (2) Configure grouping behavior to merge compatible schemas. (3) Use table prefixes. (4) If raw data genuinely has inconsistent schemas, normalize with Glue ETL before crawling.</p>
+  </div>
+</section>
+
+<!-- Screen 3: Glue ETL Jobs -->
+<section class="screen" id="s3">
+  <h2>Glue <span class="accent">ETL Jobs</span> — Spark Transformations</h2>
+  <p>Glue ETL jobs are <strong>managed Apache Spark</strong> environments. Write PySpark scripts, Glue handles cluster provisioning, scaling, and teardown.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span class="cm"># RetailMart: Raw CSV → Curated Parquet</span>
+<span class="kw">from</span> awsglue.context <span class="kw">import</span> GlueContext
+<span class="kw">from</span> awsglue.job <span class="kw">import</span> Job
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> col, year, month
+
+glueContext = GlueContext(SparkContext())
+job = Job(glueContext)
+
+<span class="cm"># Read from Data Catalog</span>
+raw_dyf = glueContext.create_dynamic_frame \
+    .from_catalog(
+        database=<span class="str">"raw_zone"</span>,
+        table_name=<span class="str">"pos_transactions"</span>)
+
+<span class="cm"># Resolve ambiguous types</span>
+resolved = raw_dyf.resolveChoice(
+    choice=<span class="str">"match_catalog"</span>,
+    database=<span class="str">"raw_zone"</span>,
+    table_name=<span class="str">"pos_transactions"</span>)
+
+<span class="cm"># Transform with Spark DataFrame</span>
+df = resolved.toDF()
+df_clean = df \
+    .filter(col(<span class="str">"total_amount"</span>) > <span class="fn">0</span>) \
+    .filter(col(<span class="str">"transaction_id"</span>).isNotNull())
+
+<span class="cm"># Write partitioned Parquet</span>
+sink = glueContext.getSink(
+    connection_type=<span class="str">"s3"</span>,
+    path=<span class="str">"s3://retailmart/curated/"</span>,
+    partitionKeys=[<span class="str">"year"</span>,<span class="str">"month"</span>])
+sink.setFormat(<span class="str">"glueparquet"</span>)
+sink.writeFrame(output_dyf)
+job.commit()</div>
+    <div class="translate-eng">
+      <div class="line">📦 ETL pipeline: CSV to Parquet</div>
+      <div class="line">🔧 Import Glue context and job classes</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🏗️ Initialize Glue context (managed Spark)</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📂 Read table from the Data Catalog — no S3 paths needed!</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔀 Fix mixed types (string vs double) using catalog schema</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🧹 Convert to DataFrame for complex transforms</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🗑️ Filter invalid rows (negative amounts, null IDs)</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">💾 Write as partitioned Parquet with Snappy compression</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">✅ Commit — signal Glue the job succeeded</div>
+    </div>
+  </div>
+
+  <h3>Glue Job Types</h3>
+  <table class="info-table">
+    <tr><th>Job Type</th><th>Engine</th><th>Best For</th><th>Pricing</th></tr>
+    <tr><td>Glue ETL (Spark)</td><td>Apache Spark</td><td>Large-scale transforms</td><td>DPU-hours</td></tr>
+    <tr><td>Glue Streaming</td><td>Structured Streaming</td><td>Near-real-time</td><td>DPU-hours</td></tr>
+    <tr><td>Glue Python Shell</td><td>Pure Python</td><td>Small tasks, API calls</td><td>1/16 DPU</td></tr>
+    <tr><td>Glue Ray</td><td>Ray</td><td>ML preprocessing</td><td>DPU-hours</td></tr>
+    <tr><td>Glue Flex</td><td>Spark (preemptible)</td><td>Non-urgent, cost-sensitive</td><td>35% cheaper</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Q: "When would you use Python Shell instead of Spark ETL?"</strong> — For tasks that <strong>don't need distributed compute</strong>: API calls, small file operations (&lt;1 GB), orchestration logic, metadata checks. Uses 1/16th DPU — RetailMart's store-metadata refresh costs $0.02/run vs. $0.44 for min Spark.</p>
+  </div>
+</section>
+
+<!-- Screen 4: Bookmarks & Incremental Processing -->
+<section class="screen screen-alt" id="s4">
+  <h2>Glue <span class="accent">Bookmarks</span> — Incremental Processing</h2>
+  <p>Bookmarks track <strong>which data has already been processed</strong>, enabling incremental ETL without reprocessing the entire dataset.</p>
+
+  <div class="code-block"><span class="cm"># How Bookmarks Work</span>
+
+Run 1 (Day 1):
+  Reads:  s3://raw/pos/2026/04/01/  →  Processes 2.3 TB
+  Saves bookmark: {path: "…/04/01/", ts: "2026-04-01T23:59:59"}
+
+Run 2 (Day 2):
+  Reads bookmark → Knows Day 1 is done
+  Reads:  s3://raw/pos/2026/04/02/  →  Processes 2.1 TB (<span class="str">NEW files only</span>)
+
+Run 3 (Day 3):
+  Reads:  s3://raw/pos/2026/04/03/  →  Only new data
+  ...</div>
+
+  <h3>Bookmark Caveats</h3>
+  <table class="info-table">
+    <tr><th>Scenario</th><th>Bookmark Behavior</th></tr>
+    <tr><td>New files in existing partition</td><td>✅ Detected and processed</td></tr>
+    <tr><td>Modified existing files</td><td>⚠️ Only if timestamp changes</td></tr>
+    <tr><td>Deleted files</td><td>❌ Not tracked</td></tr>
+    <tr><td>Schema changes</td><td>✅ Works (re-reads with new schema)</td></tr>
+    <tr><td>Job fails mid-run</td><td>⟲ Bookmark NOT updated; full retry</td></tr>
+    <tr><td>Re-partition existing data</td><td>❌ Must reset bookmark</td></tr>
+  </table>
+
+  <div class="code-block"><span class="cm"># Enable bookmarks on a job run</span>
+aws glue start-job-run \
+  --job-name retailmart-pos-etl \
+  --arguments <span class="str">'{"--job-bookmark-option": "job-bookmark-enable"}'</span>
+
+<span class="cm"># Reset bookmark (reprocess everything)</span>
+aws glue reset-job-bookmark --job-name retailmart-pos-etl</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p><strong>Q: "Bookmarks missed some late-arriving files. How?"</strong> — Bookmarks track by file timestamp and path. Late files written to an already-passed partition get missed. Fixes: (1) <strong>S3 events + SQS</strong> for explicit file tracking. (2) <strong>Lookback window</strong> — re-read last 2 days. (3) <strong>Iceberg/Delta Lake</strong> with merge operations. RetailMart uses a 24-hour lookback for late supplier feeds.</p>
+  </div>
+</section>
+
+<!-- Screen 5: DynamicFrames & Schema Registry -->
+<section class="screen" id="s5">
+  <h2>DynamicFrames, <span class="accent">resolveChoice</span> & Schema Registry</h2>
+  <p>DynamicFrames handle messy real-world data with per-record schemas. They're your ingestion workhorse before converting to DataFrames for heavy transforms.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🔄 DynamicFrame</h4>
+      <ul>
+        <li>✅ Per-record schema (flexible)</li>
+        <li>✅ <code>resolveChoice()</code> for type mismatches</li>
+        <li>✅ Built-in null handling</li>
+        <li>✅ Direct Data Catalog R/W</li>
+        <li>⚠️ Slight performance overhead</li>
+        <li>🎯 Best for: ingestion, raw data</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📊 Spark DataFrame</h4>
+      <ul>
+        <li>✅ Enforced schema (rigid, fast)</li>
+        <li>❌ Fails or casts silently on mismatch</li>
+        <li>⚠️ Manual <code>.na.fill()</code></li>
+        <li>⚠️ Via Glue catalog API</li>
+        <li>✅ Faster for large joins</li>
+        <li>🎯 Best for: complex transforms, ML</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># resolveChoice — handling messy POS data</span>
+<span class="cm"># (total_amount is sometimes string, sometimes double)</span>
+
+<span class="cm"># Option 1: Cast to specific type</span>
+resolved = raw_dyf.resolveChoice(specs=[
+    (<span class="str">"total_amount"</span>, <span class="str">"cast:double"</span>),
+    (<span class="str">"quantity"</span>, <span class="str">"cast:int"</span>),
+])
+
+<span class="cm"># Option 2: Match the catalog definition</span>
+resolved = raw_dyf.resolveChoice(
+    choice=<span class="str">"match_catalog"</span>,
+    database=<span class="str">"raw_zone"</span>,
+    table_name=<span class="str">"pos_transactions"</span>,
+)
+
+<span class="cm"># Option 3: Split into separate columns</span>
+resolved = raw_dyf.resolveChoice(specs=[
+    (<span class="str">"total_amount"</span>, <span class="str">"make_cols"</span>),
+])
+<span class="cm"># → total_amount_double, total_amount_string</span></div>
+
+  <h3>Glue Schema Registry</h3>
+  <p>For <strong>streaming</strong> workloads (Kinesis, Kafka), the Schema Registry validates incoming records before they enter the lake.</p>
+
+  <table class="info-table">
+    <tr><th>Compatibility Mode</th><th>Rules</th><th>Use Case</th></tr>
+    <tr><td>BACKWARD</td><td>New schema reads old data</td><td>Consumers updated first</td></tr>
+    <tr><td>FORWARD</td><td>Old schema reads new data</td><td>Producers updated first</td></tr>
+    <tr><td>FULL</td><td>Both directions compatible</td><td>Safest — both evolve</td></tr>
+    <tr><td>NONE</td><td>No validation</td><td>Development only</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Q: "When should you convert DynamicFrame → DataFrame?"</strong> — When you need: (1) <strong>Complex joins</strong>. (2) <strong>Window functions</strong> (<code>rank()</code>, <code>lag()</code>). (3) <strong>ML feature engineering</strong>. (4) <strong>UDFs</strong>. The pattern: read with DynamicFrame → <code>resolveChoice</code> → <code>.toDF()</code> → transform → <code>DynamicFrame.fromDF()</code> → write via Glue sink.</p>
+  </div>
+</section>
+
+<!-- Screen 6: Athena -->
+<section class="screen screen-alt" id="s6">
+  <h2>Amazon <span class="accent">Athena</span> — Serverless SQL on S3</h2>
+  <p>Athena is a <span class="tooltip-term" data-tip="Built on Trino (formerly Presto). Serverless — no clusters to manage. You pay $5 per TB of data scanned. Reads from the Glue Data Catalog.">serverless, interactive query service</span> built on Trino. Point it at S3 data in the Glue Data Catalog and run standard SQL.</p>
+
+  <div class="code-block"><span class="cm">-- Top 10 stores by revenue, last 7 days</span>
+<span class="kw">SELECT</span>
+    store_id,
+    <span class="fn">COUNT</span>(*)                  <span class="kw">AS</span> transaction_count,
+    <span class="fn">SUM</span>(total_amount)         <span class="kw">AS</span> total_revenue,
+    <span class="fn">AVG</span>(total_amount)         <span class="kw">AS</span> avg_transaction_value,
+    <span class="fn">APPROX_PERCENTILE</span>(total_amount, <span class="fn">0.95</span>) <span class="kw">AS</span> p95_transaction
+<span class="kw">FROM</span> curated.daily_sales
+<span class="kw">WHERE</span> year = <span class="str">'2026'</span>
+  <span class="kw">AND</span> month = <span class="str">'04'</span>
+  <span class="kw">AND</span> day <span class="kw">BETWEEN</span> <span class="str">'01'</span> <span class="kw">AND</span> <span class="str">'07'</span>
+<span class="kw">GROUP BY</span> store_id
+<span class="kw">ORDER BY</span> total_revenue <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="fn">10</span>;</div>
+
+  <h3>Partition Projection — Skip MSCK REPAIR TABLE</h3>
+  <p>Instead of storing partition metadata in the catalog, <strong>partition projection</strong> tells Athena to compute partitions on the fly — no crawler needed.</p>
+
+  <div class="code-block"><span class="cm">-- Partition projection: Athena computes paths, no catalog updates</span>
+<span class="kw">CREATE EXTERNAL TABLE</span> curated.daily_sales_projected (
+    transaction_id <span class="fn">STRING</span>,
+    store_id       <span class="fn">INT</span>,
+    total_amount   <span class="fn">DECIMAL</span>(<span class="fn">10</span>,<span class="fn">2</span>)
+)
+<span class="kw">PARTITIONED BY</span> (year <span class="fn">STRING</span>, month <span class="fn">STRING</span>, day <span class="fn">STRING</span>)
+<span class="kw">STORED AS</span> PARQUET
+<span class="kw">LOCATION</span> <span class="str">'s3://retailmart/curated/daily_sales/'</span>
+TBLPROPERTIES (
+    <span class="str">'projection.enabled'</span>     = <span class="str">'true'</span>,
+    <span class="str">'projection.year.type'</span>   = <span class="str">'integer'</span>,
+    <span class="str">'projection.year.range'</span>  = <span class="str">'2020,2030'</span>,
+    <span class="str">'projection.month.type'</span>  = <span class="str">'integer'</span>,
+    <span class="str">'projection.month.range'</span> = <span class="str">'1,12'</span>,
+    <span class="str">'projection.month.digits'</span>= <span class="str">'2'</span>,
+    <span class="str">'projection.day.type'</span>    = <span class="str">'integer'</span>,
+    <span class="str">'projection.day.range'</span>   = <span class="str">'1,31'</span>,
+    <span class="str">'projection.day.digits'</span>  = <span class="str">'2'</span>,
+    <span class="str">'storage.location.template'</span> =
+        <span class="str">'s3://retailmart/curated/daily_sales/year=${year}/month=${month}/day=${day}/'</span>
+);</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Q: "An Athena query scans 500 GB but only needs 1 day. How do you fix it?"</strong> — Three levers: (1) <strong>Partition pruning</strong> — filter on partition columns. (2) <strong>Columnar format</strong> — convert CSV to Parquet (selecting 5/50 columns scans ~10%). (3) <strong>Compression</strong> — Snappy/ZSTD. Combined: 500 GB → under 5 GB → saving $2.50/query. RetailMart cut Athena costs by <strong>94%</strong>.</p>
+  </div>
+</section>
+
+<!-- Screen 7: Athena Advanced -->
+<section class="screen" id="s7">
+  <h2>Athena Advanced — <span class="accent">Federation</span>, Iceberg & Notebooks</h2>
+
+  <h3>Query Federation</h3>
+  <p>Athena queries data <strong>outside S3</strong> using Lambda connectors — DynamoDB, RDS, Redshift, CloudWatch Logs, and custom sources.</p>
+
+  <div class="code-block"><span class="cm">-- Federated query: join S3 + DynamoDB + RDS in one query</span>
+<span class="kw">SELECT</span> s.store_id, p.product_name,
+       <span class="fn">SUM</span>(s.total_amount) <span class="kw">AS</span> revenue
+<span class="kw">FROM</span> curated.daily_sales s
+<span class="kw">JOIN</span> dynamodb.product_catalog p
+  <span class="kw">ON</span> s.product_sku = p.sku
+<span class="kw">JOIN</span> rds.store_metadata m
+  <span class="kw">ON</span> s.store_id = m.store_id
+<span class="kw">GROUP BY</span> s.store_id, p.product_name;</div>
+
+  <h3>Apache Iceberg on Athena</h3>
+  <p>Iceberg tables add <strong>ACID transactions</strong>, <strong>time travel</strong>, <strong>schema evolution</strong>, and <strong>row-level updates/deletes</strong> to S3.</p>
+
+  <div class="code-block"><span class="cm">-- UPSERT with Iceberg MERGE — handle late corrections</span>
+<span class="kw">MERGE INTO</span> curated.daily_sales_iceberg target
+<span class="kw">USING</span> staging.corrections source
+<span class="kw">ON</span> target.transaction_id = source.transaction_id
+<span class="kw">WHEN MATCHED THEN</span>
+    <span class="kw">UPDATE SET</span> total_amount = source.corrected_amount
+<span class="kw">WHEN NOT MATCHED THEN</span>
+    <span class="kw">INSERT</span> (transaction_id, store_id, total_amount, transaction_ts)
+    <span class="kw">VALUES</span> (source.transaction_id, source.store_id,
+            source.corrected_amount, source.transaction_ts);
+
+<span class="cm">-- Time travel — query data as it was 3 days ago</span>
+<span class="kw">SELECT</span> <span class="fn">COUNT</span>(*), <span class="fn">SUM</span>(total_amount)
+<span class="kw">FROM</span> curated.daily_sales_iceberg
+<span class="kw">FOR TIMESTAMP AS OF</span> <span class="fn">TIMESTAMP</span> <span class="str">'2026-04-03 00:00:00'</span>;</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>Q: "When Iceberg vs. standard Hive-style Parquet?"</strong> — Use Iceberg when: (1) <strong>Row-level updates/deletes</strong> (GDPR, corrections). (2) <strong>Time travel</strong> for audit. (3) <strong>Concurrent writers</strong> (ACID). (4) <strong>Schema evolution</strong> without rewriting. Stick with Hive-style for: append-only, stable schema, max tool compatibility.</p>
+  </div>
+</section>
+
+<!-- Screen 8: Cost Optimization -->
+<section class="screen screen-alt" id="s8">
+  <h2>Cost <span class="accent">Optimization</span> — Athena & Glue</h2>
+
+  <h3>Athena: The Cost Reduction Cascade</h3>
+  <div class="code-block"><span class="cm"># The 99.98% cost reduction journey</span>
+
+Raw CSV query:      <span class="kw">SELECT * FROM raw.logs WHERE date='2026-04-05'</span>
+                    → Scans 500 GB → Cost: $2.50
+
+Convert to Parquet: Same query
+                    → Scans 50 GB  → Cost: $0.25  (<span class="str">90% reduction</span>)
+
+Add partitioning:   <span class="kw">WHERE year='2026' AND month='04' AND day='05'</span>
+                    → Scans 2 GB   → Cost: $0.01  (<span class="str">99.6% reduction</span>)
+
+Add column pruning: <span class="kw">SELECT user_id, event_type</span> (2 of 40 columns)
+                    → Scans 0.1 GB → Cost: $0.0005
+
+Total savings:      $2.50 → $0.0005 = <span class="str">99.98% cost reduction</span></div>
+
+  <h3>Glue ETL Cost Levers</h3>
+  <table class="info-table">
+    <tr><th>Strategy</th><th>Savings</th><th>How</th></tr>
+    <tr><td>Right-size DPUs</td><td>20-40%</td><td>Start at 2 DPUs, scale up only if needed</td></tr>
+    <tr><td>Use Glue Flex</td><td>35%</td><td>For non-time-sensitive batch jobs</td></tr>
+    <tr><td>Enable auto-scaling</td><td>15-25%</td><td>Dynamic <code>MaxCapacity</code></td></tr>
+    <tr><td>Bookmarks</td><td>60-80%</td><td>Process only new data</td></tr>
+    <tr><td>Python Shell for small tasks</td><td>90%+</td><td>1/16 DPU vs. min 2 DPU Spark</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p><strong>Q: "Glue ETL takes 45 min for 10 GB. How do you optimize?"</strong> — Red flag! Diagnosis: (1) <strong>Small file problem</strong> — fix with <code>groupFiles: inPartition</code> and <code>groupSize: 134217728</code>. (2) Check DPU utilization — if &lt;30%, over-provisioned. (3) <strong>Data skew</strong> — repartition or broadcast small DataFrames. (4) Unnecessary shuffles. (5) Consider Python Shell if logic is simple.</p>
+  </div>
+
+  <h3>Athena Workgroups — Cost Control by Team</h3>
+  <div class="code-block"><span class="cm"># Create a workgroup with 10 GB per-query scan limit</span>
+aws athena create-work-group \
+  --name <span class="str">"retail-analysts"</span> \
+  --configuration <span class="str">'{
+    "ResultConfiguration": {
+      "OutputLocation": "s3://retailmart-athena-results/analysts/"
+    },
+    "EnforceWorkGroupConfiguration": true,
+    "BytesScannedCutoffPerQuery": 10737418240,
+    "PublishCloudWatchMetricsEnabled": true
+  }'</span>
+
+<span class="cm"># RetailMart workgroups:</span>
+<span class="cm">#   data-engineering:     100 GB limit</span>
+<span class="cm">#   retail-analysts:       10 GB limit</span>
+<span class="cm">#   executive-dashboards:   1 GB limit (forces curated tables)</span></div>
+</section>
+
+<!-- Screen 9: Quiz & Takeaways -->
+<section class="screen" id="s9">
+  <h2>Module 2: <span class="accent">Quiz</span> & Key Takeaways</h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: 50,000 partitions in <code>daily_sales</code>. <code>MSCK REPAIR TABLE</code> takes 20 minutes. Best solution?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Increase Athena query timeout</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) Use partition projection</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) Run the crawler more frequently</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Reduce the number of partitions</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: <code>price</code> column is sometimes string ("$19.99"), sometimes double. Glue-native fix?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Fix the source data</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) <code>resolveChoice(specs=[("price", "cast:double")])</code></div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) Convert to DataFrame immediately and cast</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) <code>resolveChoice(specs=[("price", "make_cols")])</code></div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: 3 columns from a 200-column CSV (1 TB). After Parquet + Snappy, Athena scans approximately…</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) 1 TB (no change)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) ~500 GB (compression only)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) ~15 GB (column pruning only)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">D) ~7-10 GB (column pruning + compression)</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: Which Glue feature prevents reprocessing already-transformed data?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Crawlers with <code>CRAWL_NEW_FOLDERS_ONLY</code></div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) Job bookmarks</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) Schema Registry</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) DynamicFrame caching</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: Join S3 sales + DynamoDB products + RDS store metadata in one SQL query. Which service?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Glue ETL with multiple sources</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">B) Athena with federated connectors</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) EMR with multi-source Spark</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">D) All of the above</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+
+  <h3>🔑 Key Takeaways</h3>
+  <div class="card-grid">
+    <div class="card"><h4>📚 Glue Data Catalog</h4><p>THE metadata store. Shared by Athena, EMR, Redshift Spectrum. One catalog to rule them all.</p></div>
+    <div class="card blue"><h4>🕷️ Crawlers</h4><p>Convenient but opinionated. Use CRAWL_NEW_FOLDERS_ONLY, exclusions, one crawler per table.</p></div>
+    <div class="card green"><h4>🔄 DynamicFrame → DataFrame</h4><p>DynamicFrame for ingestion, DataFrame for transforms. resolveChoice is your friend.</p></div>
+    <div class="card purple"><h4>🔖 Job Bookmarks</h4><p>Incremental processing — but use lookback windows for late-arriving data.</p></div>
+    <div class="card"><h4>💰 Athena Cost = Bytes Scanned</h4><p>Parquet + partitioning + column pruning = 99%+ cost reduction.</p></div>
+    <div class="card blue"><h4>🧊 Iceberg on Athena</h4><p>ACID, time travel, row-level updates. Use for mutable datasets.</p></div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-01-s3-storage/index.html">← Prev: S3 Storage</a>
+  <a href="../module-03-emr-compute/index.html">Next: EMR Compute →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Chat animation
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above — the answer focuses on the Glue/Athena-native solution.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

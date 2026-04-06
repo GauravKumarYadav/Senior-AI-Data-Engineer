@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 6: The Interview Gauntlet 🔥 | Cloud AWS Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-error);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-error)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen h4{font-family:var(--font-heading);font-size:1.1rem;font-weight:700;margin:1.2rem 0 0.5rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.red{border-top-color:var(--color-error)}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.82rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.tbl{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.88rem}
+.tbl th,.tbl td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+.tbl th{font-family:var(--font-heading);font-weight:700;background:rgba(0,0,0,0.03)}
+.tbl tr:last-child td{border-bottom:none}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+.qa-block{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin:1.2rem 0;border-left:4px solid var(--color-info)}
+.qa-block h4{color:var(--color-info);margin:0 0 0.5rem}
+.qa-block p{font-size:0.93rem;margin-bottom:0.5rem}
+.qa-block .strong-answer{background:var(--color-bg-warm);padding:0.8rem 1rem;border-radius:8px;font-size:0.88rem;margin-top:0.5rem}
+.rapid-fire{background:#fff;border-radius:12px;padding:1rem 1.2rem;margin:0.6rem 0;box-shadow:0 1px 4px rgba(0,0,0,0.04);border-left:3px solid var(--color-muted)}
+.rapid-fire strong{display:block;font-family:var(--font-heading);font-size:0.92rem;margin-bottom:0.3rem}
+.rapid-fire p{font-size:0.88rem;margin:0;color:var(--color-muted)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">☁️ Cloud AWS Mastery</a><div class="nav-dots"><a href="../module-01-s3-storage/" class="nav-dot"></a><a href="../module-02-glue-athena/" class="nav-dot"></a><a href="../module-03-emr-compute/" class="nav-dot"></a><a href="../module-04-kinesis-redshift/" class="nav-dot"></a><a href="../module-05-governance-orchestration/" class="nav-dot"></a><a href="../module-06-interview-gauntlet/" class="nav-dot active"></a></div></div></nav>
+
+<!-- Screen 1: Architecture Design -->
+<section class="screen" id="s1">
+  <h2>🔥 Architecture Design — <span class="accent">"Draw Me a Pipeline"</span></h2>
+  <p>No gentle explanations. No hand-holding. You're across from a senior data engineer. They want to see you <strong>reason through trade-offs</strong>, not just name services.</p>
+
+  <div class="qa-block">
+    <h4>Q1: Design a Data Lake for a 10,000-Store Retail Chain</h4>
+    <p><em>"5 TB/day. POS, clickstream, inventory, supplier feeds. Analysts want SQL. ML engineers need raw data. 7-year retention. PII controls."</em></p>
+    <div class="strong-answer">
+      <strong>Ingestion:</strong> POS → Kinesis Data Streams (10 shards) → Firehose (Parquet, partitioned by date/store) → S3 raw zone. Clickstream → Kinesis (On-Demand). Inventory → S3 Transfer Acceleration + Lambda validation. Supplier → S3 Access Points (write-only).<br><br>
+      <strong>Storage (S3):</strong> raw/ (immutable) → curated/ (Parquet/Iceberg) → analytics/ (aggregated) → archive/. Lifecycle: Standard 30d → IA 90d → Glacier Instant 365d → Deep Archive 7yr. SSE-KMS with Bucket Key.<br><br>
+      <strong>Processing:</strong> Glue ETL with bookmarks (raw → curated). Step Functions orchestrates nightly pipeline. EMR for heavy ML feature engineering.<br><br>
+      <strong>Query:</strong> Athena for ad-hoc SQL (workgroup scan limits). Redshift Serverless for dashboards. Spectrum for joining warehouse + historical S3.<br><br>
+      <strong>Governance:</strong> Lake Formation with LF-Tags. Column-level PII security. Cross-account sharing. KMS per-pipeline keys.
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q2: Design a Real-Time Fraud Detection Pipeline</h4>
+    <p><em>"POS transactions analyzed for fraud within 10 seconds. Card used at 3+ stores in 5 minutes = alert."</em></p>
+    <div class="strong-answer">
+      POS → <strong>Kinesis Data Streams</strong> (partition key = card_hash for ordering) → <strong>Kinesis Data Analytics (Flink)</strong> with 5-min sliding window, 1-min slide → GROUP BY card_id HAVING COUNT(DISTINCT store) ≥ 3 → Alert Kinesis stream → <strong>Lambda → PagerDuty</strong>.<br><br>
+      Key decisions: Enhanced Fan-Out for parallel consumers. Watermark = 30s. Firehose parallel consumer for S3 audit trail. <strong>Latency budget: &lt; 5 seconds</strong> (POS→Kinesis 200ms, Flink 1-2s, Lambda 500ms).
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q3: Design a CDC Pipeline from RDS to Data Lake</h4>
+    <p><em>"RDS PostgreSQL. Need change data capture — inserts, updates, deletes."</em></p>
+    <div class="strong-answer">
+      <strong>Recommended:</strong> RDS → AWS DMS (CDC mode, WAL-based logical replication) → Kinesis Data Stream → Firehose → S3 (raw CDC events) → Glue ETL → <strong>Iceberg table</strong> (MERGE INTO on primary key).<br><br>
+      Iceberg is essential for DELETE operations (Hive tables are append-only). DMS handles full load → CDC transition automatically. Schema evolution detectable if configured.
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q4: Multi-Region Disaster Recovery</h4>
+    <p><em>"Data lake is in us-east-1. If the region goes down?"</em></p>
+    <div class="strong-answer">
+      <strong>Tier 1 (RPO 15min, RTO 1hr):</strong> S3 CRR for curated/. Redshift cross-region snapshots hourly. Kinesis producer DNS failover.<br>
+      <strong>Tier 2 (RPO 4hr, RTO 24hr):</strong> S3 CRR for raw/. Manual Redshift restore.<br>
+      <strong>Cost:</strong> DR uses Redshift Serverless (scales to zero). S3 replication to Standard-IA. Only replicate curated/ (raw is re-derivable) — reduces CRR by 60%.
+    </div>
+  </div>
+</section>
+
+<!-- Screen 2: Service Selection -->
+<section class="screen screen-alt" id="s2">
+  <h2>⚖️ Service Selection — <span class="accent">"When Would You Use X vs Y?"</span></h2>
+
+  <table class="tbl">
+    <tr><th>Factor</th><th>Choose Glue</th><th>Choose EMR</th></tr>
+    <tr><td>Team size</td><td>Small (&lt; 5 engineers)</td><td>Large (dedicated platform team)</td></tr>
+    <tr><td>Duration</td><td>Minutes to low hours</td><td>Hours to days</td></tr>
+    <tr><td>Customization</td><td>Standard PySpark</td><td>Custom libs, GPU, Presto, Hudi</td></tr>
+    <tr><td>Cost model</td><td>Per-DPU-hour, no idle</td><td>Per-instance (Spot = 60-90% off)</td></tr>
+  </table>
+
+  <table class="tbl">
+    <tr><th>Factor</th><th>Choose Athena</th><th>Choose Redshift</th></tr>
+    <tr><td>Pattern</td><td>Ad-hoc queries on S3</td><td>Predictable BI workloads</td></tr>
+    <tr><td>Latency</td><td>Seconds to minutes</td><td>Sub-second dashboards</td></tr>
+    <tr><td>Cost</td><td>$5/TB scanned</td><td>Provisioned or Serverless RPU</td></tr>
+    <tr><td>Best for</td><td>SQL scratchpad for S3</td><td>Production data warehouse</td></tr>
+  </table>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>Kinesis vs MSK</h4>
+      <p><strong>Kinesis:</strong> AWS-native, small team, &lt; 200 MB/s, Lambda/Firehose integration.<br><strong>MSK:</strong> Existing Kafka, need Connect/KSQL, &gt; 200 MB/s, multi-cloud.</p>
+    </div>
+    <div class="card blue">
+      <h4>Step Functions vs MWAA</h4>
+      <p><strong>SF:</strong> All-AWS, event-driven, visual, serverless.<br><strong>MWAA:</strong> Existing DAGs, Python-first, complex scheduling, non-AWS integrations.</p>
+    </div>
+    <div class="card green">
+      <h4>Lake Formation vs IAM</h4>
+      <p><strong>LF:</strong> Column/row security, 50+ tables, cross-account, PII.<br><strong>IAM:</strong> Simple setup, &lt; 10 tables, path-level sufficient.</p>
+    </div>
+    <div class="card purple">
+      <h4>Firehose vs Lambda Consumer</h4>
+      <p><strong>Firehose:</strong> Managed bulk delivery to S3/Redshift/OpenSearch.<br><strong>Lambda:</strong> Per-record processing, enrichment, &lt; 1s latency.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 One-Liners to Memorize</div>
+    <p>Glue = serverless ETL. EMR = full cluster control. Athena = SQL scratchpad for S3. Redshift = production warehouse. Kinesis = AWS-native streaming. MSK = Kafka ecosystem. Crawlers = discovery. Manual schemas = production control.</p>
+  </div>
+</section>
+
+<!-- Screen 3: Cost & Security -->
+<section class="screen" id="s3">
+  <h2>💰 Cost & Security — <span class="accent">"Keep It Cheap and Safe"</span></h2>
+
+  <div class="qa-block">
+    <h4>Q: "Athena costs $5,000/month. Reduce by 80%."</h4>
+    <div class="strong-answer">
+      1. CSV/JSON → <strong>Parquet + Snappy</strong> (90% scan reduction)<br>
+      2. <strong>Date partitioning</strong> (prune entire directories)<br>
+      3. <strong>Partition projection</strong> (instant query start)<br>
+      4. <strong>Workgroup scan limits</strong> (BytesScannedCutoffPerQuery)<br>
+      5. <strong>CTAS</strong> for frequently-run queries<br>
+      6. Column pruning: never <code>SELECT *</code><br>
+      Result: $5,000 → <strong>~$500/month</strong>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q: "Redshift $8K/month and 70% idle. Fix it."</h4>
+    <div class="strong-answer">
+      1. <strong>Redshift Serverless</strong> → pay active time only → ~$2,400/mo<br>
+      2. Or: <strong>Pause cluster</strong> evenings/weekends → 60% savings<br>
+      3. <strong>Materialized views</strong> pre-compute heavy queries<br>
+      4. <strong>WLM queues</strong> to throttle expensive ad-hoc queries
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q: "$15K/month analytics spend → reduce 50%"</h4>
+    <div class="strong-answer">
+      Redshift dc2×4 ($5,400) → Serverless ($1,800). Glue full reprocess ($4,200) → bookmarks + Flex ($1,500). Athena raw CSV ($3,000) → Parquet + partitions ($300). S3 all Standard ($2,400) → lifecycle ($1,200). <strong>Total: $15K → $4,800 (68% reduction)</strong>.
+    </div>
+  </div>
+
+  <h3>🛡️ "How do you prevent a junior from exposing PII?"</h3>
+  <div class="card-grid">
+    <div class="card red"><h4>Layer 1-2</h4><p>Lake Formation column-level security (PII excluded from grants). S3 Block Public Access (account-level).</p></div>
+    <div class="card blue"><h4>Layer 3-4</h4><p>VPC endpoints for S3 (no internet). KMS encryption (useless without key).</p></div>
+    <div class="card green"><h4>Layer 5-6</h4><p>SCPs (prevent disabling encryption). AWS Config rules (alert in 1 hour).</p></div>
+    <div class="card purple"><h4>Layer 7-8</h4><p>CloudTrail + Athena (audit who accessed what). Macie (ML-based PII detection).</p></div>
+  </div>
+</section>
+
+<!-- Screen 4: Debugging & Operations -->
+<section class="screen screen-alt" id="s4">
+  <h2>🔧 Debugging — <span class="accent">"It's Broken, Fix It"</span></h2>
+
+  <div class="qa-block">
+    <h4>Q1: "Nightly Glue ETL failed at 2 AM."</h4>
+    <div class="strong-answer">
+      1. CloudWatch <code>/aws-glue/jobs/error</code> for stack trace<br>
+      2. Common: <strong>OOM</strong> → scale to G.2X. <strong>Access Denied</strong> → IAM/bucket/KMS. <strong>Schema mismatch</strong> → crawler or <code>resolveChoice</code>.<br>
+      3. Check Spark UI for data skew/straggler tasks.<br>
+      4. Bookmark corrupted? Reset with <code>job-bookmark-pause</code>.
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q2: "Athena returns zero results but data exists in S3."</h4>
+    <div class="strong-answer">
+      1. <code>SHOW PARTITIONS</code> — is partition registered?<br>
+      2. S3 path mismatch: must be <code>year=2026/month=04/</code> not <code>2026/04/</code><br>
+      3. Case sensitivity: Athena case-insensitive but S3 keys are case-sensitive<br>
+      4. File format mismatch: table says PARQUET but files are JSON<br>
+      5. Fix: <code>MSCK REPAIR TABLE</code> or <code>ALTER TABLE ADD PARTITION</code>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q3: "Kinesis consumer falling behind — iterator age growing."</h4>
+    <div class="strong-answer">
+      1. Scale shards: <code>UpdateShardCount</code><br>
+      2. <strong>Enhanced Fan-Out</strong> if multiple consumers compete for 2 MB/s<br>
+      3. Increase Lambda <code>BatchSize</code> + <code>ParallelizationFactor</code><br>
+      4. Switch to <strong>On-Demand mode</strong> if shard management is the bottleneck
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q4: "Redshift COPY 100 GB takes 2 hours."</h4>
+    <div class="strong-answer">
+      1. Split files = number_of_slices (parallel COPY)<br>
+      2. Compress source files (GZIP/ZSTD = 3-5x less I/O)<br>
+      3. Parquet/ORC &gt; CSV. <code>COMPUPDATE OFF</code> + <code>STATUPDATE OFF</code> for bulk.<br>
+      4. Check DISTKEY skew. Same region as S3. Use manifest file.
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q5: "Step Functions 'States.Permissions' on Glue state."</h4>
+    <div class="strong-answer">
+      Root cause: execution role lacks <code>iam:PassRole</code> for the Glue role. Fix: add <code>iam:PassRole</code> with condition <code>iam:PassedToService = glue.amazonaws.com</code>. Also check <code>glue:StartJobRun</code> on the specific job ARN.
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q6: "S3 PUT requests returning 503 SlowDown."</h4>
+    <div class="strong-answer">
+      Exceeding 3,500 PUT/sec on a single prefix. Fix: distribute writes across more prefixes (hash keys), add exponential backoff retry. S3 auto-partitions but starts at 3,500/sec and ramps up.
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q7: "LF permissions granted but analyst still gets 'Access Denied' in Athena."</h4>
+    <div class="strong-answer">
+      1. <strong>IAMAllowedPrincipals still active?</strong> — Most common issue. Revoke it.<br>
+      2. S3 location registered with LF?<br>
+      3. Need DESCRIBE on database AND SELECT on table.<br>
+      4. Column-level grant? <code>SELECT *</code> fails — must select only granted columns.
+    </div>
+  </div>
+</section>
+
+<!-- Screen 5: Rapid Fire -->
+<section class="screen" id="s5">
+  <h2>⚡ Rapid Fire — <span class="accent">20 Quick Q&A</span></h2>
+  <p>Answer each in ≤ 3 sentences. These come up <em>constantly</em> in phone screens.</p>
+
+  <div class="rapid-fire"><strong>1. Max record size in Kinesis?</strong><p>1 MB. For larger payloads, store in S3 and send the S3 key (claim-check pattern).</p></div>
+  <div class="rapid-fire"><strong>2. COMPOUND vs INTERLEAVED sort keys in Redshift?</strong><p>COMPOUND prioritizes first column (fast for leading-column filters). INTERLEAVED = equal weight (better for ad-hoc, but VACUUM REINDEX is expensive).</p></div>
+  <div class="rapid-fire"><strong>3. Can Firehose write to Redshift?</strong><p>Yes. Stages in S3 first, then auto-issues COPY command. Configure cluster, table, and COPY options in the delivery stream.</p></div>
+  <div class="rapid-fire"><strong>4. Min DPUs for a Glue Spark job?</strong><p>2 DPUs (Glue 4.0). Each DPU = 4 vCPU + 16 GB. Python Shell = 1/16 DPU (0.0625).</p></div>
+  <div class="rapid-fire"><strong>5. How does Athena charge?</strong><p>$5/TB scanned. Cancelled queries charged for data scanned before cancellation. Cached results are free.</p></div>
+  <div class="rapid-fire"><strong>6. Redshift Concurrency Scaling?</strong><p>Auto-spins additional capacity when queries queue. First 1 hour/day free. Beyond = per-second billing.</p></div>
+  <div class="rapid-fire"><strong>7. Kinesis On-Demand vs Provisioned?</strong><p>Provisioned: manage shards (1 MB/s each). On-Demand: auto-scales to 200 MB/s, ~15-20% more expensive at steady state.</p></div>
+  <div class="rapid-fire"><strong>8. Redshift materialized view?</strong><p>Pre-computed query stored on disk. Refreshed manually or auto. Supports incremental refresh for append-only tables.</p></div>
+  <div class="rapid-fire"><strong>9. Schema evolution in Glue?</strong><p>Crawlers detect new columns. For production: Glue Schema Registry (Avro/JSON with compatibility modes). Iceberg handles it natively.</p></div>
+  <div class="rapid-fire"><strong>10. S3 Events vs EventBridge for S3?</strong><p>S3 Events: free, prefix/suffix filtering, Lambda/SQS/SNS only. EventBridge: $1/M events, content-based filtering, 20+ targets, archive/replay.</p></div>
+  <div class="rapid-fire"><strong>11. Can Redshift Spectrum write to S3?</strong><p>No — read-only. Use UNLOAD from Redshift or CTAS in Athena to write to S3.</p></div>
+  <div class="rapid-fire"><strong>12. Glue Bookmarks vs Iceberg?</strong><p>Bookmarks track which files were processed (ETL state). Iceberg = table format with ACID, time travel, row-level mutations. Different problems.</p></div>
+  <div class="rapid-fire"><strong>13. Kinesis shard split?</strong><p>Divides one shard into two for more throughput. Parent stops accepting writes; two children take over. Takes minutes, is disruptive.</p></div>
+  <div class="rapid-fire"><strong>14. What's AQUA in Redshift?</strong><p>Hardware-accelerated cache on RA3 nodes. Pushes scan + aggregation to storage layer. Only on RA3.4xl and RA3.16xl.</p></div>
+  <div class="rapid-fire"><strong>15. Kinesis data at rest encryption?</strong><p>SSE-KMS. Enable: <code>start-stream-encryption --encryption-type KMS</code>. Encrypted before writing to disk.</p></div>
+  <div class="rapid-fire"><strong>16. Max concurrent Standard executions?</strong><p>1,000,000 open per account/region (soft limit). Express: 100,000 start/sec. Standard can run up to 1 year.</p></div>
+  <div class="rapid-fire"><strong>17. Redshift RA3 vs DC2?</strong><p>DC2 = compute + local SSD (coupled). RA3 = compute + S3-backed managed storage with SSD cache (independent scaling). RA3 is the modern choice.</p></div>
+  <div class="rapid-fire"><strong>18. Lake Formation + EMR?</strong><p>Yes. EMR clusters integrate via instance role. LF vends temporary credentials scoped to granted tables/columns. Requires EMR 5.31+.</p></div>
+  <div class="rapid-fire"><strong>19. Kinesis Video Streams?</strong><p>Separate service for streaming video/audio for ML. Not related to Kinesis Data Streams — don't confuse them.</p></div>
+  <div class="rapid-fire"><strong>20. DELETE from Iceberg on Athena?</strong><p>Writes a delete file marking rows deleted. Original data untouched. Run OPTIMIZE to compact and physically remove.</p></div>
+</section>
+
+<!-- Screen 6: Key Takeaways & Study Strategy -->
+<section class="screen screen-alt" id="s6">
+  <h2>🎯 Study Strategy & <span class="accent">Final Takeaways</span></h2>
+
+  <h3>The 4-Week Study Plan</h3>
+  <div class="card-grid">
+    <div class="card"><h4>Week 1: S3 + Glue + Athena</h4><p>Build: Glue crawler → ETL → Athena query. Practice: Explain partitioning and Parquet benefits to a rubber duck.</p></div>
+    <div class="card blue"><h4>Week 2: Kinesis + Redshift</h4><p>Build: Put records → consume with Lambda → deliver with Firehose. Practice: Draw a real-time pipeline on a whiteboard.</p></div>
+    <div class="card green"><h4>Week 3: Governance + Orchestration</h4><p>Build: Set up LF permissions, create a 3-state Step Functions workflow. Practice: Debug an "Access Denied" scenario.</p></div>
+    <div class="card red"><h4>Week 4: Mock Interviews</h4><p>Do this module's questions aloud (2 min/answer). Record yourself. Get a peer to drill you on "why" follow-ups.</p></div>
+  </div>
+
+  <h3>The STAR-T Answer Framework</h3>
+  <div class="code-block"><span class="kw">S</span> — <span class="str">Situation</span>: Restate the problem (shows listening)
+<span class="kw">T</span> — <span class="str">Technology</span>: Name AWS services, justify each choice
+<span class="kw">A</span> — <span class="str">Architecture</span>: Describe data flow (ingestion → storage → processing → serving)
+<span class="kw">R</span> — <span class="str">Risks</span>: Proactively mention failure modes and mitigations
+<span class="kw">T</span> — <span class="str">Trade-offs</span>: Acknowledge what you sacrifice (cost vs latency, simplicity vs flexibility)
+
+<span class="cm">Example:</span>
+<span class="str">"So you need real-time fraud detection under 10 seconds"</span> [S]
+<span class="str">"I'd use Kinesis + Flink"</span> [T]
+<span class="str">"POS → Kinesis → Flink (5-min window) → Alert → Lambda → PagerDuty"</span> [A]
+<span class="str">"Risk: if Flink falls behind, we'd monitor iterator age and auto-scale"</span> [R]
+<span class="str">"Trade-off: Flink adds complexity vs Lambda, but Lambda can't do stateful windows"</span> [T]</div>
+
+  <h3>❌ Common Mistakes to Avoid</h3>
+  <div class="card-grid">
+    <div class="card red"><h4>"I'd use Glue for everything"</h4><p>Shows you don't know when EMR, Athena, or Redshift is better.</p></div>
+    <div class="card red"><h4>"We'd use Kinesis AND Kafka"</h4><p>Pick one and justify. Using both signals confusion.</p></div>
+    <div class="card red"><h4>"Just use IAM policies"</h4><p>For data lakes, you NEED Lake Formation for column/row security.</p></div>
+    <div class="card red"><h4>Forgetting cost or failure handling</h4><p>Always mention lifecycle policies, Spot, Parquet, scan limits. Every pipeline must address: what happens when it fails?</p></div>
+  </div>
+
+  <h3>🔑 Final Key Takeaways</h3>
+  <div class="aha">
+    <div class="aha-title">The 8 Commandments</div>
+    <p>
+      <strong>1.</strong> Know the "why" not just the "what" — interviewers follow up with "why not X?"<br>
+      <strong>2.</strong> Draw diagrams — describe architecture as boxes and arrows.<br>
+      <strong>3.</strong> Numbers matter — "1 MB/s per shard" beats "a lot of throughput."<br>
+      <strong>4.</strong> Cost is a first-class design criterion — mention it proactively.<br>
+      <strong>5.</strong> Security is not an afterthought — weave it into your design.<br>
+      <strong>6.</strong> Failure handling differentiates seniors — retry, DLQ, alerting, idempotency.<br>
+      <strong>7.</strong> Acknowledge trade-offs — "I chose X over Y because… but if Z, I'd reconsider."<br>
+      <strong>8.</strong> Practice aloud — reading ≠ articulating. Record yourself.
+    </p>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-05-governance-orchestration/index.html">← Module 5: Governance & Orchestration</a>
+  <a href="../index.html">Course Home →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+})();
+</script>
+</body>
+</html>

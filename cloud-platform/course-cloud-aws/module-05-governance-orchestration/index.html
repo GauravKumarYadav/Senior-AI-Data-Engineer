@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 5: Governance & Orchestration | Cloud AWS Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.82rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+.tbl{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.88rem}
+.tbl th,.tbl td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+.tbl th{font-family:var(--font-heading);font-weight:700;background:rgba(0,0,0,0.03)}
+.tbl tr:last-child td{border-bottom:none}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">☁️ Cloud AWS Mastery</a><div class="nav-dots"><a href="../module-01-s3-storage/" class="nav-dot"></a><a href="../module-02-glue-athena/" class="nav-dot"></a><a href="../module-03-emr-compute/" class="nav-dot"></a><a href="../module-04-kinesis-redshift/" class="nav-dot"></a><a href="../module-05-governance-orchestration/" class="nav-dot active"></a><a href="../module-06-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Lake Formation -->
+<section class="screen" id="s1">
+  <h2>🏛️ Lake Formation — <span class="accent">Centralized Governance</span></h2>
+  <p>RetailMart's data lake spans S3, Glue/Athena, EMR, Kinesis, and Redshift. But <strong>who can access what?</strong> The compliance team needs column-level PII restrictions, analysts need cross-account sharing, and the nightly ETL has 12 interdependent jobs. This module tackles <strong>governance</strong> and <strong>orchestration</strong>.</p>
+  <p>AWS Lake Formation is a <span class="tooltip-term" data-tip="A centralized governance layer on top of the Glue Data Catalog that provides database, table, column, and row-level access control from a single console.">centralized governance layer</span> on top of the Glue Data Catalog. Instead of managing S3 bucket policies, IAM policies, and Glue resource policies separately — Lake Formation gives you a <strong>single pane of glass</strong>.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Before Lake Formation</h4>
+      <ul>
+        <li>S3 Bucket Policy: 200 lines of JSON</li>
+        <li>IAM Policy for Role A: 50 lines</li>
+        <li>IAM Policy for Role B: 50 lines</li>
+        <li>Glue Resource Policy: 80 lines</li>
+        <li>KMS Key Policy: 40 lines</li>
+        <li>= 15 different places to manage</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ After Lake Formation</h4>
+      <ul>
+        <li>One GRANT statement per role</li>
+        <li>✓ S3 access (credential vending)</li>
+        <li>✓ Glue Catalog permissions</li>
+        <li>✓ Athena query filtering</li>
+        <li>✓ Redshift Spectrum access</li>
+        <li>✓ EMR access — all handled</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Step 1: Register S3 locations with Lake Formation</span>
+aws lakeformation register-resource \
+  --resource-arn <span class="str">"arn:aws:s3:::retailmart-data-lake-prod"</span> \
+  --use-service-linked-role
+
+<span class="cm"># Step 2: Make Lake Formation the authority (THE critical step)</span>
+aws lakeformation put-data-lake-settings \
+  --data-lake-settings <span class="str">'{"DataLakeAdmins":[{"DataLakePrincipalIdentifier":"arn:aws:iam::123456789:role/DataLakeAdminRole"}],"CreateDatabaseDefaultPermissions":[],"CreateTableDefaultPermissions":[]}'</span>
+
+<span class="cm"># Step 3: Revoke the default super-permission</span>
+aws lakeformation batch-revoke-permissions \
+  --entries <span class="str">'[{"Id":"1","Principal":{"DataLakePrincipalIdentifier":"IAM_ALLOWED_PRINCIPALS"},"Resource":{"Database":{"Name":"curated"}},"Permissions":["ALL"],"PermissionsWithGrantOption":["ALL"]}]'</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p><strong>Q: "Why not just use IAM policies for data lake access control?"</strong> — IAM operates at the <em>S3 object level</em> (paths like <code>s3://bucket/curated/*</code>). But data access should be at the <em>table and column level</em>. IAM can't do column-level filtering. Lake Formation adds a semantic layer: permissions on databases, tables, columns, and rows — regardless of the underlying S3 layout. The trade-off: revoking <code>IAMAllowedPrincipals</code> trips up many teams during initial setup.</p>
+  </div>
+</section>
+
+<!-- Screen 2: Fine-Grained Access -->
+<section class="screen screen-alt" id="s2">
+  <h2>🔒 Fine-Grained Access — <span class="accent">Column, Row & Cell</span></h2>
+
+  <h3>Column-Level Security</h3>
+  <p>Restrict which columns a principal can see — the most common PII protection pattern.</p>
+  <div class="code-block"><span class="cm"># Grant analysts SELECT on specific columns only (PII excluded)</span>
+aws lakeformation grant-permissions \
+  --principal <span class="str">'{"DataLakePrincipalIdentifier":"arn:aws:iam::123456789:role/AnalystRole"}'</span> \
+  --resource <span class="str">'{"TableWithColumns":{"DatabaseName":"curated","Name":"daily_sales","ColumnNames":["store_id","product_sku","quantity","total_amount","transaction_ts"]}}'</span> \
+  --permissions <span class="str">'["SELECT"]'</span>
+
+<span class="cm"># customer_id and payment_method are NOT granted — analysts simply cannot see PII</span></div>
+
+  <h3>Row-Level Security (Data Filters)</h3>
+  <p>Restrict which <em>rows</em> a principal can see — e.g., regional managers see only their region.</p>
+  <div class="code-block"><span class="cm"># Create a data cell filter for the Northeast region manager</span>
+aws lakeformation create-data-cells-filter \
+  --table-data <span class="str">'{"TableCatalogId":"123456789012","DatabaseName":"curated","TableName":"daily_sales","Name":"northeast-only","RowFilter":{"FilterExpression":"region = '\''northeast'\''"},"ColumnNames":["store_id","product_sku","quantity","total_amount","transaction_ts","region"]}'</span></div>
+
+  <h3>Cell-Level Security (Column + Row Combined)</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🔓 Data Engineer Sees</h4>
+      <ul>
+        <li>store_id | cust_id | product | amount | card_last4 | region</li>
+        <li>42 | C-99381 | TV-55 | 499.99 | 4242 | NE</li>
+        <li>17 | C-44210 | Laptop | 899.00 | 1234 | SE</li>
+        <li>103 | C-77512 | Headphones | 149.99 | 5678 | NE</li>
+        <li>88 | C-11293 | Tablet | 329.00 | 9999 | MW</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>🔐 NE Manager Sees</h4>
+      <ul>
+        <li>store_id | product | amount | region</li>
+        <li>42 | TV-55 | 499.99 | NE</li>
+        <li>103 | Headphones | 149.99 | NE</li>
+        <li><em>2 cols hidden + 2 rows filtered</em></li>
+        <li><em>= Cell-level security</em></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p><strong>Q: "How do you implement GDPR right-to-be-forgotten in a data lake?"</strong> — Multiple layers: (1) Column-level security via LF hides PII from analysts. (2) Row-level filtering excludes flagged customers. (3) For actual deletion, use <strong>Apache Iceberg</strong> <code>DELETE FROM</code> to physically remove records. (4) For pseudonymization, hash PII in a Glue ETL job. Lake Formation controls <em>visibility</em> — physical deletion requires a separate process.</p>
+  </div>
+</section>
+
+<!-- Screen 3: LF-Tags -->
+<section class="screen" id="s3">
+  <h2>🏷️ LF-Tags — <span class="accent">Tag-Based Access at Scale</span></h2>
+  <p>Managing individual table/column grants doesn't scale with 500+ tables across 20 teams. <strong>LF-Tags</strong> enable <span class="tooltip-term" data-tip="Attribute-Based Access Control: tag resources and principals, let Lake Formation match them automatically. New tables that match tags get instant access grants.">attribute-based access control (ABAC)</span>.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🏷️ Tag Taxonomy</h4>
+      <p><code>sensitivity</code> = public | internal | confidential | pii<br><code>domain</code> = sales | inventory | hr | finance<br><code>environment</code> = dev | staging | prod</p>
+    </div>
+    <div class="card blue">
+      <h4>📊 Resource Tagging</h4>
+      <p><code>curated.daily_sales</code> → sensitivity=internal, domain=sales<br><code>curated.daily_sales.cust_id</code> → sensitivity=pii<br><code>curated.employee_data</code> → sensitivity=confidential, domain=hr</p>
+    </div>
+    <div class="card green">
+      <h4>👤 Principal Matching</h4>
+      <p>AnalystRole → sensitivity≤internal, domain=sales ✅ daily_sales, ❌ cust_id column, ❌ employee_data<br>New sales table tagged correctly? → Auto-access, zero tickets.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Create tag keys</span>
+aws lakeformation create-lf-tag --tag-key <span class="str">"sensitivity"</span> \
+  --tag-values <span class="str">'["public","internal","confidential","pii"]'</span>
+
+<span class="cm"># Tag PII columns separately</span>
+aws lakeformation add-lf-tags-to-resource \
+  --resource <span class="str">'{"TableWithColumns":{"DatabaseName":"curated","Name":"daily_sales","ColumnNames":["customer_id","payment_method","card_last_four"]}}'</span> \
+  --lf-tags <span class="str">'[{"TagKey":"sensitivity","TagValues":["pii"]}]'</span>
+
+<span class="cm"># Grant via tag-based policy — one statement covers all matching tables</span>
+aws lakeformation grant-permissions \
+  --principal <span class="str">'{"DataLakePrincipalIdentifier":"arn:aws:iam::123456789:role/AnalystRole"}'</span> \
+  --resource <span class="str">'{"LFTagPolicy":{"ResourceType":"TABLE","Expression":[{"TagKey":"sensitivity","TagValues":["public","internal"]},{"TagKey":"domain","TagValues":["sales"]}]}}'</span> \
+  --permissions <span class="str">'["SELECT","DESCRIBE"]'</span></div>
+
+  <table class="tbl">
+    <tr><th>Approach</th><th>Named Resources</th><th>LF-Tags</th></tr>
+    <tr><td>Scale</td><td>O(tables × roles) grants</td><td>O(tags × roles) policies</td></tr>
+    <tr><td>New table</td><td>Manual grant required</td><td>Auto if tagged correctly</td></tr>
+    <tr><td>Best for</td><td>&lt; 50 tables, few roles</td><td>50+ tables, many teams</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p><strong>Q: "How do you manage data access for 200 tables across 15 teams?"</strong> — LF-Tags. Define a taxonomy, tag every table at creation time via CI/CD, create tag-based policies. When a new sales table is created and tagged <code>domain=sales, sensitivity=internal</code>, Role X automatically gets access. This scales from 200 to 2,000 tables without additional policies.</p>
+  </div>
+</section>
+
+<!-- Screen 4: Cross-Account Sharing -->
+<section class="screen screen-alt" id="s4">
+  <h2>🔗 Cross-Account <span class="accent">Data Sharing</span></h2>
+  <p>RetailMart's analytics subsidiary operates in a separate AWS account. They need access to curated sales data <strong>without duplicating it</strong>.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📤 Producer Account</h4>
+      <ul>
+        <li>Lake Formation Admin</li>
+        <li>GRANT cross-account SELECT on curated.sales to Account B</li>
+        <li>Data stays here (S3) — no data movement</li>
+        <li>Via RAM Share or Direct LF grant</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📥 Consumer Account</h4>
+      <ul>
+        <li>Create resource link to shared database</li>
+        <li>Grant local roles access to the link</li>
+        <li>Query with Athena/EMR/Redshift</li>
+        <li>Compute is consumer-side</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># PRODUCER: Grant cross-account access</span>
+aws lakeformation grant-permissions \
+  --principal <span class="str">'{"DataLakePrincipalIdentifier":"987654321098"}'</span> \
+  --resource <span class="str">'{"Table":{"DatabaseName":"curated","Name":"daily_sales"}}'</span> \
+  --permissions <span class="str">'["SELECT","DESCRIBE"]'</span> \
+  --permissions-with-grant-option <span class="str">'["SELECT","DESCRIBE"]'</span>
+
+<span class="cm"># CONSUMER: Create resource link (pointer to shared database)</span>
+aws glue create-database \
+  --database-input <span class="str">'{"Name":"shared_curated","TargetDatabase":{"CatalogId":"123456789012","DatabaseName":"curated"}}'</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p><strong>S3 bucket policies</strong> give path-level access — no schema, no column filtering. <strong>Lake Formation</strong> shares at the table/column level with full governance. LF handles credential vending so you don't expose your S3 bucket at all. The consumer doesn't even know your bucket name.</p>
+  </div>
+</section>
+
+<!-- Screen 5: Step Functions -->
+<section class="screen" id="s5">
+  <h2>⚙️ Step Functions — <span class="accent">State Machine Orchestration</span></h2>
+  <p>AWS Step Functions coordinate multiple services into <strong>visual workflows</strong> using state machines. Think of them as Airflow, but serverless and AWS-native.</p>
+
+  <h3>RetailMart Nightly ETL Pipeline</h3>
+  <div class="code-block"><span class="cm">START → Check S3 for today's raw files (Lambda)</span>
+       │
+  <span class="fn">Files &gt; 0?</span>
+   YES │          NO → Alert &amp; Wait 30m → Retry (max 3)
+       ▼
+  <span class="kw">Parallel Branch:</span>
+   ├── Glue Job: POS ETL (raw → curated)
+   ├── Glue Job: Clickstream ETL
+   └── Glue Job: Inventory ETL
+       │ <span class="cm">(wait for all 3)</span>
+       ▼
+  <span class="fn">Data Quality Validation</span> (Lambda: Great Expectations)
+       │
+  <span class="fn">DQ Pass?</span>
+   YES │          NO → Quarantine + Alert PagerDuty
+       ▼
+  Redshift COPY → Update Glue Catalog (Crawler) → Notify Success (SNS)
+       ▼
+      <span class="str">END</span></div>
+
+  <div class="code-block"><span class="cm">// ASL snippet — Parallel ETL with Retry + Catch</span>
+{
+  <span class="str">"RunParallelETL"</span>: {
+    <span class="str">"Type"</span>: <span class="str">"Parallel"</span>,
+    <span class="str">"Branches"</span>: [{
+      <span class="str">"StartAt"</span>: <span class="str">"POS_ETL"</span>,
+      <span class="str">"States"</span>: {
+        <span class="str">"POS_ETL"</span>: {
+          <span class="str">"Type"</span>: <span class="str">"Task"</span>,
+          <span class="str">"Resource"</span>: <span class="str">"arn:aws:states:::glue:startJobRun.sync"</span>,
+          <span class="str">"Parameters"</span>: {
+            <span class="str">"JobName"</span>: <span class="str">"retailmart-pos-etl"</span>,
+            <span class="str">"Arguments"</span>: {<span class="str">"--job-bookmark-option"</span>: <span class="str">"job-bookmark-enable"</span>}
+          },
+          <span class="kw">"Retry"</span>: [{<span class="str">"ErrorEquals"</span>: [<span class="str">"Glue.ConcurrentRunsExceededException"</span>],
+                    <span class="str">"IntervalSeconds"</span>: <span class="fn">60</span>, <span class="str">"MaxAttempts"</span>: <span class="fn">3</span>, <span class="str">"BackoffRate"</span>: <span class="fn">2.0</span>}],
+          <span class="kw">"Catch"</span>: [{<span class="str">"ErrorEquals"</span>: [<span class="str">"States.ALL"</span>], <span class="str">"Next"</span>: <span class="str">"POS_ETL_Failed"</span>}],
+          <span class="str">"End"</span>: <span class="fn">true</span>
+        }
+      }
+    }],
+    <span class="str">"Next"</span>: <span class="str">"DataQualityCheck"</span>
+  }
+}</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p><strong>Step Functions</strong> when: all-AWS, event-driven, visual debugging, zero infra. <strong>MWAA (Airflow)</strong> when: existing DAGs, complex scheduling/sensors/backfill, non-AWS integrations, Python-first API. RetailMart uses Step Functions for nightly ETL and MWAA for the monthly ML retraining pipeline.</p>
+  </div>
+</section>
+
+<!-- Screen 6: Standard vs Express -->
+<section class="screen screen-alt" id="s6">
+  <h2>⚡ Standard vs <span class="accent">Express</span> Workflows</h2>
+
+  <table class="tbl">
+    <tr><th>Feature</th><th>Standard</th><th>Express</th></tr>
+    <tr><td>Duration</td><td>Up to 1 year</td><td>Up to 5 minutes</td></tr>
+    <tr><td>Execution model</td><td>Exactly-once</td><td>At-least-once (async)</td></tr>
+    <tr><td>Pricing</td><td>Per state transition ($0.025/1K)</td><td>Per request + duration</td></tr>
+    <tr><td>History</td><td>Full (90 days in console)</td><td>CloudWatch Logs only</td></tr>
+    <tr><td>Concurrency</td><td>25,000 concurrent</td><td>100,000/sec start rate</td></tr>
+    <tr><td>Use case</td><td>Long-running ETL, approvals</td><td>High-volume, short transforms</td></tr>
+  </table>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📋 Standard (Nightly ETL)</h4>
+      <ul>
+        <li>12 states, runs 45 minutes</li>
+        <li>Must be exactly-once</li>
+        <li>1 execution per night</li>
+        <li>Cost: negligible</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>⚡ Express (Per-Order)</h4>
+      <ul>
+        <li>4 states, 2-3 seconds each</li>
+        <li>50,000 orders/hour at peak</li>
+        <li>At-least-once is acceptable</li>
+        <li>Cost: much cheaper at volume</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p><strong>Q: "100K executions/day, 5 states each — Standard or Express?"</strong><br>Standard: 500K transitions/day × 30 = 15M/month × $0.025/1K = <strong>$375/mo</strong>.<br>Express: 100K × $0.000001 + duration = <strong>~$153/mo</strong>. Express is ~60% cheaper. Rule of thumb: high-volume, short-lived → Express.</p>
+  </div>
+</section>
+
+<!-- Screen 7: Error Handling -->
+<section class="screen" id="s7">
+  <h2>🛡️ Error Handling — <span class="accent">Retry, Catch & Fallback</span></h2>
+
+  <div class="code-block"><span class="cm">// Task error flow</span>
+Task Executes
+  ├── <span class="str">Success</span> ──► Next State
+  ├── <span class="kw">Retryable Error</span> ──► Retry Policy
+  │     ├── Attempt 1 (wait 5s)
+  │     ├── Attempt 2 (wait 10s)
+  │     └── Attempt 3 (wait 20s)
+  │           └── Recovered? YES → Next State
+  │                          NO  → <span class="fn">Catch Handler</span>
+  └── <span class="kw">Non-retryable Error</span> ──► <span class="fn">Catch Handler</span> ──► Fallback State</div>
+
+  <div class="code-block"><span class="cm">// Retry + Catch configuration</span>
+{
+  <span class="kw">"Retry"</span>: [
+    {<span class="str">"ErrorEquals"</span>: [<span class="str">"Glue.ConcurrentRunsExceededException"</span>],
+     <span class="str">"IntervalSeconds"</span>: <span class="fn">60</span>, <span class="str">"MaxAttempts"</span>: <span class="fn">5</span>, <span class="str">"BackoffRate"</span>: <span class="fn">2.0</span>},
+    {<span class="str">"ErrorEquals"</span>: [<span class="str">"Lambda.TooManyRequestsException"</span>],
+     <span class="str">"IntervalSeconds"</span>: <span class="fn">5</span>, <span class="str">"MaxAttempts"</span>: <span class="fn">3</span>, <span class="str">"BackoffRate"</span>: <span class="fn">2.0</span>},
+    {<span class="str">"ErrorEquals"</span>: [<span class="str">"States.Timeout"</span>],
+     <span class="str">"IntervalSeconds"</span>: <span class="fn">30</span>, <span class="str">"MaxAttempts"</span>: <span class="fn">2</span>}
+  ],
+  <span class="kw">"Catch"</span>: [
+    {<span class="str">"ErrorEquals"</span>: [<span class="str">"Glue.EntityNotFoundException"</span>], <span class="str">"Next"</span>: <span class="str">"HandleMissingTable"</span>},
+    {<span class="str">"ErrorEquals"</span>: [<span class="str">"States.ALL"</span>], <span class="str">"Next"</span>: <span class="str">"GenericErrorHandler"</span>}
+  ]
+}</div>
+
+  <table class="tbl">
+    <tr><th>Error Type</th><th>Meaning</th></tr>
+    <tr><td><code>States.ALL</code></td><td>Catches everything (wildcard)</td></tr>
+    <tr><td><code>States.Timeout</code></td><td>Task exceeded TimeoutSeconds</td></tr>
+    <tr><td><code>States.TaskFailed</code></td><td>Task returned a failure</td></tr>
+    <tr><td><code>States.Permissions</code></td><td>Insufficient IAM permissions</td></tr>
+    <tr><td><code>States.HeartbeatTimeout</code></td><td>Long task missed heartbeat</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p><strong>Q: "Glue job intermittently fails with OOM. How do you handle it?"</strong> — (1) Retry with exponential backoff — OOM can be transient. (2) Catch after max retries → fallback state that re-runs with <code>G.2X</code> instead of <code>G.1X</code>. (3) If fallback fails → alert PagerDuty. The state machine encodes the escalation policy: retry → scale up → alert human. No silent failures.</p>
+  </div>
+</section>
+
+<!-- Screen 8: IAM for Data Pipelines -->
+<section class="screen screen-alt" id="s8">
+  <h2>🔑 IAM for <span class="accent">Data Pipelines</span></h2>
+  <p>Every AWS service in your pipeline needs an IAM role. Understanding the <strong>trust chain</strong> is critical for debugging "Access Denied" errors.</p>
+
+  <div class="code-block"><span class="cm">// IAM Role Chain for ETL Pipeline</span>
+<span class="kw">EventBridge Rule</span>
+  → Assumes: StepFunctions Execution Role
+     Trust: <span class="str">events.amazonaws.com</span>
+     Permissions: <span class="fn">states:StartExecution</span>
+
+<span class="kw">Step Functions Execution Role</span>
+  → Passes role to Glue
+     Trust: <span class="str">states.amazonaws.com</span>
+     Permissions: <span class="fn">glue:StartJobRun, lambda:InvokeFunction, iam:PassRole, sns:Publish</span>
+
+<span class="kw">Glue ETL Job Role</span>
+  → Reads/writes S3, accesses Catalog
+     Trust: <span class="str">glue.amazonaws.com</span>
+     Permissions: <span class="fn">s3:GetObject, s3:PutObject, glue:GetTable, kms:Decrypt</span>
+
+<span class="kw">Redshift Copy Role</span>
+  → Reads S3 curated data
+     Trust: <span class="str">redshift.amazonaws.com</span>
+     Permissions: <span class="fn">s3:GetObject, s3:ListBucket, kms:Decrypt</span></div>
+
+  <h3>Least-Privilege Glue ETL Policy (Key Statements)</h3>
+  <div class="code-block">{
+  <span class="str">"Sid"</span>: <span class="str">"ReadRawData"</span>,
+  <span class="str">"Effect"</span>: <span class="str">"Allow"</span>,
+  <span class="str">"Action"</span>: [<span class="str">"s3:GetObject"</span>, <span class="str">"s3:ListBucket"</span>],
+  <span class="str">"Resource"</span>: [<span class="str">"arn:aws:s3:::retailmart-data-lake-prod"</span>,
+              <span class="str">"arn:aws:s3:::retailmart-data-lake-prod/raw/*"</span>]
+},
+{
+  <span class="str">"Sid"</span>: <span class="str">"KMSDecryptEncrypt"</span>,
+  <span class="str">"Effect"</span>: <span class="str">"Allow"</span>,
+  <span class="str">"Action"</span>: [<span class="str">"kms:Decrypt"</span>, <span class="str">"kms:GenerateDataKey"</span>],
+  <span class="str">"Resource"</span>: <span class="str">"arn:aws:kms:us-east-1:123456789:key/mrk-abcdef"</span>,
+  <span class="kw">"Condition"</span>: {<span class="str">"StringEquals"</span>: {<span class="str">"kms:ViaService"</span>: <span class="str">"s3.us-east-1.amazonaws.com"</span>}}
+}</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p><strong>Q: "Glue job gets Access Denied reading S3."</strong> — Debug order: (1) Which IAM role? (2) S3 bucket policy deny? (3) KMS <code>kms:Decrypt</code> on that key? (4) Lake Formation grants? (5) VPC endpoint policy? (6) Organization SCP? Use <code>aws iam simulate-principal-policy</code> to test without trial-and-error.</p>
+  </div>
+</section>
+
+<!-- Screen 9: S3 Policies & KMS -->
+<section class="screen" id="s9">
+  <h2>📋 Policy Evaluation & <span class="accent">KMS Keys</span></h2>
+
+  <div class="code-block"><span class="cm">// S3 Access Evaluation Flow</span>
+Request to access S3 object
+  │
+  ▼ <span class="kw">Organization SCP</span> ──── Deny? → <span class="str">DENIED</span>
+  │
+  ▼ <span class="kw">IAM Policy</span> ──── Explicit Deny? → <span class="str">DENIED</span>
+  │
+  ▼ <span class="kw">S3 Bucket Policy</span> ──── Explicit Deny? → <span class="str">DENIED</span>
+  │
+  ▼ <span class="fn">Union of Allows</span> ──── Any Allow? → <span class="str">ALLOWED</span>
+  │                    ──── No Allow? → <span class="str">DENIED</span>
+  │
+  ▼ <span class="kw">KMS Key Policy</span> (if encrypted) ──── Allows? → <span class="str">ALLOWED</span></div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>🏠 Same Account</h4>
+      <ul>
+        <li>IAM allows s3:GetObject → ALLOWED</li>
+        <li>Bucket policy doesn't need explicit allow</li>
+        <li>Union of IAM + Bucket applies</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>🌐 Cross Account</h4>
+      <ul>
+        <li>IAM in Account A allows → NOT ENOUGH</li>
+        <li>Bucket Policy in Account B MUST also allow</li>
+        <li>Both sides must explicitly allow</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># KMS key policy — least-privilege for data pipeline roles</span>
+{
+  <span class="str">"Sid"</span>: <span class="str">"GlueETLAccess"</span>,
+  <span class="str">"Effect"</span>: <span class="str">"Allow"</span>,
+  <span class="str">"Principal"</span>: {<span class="str">"AWS"</span>: <span class="str">"arn:aws:iam::123456789:role/GlueETLRole"</span>},
+  <span class="str">"Action"</span>: [<span class="str">"kms:Decrypt"</span>, <span class="str">"kms:GenerateDataKey"</span>],
+  <span class="str">"Resource"</span>: <span class="str">"*"</span>,
+  <span class="kw">"Condition"</span>: {<span class="str">"StringEquals"</span>: {<span class="str">"kms:ViaService"</span>: <span class="str">"s3.us-east-1.amazonaws.com"</span>}}
+}</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p><strong>Q: "Cross-account Glue job reads S3 but gets 'Access Denied' on kms:Decrypt."</strong> — The KMS key policy in the source account must explicitly grant the cross-account role <code>kms:Decrypt</code>. Unlike S3 bucket policies, <strong>KMS key policies are the primary authority</strong> — if the key policy doesn't grant the external role, no amount of IAM policies will help. Add <code>kms:ViaService</code> condition for least privilege.</p>
+  </div>
+</section>
+
+<!-- Screen 10: Quiz & Takeaways -->
+<section class="screen screen-alt" id="s10">
+  <h2>🧪 Module 5 <span class="accent">Quiz</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: 300 tables. New team needs SELECT on all tables tagged domain=sales, sensitivity≤internal. Most scalable approach?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Create individual GRANT statements for each ~100 sales table</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) Use LF-Tags: grant SELECT where domain=sales AND sensitivity IN (public, internal)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) Give them the DataLakeAdmin role</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Create an S3 bucket policy for s3://bucket/curated/sales/*</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Step Functions Standard: 8 states, 50K runs/month. Express: 4 seconds each. Which is cheaper?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Standard: 50K × 8 × $0.025/1K = $10/month</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) Express: 50K × ($0.000001 + 4s × $0.00001667) ≈ $3.38/month</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) They cost the same</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) Cannot determine without knowing Lambda costs</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: Glue ETL (Account A) reads S3 encrypted with KMS CMK (Account B). Required permissions?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Only IAM policy in Account A</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) IAM policy (A) + S3 bucket policy (B)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">C) IAM policy (A) + S3 bucket policy (B) + KMS key policy (B)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Lake Formation grant only</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: Northeast manager should see only rows where region = 'northeast'. Which LF feature?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Column-level security</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) LF-Tags</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">C) Data cell filters (row-level security)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) S3 prefix-based access</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: Lambda in Step Functions intermittently times out due to slow downstream API. Best error handling?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Catch States.ALL → Fail immediately</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) Retry States.Timeout with exponential backoff (3 attempts), then Catch → alert</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) Remove the Lambda timeout</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Use an Express workflow instead</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+
+  <h3>🔑 Key Takeaways</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🏛️ Lake Formation</h4><p>Centralizes governance — one place for database, table, column, and row-level permissions. Revoke IAMAllowedPrincipals or old IAM policies bypass everything.</p></div>
+    <div class="card blue"><h4>🏷️ LF-Tags Scale</h4><p>Tag-based policies mean new tables get automatic access grants. O(tags) policies vs O(tables × roles) grants.</p></div>
+    <div class="card green"><h4>⚙️ Step Functions</h4><p>AWS-native orchestration with visual debugging. Standard for long ETL, Express for high-volume micro-workflows.</p></div>
+    <div class="card purple"><h4>🔑 IAM Chain</h4><p>EventBridge → Step Functions → Glue → S3 → KMS. Every link needs trust + permissions. Cross-account = both sides must allow.</p></div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-04-kinesis-redshift/index.html">← Module 4: Kinesis & Redshift</a>
+  <a href="../module-06-interview-gauntlet/index.html">Next: Interview Gauntlet →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s the answer interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above for the correct approach.';}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

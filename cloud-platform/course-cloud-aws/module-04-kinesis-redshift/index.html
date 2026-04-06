@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 4: Kinesis & Redshift — Streaming & Warehousing | Cloud AWS Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">☁️ Cloud AWS Mastery</a><div class="nav-dots"><a href="../module-01-s3-storage/" class="nav-dot"></a><a href="../module-02-glue-athena/" class="nav-dot"></a><a href="../module-03-emr-compute/" class="nav-dot"></a><a href="../module-04-kinesis-redshift/" class="nav-dot active"></a><a href="../module-05-governance-orchestration/" class="nav-dot"></a><a href="../module-06-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Kinesis Data Streams -->
+<section class="screen" id="s1">
+  <h2>Kinesis Data Streams — <span class="accent">Real-Time Ingestion</span></h2>
+  <p>Kinesis Data Streams (KDS) captures <strong>gigabytes per second</strong> from hundreds of thousands of sources — POS terminals, clickstream, IoT sensors, application logs.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>📥 Write: 1 MB/s per shard</h4>
+      <p>Max 1,000 records/sec per shard. Record size max: 1 MB.</p>
+    </div>
+    <div class="card blue">
+      <h4>📤 Read: 2 MB/s per shard</h4>
+      <p>Shared across all consumers (or 2 MB/s per consumer with Enhanced Fan-Out).</p>
+    </div>
+    <div class="card green">
+      <h4>🕐 Retention: 24h → 365d</h4>
+      <p>Default 24 hours. Extend up to 365 days. Replay from any point.</p>
+    </div>
+  </div>
+  <div class="code-block"><span class="cm"># Partition key = store_id → ordered processing per store</span>
+<span class="kw">import</span> boto3, json
+
+kinesis = boto3.client(<span class="str">"kinesis"</span>)
+
+<span class="kw">def</span> <span class="fn">send_pos_batch</span>(events: list[dict]):
+    records = [
+        {<span class="str">"Data"</span>: json.dumps(e).encode(), <span class="str">"PartitionKey"</span>: str(e[<span class="str">"store_id"</span>])}
+        <span class="kw">for</span> e <span class="kw">in</span> events
+    ]
+    resp = kinesis.put_records(StreamName=<span class="str">"retailmart-pos-events"</span>, Records=records)
+    <span class="kw">if</span> resp[<span class="str">"FailedRecordCount"</span>] > <span class="fn">0</span>:
+        <span class="cm"># Implement exponential backoff retry for failed records</span>
+        ...</div>
+  <div class="aha">
+    <div class="aha-title">💡 Partition Key Strategy</div>
+    <p><strong>❌ Bad:</strong> constant key → all records to 1 shard (bottleneck). <strong>❌ Mediocre:</strong> store_id with skew (flagship store = 40%). <strong>✅ Good:</strong> composite <code>f"{store_id}-{register_id}"</code> → 60K unique keys, even distribution. <strong>✅ Best:</strong> <code>uuid4()</code> when ordering doesn't matter.</p>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 How Many Shards?</div>
+    <p><strong>Shards = max(incoming_MB/s ÷ 1, outgoing_MB/s ÷ 2)</strong>. RetailMart: 8 MB/s peak → 8 shards min. 3 consumers × 8 MB/s ÷ 2 = 12 shards for fan-out. Add 20% headroom. Use <strong>On-Demand mode</strong> if traffic is unpredictable (auto-scales to 200 MB/s).</p>
+  </div>
+</section>
+
+<!-- Screen 2: Kinesis Data Firehose -->
+<section class="screen screen-alt" id="s2">
+  <h2>Kinesis Data Firehose — <span class="accent">Managed Delivery</span></h2>
+  <p>Fully managed delivery stream: captures, transforms, and loads data into S3, Redshift, OpenSearch, Splunk. <strong>Zero administration</strong>, auto-scaling.</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📡 Kinesis Data Streams</h4>
+      <ul>
+        <li>⚡ ~200ms latency (real-time)</li>
+        <li>🔧 You manage shards</li>
+        <li>👥 You build consumers (KCL, Lambda)</li>
+        <li>🔄 Replay supported (re-read from shard)</li>
+        <li>💰 Per shard-hour pricing</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🚚 Kinesis Data Firehose</h4>
+      <ul>
+        <li>⏱️ 60-900 sec buffer (near-real-time)</li>
+        <li>✅ Fully managed, auto-scales</li>
+        <li>📦 Built-in destinations (S3, Redshift…)</li>
+        <li>❌ No replay (one-shot delivery)</li>
+        <li>💰 Per GB ingested pricing</li>
+      </ul>
+    </div>
+  </div>
+  <div class="code-block"><span class="cm"># Firehose: KDS → S3 as Parquet with dynamic partitioning</span>
+aws firehose create-delivery-stream \
+  --delivery-stream-name <span class="str">"retailmart-pos-to-s3"</span> \
+  --delivery-stream-type KinesisStreamAsSource \
+  --extended-s3-destination-configuration <span class="str">'{
+    "Prefix": "streaming/pos-events/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/",
+    "BufferingHints": {"SizeInMBs": 128, "IntervalInSeconds": 300},
+    "DataFormatConversionConfiguration": {
+      "Enabled": true,
+      "OutputFormatConfiguration": {"Serializer": {"ParquetSerDe": {"Compression": "SNAPPY"}}}
+    }
+  }'</span></div>
+  <div class="aha">
+    <div class="aha-title">💡 Firehose Alone vs. Data Streams + Firehose</div>
+    <p><strong>Firehose alone</strong> (Direct PUT): just loading into S3/Redshift. Simple, cheap.<br>
+    <strong>Data Streams + Firehose</strong>: when you need (1) multiple consumers, (2) real-time processing alongside loading (Lambda fraud detection &lt;200ms while Firehose buffers to S3), (3) replay capability. RetailMart uses KDS as the "spine" with 3 consumers: Firehose→S3, Lambda→fraud alerts, Flink→dashboards.</p>
+  </div>
+</section>
+
+<!-- Screen 3: Kinesis vs. Kafka -->
+<section class="screen" id="s3">
+  <h2>Kinesis vs. Kafka <span class="accent">(MSK)</span></h2>
+  <p>One of the <strong>most common interview questions</strong> for data engineering roles.</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📡 Kinesis</h4>
+      <ul>
+        <li>✅ Zero ops — AWS-managed shards</li>
+        <li>✅ Tight AWS integration (Firehose, Lambda)</li>
+        <li>✅ Budget predictability (per-shard)</li>
+        <li>⚠️ 1 MB/s in, 2 MB/s out per shard</li>
+        <li>⚠️ Shard split/merge takes minutes</li>
+        <li>⚠️ AWS SDK only (not open standard)</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📨 MSK (Kafka)</h4>
+      <ul>
+        <li>✅ No per-partition throughput limit</li>
+        <li>✅ Kafka Connect (100+ connectors)</li>
+        <li>✅ Open standard, multi-cloud portable</li>
+        <li>✅ Log compaction (latest per key)</li>
+        <li>⚠️ Broker patching, disk, ZooKeeper/KRaft</li>
+        <li>⚠️ Higher baseline cost ($4,800+/mo)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 Migrating from On-Prem Kafka to AWS</div>
+    <p><strong>MSK</strong> in most cases — existing producers/consumers, Kafka Connect pipelines, team expertise make it a drop-in replacement. MirrorMaker 2 replicates from on-prem to MSK, then cut over. Kinesis would require rewriting every producer/consumer. Exception: going "all-in serverless" with Lambda + Firehose as a clean break.</p>
+  </div>
+  <div class="aha">
+    <div class="aha-title">🏪 RetailMart Chose Kinesis — Why?</div>
+    <p>Split into 3 streams (POS ~150 MB/s, clickstream ~200 MB/s, inventory ~50 MB/s). On-Demand mode auto-scales. Total: ~$3,200/mo vs. MSK $4,800/mo + ops. <strong>33% cheaper, zero ops, 3-person team.</strong></p>
+  </div>
+</section>
+
+<!-- Screen 4: Enhanced Fan-Out & Flink -->
+<section class="screen screen-alt" id="s4">
+  <h2>Enhanced Fan-Out & <span class="accent">Flink Analytics</span></h2>
+  <p>By default, all consumers <strong>share</strong> 2 MB/s per shard. Enhanced Fan-Out gives each consumer a <strong>dedicated</strong> 2 MB/s pipe via HTTP/2 push.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>📡 Standard (Shared)</h4>
+      <p>3 consumers on 1 shard = ~0.67 MB/s each. Polling-based. Good for 1-2 consumers.</p>
+    </div>
+    <div class="card blue">
+      <h4>🚀 Enhanced Fan-Out</h4>
+      <p>3 consumers on 1 shard = 2 MB/s EACH (6 MB/s total). HTTP/2 push, ~70ms latency. Use for 3+ consumers or &lt;200ms needs.</p>
+    </div>
+  </div>
+  <h3>Flink SQL: Real-Time Fraud Detection</h3>
+  <div class="code-block"><span class="cm">-- Detect fraud: 3+ transactions at different stores within 5 minutes</span>
+<span class="kw">INSERT INTO</span> fraud_alerts
+<span class="kw">SELECT</span>
+    customer_id,
+    <span class="fn">COUNT</span>(<span class="kw">DISTINCT</span> store_id) <span class="kw">AS</span> distinct_stores,
+    <span class="fn">SUM</span>(total_amount)     <span class="kw">AS</span> total_spent,
+    <span class="fn">TUMBLE_START</span>(event_time, <span class="kw">INTERVAL</span> <span class="str">'5'</span> MINUTE) <span class="kw">AS</span> window_start
+<span class="kw">FROM</span> pos_events
+<span class="kw">GROUP BY</span> customer_id, <span class="fn">TUMBLE</span>(event_time, <span class="kw">INTERVAL</span> <span class="str">'5'</span> MINUTE)
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(<span class="kw">DISTINCT</span> store_id) >= <span class="fn">3</span>;</div>
+  <div class="aha">
+    <div class="aha-title">💡 Flink Window Types</div>
+    <p><strong>Tumbling</strong>: fixed, non-overlapping (every 5 min). <strong>Sliding</strong>: overlapping (10-min window sliding every 1 min). <strong>Session</strong>: gap-based (closes after N min of inactivity). <strong>Watermarks</strong> handle late data — events up to the watermark threshold are included in the correct window.</p>
+  </div>
+</section>
+
+<!-- Screen 5: Redshift Architecture -->
+<section class="screen" id="s5">
+  <h2>Redshift — <span class="accent">Columnar MPP Warehouse</span></h2>
+  <p>Petabyte-scale, columnar, massively parallel processing (MPP) warehouse. Purpose-built for OLAP queries scanning billions of rows.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>👑 Leader Node</h4>
+      <p>Parses SQL, builds query plan, distributes work to compute nodes, aggregates results.</p>
+    </div>
+    <div class="card blue">
+      <h4>⚙️ Compute Nodes</h4>
+      <p>Execute query fragments in parallel. Each node has multiple slices (1 CPU + memory + disk each).</p>
+    </div>
+    <div class="card green">
+      <h4>📊 Columnar Storage</h4>
+      <p>SELECT SUM(amount) reads ONLY the amount column (1/5 of data). 5-10x compression. Zone maps skip irrelevant blocks.</p>
+    </div>
+  </div>
+  <h3>Distribution Styles</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🔑 KEY</h4><p>Same key value → same node. Best for large fact tables joined on that key. Avoid when key is skewed.</p></div>
+    <div class="card blue"><h4>🔄 EVEN</h4><p>Round-robin across nodes. For tables not joined, or no clear key. Causes redistribution on joins.</p></div>
+    <div class="card green"><h4>📋 ALL</h4><p>Full copy on every node. For small dimension tables (&lt;5M rows) joined frequently. Wastes storage for large tables.</p></div>
+    <div class="card purple"><h4>🤖 AUTO</h4><p>Redshift decides (starts EVEN, may change). Default — let Redshift optimize when you're unsure.</p></div>
+  </div>
+  <div class="code-block"><span class="cm">-- Fact table: KEY distribution on store_id, COMPOUND SORTKEY on timestamp</span>
+<span class="kw">CREATE TABLE</span> warehouse.fact_daily_sales (
+    transaction_id  <span class="fn">VARCHAR(50)</span>    ENCODE zstd,
+    store_id        <span class="fn">INTEGER</span>        ENCODE az64  <span class="kw">DISTKEY</span>,
+    product_sku     <span class="fn">VARCHAR(30)</span>    ENCODE zstd,
+    total_amount    <span class="fn">DECIMAL(10,2)</span>  ENCODE az64,
+    transaction_ts  <span class="fn">TIMESTAMP</span>      ENCODE az64  <span class="kw">SORTKEY</span>
+) <span class="kw">DISTSTYLE KEY</span>
+<span class="kw">COMPOUND SORTKEY</span> (transaction_ts, store_id);
+
+<span class="cm">-- Dimension: ALL distribution (small, joined frequently)</span>
+<span class="kw">CREATE TABLE</span> warehouse.dim_store (
+    store_id  <span class="fn">INTEGER</span> PRIMARY KEY, store_name <span class="fn">VARCHAR(100)</span>,
+    region <span class="fn">VARCHAR(30)</span>, state <span class="fn">VARCHAR(2)</span>
+) <span class="kw">DISTSTYLE ALL</span>;</div>
+  <div class="aha">
+    <div class="aha-title">💡 DISTKEY Pitfall</div>
+    <p>KEY distribution on a <strong>skewed column</strong> (e.g., 1% of customers = 50% of transactions) drowns one node while others idle. Check: <code>SELECT "table", skew_rows FROM svv_table_info</code>. <strong>COMPOUND SORTKEY</strong>: first column dominates zone maps. <strong>INTERLEAVED</strong>: equal weight but expensive VACUUM REINDEX.</p>
+  </div>
+</section>
+
+<!-- Screen 6: Spectrum & Serverless -->
+<section class="screen screen-alt" id="s6">
+  <h2>Redshift Spectrum & <span class="accent">Serverless</span></h2>
+  <p><strong>Spectrum</strong> extends Redshift SQL to query data directly in S3 via Glue Data Catalog — no loading required. Bridge your warehouse and data lake in one SQL statement.</p>
+  <div class="code-block"><span class="cm">-- Create external schema pointing to Glue Data Catalog</span>
+<span class="kw">CREATE EXTERNAL SCHEMA</span> spectrum_schema
+<span class="kw">FROM</span> DATA CATALOG DATABASE <span class="str">'curated'</span>
+IAM_ROLE <span class="str">'arn:aws:iam::123456789:role/SpectrumRole'</span>;
+
+<span class="cm">-- Join local Redshift + S3 Spectrum tables in one query</span>
+<span class="kw">SELECT</span> d.region, d.store_name,
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> s.year = <span class="str">'2026'</span> <span class="kw">THEN</span> s.total_amount <span class="kw">END</span>) <span class="kw">AS</span> rev_2026,
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> h.year = <span class="str">'2025'</span> <span class="kw">THEN</span> h.total_amount <span class="kw">END</span>) <span class="kw">AS</span> rev_2025
+<span class="kw">FROM</span> warehouse.fact_daily_sales s               <span class="cm">-- Local Redshift</span>
+<span class="kw">JOIN</span> spectrum_schema.historical_sales h <span class="kw">ON</span> s.store_id = h.store_id  <span class="cm">-- S3</span>
+<span class="kw">JOIN</span> warehouse.dim_store d <span class="kw">ON</span> s.store_id = d.store_id   <span class="cm">-- Local</span>
+<span class="kw">GROUP BY</span> d.region, d.store_name;</div>
+  <h3>Redshift Serverless</h3>
+  <p>No clusters. Define a <strong>workgroup</strong> + <strong>namespace</strong>. Auto-scales RPUs. Scales to zero when idle — $0 cost.</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🖥️ Provisioned</h4>
+      <ul>
+        <li>💰 Per-node-hour (always on)</li>
+        <li>📈 Resize cluster (minutes)</li>
+        <li>✅ Reserved Instances (75% off)</li>
+        <li>📊 Best: steady, predictable workloads</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>⚡ Serverless</h4>
+      <ul>
+        <li>💰 Per RPU-second (pay for use)</li>
+        <li>📈 Auto-scale in seconds</li>
+        <li>🆓 Scales to zero ($0 idle)</li>
+        <li>📊 Best: variable, bursty workloads</li>
+      </ul>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 Spectrum vs. Athena</div>
+    <p><strong>Spectrum</strong>: you already have Redshift and need to join local tables with S3 data. Requires running cluster/serverless.<br>
+    <strong>Athena</strong>: no Redshift needed, purely S3 queries, serverless per-query pricing. They complement — use Athena for exploration, Spectrum for warehouse+lake joins.</p>
+  </div>
+</section>
+
+<!-- Screen 7: Data Sharing & Redshift Comparisons -->
+<section class="screen" id="s7">
+  <h2>Data Sharing & <span class="accent">Redshift vs. Athena vs. BigQuery</span></h2>
+  <p><strong>Data Sharing</strong>: share live data across Redshift clusters/accounts without copying. Consumers use their own compute, see real-time data, pay no storage.</p>
+  <div class="code-block"><span class="cm">-- PRODUCER: create and grant data share</span>
+<span class="kw">CREATE DATASHARE</span> retailmart_share;
+<span class="kw">ALTER DATASHARE</span> retailmart_share <span class="kw">ADD TABLE</span> warehouse.fact_daily_sales;
+<span class="kw">GRANT USAGE ON DATASHARE</span> retailmart_share <span class="kw">TO ACCOUNT</span> <span class="str">'987654321012'</span>;
+
+<span class="cm">-- CONSUMER: mount and query</span>
+<span class="kw">CREATE DATABASE</span> shared_warehouse <span class="kw">FROM DATASHARE</span> retailmart_share;
+<span class="kw">SELECT</span> region, <span class="fn">SUM</span>(total_amount)
+<span class="kw">FROM</span> shared_warehouse.warehouse.fact_daily_sales f
+<span class="kw">JOIN</span> shared_warehouse.warehouse.dim_store s <span class="kw">ON</span> f.store_id = s.store_id
+<span class="kw">GROUP BY</span> region;</div>
+  <h3>The Three-Way Comparison</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🏢 Redshift</h4><p>MPP warehouse, sub-second cached queries, complex joins, materialized views, BI dashboards. Cluster or RPU pricing. Best for known DW workloads.</p></div>
+    <div class="card blue"><h4>🔍 Athena</h4><p>Serverless Trino/Presto, $5/TB scanned, zero idle cost. Best for ad-hoc S3 exploration, data quality checks, one-off reports.</p></div>
+    <div class="card green"><h4>☁️ BigQuery</h4><p>Serverless warehouse, $6.25/TB on-demand, native ML, streaming ingest. Best for all-purpose serverless DW, especially multi-cloud.</p></div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 RetailMart: Redshift + Athena Together</div>
+    <p>Not either/or — they complement. <strong>Athena</strong> for exploration (raw/curated S3 zones). <strong>Redshift</strong> for production analytics warehouse powering executive dashboards. <strong>Spectrum</strong> bridges both — Redshift queries reach into S3 for historical data in a single SQL statement.</p>
+  </div>
+</section>
+
+<!-- Screen 8: End-to-End Architecture -->
+<section class="screen screen-alt" id="s8">
+  <h2>Streaming-to-Warehouse <span class="accent">End-to-End</span></h2>
+  <p>RetailMart's complete pipeline: POS → Kinesis → S3 → Redshift. Three paths: Firehose (S3), Flink (dashboards), Lambda (alerts).</p>
+  <div class="code-block"><span class="cm">-- COPY: fastest way to load S3 → Redshift</span>
+<span class="kw">COPY</span> warehouse.fact_daily_sales
+<span class="kw">FROM</span> <span class="str">'s3://retailmart-data-lake-prod/curated/daily_sales/year=2026/'</span>
+IAM_ROLE <span class="str">'arn:aws:iam::123456789:role/RedshiftCopyRole'</span>
+<span class="kw">FORMAT AS PARQUET</span>;
+
+<span class="cm">-- Streaming Ingestion: direct from Kinesis into materialized view</span>
+<span class="kw">CREATE EXTERNAL SCHEMA</span> kinesis_schema <span class="kw">FROM</span> KINESIS
+IAM_ROLE <span class="str">'arn:aws:iam::123456789:role/RedshiftStreamRole'</span>;
+
+<span class="kw">CREATE MATERIALIZED VIEW</span> warehouse.mv_realtime_sales <span class="kw">AS</span>
+<span class="kw">SELECT</span>
+    approximate_arrival_timestamp <span class="kw">AS</span> event_time,
+    <span class="fn">JSON_EXTRACT_PATH_TEXT</span>(kinesis_data, <span class="str">'store_id'</span>)::<span class="fn">INT</span> <span class="kw">AS</span> store_id,
+    <span class="fn">JSON_EXTRACT_PATH_TEXT</span>(kinesis_data, <span class="str">'total_amount'</span>)::<span class="fn">DECIMAL</span>(<span class="fn">10</span>,<span class="fn">2</span>) <span class="kw">AS</span> amount
+<span class="kw">FROM</span> kinesis_schema.<span class="str">"retailmart-pos-events"</span>;</div>
+  <div class="aha">
+    <div class="aha-title">💡 Near-Real-Time into Redshift — 3 Options</div>
+    <p>(1) <strong>Streaming Ingestion</strong> — materialized views read from Kinesis/MSK, refresh in seconds. Lowest latency. (2) <strong>Firehose → S3 → COPY</strong> — 1-5 min latency, most common. (3) <strong>Micro-batch with Glue/Lambda</strong> — custom COPY every N minutes. RetailMart: Streaming Ingestion for real-time dashboards, COPY from S3 for nightly refresh.</p>
+  </div>
+</section>
+
+<!-- Screen 9: Quiz -->
+<section class="screen" id="s9">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: 4 shards, 5 consumers in shared mode. Per-consumer read throughput?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) 2 MB/s per consumer</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">B) 8 MB/s per consumer</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">C) 1.6 MB/s per consumer (4×2÷5)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) 0.4 MB/s per consumer</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Load streaming data into S3 as Parquet with minimal code. Which service?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Kinesis Data Streams with Lambda consumer</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) Kinesis Data Firehose with Parquet conversion</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) Kinesis Data Analytics</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) AWS DMS</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: fact_daily_sales distributed by store_id (KEY). Joins on product_sku are slow. Why?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) The table needs more sort keys</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) Rows with matching product_sku are scattered across nodes, requiring redistribution</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) The table is too large</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Columnar storage doesn't support joins</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: Which Redshift feature lets a separate AWS account query your data without copying?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Redshift Spectrum</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) Cross-region snapshots</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">C) Data Sharing</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Federated queries</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: Detect patterns over last 10 min, updating every 1 min. Which Flink window?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Tumbling window of 10 minutes</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) Sliding window of 10 min with 1-min slide</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) Session window with 10-min gap</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Global window</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<!-- Screen 10: Key Takeaways -->
+<section class="screen screen-alt" id="s10">
+  <h2>🔑 Key <span class="accent">Takeaways</span></h2>
+  <div class="card-grid">
+    <div class="card"><h4>KDS = Real-Time Backbone</h4><p>Per-shard: 1 MB/s in, 2 MB/s out, 1,000 rec/s. Memorize these limits.</p></div>
+    <div class="card blue"><h4>Firehose = Managed Delivery</h4><p>S3/Redshift with built-in Parquet. Near-real-time (60-900s buffer), not real-time.</p></div>
+    <div class="card green"><h4>Kinesis vs. Kafka</h4><p>Kinesis for AWS-native simplicity. MSK for existing Kafka ecosystems & extreme throughput.</p></div>
+    <div class="card purple"><h4>Enhanced Fan-Out</h4><p>Dedicated 2 MB/s per consumer via HTTP/2. Use for 3+ consumers or &lt;200ms latency.</p></div>
+    <div class="card"><h4>Redshift = Columnar + MPP</h4><p>DISTKEY (KEY/EVEN/ALL) and SORTKEY are the two biggest perf levers.</p></div>
+    <div class="card blue"><h4>Spectrum Bridges Lake + DW</h4><p>Query S3 from Redshift SQL. Join local tables with S3 data in one statement.</p></div>
+    <div class="card green"><h4>Serverless Scales to Zero</h4><p>RPU-second billing, auto-scale, zero idle cost. Ideal for variable workloads.</p></div>
+    <div class="card purple"><h4>Streaming Ingestion</h4><p>Kinesis → Redshift materialized views. Lowest latency for real-time warehouse updates.</p></div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-03-emr-compute/index.html">← Module 3: EMR & Compute</a>
+  <a href="../module-05-governance-orchestration/index.html">Next: Governance & Orchestration →</a>
+</footer>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);if(box.dataset.answered)return;box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above and try to understand why.';}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>
