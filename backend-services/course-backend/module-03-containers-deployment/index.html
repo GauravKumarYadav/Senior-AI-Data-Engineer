@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 3: Containers & Deployment | Backend Services</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#0284C7;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#F0F7FF,#E8F2FF);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#F0F7FF}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+table.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+table.info-table th,table.info-table td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+table.info-table th{font-family:var(--font-heading);font-weight:700;font-size:0.85rem;color:var(--color-muted)}
+table.info-table tr:last-child td{border-bottom:none}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🌐 Backend Services</a><div class="nav-dots"><a href="../module-01-fastapi/" class="nav-dot"></a><a href="../module-02-apis-microservices/" class="nav-dot"></a><a href="../module-03-containers-deployment/" class="nav-dot active"></a><a href="../module-04-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Docker Fundamentals -->
+<section class="screen" id="s1">
+  <h2>🐳 <span class="accent">Docker</span> Fundamentals</h2>
+
+  <h3>What Are Containers?</h3>
+  <p>A container is a lightweight, standalone, executable package that includes everything needed to run a piece of software: the code, the runtime, system libraries, and settings. Containers run on top of a shared OS kernel, making them dramatically faster and lighter than virtual machines.</p>
+  <p>Think of it this way: a <strong>virtual machine</strong> virtualizes the <em>hardware</em> — each VM runs its own full OS. A <strong>container</strong> virtualizes the <em>operating system</em> — containers share the host's kernel and isolate processes using <span class="tooltip-term" data-tip="Linux kernel features that partition system resources (process IDs, network, filesystem) so each container thinks it has its own isolated environment.">Linux namespaces and cgroups</span>.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📦 Containers</h4>
+      <ul>
+        <li>⚡ Boot in milliseconds</li>
+        <li>💾 Megabytes in size</li>
+        <li>🔗 Process-level isolation (shared kernel)</li>
+        <li>🪶 Minimal overhead</li>
+        <li>📊 Hundreds per host</li>
+        <li>🌍 Excellent portability (OCI standard)</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🖥️ Virtual Machines</h4>
+      <ul>
+        <li>🐢 Boot in minutes</li>
+        <li>💾 Gigabytes in size</li>
+        <li>🔒 Full OS isolation (own kernel)</li>
+        <li>⚙️ Significant overhead</li>
+        <li>📊 Tens per host</li>
+        <li>🌍 Good portability (hypervisor-dependent)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>When asked "containers vs VMs," don't just list differences. Say: <em>"Containers share the host kernel, so they're faster to start and use fewer resources. VMs provide stronger isolation because each has its own kernel. In practice, most teams use containers for application workloads and VMs for the underlying infrastructure — your Kubernetes nodes are usually VMs running containers."</em></p>
+  </div>
+
+  <h3>The Dockerfile</h3>
+  <p>A Dockerfile is a declarative recipe for building a container image. Each instruction creates a <strong>layer</strong> in the image filesystem. Understanding layers is crucial for writing efficient Dockerfiles.</p>
+
+  <h3>Layer Caching — Order Matters!</h3>
+  <p>Docker caches each layer. When you rebuild, Docker reuses cached layers until it hits one where something changed. After that, every subsequent layer is rebuilt. Order instructions from <strong>least frequently changed</strong> to <strong>most frequently changed</strong>.</p>
+
+  <div class="code-block"><span class="cm"># ❌ BAD — copying all files before installing dependencies</span>
+<span class="cm"># Every code change invalidates the pip install cache</span>
+<span class="kw">COPY</span> . /app
+<span class="kw">RUN</span> pip install -r requirements.txt
+
+<span class="cm"># ✅ GOOD — copy requirements first, then install, then copy code</span>
+<span class="cm"># Dependencies are cached unless requirements.txt changes</span>
+<span class="kw">COPY</span> requirements.txt /app/
+<span class="kw">RUN</span> pip install -r requirements.txt
+<span class="kw">COPY</span> . /app</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>The reason this matters so much is that <code>pip install</code> can take minutes for large projects. By copying <code>requirements.txt</code> separately, you only re-run the install step when your dependencies actually change — not every time you tweak a line of application code.</p>
+  </div>
+
+  <h3>Multi-Stage Builds for Smaller Images</h3>
+  <p>Multi-stage builds let you use one image for building (with compilers, dev tools) and a separate, minimal image for running. The final image only contains what you need at runtime.</p>
+
+  <div class="code-block"><span class="cm"># =============================================================</span>
+<span class="cm"># Stage 1: Builder — install dependencies in a full Python image</span>
+<span class="cm"># =============================================================</span>
+<span class="kw">FROM</span> python:<span class="fn">3.12</span>-slim <span class="kw">AS</span> builder
+
+<span class="kw">ENV</span> PYTHONDONTWRITEBYTECODE=<span class="fn">1</span> \
+    PYTHONUNBUFFERED=<span class="fn">1</span>
+
+<span class="kw">WORKDIR</span> /app
+
+<span class="kw">RUN</span> apt-get update &amp;&amp; \
+    apt-get install -y --no-install-recommends gcc libpq-dev &amp;&amp; \
+    rm -rf /var/lib/apt/lists/*
+
+<span class="kw">COPY</span> requirements.txt .
+<span class="kw">RUN</span> python -m venv /opt/venv
+<span class="kw">ENV</span> PATH=<span class="str">"/opt/venv/bin:$PATH"</span>
+<span class="kw">RUN</span> pip install --no-cache-dir --upgrade pip &amp;&amp; \
+    pip install --no-cache-dir -r requirements.txt
+
+<span class="cm"># =============================================================</span>
+<span class="cm"># Stage 2: Runtime — slim image with only the venv and app code</span>
+<span class="cm"># =============================================================</span>
+<span class="kw">FROM</span> python:<span class="fn">3.12</span>-slim <span class="kw">AS</span> runtime
+
+<span class="kw">ENV</span> PYTHONDONTWRITEBYTECODE=<span class="fn">1</span> \
+    PYTHONUNBUFFERED=<span class="fn">1</span>
+
+<span class="kw">WORKDIR</span> /app
+
+<span class="kw">RUN</span> apt-get update &amp;&amp; \
+    apt-get install -y --no-install-recommends libpq5 curl &amp;&amp; \
+    rm -rf /var/lib/apt/lists/*
+
+<span class="kw">COPY</span> --from=builder /opt/venv /opt/venv
+<span class="kw">ENV</span> PATH=<span class="str">"/opt/venv/bin:$PATH"</span>
+
+<span class="kw">COPY</span> . .
+
+<span class="kw">RUN</span> addgroup --system appgroup &amp;&amp; \
+    adduser --system --ingroup appgroup appuser
+<span class="kw">USER</span> appuser
+
+<span class="kw">EXPOSE</span> <span class="fn">8000</span>
+
+<span class="kw">HEALTHCHECK</span> --interval=<span class="fn">30</span>s --timeout=<span class="fn">5</span>s --start-period=<span class="fn">10</span>s --retries=<span class="fn">3</span> \
+    <span class="kw">CMD</span> curl -f http://localhost:<span class="fn">8000</span>/health || exit <span class="fn">1</span>
+
+<span class="kw">CMD</span> [<span class="str">"uvicorn"</span>, <span class="str">"app.main:app"</span>, <span class="str">"--host"</span>, <span class="str">"0.0.0.0"</span>, <span class="str">"--port"</span>, <span class="str">"8000"</span>]</div>
+
+  <p><strong>Why this works well:</strong></p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔨 Stage 1</h4>
+      <p>Has gcc and build tools — needed to compile C extensions. These are NOT in the final image.</p>
+    </div>
+    <div class="card blue">
+      <h4>🪶 Stage 2</h4>
+      <p>Only has the compiled venv, runtime libs, and app code. Final image can be 60–80% smaller.</p>
+    </div>
+    <div class="card green">
+      <h4>🔒 Non-root User</h4>
+      <p>Running as a non-root user is a critical security best practice for production containers.</p>
+    </div>
+    <div class="card purple">
+      <h4>💓 Health Check</h4>
+      <p>The HEALTHCHECK instruction lets Docker and orchestrators verify the container is actually serving traffic.</p>
+    </div>
+  </div>
+
+  <h3>Optimizing Base Images: slim vs alpine</h3>
+  <table class="info-table">
+    <tr><th>Base Image</th><th>Size</th><th>Pros</th><th>Cons</th></tr>
+    <tr><td><code>python:3.12</code></td><td>~900 MB</td><td>Everything included</td><td>Huge</td></tr>
+    <tr><td><code>python:3.12-slim</code></td><td>~150 MB</td><td>Good balance</td><td>Missing some libs</td></tr>
+    <tr><td><code>python:3.12-alpine</code></td><td>~50 MB</td><td>Tiny</td><td>Uses musl libc, breaks wheels</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p><em>"I prefer <code>slim</code> over <code>alpine</code> for Python. Alpine uses musl libc instead of glibc, which means many Python packages can't use pre-built wheels and must compile from source — making builds slower and sometimes introducing subtle bugs. The size savings of alpine rarely justify the headaches."</em></p>
+  </div>
+
+  <h3>.dockerignore — What to Exclude</h3>
+  <div class="code-block"><span class="cm"># .dockerignore</span>
+__pycache__
+*.pyc
+*.pyo
+.git
+.github
+.gitignore
+.env
+.env.*
+*.md
+docs/
+tests/
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.venv
+venv
+*.egg-info
+dist/
+build/
+docker-compose*.yml
+Dockerfile
+.dockerignore
+*.log
+.coverage
+htmlcov/</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>Forgetting <code>.dockerignore</code> is a classic mistake. Without it, Docker sends your entire build context (including <code>.git</code>, <code>node_modules</code>, test data, etc.) to the daemon. For large repos, this can add minutes to your build time — and potentially leak secrets into your image.</p>
+  </div>
+</section>
+
+<!-- Screen 2: Docker Compose & Local Dev -->
+<section class="screen screen-alt" id="s2">
+  <h2>🐙 Docker <span class="accent">Compose</span> &amp; Local Dev</h2>
+
+  <h3>Why Docker Compose?</h3>
+  <p>In the real world, your application doesn't run in isolation. It talks to a database, a cache, a message queue. Docker Compose lets you define and run <strong>multi-container applications</strong> with a single YAML file and a single command: <code>docker compose up</code>.</p>
+
+  <h3>Complete docker-compose.yml</h3>
+  <p>A production-like local dev setup with FastAPI, PostgreSQL, and Redis:</p>
+
+  <div class="code-block"><span class="cm"># docker-compose.yml</span>
+<span class="kw">version</span>: <span class="str">"3.9"</span>
+
+<span class="kw">services</span>:
+  <span class="cm"># ── FastAPI Application ─────────────────────────</span>
+  <span class="kw">app</span>:
+    <span class="kw">build</span>:
+      <span class="kw">context</span>: .
+      <span class="kw">dockerfile</span>: Dockerfile
+      <span class="kw">target</span>: runtime
+    <span class="kw">ports</span>:
+      - <span class="str">"8000:8000"</span>
+    <span class="kw">volumes</span>:
+      - ./app:/app/app         <span class="cm"># bind mount for hot-reload</span>
+    <span class="kw">environment</span>:
+      - <span class="str">DATABASE_URL=postgresql+asyncpg://myuser:mypass@db:5432/mydb</span>
+      - <span class="str">REDIS_URL=redis://redis:6379/0</span>
+      - <span class="str">LOG_LEVEL=debug</span>
+    <span class="kw">env_file</span>:
+      - .env
+    <span class="kw">depends_on</span>:
+      <span class="kw">db</span>:
+        <span class="kw">condition</span>: service_healthy
+      <span class="kw">redis</span>:
+        <span class="kw">condition</span>: service_healthy
+    <span class="kw">healthcheck</span>:
+      <span class="kw">test</span>: [<span class="str">"CMD"</span>, <span class="str">"curl"</span>, <span class="str">"-f"</span>, <span class="str">"http://localhost:8000/health"</span>]
+      <span class="kw">interval</span>: <span class="fn">15</span>s
+      <span class="kw">timeout</span>: <span class="fn">5</span>s
+      <span class="kw">retries</span>: <span class="fn">5</span>
+    <span class="kw">restart</span>: unless-stopped
+    <span class="kw">networks</span>:
+      - backend
+
+  <span class="cm"># ── PostgreSQL Database ─────────────────────────</span>
+  <span class="kw">db</span>:
+    <span class="kw">image</span>: <span class="str">postgres:16-alpine</span>
+    <span class="kw">ports</span>:
+      - <span class="str">"5432:5432"</span>
+    <span class="kw">environment</span>:
+      <span class="kw">POSTGRES_USER</span>: myuser
+      <span class="kw">POSTGRES_PASSWORD</span>: mypass
+      <span class="kw">POSTGRES_DB</span>: mydb
+    <span class="kw">volumes</span>:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    <span class="kw">healthcheck</span>:
+      <span class="kw">test</span>: [<span class="str">"CMD-SHELL"</span>, <span class="str">"pg_isready -U myuser -d mydb"</span>]
+      <span class="kw">interval</span>: <span class="fn">10</span>s
+      <span class="kw">timeout</span>: <span class="fn">5</span>s
+      <span class="kw">retries</span>: <span class="fn">5</span>
+    <span class="kw">restart</span>: unless-stopped
+    <span class="kw">networks</span>:
+      - backend
+
+  <span class="cm"># ── Redis Cache ─────────────────────────────────</span>
+  <span class="kw">redis</span>:
+    <span class="kw">image</span>: <span class="str">redis:7-alpine</span>
+    <span class="kw">ports</span>:
+      - <span class="str">"6379:6379"</span>
+    <span class="kw">volumes</span>:
+      - redis_data:/data
+    <span class="kw">healthcheck</span>:
+      <span class="kw">test</span>: [<span class="str">"CMD"</span>, <span class="str">"redis-cli"</span>, <span class="str">"ping"</span>]
+      <span class="kw">interval</span>: <span class="fn">10</span>s
+      <span class="kw">timeout</span>: <span class="fn">5</span>s
+      <span class="kw">retries</span>: <span class="fn">5</span>
+    <span class="kw">command</span>: redis-server --appendonly yes
+    <span class="kw">restart</span>: unless-stopped
+    <span class="kw">networks</span>:
+      - backend
+
+<span class="kw">volumes</span>:
+  <span class="kw">postgres_data</span>:    <span class="cm"># named volume — survives container restarts</span>
+  <span class="kw">redis_data</span>:
+
+<span class="kw">networks</span>:
+  <span class="kw">backend</span>:
+    <span class="kw">driver</span>: bridge</div>
+
+  <h3>Bind Mounts vs Named Volumes</h3>
+  <p>This is a frequent interview question. Know the difference cold.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📂 Bind Mounts</h4>
+      <ul>
+        <li>🔗 Maps a host directory into the container</li>
+        <li>⚡ Changes visible instantly (great for hot-reload)</li>
+        <li>⚠️ Host filesystem "wins" — empty host dir = empty in container</li>
+        <li>🐢 Can be slow on macOS</li>
+        <li>🛠️ Best for: development code</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>💾 Named Volumes</h4>
+      <ul>
+        <li>🔗 Managed by Docker — you don't pick the path</li>
+        <li>💪 Data persists even when containers are removed</li>
+        <li>🚀 Better performance (especially on macOS)</li>
+        <li>🗄️ Best for: databases, caches, persistent data</li>
+        <li>☁️ In production: use managed services instead</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p><em>"I use bind mounts for application code during development — so I get hot-reload. For databases and caches, I use named volumes because they're managed by Docker and persist across container restarts. In production, I'd use neither — I'd use managed services like RDS or cloud-native volumes."</em></p>
+  </div>
+
+  <h3>Networking in Compose</h3>
+  <p>Docker Compose automatically creates a network for your services. Each service can reach others <strong>by container name</strong> as the hostname.</p>
+
+  <div class="code-block"><span class="cm"># In your FastAPI app, the database URL uses the service name:</span>
+DATABASE_URL = <span class="str">"postgresql+asyncpg://myuser:mypass@db:5432/mydb"</span>
+<span class="cm">#                                                    ^^</span>
+<span class="cm">#                                        service name, not localhost!</span></div>
+
+  <h3>Environment Variables &amp; .env Files</h3>
+  <p>Three ways to pass environment variables in Compose:</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>1️⃣ Inline in YAML</h4>
+      <p>Good for non-sensitive defaults. Visible in version control.</p>
+    </div>
+    <div class="card blue">
+      <h4>2️⃣ env_file directive</h4>
+      <p>Loads from a .env file. Never commit this file to git!</p>
+    </div>
+    <div class="card green">
+      <h4>3️⃣ Shell environment</h4>
+      <p>Variables from your shell override compose file values.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># .env (NEVER commit this file to git)</span>
+SECRET_KEY=<span class="str">super-secret-key-change-in-production</span>
+JWT_ALGORITHM=<span class="str">HS256</span>
+SENTRY_DSN=<span class="str">https://examplePublicKey@o0.ingest.sentry.io/0</span></div>
+
+  <h3>Health Checks in Compose</h3>
+  <p>Health checks tell Docker whether a container is actually <em>working</em>, not just <em>running</em>. The <code>depends_on</code> with <code>condition: service_healthy</code> ensures your app doesn't start until the database is actually accepting connections.</p>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p><code>depends_on</code> without a health check condition only waits for the container to <em>start</em>, not for the service inside it to be <em>ready</em>. This subtle difference causes real-world outages. Always pair <code>depends_on</code> with health checks.</p>
+  </div>
+</section>
+
+<!-- Screen 3: Kubernetes Basics -->
+<section class="screen" id="s3">
+  <h2>☸️ <span class="accent">Kubernetes</span> Basics</h2>
+
+  <h3>Why Kubernetes?</h3>
+  <p>Docker Compose is great for local dev. But when you need hundreds of containers across dozens of machines, auto-scaling, zero-downtime deployments, and self-healing — that's <span class="tooltip-term" data-tip="Kubernetes (K8s) is an open-source container orchestration platform that automates deploying, scaling, and managing containerized applications.">Kubernetes (K8s)</span>.</p>
+
+  <h3>K8s Architecture</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🧠 Control Plane</h4>
+      <ul>
+        <li><strong>API Server</strong> — the front door. Every interaction goes through it.</li>
+        <li><strong>etcd</strong> — distributed key-value store holding all cluster state.</li>
+        <li><strong>Scheduler</strong> — decides which node runs new Pods.</li>
+        <li><strong>Controller Manager</strong> — reconciles actual state vs desired state.</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>💪 Worker Nodes</h4>
+      <ul>
+        <li><strong>kubelet</strong> — agent ensuring containers in PodSpecs are running.</li>
+        <li><strong>kube-proxy</strong> — handles network rules for Pod communication.</li>
+        <li><strong>Container Runtime</strong> — actually runs containers (containerd, CRI-O).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p><em>"Kubernetes is a declarative system. You tell it WHAT you want (3 replicas of my app), and the controllers figure out HOW to make it happen. If a Pod dies, the controller notices the actual state doesn't match the desired state and creates a new Pod. This reconciliation loop is the heart of K8s."</em></p>
+  </div>
+
+  <h3>Core Objects: Deployments</h3>
+  <p>A Deployment manages Pod lifecycle: replica count, rolling updates, and rollbacks.</p>
+
+  <div class="code-block"><span class="cm"># deployment.yaml</span>
+<span class="kw">apiVersion</span>: apps/v1
+<span class="kw">kind</span>: Deployment
+<span class="kw">metadata</span>:
+  <span class="kw">name</span>: fastapi-app
+  <span class="kw">namespace</span>: production
+<span class="kw">spec</span>:
+  <span class="kw">replicas</span>: <span class="fn">3</span>
+  <span class="kw">selector</span>:
+    <span class="kw">matchLabels</span>:
+      <span class="kw">app</span>: fastapi-app
+  <span class="kw">strategy</span>:
+    <span class="kw">type</span>: RollingUpdate
+    <span class="kw">rollingUpdate</span>:
+      <span class="kw">maxSurge</span>: <span class="fn">1</span>            <span class="cm"># allow 1 extra Pod during rollout</span>
+      <span class="kw">maxUnavailable</span>: <span class="fn">0</span>      <span class="cm"># never have fewer than 3 running</span>
+  <span class="kw">template</span>:
+    <span class="kw">spec</span>:
+      <span class="kw">containers</span>:
+        - <span class="kw">name</span>: fastapi-app
+          <span class="kw">image</span>: <span class="str">my-registry.example.com/fastapi-app:v1.2.0</span>
+          <span class="kw">ports</span>:
+            - <span class="kw">containerPort</span>: <span class="fn">8000</span>
+          <span class="kw">resources</span>:
+            <span class="kw">requests</span>:
+              <span class="kw">cpu</span>: <span class="str">"100m"</span>       <span class="cm"># guaranteed minimum</span>
+              <span class="kw">memory</span>: <span class="str">"128Mi"</span>
+            <span class="kw">limits</span>:
+              <span class="kw">cpu</span>: <span class="str">"500m"</span>       <span class="cm"># maximum allowed</span>
+              <span class="kw">memory</span>: <span class="str">"512Mi"</span>
+          <span class="kw">env</span>:
+            - <span class="kw">name</span>: DATABASE_URL
+              <span class="kw">valueFrom</span>:
+                <span class="kw">secretKeyRef</span>:
+                  <span class="kw">name</span>: app-secrets
+                  <span class="kw">key</span>: database-url
+          <span class="kw">readinessProbe</span>:
+            <span class="kw">httpGet</span>:
+              <span class="kw">path</span>: /health
+              <span class="kw">port</span>: <span class="fn">8000</span>
+            <span class="kw">initialDelaySeconds</span>: <span class="fn">5</span>
+            <span class="kw">periodSeconds</span>: <span class="fn">10</span>
+          <span class="kw">livenessProbe</span>:
+            <span class="kw">httpGet</span>:
+              <span class="kw">path</span>: /health
+              <span class="kw">port</span>: <span class="fn">8000</span>
+            <span class="kw">initialDelaySeconds</span>: <span class="fn">15</span>
+            <span class="kw">periodSeconds</span>: <span class="fn">20</span></div>
+
+  <h3>Services</h3>
+  <p>A Service provides a stable network endpoint for a set of Pods. Pods come and go, but a Service gives you a consistent DNS name and IP.</p>
+
+  <div class="code-block"><span class="cm"># service.yaml</span>
+<span class="kw">apiVersion</span>: v1
+<span class="kw">kind</span>: Service
+<span class="kw">metadata</span>:
+  <span class="kw">name</span>: fastapi-service
+  <span class="kw">namespace</span>: production
+<span class="kw">spec</span>:
+  <span class="kw">type</span>: ClusterIP              <span class="cm"># internal only (default)</span>
+  <span class="kw">selector</span>:
+    <span class="kw">app</span>: fastapi-app           <span class="cm"># routes to Pods with this label</span>
+  <span class="kw">ports</span>:
+    - <span class="kw">port</span>: <span class="fn">80</span>                 <span class="cm"># port the Service listens on</span>
+      <span class="kw">targetPort</span>: <span class="fn">8000</span>         <span class="cm"># port on the Pod</span></div>
+
+  <p><strong>Service types:</strong></p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔒 ClusterIP</h4>
+      <p>Internal only (default). Other services in the cluster can reach it.</p>
+    </div>
+    <div class="card blue">
+      <h4>🌐 NodePort</h4>
+      <p>Exposes on a static port on every node. Rarely used in production.</p>
+    </div>
+    <div class="card green">
+      <h4>⚖️ LoadBalancer</h4>
+      <p>Provisions a cloud load balancer (AWS ELB, GCP LB). The standard way to expose services externally.</p>
+    </div>
+  </div>
+
+  <h3>Ingress</h3>
+  <p>An Ingress is a layer 7 (HTTP) routing rule mapping external URLs to internal Services. Requires an <strong>Ingress Controller</strong> (like NGINX or Traefik).</p>
+
+  <div class="code-block"><span class="kw">apiVersion</span>: networking.k8s.io/v1
+<span class="kw">kind</span>: Ingress
+<span class="kw">metadata</span>:
+  <span class="kw">name</span>: api-ingress
+  <span class="kw">annotations</span>:
+    <span class="kw">nginx.ingress.kubernetes.io/rewrite-target</span>: /
+<span class="kw">spec</span>:
+  <span class="kw">rules</span>:
+    - <span class="kw">host</span>: <span class="str">api.example.com</span>
+      <span class="kw">http</span>:
+        <span class="kw">paths</span>:
+          - <span class="kw">path</span>: /
+            <span class="kw">pathType</span>: Prefix
+            <span class="kw">backend</span>:
+              <span class="kw">service</span>:
+                <span class="kw">name</span>: fastapi-service
+                <span class="kw">port</span>:
+                  <span class="kw">number</span>: <span class="fn">80</span></div>
+
+  <h3>ConfigMaps and Secrets</h3>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>📋 ConfigMap</h4>
+      <ul>
+        <li>Stores non-sensitive configuration</li>
+        <li>Key-value pairs in plain text</li>
+        <li>Injected as env vars or volume mounts</li>
+        <li>log-level, max-connections, feature flags</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>🔐 Secret</h4>
+      <ul>
+        <li>Stores sensitive data</li>
+        <li>Base64-encoded (NOT encrypted!)</li>
+        <li>database-url, api-key, certificates</li>
+        <li>Use Vault or KMS for real security</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>Kubernetes Secrets are base64-encoded, <strong>not encrypted</strong>. Anyone with namespace access can decode them. For real security, use HashiCorp Vault, AWS Secrets Manager, or enable K8s encryption at rest with a KMS provider. Interviewers love to test whether you know this distinction.</p>
+  </div>
+
+  <h3>Namespaces</h3>
+  <p>Namespaces provide logical isolation within a cluster — apply resource quotas, network policies, and RBAC rules per environment.</p>
+
+  <div class="code-block"><span class="cm">$ kubectl get namespaces</span>
+<span class="cm"># NAME              STATUS   AGE</span>
+<span class="cm"># default           Active   30d</span>
+<span class="cm"># kube-system       Active   30d    ← K8s internal components</span>
+<span class="cm"># production        Active   25d</span>
+<span class="cm"># staging           Active   25d</span>
+<span class="cm"># development       Active   20d</span>
+<span class="cm"># monitoring        Active   20d    ← Prometheus, Grafana</span></div>
+</section>
+
+<!-- Screen 4: K8s Advanced & Helm -->
+<section class="screen screen-alt" id="s4">
+  <h2>🚀 K8s Advanced &amp; <span class="accent">Helm</span></h2>
+
+  <h3>Readiness vs Liveness Probes</h3>
+  <p>This is one of the most commonly asked Kubernetes interview questions. Get this right.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>💓 Liveness Probe</h4>
+      <ul>
+        <li><strong>Question:</strong> "Is this container alive?"</li>
+        <li><strong>On failure:</strong> container is killed &amp; restarted</li>
+        <li><strong>Purpose:</strong> recover from deadlocks, infinite loops</li>
+        <li>⚠️ Don't make too aggressive — may kill healthy containers under load</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>✅ Readiness Probe</h4>
+      <ul>
+        <li><strong>Question:</strong> "Is this container ready for traffic?"</li>
+        <li><strong>On failure:</strong> Pod removed from Service endpoints (no traffic)</li>
+        <li><strong>Purpose:</strong> warm-up time, temporary overload, dependency issues</li>
+        <li>Container is NOT restarted — it stays running</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># In a Pod spec:</span>
+<span class="kw">readinessProbe</span>:
+  <span class="kw">httpGet</span>:
+    <span class="kw">path</span>: /health/ready       <span class="cm"># check DB connection, cache, etc.</span>
+    <span class="kw">port</span>: <span class="fn">8000</span>
+  <span class="kw">initialDelaySeconds</span>: <span class="fn">5</span>
+  <span class="kw">periodSeconds</span>: <span class="fn">10</span>
+  <span class="kw">failureThreshold</span>: <span class="fn">3</span>         <span class="cm"># 3 failures = not ready</span>
+
+<span class="kw">livenessProbe</span>:
+  <span class="kw">httpGet</span>:
+    <span class="kw">path</span>: /health/alive        <span class="cm"># lightweight — is the process running?</span>
+    <span class="kw">port</span>: <span class="fn">8000</span>
+  <span class="kw">initialDelaySeconds</span>: <span class="fn">15</span>
+  <span class="kw">periodSeconds</span>: <span class="fn">20</span>
+  <span class="kw">failureThreshold</span>: <span class="fn">3</span>         <span class="cm"># 3 failures = restart container</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p><em>"The key insight is what happens on failure. Liveness failure restarts the container — use it for unrecoverable states. Readiness failure removes the Pod from traffic — use it for temporary issues like database reconnection. A common mistake is using an aggressive liveness probe that kills healthy containers during temporary load spikes."</em></p>
+  </div>
+
+  <h3>Horizontal Pod Autoscaler (HPA)</h3>
+  <p>HPA automatically scales the number of Pod replicas based on observed metrics.</p>
+
+  <div class="code-block"><span class="kw">apiVersion</span>: autoscaling/v2
+<span class="kw">kind</span>: HorizontalPodAutoscaler
+<span class="kw">metadata</span>:
+  <span class="kw">name</span>: fastapi-hpa
+<span class="kw">spec</span>:
+  <span class="kw">scaleTargetRef</span>:
+    <span class="kw">apiVersion</span>: apps/v1
+    <span class="kw">kind</span>: Deployment
+    <span class="kw">name</span>: fastapi-app
+  <span class="kw">minReplicas</span>: <span class="fn">2</span>
+  <span class="kw">maxReplicas</span>: <span class="fn">20</span>
+  <span class="kw">metrics</span>:
+    - <span class="kw">type</span>: Resource
+      <span class="kw">resource</span>:
+        <span class="kw">name</span>: cpu
+        <span class="kw">target</span>:
+          <span class="kw">type</span>: Utilization
+          <span class="kw">averageUtilization</span>: <span class="fn">70</span>     <span class="cm"># scale up when avg CPU > 70%</span>
+  <span class="kw">behavior</span>:
+    <span class="kw">scaleUp</span>:
+      <span class="kw">stabilizationWindowSeconds</span>: <span class="fn">60</span>
+    <span class="kw">scaleDown</span>:
+      <span class="kw">stabilizationWindowSeconds</span>: <span class="fn">300</span>  <span class="cm"># wait 5min before scaling down</span></div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>HPA scales based on the <em>ratio</em> of current metric value to target. If you set target CPU at 70% and current average is 140%, K8s roughly doubles the replicas. The <code>stabilizationWindowSeconds</code> on scale-down prevents "flapping" — where the autoscaler keeps scaling up and down rapidly.</p>
+  </div>
+
+  <h3>Jobs and CronJobs</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>⚡ Job</h4>
+      <ul>
+        <li>Runs a task to completion (not a long-running server)</li>
+        <li>Configurable retries with backoffLimit</li>
+        <li>Deadline with activeDeadlineSeconds</li>
+        <li>Example: database migrations</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid #7B5EA7">
+      <h4>🕐 CronJob</h4>
+      <ul>
+        <li>Runs Jobs on a schedule (cron syntax)</li>
+        <li>concurrencyPolicy controls overlap</li>
+        <li>History limits for cleanup</li>
+        <li>Example: nightly reports</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Job — run a database migration</span>
+<span class="kw">apiVersion</span>: batch/v1
+<span class="kw">kind</span>: Job
+<span class="kw">metadata</span>:
+  <span class="kw">name</span>: db-migration
+<span class="kw">spec</span>:
+  <span class="kw">backoffLimit</span>: <span class="fn">3</span>
+  <span class="kw">activeDeadlineSeconds</span>: <span class="fn">600</span>
+  <span class="kw">template</span>:
+    <span class="kw">spec</span>:
+      <span class="kw">containers</span>:
+        - <span class="kw">name</span>: migrate
+          <span class="kw">image</span>: <span class="str">my-registry.example.com/fastapi-app:v1.2.0</span>
+          <span class="kw">command</span>: [<span class="str">"alembic"</span>, <span class="str">"upgrade"</span>, <span class="str">"head"</span>]
+      <span class="kw">restartPolicy</span>: Never</div>
+
+  <h3>Helm Charts</h3>
+  <p>Helm is the <strong>package manager for Kubernetes</strong>. Instead of managing dozens of raw YAML files, create a <strong>chart</strong> — a templated, versioned, reusable package.</p>
+
+  <div class="code-block"><span class="cm"># Chart structure:</span>
+my-fastapi-chart/
+├── Chart.yaml              <span class="cm"># metadata: name, version</span>
+├── values.yaml             <span class="cm"># default configuration</span>
+├── charts/                 <span class="cm"># sub-chart dependencies</span>
+└── templates/
+    ├── deployment.yaml     <span class="cm"># templated K8s manifest</span>
+    ├── service.yaml
+    ├── ingress.yaml
+    ├── configmap.yaml
+    ├── hpa.yaml
+    └── _helpers.tpl        <span class="cm"># reusable template snippets</span></div>
+
+  <div class="code-block"><span class="cm"># values.yaml — override per environment</span>
+<span class="kw">replicaCount</span>: <span class="fn">3</span>
+
+<span class="kw">image</span>:
+  <span class="kw">repository</span>: <span class="str">my-registry.example.com/fastapi-app</span>
+  <span class="kw">tag</span>: <span class="str">"v1.2.0"</span>
+  <span class="kw">pullPolicy</span>: IfNotPresent
+
+<span class="kw">service</span>:
+  <span class="kw">type</span>: ClusterIP
+  <span class="kw">port</span>: <span class="fn">80</span>
+  <span class="kw">targetPort</span>: <span class="fn">8000</span>
+
+<span class="kw">autoscaling</span>:
+  <span class="kw">enabled</span>: <span class="fn">true</span>
+  <span class="kw">minReplicas</span>: <span class="fn">2</span>
+  <span class="kw">maxReplicas</span>: <span class="fn">20</span>
+  <span class="kw">targetCPUUtilizationPercentage</span>: <span class="fn">70</span>
+
+<span class="kw">resources</span>:
+  <span class="kw">requests</span>:
+    <span class="kw">cpu</span>: <span class="str">100m</span>
+    <span class="kw">memory</span>: <span class="str">128Mi</span>
+  <span class="kw">limits</span>:
+    <span class="kw">cpu</span>: <span class="str">500m</span>
+    <span class="kw">memory</span>: <span class="str">512Mi</span></div>
+
+  <div class="code-block"><span class="cm"># Using Helm</span>
+helm install my-app ./my-fastapi-chart -f values-production.yaml
+
+<span class="cm"># Upgrade with new image tag</span>
+helm upgrade my-app ./my-fastapi-chart --set image.tag=v1.3.0
+
+<span class="cm"># Rollback to a previous release</span>
+helm rollback my-app <span class="fn">1</span>
+
+<span class="cm"># See release history</span>
+helm history my-app</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p><em>"Helm solves the problem of managing Kubernetes manifests at scale. Instead of copy-pasting YAML for each environment, you template it once and override values. The real power is in release management — every <code>helm upgrade</code> creates a versioned release, and you can <code>helm rollback</code> instantly if something breaks."</em></p>
+  </div>
+</section>
+
+<!-- Screen 5: CI/CD, Monitoring & 12-Factor -->
+<section class="screen" id="s5">
+  <h2>🔄 CI/CD, Monitoring &amp; <span class="accent">12-Factor</span></h2>
+
+  <h3>CI/CD Pipelines</h3>
+  <p>CI/CD automates the journey from code commit to production. A typical pipeline:</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>1️⃣ Build</h4>
+      <p>Install dependencies, compile if needed.</p>
+    </div>
+    <div class="card blue">
+      <h4>2️⃣ Test</h4>
+      <p>Run unit tests, integration tests, linting.</p>
+    </div>
+    <div class="card green">
+      <h4>3️⃣ Build Image</h4>
+      <p>Create a Docker image from the tested code.</p>
+    </div>
+    <div class="card purple">
+      <h4>4️⃣ Push</h4>
+      <p>Push image to a container registry.</p>
+    </div>
+    <div class="card">
+      <h4>5️⃣ Deploy</h4>
+      <p>Update K8s deployment with the new image.</p>
+    </div>
+  </div>
+
+  <h3>GitHub Actions Workflow</h3>
+  <div class="code-block"><span class="cm"># .github/workflows/deploy.yml</span>
+<span class="kw">name</span>: <span class="str">Build, Test & Deploy</span>
+
+<span class="kw">on</span>:
+  <span class="kw">push</span>:
+    <span class="kw">branches</span>: [main]
+  <span class="kw">pull_request</span>:
+    <span class="kw">branches</span>: [main]
+
+<span class="kw">jobs</span>:
+  <span class="cm"># ── Step 1: Test ────────────────────────────────</span>
+  <span class="kw">test</span>:
+    <span class="kw">runs-on</span>: ubuntu-latest
+    <span class="kw">services</span>:
+      <span class="kw">postgres</span>:
+        <span class="kw">image</span>: <span class="str">postgres:16-alpine</span>
+        <span class="kw">env</span>:
+          <span class="kw">POSTGRES_USER</span>: testuser
+          <span class="kw">POSTGRES_PASSWORD</span>: testpass
+          <span class="kw">POSTGRES_DB</span>: testdb
+    <span class="kw">steps</span>:
+      - <span class="kw">uses</span>: actions/checkout@v4
+      - <span class="kw">name</span>: <span class="str">Install dependencies</span>
+        <span class="kw">run</span>: pip install -r requirements.txt
+      - <span class="kw">name</span>: <span class="str">Lint with ruff</span>
+        <span class="kw">run</span>: ruff check .
+      - <span class="kw">name</span>: <span class="str">Run tests</span>
+        <span class="kw">run</span>: pytest --cov=app -v
+
+  <span class="cm"># ── Step 2: Build & Push ────────────────────────</span>
+  <span class="kw">build-and-push</span>:
+    <span class="kw">needs</span>: test
+    <span class="kw">if</span>: github.ref == <span class="str">'refs/heads/main'</span>
+    <span class="kw">steps</span>:
+      - <span class="kw">name</span>: <span class="str">Build and push Docker image</span>
+        <span class="kw">uses</span>: docker/build-push-action@v5
+        <span class="kw">with</span>:
+          <span class="kw">push</span>: <span class="fn">true</span>
+          <span class="kw">cache-from</span>: type=gha
+          <span class="kw">cache-to</span>: type=gha,mode=max
+
+  <span class="cm"># ── Step 3: Deploy to K8s ───────────────────────</span>
+  <span class="kw">deploy</span>:
+    <span class="kw">needs</span>: build-and-push
+    <span class="kw">environment</span>: production   <span class="cm"># requires manual approval</span>
+    <span class="kw">steps</span>:
+      - <span class="kw">name</span>: <span class="str">Deploy with Helm</span>
+        <span class="kw">run</span>: |
+          helm upgrade --install my-app ./helm/my-fastapi-chart \
+            --set image.tag=${{ github.sha }} \
+            --namespace production \
+            --wait --timeout 300s</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>Notice the <code>--wait</code> flag on <code>helm upgrade</code>. This tells Helm to wait until all Pods are ready before marking the deployment as successful. Without it, the CI pipeline might report "deployed" before the new Pods are actually healthy — giving you a false green check.</p>
+  </div>
+
+  <h3>Structured Logging &amp; ELK Stack</h3>
+  <p>In a containerized world, you can't SSH into a server and <code>tail -f</code> a log file. You need <strong>structured logging</strong> that feeds into a centralized system.</p>
+
+  <div class="code-block"><span class="kw">import</span> structlog
+
+<span class="cm"># Configure structured logging</span>
+structlog.configure(
+    processors=[
+        structlog.processors.TimeStamper(fmt=<span class="str">"iso"</span>),
+        structlog.processors.add_log_level,
+        structlog.processors.JSONRenderer(),
+    ],
+)
+
+logger = structlog.get_logger()
+
+<span class="cm"># Usage — structured JSON output</span>
+logger.info(
+    <span class="str">"order_processed"</span>,
+    order_id=<span class="str">"ORD-12345"</span>,
+    user_id=<span class="str">"USR-67890"</span>,
+    amount=<span class="fn">99.99</span>,
+    duration_ms=<span class="fn">42</span>,
+)
+<span class="cm"># → {"event": "order_processed", "order_id": "ORD-12345",</span>
+<span class="cm">#    "amount": 99.99, "level": "info", "timestamp": "..."}</span></div>
+
+  <p><strong>The ELK Stack:</strong></p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔍 Elasticsearch</h4>
+      <p>Stores and indexes log data for fast searching.</p>
+    </div>
+    <div class="card blue">
+      <h4>📨 Logstash / Fluent Bit</h4>
+      <p>Collects, transforms, and ships logs. In K8s, run as a DaemonSet.</p>
+    </div>
+    <div class="card green">
+      <h4>📊 Kibana</h4>
+      <p>Web UI for searching, visualizing, and creating dashboards from log data.</p>
+    </div>
+  </div>
+
+  <h3>Monitoring: Prometheus + Grafana</h3>
+  <p><strong>Prometheus</strong> is a pull-based monitoring system. It scrapes metrics from your apps at regular intervals.</p>
+
+  <div class="code-block"><span class="kw">from</span> prometheus_client <span class="kw">import</span> Counter, Histogram, generate_latest
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, Response
+
+app = FastAPI()
+
+REQUEST_COUNT = Counter(
+    <span class="str">"http_requests_total"</span>,
+    <span class="str">"Total HTTP requests"</span>,
+    [<span class="str">"method"</span>, <span class="str">"endpoint"</span>, <span class="str">"status_code"</span>],
+)
+
+REQUEST_DURATION = Histogram(
+    <span class="str">"http_request_duration_seconds"</span>,
+    <span class="str">"HTTP request duration in seconds"</span>,
+    [<span class="str">"method"</span>, <span class="str">"endpoint"</span>],
+)
+
+<span class="kw">@app.get</span>(<span class="str">"/metrics"</span>)
+<span class="kw">async def</span> <span class="fn">metrics</span>():
+    <span class="kw">return</span> Response(
+        content=generate_latest(),
+        media_type=<span class="str">"text/plain"</span>,
+    )</div>
+
+  <p><strong>Grafana</strong> connects to Prometheus as a data source — build dashboards and alerts (e.g., "alert me if p99 latency exceeds 500ms for 5 minutes").</p>
+
+  <h3>The 12-Factor App</h3>
+  <p>The 12-Factor methodology is about building modern, cloud-native applications. Interviewers love this because it tests whether you think about operational concerns, not just code.</p>
+
+  <table class="info-table">
+    <tr><th>#</th><th>Factor</th><th>Summary</th></tr>
+    <tr><td>1</td><td>Codebase</td><td>One codebase, many deploys</td></tr>
+    <tr><td>2</td><td>Dependencies</td><td>Explicitly declare &amp; isolate</td></tr>
+    <tr><td>3</td><td>⭐ Config</td><td>Store config in env vars</td></tr>
+    <tr><td>4</td><td>Backing Services</td><td>Treat DBs, caches as attached resources</td></tr>
+    <tr><td>5</td><td>⭐ Build, Release, Run</td><td>Strictly separate stages</td></tr>
+    <tr><td>6</td><td>⭐ Processes</td><td>Execute as stateless processes</td></tr>
+    <tr><td>7</td><td>Port Binding</td><td>Export services via port binding</td></tr>
+    <tr><td>8</td><td>⭐ Concurrency</td><td>Scale out via process model</td></tr>
+    <tr><td>9</td><td>⭐ Disposability</td><td>Fast startup, graceful shutdown</td></tr>
+    <tr><td>10</td><td>Dev/Prod Parity</td><td>Keep environments similar</td></tr>
+    <tr><td>11</td><td>Logs</td><td>Treat logs as event streams</td></tr>
+    <tr><td>12</td><td>Admin Processes</td><td>Run admin tasks as one-off processes</td></tr>
+  </table>
+
+  <h3>Deep Dive: Top 5 Interview Favorites</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>⭐ Factor 3 — Config</h4>
+      <p>Never hardcode configuration. Use env vars. This is why we use ConfigMaps, Secrets, .env files, and CI/CD environment variables.</p>
+    </div>
+    <div class="card blue">
+      <h4>⭐ Factor 5 — Build, Release, Run</h4>
+      <p>Build creates an artifact (Docker image). Release combines artifact + config. Run executes it. Never modify code in a running container.</p>
+    </div>
+    <div class="card green">
+      <h4>⭐ Factor 6 — Processes</h4>
+      <p>Your app should be stateless. Don't store sessions in memory — use Redis. If a container dies and gets replaced, users shouldn't notice.</p>
+    </div>
+    <div class="card purple">
+      <h4>⭐ Factor 8 — Concurrency</h4>
+      <p>Scale by adding more processes (Pods), not by making one bigger. This is exactly what HPA does — add replicas.</p>
+    </div>
+    <div class="card">
+      <h4>⭐ Factor 9 — Disposability</h4>
+      <p>Containers should start fast and shut down gracefully. Handle SIGTERM by finishing in-flight requests. Enables smooth rolling deployments.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p><em>"The 12-Factor methodology is really about building apps that are cloud-native by design. The three I emphasize most are: stateless processes (Factor 6) so you can scale horizontally, config in environment variables (Factor 3) so the same image runs in any environment, and disposability (Factor 9) so containers can be created and destroyed freely. These three factors are why Kubernetes works — if your app violates them, K8s can't manage it effectively."</em></p>
+  </div>
+</section>
+
+<!-- Screen 6: Quiz -->
+<section class="screen screen-alt" id="s6">
+  <h2>🧪 Quiz: <span class="accent">Test Yourself</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: Why should you copy <code>requirements.txt</code> before copying your application code in a Dockerfile?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Python requires dependencies to be installed before code is present</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) It ensures the pip install layer is cached and only re-runs when dependencies change</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) Docker cannot process COPY instructions after RUN instructions</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) It prevents requirements.txt from being overwritten by the application code</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: A Kubernetes Pod is running but failing its readiness probe. What happens?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) The Pod is immediately deleted and a new one is created</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) The Pod is restarted by the kubelet</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">C) The Pod is removed from the Service's endpoints so it receives no traffic</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) The Deployment scales up to compensate for the unhealthy Pod</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: In Docker Compose, what does <code>depends_on</code> with <code>condition: service_healthy</code> guarantee?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) The dependent service will automatically restart if the dependency fails</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) The dependent service won't start until the dependency's health check passes</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) Network traffic between the services is encrypted</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) The dependent service shares the same container as the dependency</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: Which 12-Factor principle is violated when you store user session data in application memory?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Factor 3 — Config</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) Factor 5 — Build, Release, Run</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">C) Factor 6 — Processes (stateless)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Factor 11 — Logs</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: What is the primary benefit of using Helm charts over raw Kubernetes YAML manifests?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Helm charts run faster than raw YAML</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) Helm provides templating, versioning, and release management for K8s resources</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) Helm eliminates the need for a container registry</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Helm automatically scales applications based on traffic</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<!-- Wrapping Up -->
+<section class="screen" id="s7">
+  <h2>🏁 <span class="accent">Cheat Sheet</span></h2>
+  <p>You've covered the full journey from Dockerfile to production. Here's your interview cheat sheet:</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🐳 Docker</h4>
+      <p>Multi-stage builds, layer caching, non-root users, slim base images, .dockerignore.</p>
+    </div>
+    <div class="card blue">
+      <h4>🐙 Compose</h4>
+      <p>Multi-service local dev, health checks, bind mounts vs named volumes, networking by service name.</p>
+    </div>
+    <div class="card green">
+      <h4>☸️ K8s Basics</h4>
+      <p>Pods, Deployments, Services (ClusterIP/NodePort/LB), ConfigMaps, Secrets, Namespaces.</p>
+    </div>
+    <div class="card purple">
+      <h4>🚀 K8s Advanced</h4>
+      <p>Readiness vs liveness probes, HPA, Jobs/CronJobs, Helm charts for templating.</p>
+    </div>
+    <div class="card">
+      <h4>🔄 CI/CD</h4>
+      <p>Build → test → push → deploy pipelines, GitHub Actions, --wait for safe deploys.</p>
+    </div>
+    <div class="card blue">
+      <h4>📊 Operations</h4>
+      <p>Structured logging (ELK), metrics (Prometheus + Grafana), 12-Factor principles.</p>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">🎯 The Golden Thread</div>
+    <p><strong>Treat your infrastructure as code, your containers as disposable, and your deployments as automated.</strong> If you can articulate that philosophy and back it up with specifics from this module, you'll ace the containers and deployment portion of any backend interview. Good luck out there! 🚀</p>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-02-apis-microservices/index.html">← Prev: APIs & Microservices</a>
+  <a href="../module-04-interview-gauntlet/index.html">Next: The Interview Gauntlet 🔥 →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Chat animation
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Look at the other options — the answer focuses on the core concept.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

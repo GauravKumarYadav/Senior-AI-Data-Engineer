@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 1: FastAPI Core | Backend Services</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#0284C7;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.88rem;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.data-table th{background:var(--color-accent);color:#fff;font-family:var(--font-heading);font-weight:700;padding:0.7rem 0.8rem;text-align:left}
+.data-table td{padding:0.6rem 0.8rem;border-bottom:1px solid rgba(0,0,0,0.04)}
+.data-table tr:last-child td{border:none}
+.data-table tr:nth-child(even){background:rgba(0,0,0,0.015)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}.data-table{font-size:0.8rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🌐 Backend Services</a><div class="nav-dots"><a href="../module-01-fastapi/" class="nav-dot active"></a><a href="../module-02-apis-microservices/" class="nav-dot"></a><a href="../module-03-containers-deployment/" class="nav-dot"></a><a href="../module-04-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Why FastAPI? -->
+<section class="screen" id="s1">
+  <h2>🚀 Why <span class="accent">FastAPI</span>?</h2>
+
+  <h3>What Is FastAPI?</h3>
+  <p>FastAPI is a modern, high-performance Python web framework for building APIs. It was created by Sebastián Ramírez and first released in late 2018. It sits on top of two powerhouse libraries: <strong>Starlette</strong> (for the async web layer) and <strong>Pydantic</strong> (for data validation and serialization). That combination is the secret sauce — you get the raw speed of an ASGI server with the developer experience of automatic type checking and documentation.</p>
+  <p>Here's the shortest possible FastAPI app:</p>
+  <div class="code-block"><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+
+app = FastAPI()
+
+<span class="cm">@app.get("/")</span>
+<span class="kw">async def</span> <span class="fn">root</span>():
+    <span class="kw">return</span> {<span class="str">"message"</span>: <span class="str">"Hello, world"</span>}</div>
+
+  <p>Run it with <code>uvicorn main:app --reload</code> and you instantly get:</p>
+  <div class="card-grid">
+    <div class="card"><h4>🌐 JSON API</h4><p>A working API at http://localhost:8000</p></div>
+    <div class="card blue"><h4>📖 Swagger Docs</h4><p>Interactive docs at /docs — for free</p></div>
+    <div class="card green"><h4>📄 ReDoc</h4><p>Beautiful documentation at /redoc</p></div>
+    <div class="card purple"><h4>📋 OpenAPI Schema</h4><p>JSON schema at /openapi.json</p></div>
+  </div>
+  <p>You wrote <strong>three lines of business logic</strong> and got all of that for free. That's the pitch.</p>
+
+  <h3>Why Is It So Popular?</h3>
+  <p>Three pillars keep coming up in every conversation about FastAPI:</p>
+  <div class="card-grid">
+    <div class="card"><h4>⚡ Async-First Design</h4><p>Built on ASGI, not the older WSGI standard. Every endpoint can be async def natively — handle thousands of concurrent I/O-bound requests without threads.</p></div>
+    <div class="card blue"><h4>📝 Auto OpenAPI Docs</h4><p>Add type hints and Pydantic models → complete, interactive API documentation. No Swagger config files. No manual YAML. The code IS the documentation.</p></div>
+    <div class="card green"><h4>✅ Pydantic Validation</h4><p>Request bodies, query params, path params, headers, cookies — everything validated through Python type hints at the framework level. Invalid data never reaches your logic.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>When asked "Why FastAPI?", hit these three points in order: <em>async performance</em>, <em>auto-generated docs</em>, and <em>type-safe validation</em>. Then add: "It also has first-class dependency injection, which makes testing and composability trivial." That fourth point separates you from someone who just read the README.</p>
+  </div>
+
+  <h3>FastAPI vs Flask vs Django REST Framework</h3>
+  <table class="data-table">
+    <tr><th>Dimension</th><th>Flask</th><th>Django REST</th><th>FastAPI</th></tr>
+    <tr><td>Protocol</td><td>WSGI (sync)</td><td>WSGI (sync)</td><td>ASGI (async)</td></tr>
+    <tr><td>Validation</td><td>Manual / Marshmallow</td><td>Serializers</td><td>Pydantic (auto)</td></tr>
+    <tr><td>API docs</td><td>Flask-Swagger (addon)</td><td>drf-spectacular</td><td>Built-in OpenAPI</td></tr>
+    <tr><td>ORM</td><td>SQLAlchemy (BYO)</td><td>Django ORM (built-in)</td><td>SQLAlchemy / any</td></tr>
+    <tr><td>Auth</td><td>Flask-Login (addon)</td><td>Built-in (sessions)</td><td>OAuth2 / JWT (BYO)</td></tr>
+    <tr><td>Learning curve</td><td>Low</td><td>Medium-high</td><td>Low-medium</td></tr>
+    <tr><td>Performance</td><td>Moderate</td><td>Moderate</td><td>High</td></tr>
+    <tr><td>Best for</td><td>Simple services</td><td>Full-stack + API</td><td>High-perf APIs</td></tr>
+  </table>
+
+  <p><strong>Flask</strong> is the classic micro-framework. Battle-tested, massive ecosystem, dead simple. But synchronous by default, no built-in validation or documentation.</p>
+  <p><strong>Django REST Framework (DRF)</strong> is the heavyweight. Admin panel, ORM, migrations, user auth, and a full-stack app plus an API. But synchronous, opinionated, and heavy for pure API services.</p>
+  <p><strong>FastAPI</strong> is the modern middle ground. Flask-level simplicity with DRF-level features and performance in the same ballpark as Node.js and Go for I/O-bound workloads.</p>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>FastAPI isn't "better" than Django or Flask — it's <em>purpose-built for APIs</em>. If someone asks you to build a full website with server-rendered templates, Django is probably the better call. FastAPI shines when you're building JSON APIs, microservices, and ML model endpoints.</p>
+  </div>
+
+  <h3>Key Selling Points an Interviewer Wants to Hear</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🔒 Type Safety End-to-End</h4><p>Request validation, response serialization, and IDE autocompletion — all from the same type hints.</p></div>
+    <div class="card blue"><h4>⚡ Performance</h4><p>Benchmarks show 2-5× throughput of Flask for I/O-bound workloads thanks to async.</p></div>
+    <div class="card green"><h4>🛠️ Developer Productivity</h4><p>Less boilerplate = fewer bugs and faster iteration. Auto-docs save hours of Swagger maintenance.</p></div>
+    <div class="card purple"><h4>💉 Dependency Injection</h4><p>Built-in DI for testing (swap real DB for mock), separation of concerns, and resource lifecycle management.</p></div>
+    <div class="card"><h4>📐 Standards-Based</h4><p>Generates OpenAPI 3.1 and JSON Schema — frontend teams can auto-generate TypeScript clients from your API spec.</p></div>
+    <div class="card blue"><h4>🏭 Production-Ready</h4><p>Uvicorn + Gunicorn for serving, Pydantic for validation, SQLAlchemy for data access — all well-supported.</p></div>
+  </div>
+</section>
+
+<!-- Screen 2: Request/Response Models & Routing -->
+<section class="screen screen-alt" id="s2">
+  <h2>📦 Request/Response <span class="accent">Models & Routing</span></h2>
+
+  <h3>Pydantic v2 Models — The Foundation</h3>
+  <p>Every FastAPI application lives and dies by its Pydantic models. These are Python classes that define the shape of your data, validate it automatically, and serialize it for responses. Pydantic v2 (which FastAPI 0.100+ uses) is a ground-up rewrite with a Rust-powered core that's 5-50× faster than v1.</p>
+
+  <div class="code-block"><span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field, field_validator, model_validator
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+<span class="kw">from</span> enum <span class="kw">import</span> Enum
+
+
+<span class="kw">class</span> <span class="fn">Priority</span>(str, Enum):
+    LOW = <span class="str">"low"</span>
+    MEDIUM = <span class="str">"medium"</span>
+    HIGH = <span class="str">"high"</span>
+
+
+<span class="kw">class</span> <span class="fn">TaskCreate</span>(BaseModel):
+    <span class="str">"""Request model for creating a new task."""</span>
+
+    title: str = Field(
+        ...,
+        min_length=<span class="fn">1</span>,
+        max_length=<span class="fn">200</span>,
+        description=<span class="str">"The task title"</span>,
+        examples=[<span class="str">"Fix login bug"</span>],
+    )
+    description: str | None = Field(
+        default=None,
+        max_length=<span class="fn">2000</span>,
+        description=<span class="str">"Optional detailed description"</span>,
+    )
+    priority: Priority = Field(
+        default=Priority.MEDIUM,
+        description=<span class="str">"Task priority level"</span>,
+    )
+    tags: list[str] = Field(
+        default_factory=list,
+        max_length=<span class="fn">10</span>,
+        description=<span class="str">"Up to 10 tags"</span>,
+    )
+
+    model_config = {
+        <span class="str">"str_strip_whitespace"</span>: True,
+        <span class="str">"json_schema_extra"</span>: {
+            <span class="str">"examples"</span>: [
+                {
+                    <span class="str">"title"</span>: <span class="str">"Fix login bug"</span>,
+                    <span class="str">"priority"</span>: <span class="str">"high"</span>,
+                    <span class="str">"tags"</span>: [<span class="str">"backend"</span>, <span class="str">"auth"</span>],
+                }
+            ]
+        },
+    }
+
+    <span class="cm">@field_validator("tags")</span>
+    <span class="cm">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">lowercase_tags</span>(cls, v: list[str]) -> list[str]:
+        <span class="kw">return</span> [tag.lower().strip() <span class="kw">for</span> tag <span class="kw">in</span> v]
+
+    <span class="cm">@model_validator(mode="after")</span>
+    <span class="kw">def</span> <span class="fn">high_priority_needs_description</span>(self) -> <span class="str">"TaskCreate"</span>:
+        <span class="kw">if</span> self.priority == Priority.HIGH <span class="kw">and</span> not self.description:
+            raise ValueError(
+                <span class="str">"High-priority tasks require a description"</span>
+            )
+        <span class="kw">return</span> self</div>
+
+  <p>Let's break down what's happening:</p>
+  <div class="card-grid">
+    <div class="card"><h4>📌 Field(...)</h4><p>The ... (Ellipsis) means required. Use default= for optional fields or default_factory= for mutable defaults like lists.</p></div>
+    <div class="card blue"><h4>🔍 field_validator</h4><p>Validates a single field. In Pydantic v2, these are @classmethod with @field_validator("field_name"). mode="before" transforms data before type coercion.</p></div>
+    <div class="card green"><h4>🔗 model_validator</h4><p>Validates across multiple fields. mode="after" means all fields are parsed; mode="before" gives raw input data.</p></div>
+    <div class="card purple"><h4>⚙️ model_config</h4><p>Replaces the old class Config. Common settings: str_strip_whitespace, strict, from_attributes (for ORM mode).</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>Know the difference between <code>field_validator</code> and <code>model_validator</code>. The interviewer will ask. Field validators operate on a single field. Model validators see the entire model — use them for cross-field validation like "end_date must be after start_date."</p>
+  </div>
+
+  <h3>Response Models</h3>
+  <p>You typically want a <em>different</em> model for responses than for requests. The response includes fields the server generates (ID, timestamps) and may exclude sensitive fields.</p>
+
+  <div class="code-block"><span class="kw">class</span> <span class="fn">TaskResponse</span>(BaseModel):
+    id: int
+    title: str
+    description: str | None
+    priority: Priority
+    tags: list[str]
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {<span class="str">"from_attributes"</span>: True}
+
+
+<span class="kw">class</span> <span class="fn">TaskListResponse</span>(BaseModel):
+    tasks: list[TaskResponse]
+    total: int
+    page: int
+    page_size: int</div>
+
+  <p>The <code>from_attributes = True</code> setting (formerly <code>orm_mode</code>) lets Pydantic read data from ORM objects (like SQLAlchemy models) by accessing attributes instead of dictionary keys.</p>
+
+  <h3>Path Parameters, Query Parameters & Request Body</h3>
+  <p>FastAPI uses function signature inspection to determine where each parameter comes from:</p>
+
+  <div class="code-block"><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, Query, Path, Body, HTTPException, status
+
+app = FastAPI()
+
+
+<span class="cm">@app.get("/tasks/{task_id}", response_model=TaskResponse)</span>
+<span class="kw">async def</span> <span class="fn">get_task</span>(
+    task_id: int = Path(
+        ..., gt=<span class="fn">0</span>, description=<span class="str">"The ID of the task to retrieve"</span>
+    ),
+):
+    <span class="str">"""Fetch a single task by ID."""</span>
+    task = <span class="kw">await</span> db.get_task(task_id)
+    <span class="kw">if</span> not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f<span class="str">"Task {task_id} not found"</span>,
+        )
+    <span class="kw">return</span> task
+
+
+<span class="cm">@app.get("/tasks", response_model=TaskListResponse)</span>
+<span class="kw">async def</span> <span class="fn">list_tasks</span>(
+    page: int = Query(default=<span class="fn">1</span>, ge=<span class="fn">1</span>, description=<span class="str">"Page number"</span>),
+    page_size: int = Query(default=<span class="fn">20</span>, ge=<span class="fn">1</span>, le=<span class="fn">100</span>),
+    priority: Priority | None = Query(default=None),
+    search: str | None = Query(
+        default=None, min_length=<span class="fn">2</span>, max_length=<span class="fn">100</span>
+    ),
+):
+    <span class="str">"""List tasks with pagination and optional filters."""</span>
+    tasks, total = <span class="kw">await</span> db.list_tasks(
+        page=page, page_size=page_size,
+        priority=priority, search=search,
+    )
+    <span class="kw">return</span> TaskListResponse(
+        tasks=tasks, total=total, page=page, page_size=page_size
+    )
+
+
+<span class="cm">@app.post("/tasks", response_model=TaskResponse, status_code=status.HTTP_201_CREATED)</span>
+<span class="kw">async def</span> <span class="fn">create_task</span>(task: TaskCreate):
+    <span class="str">"""Create a new task. The request body is validated by Pydantic."""</span>
+    <span class="kw">return</span> <span class="kw">await</span> db.create_task(task)</div>
+
+  <p><strong>The rules are simple:</strong></p>
+  <table class="data-table">
+    <tr><th>Parameter location</th><th>How FastAPI knows</th></tr>
+    <tr><td>Path parameter</td><td>Name matches {name} in route</td></tr>
+    <tr><td>Request body</td><td>It's a Pydantic BaseModel</td></tr>
+    <tr><td>Query parameter</td><td>Everything else (primitives)</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>If your endpoint has a parameter that's a plain type (<code>int</code>, <code>str</code>, <code>bool</code>) and it's not in the URL path, FastAPI treats it as a query parameter. If it's a Pydantic model, it's the request body. You don't need to explicitly annotate most of the time — but <code>Query()</code>, <code>Path()</code>, and <code>Body()</code> let you add validation and documentation.</p>
+  </div>
+
+  <h3>Status Codes and Response Model Exclusion</h3>
+
+  <div class="code-block"><span class="cm">@app.put("/tasks/{task_id}", response_model=TaskResponse)</span>
+<span class="kw">async def</span> <span class="fn">update_task</span>(
+    task_id: int,
+    task: TaskCreate,
+):
+    updated = <span class="kw">await</span> db.update_task(task_id, task)
+    <span class="kw">if</span> not updated:
+        raise HTTPException(status_code=<span class="fn">404</span>, detail=<span class="str">"Task not found"</span>)
+    <span class="kw">return</span> updated
+
+
+<span class="cm">@app.delete("/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT)</span>
+<span class="kw">async def</span> <span class="fn">delete_task</span>(task_id: int):
+    deleted = <span class="kw">await</span> db.delete_task(task_id)
+    <span class="kw">if</span> not deleted:
+        raise HTTPException(status_code=<span class="fn">404</span>, detail=<span class="str">"Task not found"</span>)
+    <span class="cm"># 204 = no response body</span></div>
+
+  <p>You can also control which fields appear in the response without creating a separate model:</p>
+
+  <div class="code-block"><span class="cm">@app.get(
+    "/tasks/{task_id}/summary",
+    response_model=TaskResponse,
+    response_model_exclude={"description", "tags"},
+)</span>
+<span class="kw">async def</span> <span class="fn">get_task_summary</span>(task_id: int):
+    <span class="kw">return</span> <span class="kw">await</span> db.get_task(task_id)</div>
+
+  <p>Use <code>response_model_include</code> and <code>response_model_exclude</code> sparingly — separate response models are usually cleaner. But for quick projections, these are handy.</p>
+</section>
+
+<!-- Screen 3: Dependency Injection & Middleware -->
+<section class="screen" id="s3">
+  <h2>💉 Dependency Injection <span class="accent">& Middleware</span></h2>
+
+  <h3>Understanding Depends()</h3>
+  <p>Dependency Injection (DI) is FastAPI's superpower for composability and testability. The <code>Depends()</code> function tells FastAPI: "Before running this endpoint, call this function first and inject the result."</p>
+
+  <div class="code-block"><span class="kw">from</span> fastapi <span class="kw">import</span> Depends, FastAPI, HTTPException, status
+<span class="kw">from</span> typing <span class="kw">import</span> Annotated
+
+app = FastAPI()
+
+
+<span class="cm"># ---------- Simple dependency ----------</span>
+<span class="kw">async def</span> <span class="fn">get_db_session</span>():
+    <span class="str">"""Create a database session for each request."""</span>
+    session = AsyncSession(engine)
+    try:
+        <span class="kw">yield</span> session  <span class="cm"># &lt;-- yield makes this a "generator dependency"</span>
+        <span class="kw">await</span> session.commit()
+    except Exception:
+        <span class="kw">await</span> session.rollback()
+        raise
+    finally:
+        <span class="kw">await</span> session.close()
+
+
+<span class="cm"># Type alias for cleaner signatures</span>
+DBSession = Annotated[AsyncSession, Depends(get_db_session)]
+
+
+<span class="cm"># ---------- Auth dependency ----------</span>
+<span class="kw">async def</span> <span class="fn">get_current_user</span>(
+    token: str = Depends(oauth2_scheme),
+    db: DBSession = ...,  <span class="cm"># sub-dependency!</span>
+) -> User:
+    <span class="str">"""Validate JWT and return the current user."""</span>
+    payload = decode_jwt(token)
+    user = <span class="kw">await</span> db.get(User, payload[<span class="str">"sub"</span>])
+    <span class="kw">if</span> not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=<span class="str">"User not found"</span>,
+        )
+    <span class="kw">return</span> user
+
+
+CurrentUser = Annotated[User, Depends(get_current_user)]
+
+
+<span class="cm"># ---------- Using them ----------</span>
+<span class="cm">@app.get("/tasks", response_model=list[TaskResponse])</span>
+<span class="kw">async def</span> <span class="fn">list_tasks</span>(
+    db: DBSession,
+    user: CurrentUser,
+):
+    <span class="str">"""Both db and user are injected automatically."""</span>
+    <span class="kw">return</span> <span class="kw">await</span> db.execute(
+        select(Task).where(Task.owner_id == user.id)
+    )</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>The <code>Annotated[Type, Depends(fn)]</code> pattern (introduced in FastAPI 0.95+) is the modern way to declare dependencies. It's cleaner than the old <code>param: Type = Depends(fn)</code> style because the annotation is reusable via type aliases. If an interviewer sees you use <code>Annotated</code>, they'll know you're current.</p>
+  </div>
+
+  <h3>How Yield Dependencies Work</h3>
+  <p>A yield dependency is FastAPI's equivalent of a context manager. Everything <em>before</em> the <code>yield</code> runs before the endpoint. Everything <em>after</em> the <code>yield</code> runs after the response is sent. This is perfect for database sessions, file handles, and any resource that needs cleanup.</p>
+
+  <div class="code-block"><span class="kw">async def</span> <span class="fn">get_db_session</span>():
+    session = async_session_maker()
+    try:
+        <span class="kw">yield</span> session           <span class="cm"># &lt;-- endpoint runs here</span>
+        <span class="kw">await</span> session.commit()  <span class="cm"># runs AFTER endpoint returns</span>
+    except Exception:
+        <span class="kw">await</span> session.rollback()
+        raise
+    finally:
+        <span class="kw">await</span> session.close()   <span class="cm"># cleanup always runs</span></div>
+
+  <p>The execution order is:</p>
+  <div class="card-grid">
+    <div class="card"><h4>1️⃣ Setup</h4><p>session = async_session_maker() — create the resource</p></div>
+    <div class="card blue"><h4>2️⃣ Yield</h4><p>yield session — FastAPI injects session into the endpoint</p></div>
+    <div class="card green"><h4>3️⃣ Endpoint</h4><p>Your endpoint runs and returns a response</p></div>
+    <div class="card purple"><h4>4️⃣ Teardown</h4><p>await session.commit() — happy path cleanup</p></div>
+    <div class="card"><h4>5️⃣ Finally</h4><p>await session.close() — always runs, exception or not</p></div>
+  </div>
+
+  <h3>Sub-Dependencies — Building a Chain</h3>
+  <p>Dependencies can depend on other dependencies. FastAPI resolves the entire graph automatically.</p>
+
+  <div class="code-block"><span class="kw">async def</span> <span class="fn">get_settings</span>() -> Settings:
+    <span class="str">"""App configuration — cached per-request by default."""</span>
+    <span class="kw">return</span> Settings()
+
+
+<span class="kw">async def</span> <span class="fn">get_db_session</span>(
+    settings: Annotated[Settings, Depends(get_settings)],
+):
+    engine = create_async_engine(settings.database_url)
+    <span class="kw">async</span> with AsyncSession(engine) <span class="kw">as</span> session:
+        <span class="kw">yield</span> session
+
+
+<span class="kw">async def</span> <span class="fn">get_current_user</span>(
+    db: Annotated[AsyncSession, Depends(get_db_session)],
+    token: Annotated[str, Depends(oauth2_scheme)],
+) -> User:
+    <span class="cm"># ... validate token, fetch user from db</span>
+    <span class="kw">return</span> user
+
+
+<span class="kw">async def</span> <span class="fn">require_admin</span>(
+    user: Annotated[User, Depends(get_current_user)],
+) -> User:
+    <span class="kw">if</span> not user.is_admin:
+        raise HTTPException(status_code=<span class="fn">403</span>, detail=<span class="str">"Admin required"</span>)
+    <span class="kw">return</span> user
+
+
+<span class="cm">@app.delete("/admin/tasks/{task_id}")</span>
+<span class="kw">async def</span> <span class="fn">admin_delete_task</span>(
+    task_id: int,
+    admin: Annotated[User, Depends(require_admin)],
+    db: Annotated[AsyncSession, Depends(get_db_session)],
+):
+    <span class="str">"""Only admins can delete tasks."""</span>
+    <span class="cm"># `db` is the SAME session instance as the one in require_admin</span>
+    <span class="cm"># FastAPI caches dependencies within a request by default</span>
+    <span class="kw">await</span> db.execute(delete(Task).where(Task.id == task_id))</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>FastAPI caches dependency results per-request by default. In the example above, <code>get_db_session</code> is called only <strong>once</strong> even though both <code>get_current_user</code> and the endpoint depend on it. You get the same session instance. To disable caching, use <code>Depends(get_db_session, use_cache=False)</code>.</p>
+  </div>
+
+  <h3>Middleware</h3>
+  <p>Middleware wraps every request/response cycle. It runs <em>before</em> your endpoint and <em>after</em> your endpoint — like a Russian nesting doll.</p>
+
+  <h3>CORS Middleware</h3>
+  <div class="code-block"><span class="kw">from</span> fastapi.middleware.cors <span class="kw">import</span> CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        <span class="str">"https://your-frontend.walmart.com"</span>,
+        <span class="str">"http://localhost:3000"</span>,
+    ],
+    allow_credentials=True,
+    allow_methods=[<span class="str">"*"</span>],
+    allow_headers=[<span class="str">"*"</span>],
+)</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>Never use <code>allow_origins=["*"]</code> in production with <code>allow_credentials=True</code>. It's a security hole. Browsers will reject it anyway (the CORS spec forbids wildcard origins with credentials). Always list your specific origins.</p>
+  </div>
+
+  <h3>Custom Middleware — Logging & Timing</h3>
+  <div class="code-block"><span class="kw">import</span> time
+<span class="kw">import</span> logging
+<span class="kw">from</span> starlette.middleware.base <span class="kw">import</span> (
+    BaseHTTPMiddleware,
+    RequestResponseEndpoint,
+)
+<span class="kw">from</span> starlette.requests <span class="kw">import</span> Request
+<span class="kw">from</span> starlette.responses <span class="kw">import</span> Response
+
+logger = logging.getLogger(__name__)
+
+
+<span class="kw">class</span> <span class="fn">TimingMiddleware</span>(BaseHTTPMiddleware):
+    <span class="kw">async def</span> <span class="fn">dispatch</span>(
+        self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
+        start = time.perf_counter()
+        response = <span class="kw">await</span> call_next(request)
+        elapsed_ms = (time.perf_counter() - start) * <span class="fn">1000</span>
+
+        logger.info(
+            <span class="str">"%s %s completed in %.2fms (status %d)"</span>,
+            request.method,
+            request.url.path,
+            elapsed_ms,
+            response.status_code,
+        )
+        response.headers[<span class="str">"X-Process-Time-Ms"</span>] = f<span class="str">"{elapsed_ms:.2f}"</span>
+        <span class="kw">return</span> response
+
+
+app.add_middleware(TimingMiddleware)</div>
+
+  <h3>Auth Middleware (Header-Based API Key)</h3>
+  <div class="code-block"><span class="kw">class</span> <span class="fn">APIKeyMiddleware</span>(BaseHTTPMiddleware):
+    EXCLUDED_PATHS = {<span class="str">"/docs"</span>, <span class="str">"/redoc"</span>, <span class="str">"/openapi.json"</span>, <span class="str">"/health"</span>}
+
+    <span class="kw">async def</span> <span class="fn">dispatch</span>(
+        self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
+        <span class="kw">if</span> request.url.path <span class="kw">in</span> self.EXCLUDED_PATHS:
+            <span class="kw">return</span> <span class="kw">await</span> call_next(request)
+
+        api_key = request.headers.get(<span class="str">"X-API-Key"</span>)
+        <span class="kw">if</span> not api_key or api_key not <span class="kw">in</span> VALID_API_KEYS:
+            <span class="kw">return</span> Response(
+                content=<span class="str">'{"detail": "Invalid API key"}'</span>,
+                status_code=<span class="fn">401</span>,
+                media_type=<span class="str">"application/json"</span>,
+            )
+        <span class="kw">return</span> <span class="kw">await</span> call_next(request)</div>
+
+  <p><strong>Middleware execution order</strong> matters. Middleware is applied in reverse order of how you add it — the <em>last</em> middleware you add is the <em>outermost</em> wrapper (runs first). Think of it like stacking decorators.</p>
+</section>
+
+<!-- Screen 4: Async, Performance & Streaming -->
+<section class="screen screen-alt" id="s4">
+  <h2>⚡ Async, Performance <span class="accent">& Streaming</span></h2>
+
+  <h3>async def vs def — When to Use Each</h3>
+  <p>This is one of the most commonly misunderstood topics in FastAPI, and interviewers love it.</p>
+
+  <div class="code-block"><span class="cm"># ✅ Use async def for I/O-bound operations</span>
+<span class="cm">@app.get("/users/{user_id}")</span>
+<span class="kw">async def</span> <span class="fn">get_user</span>(user_id: int):
+    <span class="cm"># awaiting an async database call — non-blocking</span>
+    user = <span class="kw">await</span> db.fetch_one(<span class="str">"SELECT * FROM users WHERE id=$1"</span>, user_id)
+    <span class="kw">return</span> user
+
+
+<span class="cm"># ✅ Use plain def for CPU-bound or blocking I/O</span>
+<span class="cm">@app.get("/report")</span>
+<span class="kw">def</span> <span class="fn">generate_report</span>():
+    <span class="cm"># This calls a synchronous library (e.g., pandas)</span>
+    <span class="cm"># FastAPI runs this in a thread pool automatically</span>
+    df = pd.read_sql(<span class="str">"SELECT * FROM sales"</span>, sync_engine)
+    <span class="kw">return</span> df.to_dict(orient=<span class="str">"records"</span>)</div>
+
+  <p><strong>The rules:</strong></p>
+  <table class="data-table">
+    <tr><th>Scenario</th><th>Use</th><th>Why</th></tr>
+    <tr><td>Async DB driver (asyncpg)</td><td><code>async def</code></td><td>Non-blocking I/O</td></tr>
+    <tr><td>Async HTTP client (httpx)</td><td><code>async def</code></td><td>Non-blocking I/O</td></tr>
+    <tr><td>Sync DB driver (psycopg2)</td><td><code>def</code></td><td>FastAPI threads it</td></tr>
+    <tr><td>CPU-heavy (pandas, ML)</td><td><code>def</code></td><td>FastAPI threads it</td></tr>
+    <tr><td>Mixed sync + async</td><td><code>def</code></td><td>Don't block the loop</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"If I define an endpoint with <code>def</code>, FastAPI doesn't block the event loop — it runs the function in an external threadpool. If I use <code>async def</code>, I <em>must</em> use <code>await</code> for all I/O, otherwise I'll block the entire event loop and kill throughput for all concurrent requests." This answer shows you understand the async model deeply.</p>
+  </div>
+
+  <h3>Connection Pooling with asyncpg</h3>
+  <p>For Postgres, <code>asyncpg</code> is the gold standard async driver. Pair it with SQLAlchemy's async engine for connection pooling:</p>
+
+  <div class="code-block"><span class="kw">from</span> sqlalchemy.ext.asyncio <span class="kw">import</span> (
+    create_async_engine,
+    async_sessionmaker,
+    AsyncSession,
+)
+
+engine = create_async_engine(
+    <span class="str">"postgresql+asyncpg://user:pass@localhost/mydb"</span>,
+    pool_size=<span class="fn">20</span>,         <span class="cm"># persistent connections</span>
+    max_overflow=<span class="fn">10</span>,      <span class="cm"># burst connections</span>
+    pool_timeout=<span class="fn">30</span>,      <span class="cm"># seconds to wait for a connection</span>
+    pool_recycle=<span class="fn">1800</span>,    <span class="cm"># recycle connections every 30 min</span>
+    echo=False,           <span class="cm"># set True for SQL logging</span>
+)
+
+async_session_maker = async_sessionmaker(
+    engine, class_=AsyncSession, expire_on_commit=False
+)</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p><code>pool_size=20</code> means 20 persistent connections. <code>max_overflow=10</code> means up to 30 total under load. If you have 4 Uvicorn workers, that's 120 connections to your database. Size your pool based on your DB's <code>max_connections</code> setting divided by the number of app instances.</p>
+  </div>
+
+  <h3>Background Tasks</h3>
+  <p>For fire-and-forget work (sending emails, logging analytics, cache warming), use <code>BackgroundTasks</code>:</p>
+
+  <div class="code-block"><span class="kw">from</span> fastapi <span class="kw">import</span> BackgroundTasks
+
+
+<span class="kw">async def</span> <span class="fn">send_welcome_email</span>(email: str, name: str) -> None:
+    <span class="str">"""Runs AFTER the response is sent to the client."""</span>
+    <span class="kw">async</span> with httpx.AsyncClient() <span class="kw">as</span> client:
+        <span class="kw">await</span> client.post(
+            <span class="str">"https://email-service.internal/send"</span>,
+            json={
+                <span class="str">"to"</span>: email,
+                <span class="str">"template"</span>: <span class="str">"welcome"</span>,
+                <span class="str">"vars"</span>: {<span class="str">"name"</span>: name},
+            },
+        )
+
+
+<span class="cm">@app.post("/users", status_code=201)</span>
+<span class="kw">async def</span> <span class="fn">create_user</span>(
+    user: UserCreate,
+    background_tasks: BackgroundTasks,
+    db: DBSession,
+):
+    new_user = <span class="kw">await</span> db.create_user(user)
+    <span class="cm"># This runs after the 201 response is already sent</span>
+    background_tasks.add_task(
+        send_welcome_email, new_user.email, new_user.name
+    )
+    <span class="kw">return</span> new_user</div>
+
+  <p>The client gets their <code>201 Created</code> immediately. The email sends in the background. If you need robust job queues with retries and persistence, graduate to <strong>Celery</strong> or <strong>ARQ</strong>.</p>
+
+  <h3>File Uploads and Form Data</h3>
+  <div class="code-block"><span class="kw">from</span> fastapi <span class="kw">import</span> File, UploadFile, Form
+
+
+<span class="cm">@app.post("/upload")</span>
+<span class="kw">async def</span> <span class="fn">upload_file</span>(
+    file: UploadFile = File(..., description=<span class="str">"The file to upload"</span>),
+    category: str = Form(..., description=<span class="str">"File category"</span>),
+):
+    <span class="cm"># UploadFile is async-friendly and spools large files to disk</span>
+    contents = <span class="kw">await</span> file.read()
+    size_mb = len(contents) / (<span class="fn">1024</span> * <span class="fn">1024</span>)
+
+    <span class="kw">if</span> size_mb > <span class="fn">50</span>:
+        raise HTTPException(
+            status_code=<span class="fn">413</span>,
+            detail=<span class="str">"File too large. Max 50MB."</span>,
+        )
+
+    <span class="cm"># Save to object storage, database, etc.</span>
+    path = f<span class="str">"/storage/{category}/{file.filename}"</span>
+    <span class="kw">async</span> with aiofiles.open(path, <span class="str">"wb"</span>) <span class="kw">as</span> f:
+        <span class="kw">await</span> f.write(contents)
+
+    <span class="kw">return</span> {
+        <span class="str">"filename"</span>: file.filename,
+        <span class="str">"content_type"</span>: file.content_type,
+        <span class="str">"size_mb"</span>: round(size_mb, <span class="fn">2</span>),
+    }</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p><code>UploadFile</code> is better than <code>bytes</code> for file uploads. <code>bytes</code> loads the entire file into memory at once. <code>UploadFile</code> uses a <code>SpooledTemporaryFile</code> that spills to disk when the file exceeds a threshold (default 1MB). For large files, you can read in chunks with <code>await file.read(chunk_size)</code>.</p>
+  </div>
+
+  <h3>StreamingResponse for LLM Token Output</h3>
+  <p>This is increasingly common in modern backends — streaming tokens from an LLM to the client as they're generated:</p>
+
+  <div class="code-block"><span class="kw">from</span> fastapi.responses <span class="kw">import</span> StreamingResponse
+<span class="kw">import</span> asyncio
+
+
+<span class="kw">async def</span> <span class="fn">stream_llm_response</span>(prompt: str):
+    <span class="str">"""Simulate an LLM generating tokens one at a time."""</span>
+    <span class="cm"># In production, this would call OpenAI, Bedrock, or</span>
+    <span class="cm"># an internal LLM Gateway endpoint</span>
+    tokens = f<span class="str">"The answer to '{prompt}' is a thoughtful response."</span>.split()
+    <span class="kw">for</span> token <span class="kw">in</span> tokens:
+        <span class="kw">yield</span> f<span class="str">"data: {token}\n\n"</span>  <span class="cm"># SSE format</span>
+        <span class="kw">await</span> asyncio.sleep(<span class="fn">0.05</span>)   <span class="cm"># simulate token generation delay</span>
+    <span class="kw">yield</span> <span class="str">"data: [DONE]\n\n"</span>
+
+
+<span class="cm">@app.post("/chat/stream")</span>
+<span class="kw">async def</span> <span class="fn">chat_stream</span>(prompt: str):
+    <span class="kw">return</span> StreamingResponse(
+        stream_llm_response(prompt),
+        media_type=<span class="str">"text/event-stream"</span>,
+        headers={
+            <span class="str">"Cache-Control"</span>: <span class="str">"no-cache"</span>,
+            <span class="str">"Connection"</span>: <span class="str">"keep-alive"</span>,
+            <span class="str">"X-Accel-Buffering"</span>: <span class="str">"no"</span>,  <span class="cm"># disable nginx buffering</span>
+        },
+    )</div>
+
+  <p>The client consumes this with <code>EventSource</code> or <code>fetch</code> with a readable stream. Each token arrives as a Server-Sent Event (SSE). The <code>X-Accel-Buffering: no</code> header is critical if you're behind Nginx — without it, Nginx buffers the entire response and defeats the purpose of streaming.</p>
+
+  <h3>WebSockets</h3>
+  <p>For true bidirectional real-time communication (chat, live dashboards, collaborative editing):</p>
+
+  <div class="code-block"><span class="kw">from</span> fastapi <span class="kw">import</span> WebSocket, WebSocketDisconnect
+
+
+<span class="kw">class</span> <span class="fn">ConnectionManager</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.active_connections: list[WebSocket] = []
+
+    <span class="kw">async def</span> <span class="fn">connect</span>(self, websocket: WebSocket):
+        <span class="kw">await</span> websocket.accept()
+        self.active_connections.append(websocket)
+
+    <span class="kw">def</span> <span class="fn">disconnect</span>(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    <span class="kw">async def</span> <span class="fn">broadcast</span>(self, message: str):
+        <span class="kw">for</span> connection <span class="kw">in</span> self.active_connections:
+            <span class="kw">await</span> connection.send_text(message)
+
+
+manager = ConnectionManager()
+
+
+<span class="cm">@app.websocket("/ws/chat/{room_id}")</span>
+<span class="kw">async def</span> <span class="fn">websocket_endpoint</span>(
+    websocket: WebSocket,
+    room_id: str,
+):
+    <span class="kw">await</span> manager.connect(websocket)
+    try:
+        while True:
+            data = <span class="kw">await</span> websocket.receive_text()
+            <span class="kw">await</span> manager.broadcast(
+                f<span class="str">"Room {room_id}: {data}"</span>
+            )
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+        <span class="kw">await</span> manager.broadcast(<span class="str">"A user left the chat"</span>)</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>Know when to use WebSockets vs SSE. <strong>SSE</strong> is simpler (server → client only, auto-reconnect, works over HTTP/2) and is perfect for LLM streaming, live feeds, and notifications. <strong>WebSockets</strong> are bidirectional (client ↔ server) and are needed for chat, gaming, and collaborative editing. Most interviewers appreciate when you know the right tool for the right job.</p>
+  </div>
+
+  <h3>Lifespan Events</h3>
+  <p>The modern way to handle startup/shutdown logic (replacing the deprecated <code>@app.on_event</code> decorators):</p>
+
+  <div class="code-block"><span class="kw">from</span> contextlib <span class="kw">import</span> asynccontextmanager
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+
+
+<span class="cm">@asynccontextmanager</span>
+<span class="kw">async def</span> <span class="fn">lifespan</span>(app: FastAPI):
+    <span class="cm"># --- STARTUP ---</span>
+    print(<span class="str">"🚀 Starting up..."</span>)
+    app.state.db_engine = create_async_engine(DATABASE_URL)
+    app.state.redis = <span class="kw">await</span> aioredis.from_url(REDIS_URL)
+    app.state.http_client = httpx.AsyncClient()
+
+    <span class="kw">yield</span>  <span class="cm"># &lt;-- app runs here</span>
+
+    <span class="cm"># --- SHUTDOWN ---</span>
+    print(<span class="str">"🛑 Shutting down..."</span>)
+    <span class="kw">await</span> app.state.http_client.aclose()
+    <span class="kw">await</span> app.state.redis.close()
+    <span class="kw">await</span> app.state.db_engine.dispose()
+
+
+app = FastAPI(lifespan=lifespan)</div>
+
+  <p>This is a context manager pattern. Everything before <code>yield</code> runs at startup. Everything after runs at shutdown. Resources like database engines, Redis connections, and HTTP clients are created once and shared across all requests via <code>app.state</code>.</p>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>The <code>lifespan</code> pattern is better than <code>on_event("startup")</code> / <code>on_event("shutdown")</code> for two reasons: (1) it's a single function, so you can't accidentally forget the shutdown handler, and (2) variables created before <code>yield</code> are naturally in scope after <code>yield</code> for cleanup. The old decorators are deprecated as of FastAPI 0.109.</p>
+  </div>
+</section>
+
+<!-- Screen 5: Authentication & Security -->
+<section class="screen" id="s5">
+  <h2>🔐 Authentication <span class="accent">& Security</span></h2>
+
+  <h3>OAuth2 with JWT — The Complete Flow</h3>
+  <p>This is the single most commonly asked FastAPI interview topic. Let's build a complete JWT auth system.</p>
+
+  <h3>Step 1: Dependencies and Configuration</h3>
+  <div class="code-block"><span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta, timezone
+<span class="kw">from</span> typing <span class="kw">import</span> Annotated
+
+<span class="kw">import</span> jwt
+<span class="kw">from</span> fastapi <span class="kw">import</span> Depends, FastAPI, HTTPException, status
+<span class="kw">from</span> fastapi.security <span class="kw">import</span> OAuth2PasswordBearer, OAuth2PasswordRequestForm
+<span class="kw">from</span> passlib.context <span class="kw">import</span> CryptContext
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+
+<span class="cm"># Configuration — in production, load from environment variables</span>
+SECRET_KEY = <span class="str">"your-256-bit-secret"</span>  <span class="cm"># os.environ["JWT_SECRET"]</span>
+ALGORITHM = <span class="str">"HS256"</span>
+ACCESS_TOKEN_EXPIRE_MINUTES = <span class="fn">30</span>
+
+pwd_context = CryptContext(schemes=[<span class="str">"bcrypt"</span>], deprecated=<span class="str">"auto"</span>)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=<span class="str">"/auth/token"</span>)
+
+app = FastAPI()</div>
+
+  <h3>Step 2: Models</h3>
+  <div class="code-block"><span class="kw">class</span> <span class="fn">Token</span>(BaseModel):
+    access_token: str
+    token_type: str = <span class="str">"bearer"</span>
+
+
+<span class="kw">class</span> <span class="fn">TokenPayload</span>(BaseModel):
+    sub: str          <span class="cm"># subject (user ID or username)</span>
+    exp: datetime     <span class="cm"># expiration</span>
+    iat: datetime     <span class="cm"># issued at</span>
+
+
+<span class="kw">class</span> <span class="fn">UserInDB</span>(BaseModel):
+    username: str
+    hashed_password: str
+    is_active: bool = True
+    is_admin: bool = False</div>
+
+  <h3>Step 3: Token Creation and Validation</h3>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">create_access_token</span>(
+    subject: str,
+    expires_delta: timedelta | None = None,
+) -> str:
+    now = datetime.now(timezone.utc)
+    expire = now + (expires_delta or timedelta(minutes=<span class="fn">15</span>))
+    payload = {
+        <span class="str">"sub"</span>: subject,
+        <span class="str">"exp"</span>: expire,
+        <span class="str">"iat"</span>: now,
+    }
+    <span class="kw">return</span> jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+
+<span class="kw">def</span> <span class="fn">verify_password</span>(plain: str, hashed: str) -> bool:
+    <span class="kw">return</span> pwd_context.verify(plain, hashed)
+
+
+<span class="kw">def</span> <span class="fn">hash_password</span>(password: str) -> str:
+    <span class="kw">return</span> pwd_context.hash(password)</div>
+
+  <h3>Step 4: The Auth Dependency</h3>
+  <div class="code-block"><span class="kw">async def</span> <span class="fn">get_current_user</span>(
+    token: Annotated[str, Depends(oauth2_scheme)],
+) -> UserInDB:
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=<span class="str">"Could not validate credentials"</span>,
+        headers={<span class="str">"WWW-Authenticate"</span>: <span class="str">"Bearer"</span>},
+    )
+    try:
+        payload = jwt.decode(
+            token, SECRET_KEY, algorithms=[ALGORITHM]
+        )
+        username: str | None = payload.get(<span class="str">"sub"</span>)
+        <span class="kw">if</span> username <span class="kw">is</span> None:
+            raise credentials_exception
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=<span class="str">"Token has expired"</span>,
+            headers={<span class="str">"WWW-Authenticate"</span>: <span class="str">"Bearer"</span>},
+        )
+    except jwt.InvalidTokenError:
+        raise credentials_exception
+
+    user = <span class="kw">await</span> get_user_from_db(username)
+    <span class="kw">if</span> user <span class="kw">is</span> None:
+        raise credentials_exception
+    <span class="kw">if</span> not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=<span class="str">"Inactive user"</span>,
+        )
+    <span class="kw">return</span> user
+
+
+CurrentUser = Annotated[UserInDB, Depends(get_current_user)]</div>
+
+  <h3>Step 5: The Login Endpoint</h3>
+  <div class="code-block"><span class="cm">@app.post("/auth/token", response_model=Token)</span>
+<span class="kw">async def</span> <span class="fn">login</span>(
+    form_data: Annotated[
+        OAuth2PasswordRequestForm, Depends()
+    ],
+):
+    <span class="str">"""OAuth2 compatible token login."""</span>
+    user = <span class="kw">await</span> get_user_from_db(form_data.username)
+    <span class="kw">if</span> not user or not verify_password(
+        form_data.password, user.hashed_password
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=<span class="str">"Incorrect username or password"</span>,
+            headers={<span class="str">"WWW-Authenticate"</span>: <span class="str">"Bearer"</span>},
+        )
+    access_token = create_access_token(
+        subject=user.username,
+        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
+    )
+    <span class="kw">return</span> Token(access_token=access_token)</div>
+
+  <h3>Step 6: Protected Routes</h3>
+  <div class="code-block"><span class="cm">@app.get("/users/me")</span>
+<span class="kw">async def</span> <span class="fn">read_users_me</span>(current_user: CurrentUser):
+    <span class="kw">return</span> current_user
+
+
+<span class="cm">@app.get("/admin/dashboard")</span>
+<span class="kw">async def</span> <span class="fn">admin_dashboard</span>(
+    current_user: CurrentUser,
+):
+    <span class="kw">if</span> not current_user.is_admin:
+        raise HTTPException(status_code=<span class="fn">403</span>, detail=<span class="str">"Admin only"</span>)
+    <span class="kw">return</span> {<span class="str">"message"</span>: <span class="str">"Welcome, admin"</span>}</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>Always include the <code>WWW-Authenticate: Bearer</code> header in 401 responses. It's required by the OAuth2 spec (RFC 6750) and tells the client <em>how</em> to authenticate. Forgetting this header is a common mistake that interviewers notice.</p>
+  </div>
+
+  <h3>API Key Authentication</h3>
+  <p>For service-to-service communication where OAuth2 is overkill:</p>
+
+  <div class="code-block"><span class="kw">from</span> fastapi.security <span class="kw">import</span> APIKeyHeader
+
+api_key_header = APIKeyHeader(name=<span class="str">"X-API-Key"</span>)
+
+<span class="cm"># In production, store hashed keys in a database</span>
+VALID_API_KEYS = {
+    <span class="str">"sk_live_abc123"</span>: <span class="str">"service-a"</span>,
+    <span class="str">"sk_live_def456"</span>: <span class="str">"service-b"</span>,
+}
+
+
+<span class="kw">async def</span> <span class="fn">verify_api_key</span>(
+    api_key: Annotated[str, Depends(api_key_header)],
+) -> str:
+    service_name = VALID_API_KEYS.get(api_key)
+    <span class="kw">if</span> not service_name:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=<span class="str">"Invalid API key"</span>,
+        )
+    <span class="kw">return</span> service_name
+
+
+<span class="cm">@app.get("/internal/data")</span>
+<span class="kw">async def</span> <span class="fn">get_internal_data</span>(
+    service: Annotated[str, Depends(verify_api_key)],
+):
+    <span class="kw">return</span> {<span class="str">"caller"</span>: service, <span class="str">"data"</span>: <span class="str">"sensitive stuff"</span>}</div>
+
+  <h3>Rate Limiting with slowapi</h3>
+  <p>Protect your endpoints from abuse:</p>
+
+  <div class="code-block"><span class="kw">from</span> slowapi <span class="kw">import</span> Limiter
+<span class="kw">from</span> slowapi.util <span class="kw">import</span> get_remote_address
+<span class="kw">from</span> slowapi.errors <span class="kw">import</span> RateLimitExceeded
+
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+
+
+<span class="cm">@app.exception_handler(RateLimitExceeded)</span>
+<span class="kw">async def</span> <span class="fn">rate_limit_handler</span>(request, exc):
+    <span class="kw">return</span> JSONResponse(
+        status_code=<span class="fn">429</span>,
+        content={
+            <span class="str">"detail"</span>: <span class="str">"Rate limit exceeded. Try again later."</span>
+        },
+    )
+
+
+<span class="cm">@app.post("/auth/token")</span>
+<span class="cm">@limiter.limit("5/minute")</span>  <span class="cm"># max 5 login attempts per minute</span>
+<span class="kw">async def</span> <span class="fn">login</span>(request: Request, form_data: ...):
+    ...
+
+
+<span class="cm">@app.get("/api/search")</span>
+<span class="cm">@limiter.limit("30/minute")</span>
+<span class="kw">async def</span> <span class="fn">search</span>(request: Request, q: str):
+    ...</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>Rate limiting the <code>/auth/token</code> endpoint is <strong>critical</strong>. Without it, an attacker can brute-force passwords. A good default is 5 attempts per minute per IP. For general API endpoints, 30-60 requests per minute per IP is reasonable for most applications.</p>
+  </div>
+
+  <h3>HTTPS and Security Headers</h3>
+  <p>In production, always run behind a reverse proxy (Nginx, AWS ALB) that terminates TLS. Add security headers:</p>
+
+  <div class="code-block"><span class="kw">from</span> starlette.middleware.trustedhost <span class="kw">import</span> TrustedHostMiddleware
+
+<span class="cm"># Only allow requests to your actual domain</span>
+app.add_middleware(
+    TrustedHostMiddleware,
+    allowed_hosts=[<span class="str">"api.yourapp.walmart.com"</span>, <span class="str">"localhost"</span>],
+)
+
+
+<span class="cm">@app.middleware("http")</span>
+<span class="kw">async def</span> <span class="fn">add_security_headers</span>(request: Request, call_next):
+    response = <span class="kw">await</span> call_next(request)
+    response.headers[<span class="str">"X-Content-Type-Options"</span>] = <span class="str">"nosniff"</span>
+    response.headers[<span class="str">"X-Frame-Options"</span>] = <span class="str">"DENY"</span>
+    response.headers[<span class="str">"X-XSS-Protection"</span>] = <span class="str">"1; mode=block"</span>
+    response.headers[<span class="str">"Strict-Transport-Security"</span>] = (
+        <span class="str">"max-age=31536000; includeSubDomains"</span>
+    )
+    response.headers[<span class="str">"Referrer-Policy"</span>] = <span class="str">"strict-origin-when-cross-origin"</span>
+    <span class="kw">return</span> response</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>When asked about FastAPI security, go beyond just JWT. Mention: (1) HTTPS everywhere, (2) CORS properly configured, (3) rate limiting on auth endpoints, (4) security headers, (5) input validation via Pydantic, (6) parameterized queries for SQL injection prevention. Showing breadth here signals production experience.</p>
+  </div>
+</section>
+
+<!-- Screen 6: Quiz Time -->
+<section class="screen screen-alt" id="s6">
+  <h2>🧪 Quiz: <span class="accent">Test Yourself</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: What happens when you define a FastAPI endpoint with <code>def</code> instead of <code>async def</code>?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) The endpoint will not work and FastAPI raises a startup error.</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) FastAPI runs it in an external threadpool so it doesn't block the event loop.</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) FastAPI automatically converts it to an async function using asyncio.run().</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) The endpoint runs on the main thread, blocking all other requests until it completes.</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: In FastAPI's dependency injection system, what does <code>Depends(get_db, use_cache=False)</code> do?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) It disables caching globally for all dependencies in the application.</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) It ensures get_db is called fresh for this specific injection point, even if another dependency in the same request already resolved it.</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) It prevents the dependency result from being stored in Redis.</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) It makes the dependency return None if it was already called.</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: Which Pydantic v2 feature replaces the old <code>class Config: orm_mode = True</code>?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">A) model_config = {"from_attributes": True}</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) model_config = {"orm_mode": True}</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) @model_validator(mode="orm")</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) class Settings(BaseSettings): orm_mode = True</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: You need to send data from the server to the client as an LLM generates tokens. Which approach is most appropriate?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) WebSocket connection with bidirectional messaging.</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) StreamingResponse with text/event-stream media type (Server-Sent Events).</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) Long polling with repeated GET requests every 100ms.</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Return the complete response after all tokens are generated.</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: What is the correct way to handle application startup and shutdown in modern FastAPI (0.109+)?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Use @app.on_event("startup") and @app.on_event("shutdown") decorators.</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">B) Override the __init__ method of the FastAPI class.</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">C) Use the lifespan async context manager parameter when creating the FastAPI app.</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Create a startup.py module that runs before uvicorn starts.</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<!-- Screen 7: Wrap-Up Cheat Sheet -->
+<section class="screen" id="s7">
+  <h2>🏁 Your FastAPI <span class="accent">Interview Cheat Sheet</span></h2>
+  <p>Here's what to remember walking into that interview:</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>1️⃣ FastAPI = Starlette + Pydantic</h4>
+      <p>It's async-first, type-safe, and auto-documents your API.</p>
+    </div>
+    <div class="card blue">
+      <h4>2️⃣ Pydantic v2 Models</h4>
+      <p>field_validator for single fields, model_validator for cross-field, model_config for settings.</p>
+    </div>
+    <div class="card green">
+      <h4>3️⃣ Dependency Injection</h4>
+      <p>Depends() is the killer feature. Yield deps handle lifecycle. Annotated types are modern.</p>
+    </div>
+    <div class="card purple">
+      <h4>4️⃣ async def vs def</h4>
+      <p>async def for I/O-bound, def for CPU-bound. Never call blocking code inside async def.</p>
+    </div>
+    <div class="card">
+      <h4>5️⃣ Lifespan Events</h4>
+      <p>Replace on_event. Use them for DB engines, Redis connections, and HTTP clients.</p>
+    </div>
+    <div class="card blue">
+      <h4>6️⃣ JWT Auth Pattern</h4>
+      <p>OAuth2PasswordBearer → decode token → return user → inject as dependency.</p>
+    </div>
+    <div class="card green">
+      <h4>7️⃣ Security Breadth</h4>
+      <p>CORS, rate limiting, security headers, input validation, parameterized queries.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Good luck!</div>
+    <p>You've got this. 🐍 Remember: FastAPI interviews test whether you understand the <em>why</em> behind each pattern, not just the <em>how</em>. Show that you think about production concerns — performance, security, testability — and you'll stand out.</p>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../index.html">← Course Home</a>
+  <a href="../module-02-apis-microservices/index.html">Next: APIs & Microservices →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Chat animation
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above — the answer focuses on FastAPI\'s core behavior.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

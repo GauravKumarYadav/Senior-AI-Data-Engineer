@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 2: APIs & Microservices | Backend Services</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#0284C7;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#F0F7FF,#E8F2FF);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#F0F7FF}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🌐 Backend Services</a><div class="nav-dots"><a href="../module-01-fastapi/" class="nav-dot"></a><a href="../module-02-apis-microservices/" class="nav-dot active"></a><a href="../module-03-containers-deployment/" class="nav-dot"></a><a href="../module-04-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: REST API Design Principles -->
+<section class="screen" id="s1">
+  <h2>🌐 REST API <span class="accent">Design Principles</span></h2>
+
+  <h3>What REST Actually Means</h3>
+  <p>REST (Representational State Transfer) isn't a protocol — it's an <strong>architectural style</strong> defined by Roy Fielding in his 2000 doctoral dissertation. When interviewers ask about REST, they want to know that you understand the constraints: client-server separation, statelessness, cacheability, a uniform interface, and layered system architecture.</p>
+  <p>In practice, most "REST APIs" are really "HTTP APIs inspired by REST." True REST compliance (including hypermedia/HATEOAS) is rare in the wild. That's okay — what matters is that you can design clean, predictable, resource-oriented APIs.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>If asked "Is your API truly RESTful?", a strong answer is: "We follow REST conventions for resource naming, HTTP verbs, and status codes, but we don't implement full HATEOAS. Most production APIs are pragmatically RESTful rather than academically pure."</p>
+  </div>
+
+  <h3>Resource Naming Conventions</h3>
+  <p>Resources are the <strong>nouns</strong> of your API. They represent entities — users, orders, products. Every URL should describe <em>what</em> you're operating on, never <em>how</em> you're operating on it.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📝 Rule 1 &amp; 2</h4>
+      <p>Use <strong>nouns, not verbs</strong> — the HTTP method IS the verb. Use <strong>plural nouns</strong> for collections.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔤 Rule 3</h4>
+      <p>Use <strong>lowercase with hyphens</strong> for multi-word resources (<code>line-items</code>, not <code>lineItems</code>).</p>
+    </div>
+    <div class="card green">
+      <h4>📂 Rule 4</h4>
+      <p><strong>Nest resources</strong> to show relationships, but keep nesting shallow (max 2 levels deep).</p>
+    </div>
+    <div class="card purple">
+      <h4>🔍 Rule 5</h4>
+      <p>Use <strong>path parameters</strong> for identity, <strong>query parameters</strong> for filtering.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm">✅ Good resource URLs:</span>
+
+GET    /api/v1/users                       <span class="cm"># List all users</span>
+GET    /api/v1/users/<span class="fn">42</span>                     <span class="cm"># Get user 42</span>
+GET    /api/v1/users/<span class="fn">42</span>/orders              <span class="cm"># List orders for user 42</span>
+GET    /api/v1/users/<span class="fn">42</span>/orders/<span class="fn">7</span>            <span class="cm"># Get order 7 for user 42</span>
+POST   /api/v1/users                       <span class="cm"># Create a new user</span>
+PUT    /api/v1/users/<span class="fn">42</span>                     <span class="cm"># Replace user 42</span>
+PATCH  /api/v1/users/<span class="fn">42</span>                     <span class="cm"># Partially update user 42</span>
+DELETE /api/v1/users/<span class="fn">42</span>                     <span class="cm"># Delete user 42</span>
+
+<span class="cm">❌ Bad URLs (verb-based, inconsistent):</span>
+
+GET    /api/v1/getUser/<span class="fn">42</span>
+POST   /api/v1/createUser
+POST   /api/v1/user/<span class="fn">42</span>/deleteOrder/<span class="fn">7</span>
+GET    /api/v1/Users/<span class="fn">42</span>/OrderList</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>When nesting goes beyond two levels (e.g., <code>/users/42/orders/7/items/3/reviews</code>), it's a signal to promote a sub-resource to a top-level resource. You can always use <code>/api/v1/order-items/3</code> with a query param <code>?order_id=7</code> instead of deep nesting.</p>
+  </div>
+
+  <h3>HTTP Methods Mapped to CRUD</h3>
+  <p>Each HTTP method has specific semantics. Using them correctly makes your API predictable to any developer who's worked with HTTP before.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>GET → Read</h4>
+      <p>No request body. Returns <strong>200</strong> + resource(s).</p>
+    </div>
+    <div class="card blue">
+      <h4>POST → Create</h4>
+      <p>Has request body. Returns <strong>201</strong> + created resource.</p>
+    </div>
+    <div class="card green">
+      <h4>PUT → Full Replace</h4>
+      <p>Has request body. Returns <strong>200</strong> + updated resource. Omitted fields become null.</p>
+    </div>
+    <div class="card purple">
+      <h4>PATCH → Partial Update</h4>
+      <p>Has request body. Returns <strong>200</strong>. Only sent fields change.</p>
+    </div>
+    <div class="card">
+      <h4>DELETE → Delete</h4>
+      <p>Rarely has a body. Returns <strong>204</strong> (no content).</p>
+    </div>
+  </div>
+
+  <p><strong>PUT vs PATCH — the distinction that trips people up:</strong></p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>PUT — Full Replace</h4>
+      <ul>
+        <li>Replaces the <strong>entire</strong> resource</li>
+        <li>Omitted fields get set to null/default</li>
+        <li>Think "overwrite"</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>PATCH — Partial Update</h4>
+      <ul>
+        <li>Updates <strong>only</strong> the fields you send</li>
+        <li>Everything else stays as-is</li>
+        <li>Think "merge"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm">// PUT /api/v1/users/42  — full replacement</span>
+<span class="cm">// If you omit "phone", it's gone.</span>
+{
+  <span class="str">"name"</span>: <span class="str">"Alice Chen"</span>,
+  <span class="str">"email"</span>: <span class="str">"alice@example.com"</span>,
+  <span class="str">"phone"</span>: <span class="str">"+1-555-0100"</span>
+}
+
+<span class="cm">// PATCH /api/v1/users/42  — partial update</span>
+<span class="cm">// Only email changes; name and phone are untouched.</span>
+{
+  <span class="str">"email"</span>: <span class="str">"alice.chen@newdomain.com"</span>
+}</div>
+
+  <h3>Status Codes: Your API's Vocabulary</h3>
+  <p>Status codes tell the client <em>what happened</em> without the client needing to parse the body.</p>
+
+  <h3>2xx — Success</h3>
+  <div class="card-grid">
+    <div class="card green">
+      <h4>200 OK</h4>
+      <p>General success (GET, PUT, PATCH).</p>
+    </div>
+    <div class="card green">
+      <h4>201 Created</h4>
+      <p>Resource created (POST); include <code>Location</code> header.</p>
+    </div>
+    <div class="card green">
+      <h4>204 No Content</h4>
+      <p>Success with no body (DELETE, some PUTs).</p>
+    </div>
+  </div>
+
+  <h3>4xx — Client Errors</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>400 Bad Request</h4>
+      <p>Malformed JSON, missing required fields.</p>
+    </div>
+    <div class="card blue">
+      <h4>401 Unauthorized</h4>
+      <p>No auth credentials / invalid token.</p>
+    </div>
+    <div class="card purple">
+      <h4>403 Forbidden</h4>
+      <p>Valid auth, but insufficient permissions.</p>
+    </div>
+    <div class="card">
+      <h4>404 Not Found</h4>
+      <p>Resource doesn't exist at this URI.</p>
+    </div>
+    <div class="card blue">
+      <h4>409 Conflict</h4>
+      <p>State conflict (duplicate email, version mismatch).</p>
+    </div>
+    <div class="card purple">
+      <h4>422 Unprocessable Entity</h4>
+      <p>Syntactically valid but semantically wrong (e.g., age = -5).</p>
+    </div>
+  </div>
+
+  <h3>5xx — Server Errors</h3>
+  <div class="card-grid">
+    <div class="card" style="border-top-color:var(--color-error)">
+      <h4>500 Internal Server Error</h4>
+      <p>Unhandled exception — something broke.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--color-error)">
+      <h4>502 Bad Gateway</h4>
+      <p>Upstream service returned an invalid response.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--color-error)">
+      <h4>503 Service Unavailable</h4>
+      <p>Server is overloaded or down for maintenance.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>A common interview question is "What's the difference between 401 and 403?" The answer: <strong>401 means "I don't know who you are"</strong> (authentication failure). <strong>403 means "I know who you are, but you can't do this"</strong> (authorization failure). A 401 should prompt re-authentication; a 403 means retrying with the same credentials won't help.</p>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>The debate between 400 and 422 is real. Use <strong>400</strong> when the request body can't even be parsed (malformed JSON, wrong content type). Use <strong>422</strong> when the body <em>parses</em> fine but fails business validation (email format is wrong, quantity is negative). FastAPI and Rails both prefer 422 for validation errors.</p>
+  </div>
+
+  <h3>Idempotency — Why It Matters</h3>
+  <p>An operation is <strong>idempotent</strong> if calling it once produces the same result as calling it N times. This is critical for reliability in distributed systems where network failures cause retries.</p>
+
+  <div class="card-grid">
+    <div class="card green">
+      <h4>✅ GET — Idempotent</h4>
+      <p>Reading data doesn't change it.</p>
+    </div>
+    <div class="card green">
+      <h4>✅ PUT — Idempotent</h4>
+      <p>Replacing with the same data = same result.</p>
+    </div>
+    <div class="card green">
+      <h4>✅ DELETE — Idempotent</h4>
+      <p>Deleting an already-deleted resource = still deleted.</p>
+    </div>
+    <div class="card">
+      <h4>⚠️ PATCH — Depends</h4>
+      <p><code>{"email": "new@x.com"}</code> is idempotent; <code>{"views": "+1"}</code> is not.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--color-error)">
+      <h4>❌ POST — Not Idempotent</h4>
+      <p>Creating a resource twice = two resources!</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Idempotent: Safe to retry on timeout</span>
+PUT /api/v1/users/<span class="fn">42</span>
+<span class="cm"># If the network drops after the server processes this,</span>
+<span class="cm"># retrying is safe — you'll get the same user state.</span>
+
+<span class="cm"># NOT idempotent: Dangerous to retry blindly</span>
+POST /api/v1/orders
+<span class="cm"># Retrying could create duplicate orders!</span>
+<span class="cm"># Solution: Use an idempotency key header.</span></div>
+
+  <h3>The Idempotency Key Pattern</h3>
+  <p>Making POST safe to retry — the server stores the key and returns the original response if the same key comes in again. Stripe popularized this pattern.</p>
+
+  <div class="code-block">POST /api/v1/orders
+Idempotency-Key: <span class="str">550e8400-e29b-41d4-a716-446655440000</span>
+Content-Type: application/json
+
+{
+  <span class="str">"product_id"</span>: <span class="fn">101</span>,
+  <span class="str">"quantity"</span>: <span class="fn">2</span>
+}</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>If asked "How do you prevent duplicate orders in a distributed system?", talk about idempotency keys. The server hashes the key, checks a fast store (Redis), and either processes the request or returns the cached response. This is a real-world pattern, not a textbook exercise.</p>
+  </div>
+</section>
+
+<!-- Screen 2: Pagination, Filtering & Versioning -->
+<section class="screen screen-alt" id="s2">
+  <h2>📄 Pagination, Filtering &amp; <span class="accent">Versioning</span></h2>
+
+  <h3>Pagination: Offset vs Cursor</h3>
+  <p>When a collection has thousands (or millions) of items, you can't return them all. Pagination is how you slice the data into manageable pages.</p>
+
+  <h3>Offset-Based Pagination</h3>
+  <p>The simplest approach: <code>?page=3&amp;page_size=20</code> or <code>?offset=40&amp;limit=20</code>.</p>
+
+  <div class="code-block">GET /api/v1/products?page=<span class="fn">3</span>&amp;page_size=<span class="fn">20</span></div>
+
+  <div class="code-block">{
+  <span class="str">"data"</span>: [ <span class="cm">/* 20 products */</span> ],
+  <span class="str">"meta"</span>: {
+    <span class="str">"page"</span>: <span class="fn">3</span>,
+    <span class="str">"page_size"</span>: <span class="fn">20</span>,
+    <span class="str">"total_count"</span>: <span class="fn">1542</span>,
+    <span class="str">"total_pages"</span>: <span class="fn">78</span>
+  }
+}</div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Offset Pros</h4>
+      <ul>
+        <li>Simple to implement (<code>SELECT ... LIMIT 20 OFFSET 40</code>)</li>
+        <li>Users can jump to any page directly</li>
+        <li>Easy to display "Page 3 of 78"</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Offset Cons</h4>
+      <ul>
+        <li>Performance degrades with large offsets (DB scans and discards rows)</li>
+        <li>Inconsistent results when data changes between requests</li>
+        <li>Expensive <code>COUNT(*)</code> for total count on large tables</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Cursor-Based Pagination</h3>
+  <p>Uses an opaque cursor (usually Base64-encoded) pointing to a position in the dataset. The client says "give me 20 items <em>after</em> this cursor."</p>
+
+  <div class="code-block">GET /api/v1/products?limit=<span class="fn">20</span>&amp;after=<span class="str">eyJpZCI6IDQyfQ==</span></div>
+
+  <div class="code-block">{
+  <span class="str">"data"</span>: [ <span class="cm">/* 20 products */</span> ],
+  <span class="str">"cursors"</span>: {
+    <span class="str">"after"</span>: <span class="str">"eyJpZCI6IDYyfQ=="</span>,
+    <span class="str">"has_next"</span>: <span class="fn">true</span>
+  }
+}</div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Cursor Pros</h4>
+      <ul>
+        <li>Consistent performance regardless of position (index-backed)</li>
+        <li>Stable results even when data changes</li>
+        <li>Perfect for real-time feeds (social timelines, activity logs)</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Cursor Cons</h4>
+      <ul>
+        <li>Can't jump to an arbitrary page</li>
+        <li>No total count without a separate query</li>
+        <li>Slightly more complex to implement</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Python Cursor Pagination Implementation</h3>
+  <div class="code-block"><span class="kw">import</span> base64
+<span class="kw">import</span> json
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, Query
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+
+app = FastAPI()
+
+
+<span class="kw">def</span> <span class="fn">encode_cursor</span>(data: dict) -> str:
+    <span class="str">"""Encode pagination state into an opaque cursor."""</span>
+    <span class="kw">return</span> base64.urlsafe_b64encode(
+        json.dumps(data).encode()
+    ).decode()
+
+
+<span class="kw">def</span> <span class="fn">decode_cursor</span>(cursor: str) -> dict:
+    <span class="str">"""Decode an opaque cursor back into pagination state."""</span>
+    <span class="kw">return</span> json.loads(
+        base64.urlsafe_b64decode(cursor.encode()).decode()
+    )
+
+
+@app.get(<span class="str">"/api/v1/products"</span>)
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">list_products</span>(
+    limit: int = Query(default=<span class="fn">20</span>, le=<span class="fn">100</span>),
+    after: str | None = Query(default=None),
+):
+    <span class="cm"># Decode cursor to get the last seen ID</span>
+    last_id = <span class="fn">0</span>
+    <span class="kw">if</span> after:
+        cursor_data = decode_cursor(after)
+        last_id = cursor_data[<span class="str">"id"</span>]
+
+    <span class="cm"># Query with cursor (index-friendly!)</span>
+    query = <span class="str">"""
+        SELECT id, name, price
+        FROM products
+        WHERE id > :last_id
+        ORDER BY id ASC
+        LIMIT :limit + 1
+    """</span>
+    <span class="cm"># Fetch limit + 1 to check if there's a next page</span>
+    rows = <span class="kw">await</span> db.fetch_all(query, {<span class="str">"last_id"</span>: last_id, <span class="str">"limit"</span>: limit})
+
+    has_next = len(rows) > limit
+    items = rows[:limit]  <span class="cm"># Trim the extra row</span>
+
+    next_cursor = None
+    <span class="kw">if</span> has_next and items:
+        next_cursor = encode_cursor({<span class="str">"id"</span>: items[-<span class="fn">1</span>][<span class="str">"id"</span>]})
+
+    <span class="kw">return</span> {
+        <span class="str">"data"</span>: items,
+        <span class="str">"cursors"</span>: {
+            <span class="str">"after"</span>: next_cursor,
+            <span class="str">"has_next"</span>: has_next,
+        },
+    }</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"When would you use offset vs cursor pagination?" Use <strong>offset</strong> for admin dashboards, back-office tools, and small datasets where jumping to a specific page matters. Use <strong>cursor</strong> for user-facing feeds, infinite scroll, real-time data, and any dataset where performance at scale matters. If you're paginating more than ~10K rows regularly, cursor wins.</p>
+  </div>
+
+  <h3>Filtering and Sorting via Query Parameters</h3>
+  <p>Clean filtering keeps your API flexible without creating dozens of endpoints.</p>
+
+  <div class="code-block"><span class="cm"># Filter by status AND sort by creation date (descending)</span>
+GET /api/v1/orders?status=active&amp;sort=-created_at
+
+<span class="cm"># Multiple filters</span>
+GET /api/v1/products?category=electronics&amp;min_price=<span class="fn">50</span>&amp;max_price=<span class="fn">200</span>&amp;in_stock=<span class="fn">true</span>
+
+<span class="cm"># Field selection (sparse fieldsets) — reduce payload size</span>
+GET /api/v1/users/<span class="fn">42</span>?fields=id,name,email</div>
+
+  <p><strong>Sorting conventions:</strong> <code>sort=created_at</code> → ascending (default). <code>sort=-created_at</code> → descending (prefix with <code>-</code>). <code>sort=status,-created_at</code> → multi-field sort.</p>
+
+  <div class="code-block"><span class="cm"># Date range filtering</span>
+GET /api/v1/orders?created_after=<span class="str">2025-01-01T00:00:00Z</span>&amp;created_before=<span class="str">2025-12-31T23:59:59Z</span></div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>Never expose raw SQL operators in query params (<code>?price__gt=50</code>). It leaks your implementation and opens injection risks. Instead, use semantic parameter names like <code>min_price</code>, <code>max_price</code>, <code>created_after</code>, <code>created_before</code>. They're self-documenting and safe.</p>
+  </div>
+
+  <h3>API Versioning Strategies</h3>
+  <p>APIs evolve. Breaking changes are inevitable. Versioning lets old clients keep working while new clients use new features.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔗 URL Path Versioning</h4>
+      <p><code>GET /api/v1/users/42</code> — Explicit, visible, easy to route &amp; cache. <strong>Most common.</strong> Used by Twitter, Stripe.</p>
+    </div>
+    <div class="card blue">
+      <h4>📨 Header Versioning</h4>
+      <p><code>Accept: application/vnd.myapi.v2+json</code> — Clean URLs; version via content negotiation. Harder to test. Used by GitHub.</p>
+    </div>
+    <div class="card green">
+      <h4>❓ Query Param Versioning</h4>
+      <p><code>GET /api/users/42?version=2</code> — Easy to switch for testing. Easy to forget. Used by some Google APIs.</p>
+    </div>
+  </div>
+
+  <p><strong>The pragmatic recommendation:</strong> URL path versioning (<code>/v1/</code>) is the industry default. It's explicit, discoverable, and works with every HTTP client, cache, and proxy.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"When do you introduce v2?" The answer isn't "when we add features." New fields and new endpoints are <strong>non-breaking</strong> — add them to v1. You only version when you make <strong>breaking changes</strong>: removing a field, changing a field's type, renaming an endpoint, or altering the response structure. The goal is to delay v2 as long as possible through additive, backward-compatible design.</p>
+  </div>
+
+  <h3>HATEOAS (Awareness Level)</h3>
+  <p>HATEOAS (Hypermedia As The Engine Of Application State) is the idea that API responses should include <strong>links</strong> telling the client what it can do next. It's the most debated REST constraint.</p>
+
+  <div class="code-block">{
+  <span class="str">"id"</span>: <span class="fn">42</span>,
+  <span class="str">"name"</span>: <span class="str">"Alice Chen"</span>,
+  <span class="str">"email"</span>: <span class="str">"alice@example.com"</span>,
+  <span class="str">"_links"</span>: {
+    <span class="str">"self"</span>: { <span class="str">"href"</span>: <span class="str">"/api/v1/users/42"</span> },
+    <span class="str">"orders"</span>: { <span class="str">"href"</span>: <span class="str">"/api/v1/users/42/orders"</span> },
+    <span class="str">"update"</span>: { <span class="str">"href"</span>: <span class="str">"/api/v1/users/42"</span>, <span class="str">"method"</span>: <span class="str">"PATCH"</span> },
+    <span class="str">"delete"</span>: { <span class="str">"href"</span>: <span class="str">"/api/v1/users/42"</span>, <span class="str">"method"</span>: <span class="str">"DELETE"</span> }
+  }
+}</div>
+
+  <p>In practice, very few APIs implement full HATEOAS. It adds complexity and increases payload size. But you should know what it is — it comes up in interviews as a "have you heard of this?" question.</p>
+</section>
+
+<!-- Screen 3: Error Handling & Documentation -->
+<section class="screen" id="s3">
+  <h2>⚠️ Error Handling &amp; <span class="accent">Documentation</span></h2>
+
+  <h3>Consistent Error Response Format</h3>
+  <p>Nothing frustrates API consumers more than inconsistent error responses. One endpoint returns <code>{"error": "not found"}</code>, another returns <code>{"message": "Not Found", "code": 404}</code>, and a third returns a raw string. Don't be that API.</p>
+
+  <h3>RFC 7807 — Problem Details for HTTP APIs</h3>
+  <p>RFC 7807 (now superseded by RFC 9457) defines a standard error format — the gold standard for API error responses.</p>
+
+  <div class="code-block">{
+  <span class="str">"type"</span>: <span class="str">"https://api.example.com/errors/validation-failed"</span>,
+  <span class="str">"title"</span>: <span class="str">"Validation Failed"</span>,
+  <span class="str">"status"</span>: <span class="fn">422</span>,
+  <span class="str">"detail"</span>: <span class="str">"The 'email' field must be a valid email address."</span>,
+  <span class="str">"instance"</span>: <span class="str">"/api/v1/users"</span>,
+  <span class="str">"errors"</span>: [
+    {
+      <span class="str">"field"</span>: <span class="str">"email"</span>,
+      <span class="str">"message"</span>: <span class="str">"Must be a valid email address"</span>,
+      <span class="str">"value"</span>: <span class="str">"not-an-email"</span>
+    },
+    {
+      <span class="str">"field"</span>: <span class="str">"age"</span>,
+      <span class="str">"message"</span>: <span class="str">"Must be a positive integer"</span>,
+      <span class="str">"value"</span>: <span class="fn">-5</span>
+    }
+  ]
+}</div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4><code>type</code> (required)</h4>
+      <p>A URI that identifies the error type (can be a docs link).</p>
+    </div>
+    <div class="card blue">
+      <h4><code>title</code> (required)</h4>
+      <p>A short, human-readable summary.</p>
+    </div>
+    <div class="card green">
+      <h4><code>status</code> (required)</h4>
+      <p>The HTTP status code (mirrored in body for convenience).</p>
+    </div>
+    <div class="card purple">
+      <h4><code>detail</code> (required)</h4>
+      <p>A human-readable explanation specific to this occurrence.</p>
+    </div>
+    <div class="card">
+      <h4><code>instance</code> (optional)</h4>
+      <p>The URI of the request that caused the error.</p>
+    </div>
+    <div class="card blue">
+      <h4><code>errors</code> (extension)</h4>
+      <p>Array of field-level validation errors.</p>
+    </div>
+  </div>
+
+  <h3>FastAPI Error Handling Implementation</h3>
+  <div class="code-block"><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, Request
+<span class="kw">from</span> fastapi.responses <span class="kw">import</span> JSONResponse
+<span class="kw">from</span> fastapi.exceptions <span class="kw">import</span> RequestValidationError
+
+app = FastAPI()
+
+
+<span class="kw">class</span> <span class="fn">APIError</span>(Exception):
+    <span class="str">"""Base exception for all API errors."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(
+        self,
+        status: int,
+        error_type: str,
+        title: str,
+        detail: str,
+    ):
+        self.status = status
+        self.error_type = error_type
+        self.title = title
+        self.detail = detail
+
+
+@app.exception_handler(APIError)
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">api_error_handler</span>(request: Request, exc: APIError):
+    <span class="kw">return</span> JSONResponse(
+        status_code=exc.status,
+        content={
+            <span class="str">"type"</span>: f<span class="str">"https://api.example.com/errors/{exc.error_type}"</span>,
+            <span class="str">"title"</span>: exc.title,
+            <span class="str">"status"</span>: exc.status,
+            <span class="str">"detail"</span>: exc.detail,
+            <span class="str">"instance"</span>: str(request.url),
+        },
+    )
+
+
+@app.exception_handler(RequestValidationError)
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">validation_error_handler</span>(
+    request: Request, exc: RequestValidationError
+):
+    <span class="kw">return</span> JSONResponse(
+        status_code=<span class="fn">422</span>,
+        content={
+            <span class="str">"type"</span>: <span class="str">"https://api.example.com/errors/validation-failed"</span>,
+            <span class="str">"title"</span>: <span class="str">"Validation Failed"</span>,
+            <span class="str">"status"</span>: <span class="fn">422</span>,
+            <span class="str">"detail"</span>: <span class="str">"One or more fields failed validation."</span>,
+            <span class="str">"instance"</span>: str(request.url),
+            <span class="str">"errors"</span>: [
+                {
+                    <span class="str">"field"</span>: <span class="str">"."</span>.join(str(loc) <span class="kw">for</span> loc <span class="kw">in</span> err[<span class="str">"loc"</span>]),
+                    <span class="str">"message"</span>: err[<span class="str">"msg"</span>],
+                }
+                <span class="kw">for</span> err <span class="kw">in</span> exc.errors()
+            ],
+        },
+    )</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>When discussing error handling, mention that you always include a <strong>correlation ID</strong> (also called trace ID or request ID) in error responses. This lets support engineers trace a user's complaint back to the exact log entry. Generate it as middleware: <code>X-Request-ID: 550e8400-e29b-41d4-a716-446655440000</code>.</p>
+  </div>
+
+  <h3>More Error Response Examples</h3>
+  <div class="code-block"><span class="cm">// 401 Unauthorized — Missing or expired token</span>
+{
+  <span class="str">"type"</span>: <span class="str">"https://api.example.com/errors/authentication-required"</span>,
+  <span class="str">"title"</span>: <span class="str">"Authentication Required"</span>,
+  <span class="str">"status"</span>: <span class="fn">401</span>,
+  <span class="str">"detail"</span>: <span class="str">"The access token is expired. Please refresh your token."</span>,
+  <span class="str">"instance"</span>: <span class="str">"/api/v1/users/42"</span>
+}
+
+<span class="cm">// 409 Conflict — Duplicate resource</span>
+{
+  <span class="str">"type"</span>: <span class="str">"https://api.example.com/errors/duplicate-resource"</span>,
+  <span class="str">"title"</span>: <span class="str">"Duplicate Resource"</span>,
+  <span class="str">"status"</span>: <span class="fn">409</span>,
+  <span class="str">"detail"</span>: <span class="str">"A user with email 'alice@example.com' already exists."</span>,
+  <span class="str">"instance"</span>: <span class="str">"/api/v1/users"</span>
+}
+
+<span class="cm">// 429 Too Many Requests — Rate limit exceeded</span>
+{
+  <span class="str">"type"</span>: <span class="str">"https://api.example.com/errors/rate-limit-exceeded"</span>,
+  <span class="str">"title"</span>: <span class="str">"Rate Limit Exceeded"</span>,
+  <span class="str">"status"</span>: <span class="fn">429</span>,
+  <span class="str">"detail"</span>: <span class="str">"You have exceeded 100 requests per minute. Retry after 23 seconds."</span>,
+  <span class="str">"instance"</span>: <span class="str">"/api/v1/products"</span>
+}</div>
+
+  <h3>OpenAPI / Swagger Auto-Generated Docs</h3>
+  <p>OpenAPI (formerly Swagger) is the standard for describing REST APIs. <strong>FastAPI generates OpenAPI specs automatically</strong> from your type hints and Pydantic models — one of its killer features:</p>
+
+  <div class="code-block"><span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, EmailStr
+
+<span class="kw">class</span> <span class="fn">UserCreate</span>(BaseModel):
+    name: str
+    email: EmailStr
+    age: int
+
+<span class="kw">class</span> <span class="fn">UserResponse</span>(BaseModel):
+    id: int
+    name: str
+    email: str
+
+@app.post(
+    <span class="str">"/api/v1/users"</span>,
+    response_model=UserResponse,
+    status_code=<span class="fn">201</span>,
+    summary=<span class="str">"Create a new user"</span>,
+    description=<span class="str">"Register a new user account. Returns the created user."</span>,
+    tags=[<span class="str">"Users"</span>],
+)
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">create_user</span>(user: UserCreate) -> UserResponse:
+    ...</div>
+
+  <p>This auto-generates an interactive spec at <code>/docs</code> (Swagger UI) and <code>/redoc</code> (ReDoc).</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📋 Swagger UI</h4>
+      <ul>
+        <li>✅ Try-it-out (live API calls)</li>
+        <li>Functional visual design</li>
+        <li>Best for developers testing</li>
+        <li>Basic search</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📖 ReDoc</h4>
+      <ul>
+        <li>❌ No live API calls</li>
+        <li>Beautiful, clean design</li>
+        <li>Best for published documentation</li>
+        <li>Excellent full-text search</li>
+        <li>Three-panel layout (nav, content, examples)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>API Documentation Best Practices</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>📝 Describe Everything</h4>
+      <p>Every endpoint needs a description — not just the method and URL.</p>
+    </div>
+    <div class="card blue">
+      <h4>📋 Show Examples</h4>
+      <p>Include real, copy-pasteable JSON request/response examples.</p>
+    </div>
+    <div class="card green">
+      <h4>⚠️ Document Errors</h4>
+      <p>Document all error codes an endpoint can return.</p>
+    </div>
+    <div class="card purple">
+      <h4>🔐 Auth Per Endpoint</h4>
+      <p>Show authentication requirements for each endpoint.</p>
+    </div>
+    <div class="card">
+      <h4>💻 Curl Examples</h4>
+      <p>Provide curl examples — the universal API testing language.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔄 Auto-Generate</h4>
+      <p>Keep docs in sync with code — auto-generation is the only reliable way.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Good documentation includes curl examples like this:</span>
+curl -X POST https://api.example.com/api/v1/users \
+  -H <span class="str">"Authorization: Bearer eyJhbGc..."</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "name": "Alice Chen",
+    "email": "alice@example.com",
+    "age": 30
+  }'</span></div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>The best API documentation is the one that's never out of date. This means generating it from code, not writing it by hand. If your docs and code can diverge, they <em>will</em> diverge. FastAPI + Pydantic models make this virtually impossible — the types ARE the docs.</p>
+  </div>
+</section>
+
+<!-- Screen 4: Microservice Architecture Patterns -->
+<section class="screen screen-alt" id="s4">
+  <h2>🏗️ Microservice <span class="accent">Architecture Patterns</span></h2>
+
+  <h3>Monolith vs Microservices</h3>
+  <p>This is the most important architectural decision you'll discuss in interviews. There's no universally correct answer — it depends on your team, product, and scale.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📦 Monolith</h4>
+      <ul>
+        <li>Team size: &lt; 10 engineers</li>
+        <li>One deploy, everything ships</li>
+        <li>Low operational overhead</li>
+        <li>Easy data consistency (single DB, ACID)</li>
+        <li>Scale the entire app</li>
+        <li>✅ Almost always start here</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🔬 Microservices</h4>
+      <ul>
+        <li>Team size: 10+ (multiple teams)</li>
+        <li>Independent deploys per service</li>
+        <li>High complexity (networking, observability)</li>
+        <li>Hard data consistency (eventual, sagas)</li>
+        <li>Scale individual services</li>
+        <li>❌ Don't start here</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"Start with a monolith, extract microservices when you have a reason." The reason is never "because Netflix does it." Good reasons include: a module needs to scale independently, a team needs to deploy independently, or a bounded context has truly different data/technology requirements. Martin Fowler calls this the "Monolith First" approach.</p>
+  </div>
+
+  <h3>Service Decomposition</h3>
+  <p>How do you decide what becomes its own service? Two guiding principles:</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🎯 Bounded Contexts (DDD)</h4>
+      <p>A boundary within which a domain model is consistent. "User" means different things in auth (credentials), billing (payment methods), and social (profile, followers) contexts. Each can be a separate service.</p>
+    </div>
+    <div class="card blue">
+      <h4>🎯 Single Responsibility</h4>
+      <p>Each service should have one reason to change. If you're modifying payments every time the catalog team ships a feature, your boundaries are wrong.</p>
+    </div>
+  </div>
+
+  <p><strong>Signs you should extract a service:</strong></p>
+  <div class="card-grid">
+    <div class="card green">
+      <h4>📈 Different Scaling</h4>
+      <p>A module has a different scaling profile (e.g., image processing is CPU-heavy).</p>
+    </div>
+    <div class="card purple">
+      <h4>👥 Different Team</h4>
+      <p>A different team owns it and deploys on a different schedule.</p>
+    </div>
+    <div class="card">
+      <h4>🔧 Different Tech</h4>
+      <p>It uses a fundamentally different technology (e.g., ML model serving).</p>
+    </div>
+    <div class="card blue">
+      <h4>📋 Different Compliance</h4>
+      <p>It has different data retention or compliance requirements.</p>
+    </div>
+  </div>
+
+  <h3>API Gateway Pattern</h3>
+  <p>An API Gateway sits between clients and your microservices — the single entry point that handles cross-cutting concerns so individual services don't have to.</p>
+
+  <div class="code-block"><span class="cm">                    ┌─────────────────────┐</span>
+<span class="cm">   Clients ────────►│    API Gateway      │</span>
+<span class="cm">   (Web, Mobile,    │  ┌───────────────┐  │</span>
+<span class="cm">    Partners)       │  │ Auth / JWT    │  │</span>
+<span class="cm">                    │  │ Rate Limiting │  │</span>
+<span class="cm">                    │  │ Routing       │  │</span>
+<span class="cm">                    │  │ SSL Termination│  │</span>
+<span class="cm">                    │  │ Request Log   │  │</span>
+<span class="cm">                    │  └───────────────┘  │</span>
+<span class="cm">                    └──────┬──┬──┬────────┘</span>
+<span class="cm">                           │  │  │</span>
+<span class="cm">              ┌────────────┘  │  └────────────┐</span>
+<span class="cm">              ▼               ▼               ▼</span>
+<span class="cm">        ┌──────────┐   ┌──────────┐   ┌──────────────┐</span>
+<span class="cm">        │  Users   │   │  Orders  │   │   Payments   │</span>
+<span class="cm">        │ Service  │   │ Service  │   │   Service    │</span>
+<span class="cm">        └──────────┘   └──────────┘   └──────────────┘</span></div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔀 Routing</h4>
+      <p>Maps <code>/api/v1/users/*</code> → Users Service, <code>/api/v1/orders/*</code> → Orders Service.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔐 Authentication</h4>
+      <p>Validates JWTs once at the edge, passes user identity downstream.</p>
+    </div>
+    <div class="card green">
+      <h4>🚦 Rate Limiting</h4>
+      <p>Protects services from abuse (100 requests/minute per client).</p>
+    </div>
+    <div class="card purple">
+      <h4>🔗 Request Aggregation</h4>
+      <p>Combines responses from multiple services into one (BFF pattern).</p>
+    </div>
+  </div>
+
+  <p><strong>Popular options:</strong> Kong, AWS API Gateway, Envoy, Traefik, NGINX (with Lua).</p>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>The API Gateway can become a <strong>bottleneck and single point of failure</strong> if not designed carefully. Always deploy it with redundancy (multiple instances behind a load balancer). Avoid putting business logic in the gateway — it should be a thin routing/auth layer, not a "smart pipe."</p>
+  </div>
+
+  <h3>Service Discovery</h3>
+  <p>In a microservice world, services need to find each other. Hardcoding IP addresses doesn't work when services scale up/down dynamically.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🌐 DNS-Based Discovery</h4>
+      <p>Each service registers a DNS name. Kubernetes does this automatically — <code>orders-service.default.svc.cluster.local</code>.</p>
+    </div>
+    <div class="card blue">
+      <h4>📋 Service Registry</h4>
+      <p>Services register on startup, deregister on shutdown. Others query the registry for healthy instances. (Consul, Eureka)</p>
+    </div>
+    <div class="card green">
+      <h4>☸️ Kubernetes Services</h4>
+      <p>K8s Services provide a stable virtual IP that load-balances across pods. The most common modern approach.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Kubernetes Service — other services reach orders via</span>
+<span class="cm"># http://orders-service:8080</span>
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-service
+spec:
+  selector:
+    app: orders
+  ports:
+    - port: <span class="fn">8080</span>
+      targetPort: <span class="fn">8080</span></div>
+
+  <h3>Circuit Breaker Pattern</h3>
+  <p>When Service A calls Service B, and Service B is slow or down, Service A can exhaust its connection pool waiting. The circuit breaker prevents this cascade failure.</p>
+
+  <div class="code-block"><span class="cm">State Machine:</span>
+
+  <span class="fn">CLOSED</span> ──── failure threshold reached ────► <span class="fn">OPEN</span>
+  (normal)                                    (fail fast,
+     ▲                                         don't call)
+     │                                            │
+     │                                   timeout expires
+     │                                            │
+     └──── success ◄──── <span class="fn">HALF-OPEN</span> ◄──────────────┘
+                         (test with
+                          one request)</div>
+
+  <div class="card-grid">
+    <div class="card green">
+      <h4>🟢 CLOSED (Normal)</h4>
+      <p>Requests flow through. Track failure count.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--color-error)">
+      <h4>🔴 OPEN (Fail Fast)</h4>
+      <p>After N failures, stop calling downstream. Return a fallback immediately. Prevents timeout pile-up.</p>
+    </div>
+    <div class="card">
+      <h4>🟡 HALF-OPEN (Testing)</h4>
+      <p>After cooldown, allow one test request. Success → CLOSED. Failure → stay OPEN.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Using the 'circuitbreaker' library</span>
+<span class="kw">from</span> circuitbreaker <span class="kw">import</span> circuit
+
+@circuit(failure_threshold=<span class="fn">5</span>, recovery_timeout=<span class="fn">30</span>)
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">call_payment_service</span>(order_id: str) -> dict:
+    <span class="str">"""Call payment service with circuit breaker protection."""</span>
+    <span class="kw">async</span> with httpx.AsyncClient(timeout=<span class="fn">5.0</span>) as client:
+        response = <span class="kw">await</span> client.post(
+            <span class="str">"http://payments-service:8080/api/v1/charges"</span>,
+            json={<span class="str">"order_id"</span>: order_id},
+        )
+        response.raise_for_status()
+        <span class="kw">return</span> response.json()</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>When discussing circuit breakers, mention <strong>bulkheads</strong> as a complementary pattern. A bulkhead isolates failures by giving each downstream service its own connection pool. If the payment service is slow, it exhausts <em>its</em> pool but doesn't affect connections to the inventory service. Think watertight compartments in a ship.</p>
+  </div>
+
+  <h3>Saga Pattern for Distributed Transactions</h3>
+  <p>In a monolith, you wrap operations in a DB transaction. In microservices, there's no distributed ACID. The Saga pattern is a sequence of local transactions where each step has a <strong>compensating transaction</strong> (an undo) if something fails.</p>
+
+  <p><strong>Example: "Place Order" saga:</strong></p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>Step 1: Orders</h4>
+      <p><strong>Action:</strong> Create order (PENDING)<br><strong>Undo:</strong> Cancel order</p>
+    </div>
+    <div class="card blue">
+      <h4>Step 2: Inventory</h4>
+      <p><strong>Action:</strong> Reserve items<br><strong>Undo:</strong> Release reservation</p>
+    </div>
+    <div class="card green">
+      <h4>Step 3: Payments</h4>
+      <p><strong>Action:</strong> Charge card<br><strong>Undo:</strong> Issue refund</p>
+    </div>
+    <div class="card purple">
+      <h4>Step 4: Orders</h4>
+      <p><strong>Action:</strong> Confirm order (CONFIRMED)<br><strong>Undo:</strong> —</p>
+    </div>
+  </div>
+
+  <p>If step 3 (charge card) fails, the saga runs compensations in reverse: release reserved items, cancel order.</p>
+
+  <h3>Two Coordination Strategies</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>💃 Choreography</h4>
+      <ul>
+        <li>Event-driven, no central coordinator</li>
+        <li>Each service publishes an event when done</li>
+        <li>Loose coupling (services are independent)</li>
+        <li>Hard to trace across services</li>
+        <li>Best for simple sagas (2-3 steps)</li>
+        <li>Requires distributed tracing to debug</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🎵 Orchestration</h4>
+      <ul>
+        <li>Central saga coordinator directs steps</li>
+        <li>Orchestrator tells each participant what to do</li>
+        <li>Tighter coupling (orchestrator knows all steps)</li>
+        <li>Easy to understand the full flow</li>
+        <li>Best for complex sagas (4+ steps, branching)</li>
+        <li>Centralized log of saga state</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>Choreography sounds elegant but becomes a nightmare to debug with more than 3-4 services. You end up with "event spaghetti" — no one knows the full order of operations without reading every service's event handlers. For anything complex, orchestration is more maintainable. Think of it as the difference between a jazz improvisation and a symphony with a conductor.</p>
+  </div>
+</section>
+
+<!-- Screen 5: Communication Patterns & Beyond REST -->
+<section class="screen" id="s5">
+  <h2>📡 Communication Patterns &amp; <span class="accent">Beyond REST</span></h2>
+
+  <h3>Synchronous: REST vs gRPC</h3>
+  <p>REST over HTTP/JSON is the default for public APIs. But for internal microservice communication where performance matters, <strong>gRPC</strong> is a serious contender.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📦 Protocol Buffers</h4>
+      <p>Binary serialization — strongly typed, 10x smaller than JSON.</p>
+    </div>
+    <div class="card blue">
+      <h4>⚡ HTTP/2</h4>
+      <p>Multiplexed streams, header compression.</p>
+    </div>
+    <div class="card green">
+      <h4>🔄 4 Patterns</h4>
+      <p>Unary, server streaming, client streaming, bidirectional streaming.</p>
+    </div>
+    <div class="card purple">
+      <h4>🏗️ Code Generation</h4>
+      <p>Define service in <code>.proto</code>, generate client/server stubs in any language.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm">// orders.proto — service definition</span>
+syntax = <span class="str">"proto3"</span>;
+
+service <span class="fn">OrderService</span> {
+  <span class="cm">// Unary RPC — standard request/response</span>
+  rpc <span class="fn">GetOrder</span> (GetOrderRequest) <span class="kw">returns</span> (Order);
+
+  <span class="cm">// Server streaming — one request, stream of responses</span>
+  rpc <span class="fn">WatchOrderStatus</span> (GetOrderRequest) <span class="kw">returns</span> (stream OrderStatus);
+}
+
+message <span class="fn">GetOrderRequest</span> {
+  string order_id = <span class="fn">1</span>;
+}
+
+message <span class="fn">Order</span> {
+  string id = <span class="fn">1</span>;
+  string user_id = <span class="fn">2</span>;
+  repeated OrderItem items = <span class="fn">3</span>;
+  string status = <span class="fn">4</span>;
+}</div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🌐 REST (HTTP/JSON)</h4>
+      <ul>
+        <li>Larger payload (text-based JSON)</li>
+        <li>Good speed</li>
+        <li>No native streaming (WebSocket workaround)</li>
+        <li>✅ Native browser support</li>
+        <li>✅ Human-readable (easy to debug)</li>
+        <li>Manual schema evolution</li>
+        <li>Best for: public APIs, web frontends</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>⚡ gRPC (HTTP/2 + Protobuf)</h4>
+      <ul>
+        <li>~10x smaller payload (binary)</li>
+        <li>Excellent speed (2-10x faster)</li>
+        <li>✅ Native streaming (4 patterns)</li>
+        <li>⚠️ Requires grpc-web proxy for browsers</li>
+        <li>❌ Binary (need tools to inspect)</li>
+        <li>Built-in schema evolution (field numbers)</li>
+        <li>Best for: internal service-to-service</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"When would you choose gRPC over REST?" For <strong>internal</strong> service-to-service communication where latency and bandwidth matter — especially polyglot environments where you need type-safe contracts across languages. Keep REST for public/external APIs because browsers speak HTTP/JSON natively.</p>
+  </div>
+
+  <h3>Asynchronous: Message Queues &amp; Event Streaming</h3>
+  <p>Not every service call needs an immediate response. Asynchronous messaging <strong>decouples</strong> services in both time and availability.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📬 Message Queue (Point-to-Point)</h4>
+      <ul>
+        <li>Producer → Queue → One Consumer</li>
+        <li>Each message consumed once</li>
+        <li>Deleted after consumption</li>
+        <li>❌ Can't re-read consumed messages</li>
+        <li>Best-effort ordering (FIFO with limits)</li>
+        <li>Best for: task queues, work distribution</li>
+        <li>Examples: RabbitMQ, AWS SQS, Redis Streams</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📡 Event Stream (Pub/Sub + Log)</h4>
+      <ul>
+        <li>Producer → Topic → Multiple Consumer Groups</li>
+        <li>Each consumer group reads independently</li>
+        <li>Retained for configured duration</li>
+        <li>✅ Consumers can seek to any offset</li>
+        <li>Guaranteed ordering within a partition</li>
+        <li>Best for: event sourcing, data pipelines</li>
+        <li>Examples: Apache Kafka, AWS Kinesis, Redpanda</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Example: Publishing an event to Kafka after order creation</span>
+<span class="kw">from</span> aiokafka <span class="kw">import</span> AIOKafkaProducer
+<span class="kw">import</span> json
+
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">publish_order_event</span>(order: dict) -> None:
+    producer = AIOKafkaProducer(
+        bootstrap_servers=<span class="str">"kafka:9092"</span>,
+        value_serializer=<span class="kw">lambda</span> v: json.dumps(v).encode(),
+    )
+    <span class="kw">await</span> producer.start()
+    try:
+        <span class="kw">await</span> producer.send_and_wait(
+            topic=<span class="str">"order-events"</span>,
+            key=order[<span class="str">"id"</span>].encode(),  <span class="cm"># Partition by order ID for ordering</span>
+            value={
+                <span class="str">"event_type"</span>: <span class="str">"OrderCreated"</span>,
+                <span class="str">"timestamp"</span>: <span class="str">"2026-04-06T18:00:00Z"</span>,
+                <span class="str">"data"</span>: order,
+            },
+        )
+    finally:
+        <span class="kw">await</span> producer.stop()</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>The golden rule of async messaging: <strong>design for at-least-once delivery</strong>. Networks are unreliable, and message brokers may deliver a message more than once. Your consumers must be <strong>idempotent</strong> — processing the same message twice should produce the same result. Use a deduplication table or idempotency keys.</p>
+  </div>
+
+  <h3>Event Sourcing &amp; CQRS</h3>
+  <p>Advanced patterns you should know at an awareness level for interviews.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📜 Event Sourcing</h4>
+      <ul>
+        <li>Store the <strong>sequence of events</strong> instead of current state</li>
+        <li>Current state = replay all events</li>
+        <li>Complete audit trail</li>
+        <li>Can rebuild state at any point in time</li>
+        <li>⚠️ Complex to query (need projections)</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📊 CQRS</h4>
+      <ul>
+        <li>Separate <strong>read model</strong> from <strong>write model</strong></li>
+        <li>Writes → command handlers → events</li>
+        <li>Reads → denormalized, optimized projections</li>
+        <li>Scale reads and writes independently</li>
+        <li>⚠️ Eventual consistency</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm">Traditional:</span>  Account { balance: <span class="fn">150</span> }
+
+<span class="cm">Event Sourced:</span>
+  <span class="fn">1</span>. AccountOpened    { initial_deposit: <span class="fn">100</span> }
+  <span class="fn">2</span>. MoneyDeposited   { amount: <span class="fn">200</span> }
+  <span class="fn">3</span>. MoneyWithdrawn   { amount: <span class="fn">150</span> }
+  <span class="cm">// Current balance = 100 + 200 - 150 = 150</span></div>
+
+  <h3>GraphQL Basics</h3>
+  <p>GraphQL lets the <strong>client</strong> define exactly what data it needs, solving REST's over-fetching and under-fetching problems.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span class="cm"># Client requests exactly the fields it needs</span>
+query {
+  user(id: <span class="fn">42</span>) {
+    name
+    email
+    orders(first: <span class="fn">5</span>) {
+      id
+      total
+      status
+    }
+  }
+}</div>
+    <div class="translate-eng">
+      <div class="line">📝 GraphQL query — client defines the shape</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">👤 Fetch user 42</div>
+      <div class="line">📧 Get only name and email</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📦 Also fetch their first 5 orders</div>
+      <div class="line">🎯 With only id, total, and status</div>
+      <div class="line">✨ One request — no over-fetching!</div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🌐 REST</h4>
+      <ul>
+        <li>Fixed response shape per endpoint</li>
+        <li>Over-fetching common (get 20 fields, need 3)</li>
+        <li>Under-fetching common (need 3 calls for 1 view)</li>
+        <li>✅ Simple HTTP caching by URL</li>
+        <li>HTTP status codes for errors</li>
+        <li>Low learning curve</li>
+        <li>Best for: simple CRUD, public APIs</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid #7B5EA7">
+      <h4>🔮 GraphQL</h4>
+      <ul>
+        <li>Client defines response shape</li>
+        <li>✅ Over-fetching eliminated by design</li>
+        <li>✅ One query, one round-trip</li>
+        <li>⚠️ Complex caching (no URL-based)</li>
+        <li>Always 200; errors in response body</li>
+        <li>Medium-high learning curve</li>
+        <li>Best for: complex UIs, mobile apps</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"When would you use GraphQL over REST?" When you have <strong>multiple frontend clients</strong> (web, mobile, TV) that need different slices of the same data. Instead of building a custom REST endpoint for each client, GraphQL lets each client query exactly what it needs. Facebook created it for exactly this reason — their mobile app needed much less data than the web app.</p>
+  </div>
+
+  <h3>WebSocket for Real-Time Communication</h3>
+  <p>HTTP is request-response. WebSocket provides a <strong>persistent, full-duplex connection</strong> for real-time, bidirectional communication.</p>
+
+  <div class="code-block"><span class="cm">HTTP:      Client ──request──► Server ──response──► Client</span>
+<span class="cm">           (connection closes)</span>
+
+<span class="cm">WebSocket: Client ◄─── persistent connection ───► Server</span>
+<span class="cm">           (either side can send at any time)</span></div>
+
+  <p><strong>Use cases:</strong> Chat, live dashboards, collaborative editing, multiplayer games, stock tickers, notifications.</p>
+
+  <div class="code-block"><span class="cm"># FastAPI WebSocket example</span>
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, WebSocket, WebSocketDisconnect
+
+app = FastAPI()
+
+<span class="kw">class</span> <span class="fn">ConnectionManager</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.active: list[WebSocket] = []
+
+    <span class="kw">async</span> <span class="kw">def</span> <span class="fn">connect</span>(self, websocket: WebSocket):
+        <span class="kw">await</span> websocket.accept()
+        self.active.append(websocket)
+
+    <span class="kw">def</span> <span class="fn">disconnect</span>(self, websocket: WebSocket):
+        self.active.remove(websocket)
+
+    <span class="kw">async</span> <span class="kw">def</span> <span class="fn">broadcast</span>(self, message: str):
+        <span class="kw">for</span> connection <span class="kw">in</span> self.active:
+            <span class="kw">await</span> connection.send_text(message)
+
+manager = ConnectionManager()
+
+@app.websocket(<span class="str">"/ws/notifications"</span>)
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">websocket_endpoint</span>(websocket: WebSocket):
+    <span class="kw">await</span> manager.connect(websocket)
+    try:
+        while True:
+            data = <span class="kw">await</span> websocket.receive_text()
+            <span class="kw">await</span> manager.broadcast(f<span class="str">"User says: {data}"</span>)
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)</div>
+
+  <h3>WebSocket vs SSE (Server-Sent Events)</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🔌 WebSocket</h4>
+      <ul>
+        <li>Bidirectional communication</li>
+        <li>WebSocket protocol (ws://)</li>
+        <li>Manual reconnection</li>
+        <li>Best for: chat, collaboration</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📡 SSE (Server-Sent Events)</h4>
+      <ul>
+        <li>Server → Client only</li>
+        <li>Regular HTTP (GET)</li>
+        <li>Automatic reconnection (built-in)</li>
+        <li>Best for: notifications, live feeds, dashboards</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Aha!</div>
+    <p>If you only need server-to-client updates (dashboards, notifications), <strong>SSE is simpler and sufficient</strong>. It works over regular HTTP, handles reconnection automatically, and is easier to scale behind load balancers. Only reach for WebSocket when you need true bidirectional communication.</p>
+  </div>
+</section>
+
+<!-- Screen 6: Quiz -->
+<section class="screen screen-alt" id="s6">
+  <h2>🧪 Quiz: <span class="accent">Test Yourself</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: You're designing a REST API endpoint for partially updating a user's profile (e.g., change only the email). Which HTTP method and status code is most appropriate?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) POST /api/v1/users/42 → 200 OK</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">B) PUT /api/v1/users/42 → 200 OK</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">C) PATCH /api/v1/users/42 → 200 OK</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) PATCH /api/v1/users/42 → 201 Created</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Your e-commerce platform processes orders through multiple microservices (Orders, Inventory, Payments). If payment fails, reserved inventory must be released and the order cancelled. Which pattern solves this?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Two-phase commit (2PC) across all three databases</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) Saga pattern with compensating transactions</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) Shared database across all three services</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) Synchronous REST calls with retry logic</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: You're paginating a social media feed that receives hundreds of new posts per minute. Users scroll using infinite scroll. Which pagination strategy is best?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Offset-based pagination with ?page=1&amp;page_size=20</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) Cursor-based pagination with ?after=eyJpZCI6IDQyfQ==&amp;limit=20</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) No pagination — return all posts and let the frontend handle it</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Random sampling of posts per request</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: Your API gateway routes to a downstream payment service that has become slow and unresponsive. Requests time out after 30s, filling up your thread pool. Which pattern prevents this cascade failure?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Increase the timeout to 60 seconds</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) Add more instances of the API gateway</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">C) Implement the circuit breaker pattern</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Switch from REST to gRPC for faster communication</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: A mobile app needs to display a user's profile, their 3 most recent orders, and their notification count — all on one screen. With REST, this requires 3 separate requests. Which technology fetches all this in a single request?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) gRPC with server streaming</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) GraphQL with a nested query</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) REST with cursor-based pagination</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) WebSocket with a subscription</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<!-- Screen 7: Module Summary -->
+<section class="screen" id="s7">
+  <h2>🏁 Module <span class="accent">Summary</span></h2>
+
+  <p>You've covered the full landscape of API design and microservice architecture:</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🌐 REST Design</h4>
+      <p>Resources are nouns; HTTP methods are verbs; status codes tell the story.</p>
+    </div>
+    <div class="card blue">
+      <h4>📄 Pagination</h4>
+      <p>Cursor for feeds and scale; offset for admin UIs and small datasets.</p>
+    </div>
+    <div class="card green">
+      <h4>⚠️ Error Handling</h4>
+      <p>RFC 7807 gives you a consistent, professional error format.</p>
+    </div>
+    <div class="card purple">
+      <h4>🏗️ Microservices</h4>
+      <p>Start monolith; extract when you have a reason; sagas replace transactions.</p>
+    </div>
+    <div class="card">
+      <h4>📡 Communication</h4>
+      <p>REST for public, gRPC for internal, async messaging for decoupling.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔌 Real-Time</h4>
+      <p>WebSocket for bidirectional; SSE for server-push.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>The meta-skill interviewers are looking for isn't memorization — it's <strong>tradeoff analysis</strong>. Every pattern in this module has pros and cons. When you say "I'd use X because of Y tradeoff," you sound like a senior engineer. When you say "I'd always use X," you sound like you read a blog post. Practice articulating <em>when</em> to use each pattern and <em>why</em>.</p>
+  </div>
+
+  <p>Good luck with your interviews. You've got this. 🚀</p>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-01-fastapi/index.html">← Prev: FastAPI Core</a>
+  <a href="../module-03-containers-deployment/index.html">Next: Containers & Deployment →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Chat animation
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Think about the specific semantics of each option and try to identify the pattern designed for this exact scenario.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

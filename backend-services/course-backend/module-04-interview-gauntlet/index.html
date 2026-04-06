@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 4: The Interview Gauntlet 🔥 | Backend Services</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#0284C7;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04);margin-bottom:1.2rem}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.card h3{margin-top:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+table.cheat{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.88rem}
+table.cheat th,table.cheat td{padding:0.5rem 0.7rem;border-bottom:1px solid rgba(0,0,0,0.08);text-align:left}
+table.cheat th{font-family:var(--font-heading);font-weight:700;background:rgba(0,0,0,0.03)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🌐 Backend Services</a><div class="nav-dots"><a href="../module-01-fastapi/" class="nav-dot"></a><a href="../module-02-apis-microservices/" class="nav-dot"></a><a href="../module-03-containers-deployment/" class="nav-dot"></a><a href="../module-04-interview-gauntlet/" class="nav-dot active" style="background:var(--color-error)"></a></div></div></nav>
+
+<!-- ==================== SCREEN 1: API Design ==================== -->
+<section class="screen" id="s1">
+  <h2>🏗️ API <span class="accent">Design</span></h2>
+  <p>API design is the front door to your backend. Interviewers use these questions to gauge whether you think in systems or just write endpoints. They want to see that you understand contracts, backward compatibility, failure modes, and developer experience. Every answer should demonstrate that you've shipped APIs that real humans had to consume.</p>
+
+  <div class="aha" style="background:linear-gradient(135deg,#FFF0F0,#FFE8E8);border-left-color:var(--color-error)"><div class="aha-title" style="color:var(--color-error)">🔥 Gauntlet Tip</div><p>When answering API design questions, always start with the <em>consumer's perspective</em>. Who is calling this API? What do they need? Then work backward to resources, endpoints, and status codes. Interviewers love candidates who think about the developer experience first, not the database schema.</p></div>
+
+  <!-- Q1 -->
+  <div class="card" style="border-top-color:var(--color-info)">
+    <h3>Q1: Design a RESTful API for an e-commerce order system. Walk me through the resources, endpoints, and status codes.</h3>
+    <p>I'd start by identifying the core resources: <strong>Orders</strong>, <strong>Order Items</strong>, <strong>Customers</strong>, and <strong>Products</strong>. Orders are the aggregate root here — they own the lifecycle.</p>
+    <p><strong>Resource hierarchy:</strong></p>
+    <div class="code-block">/customers/{customer_id}/orders          — scoped to a customer
+/orders/{order_id}                       — direct access for internal services
+/orders/{order_id}/items                 — line items within an order</div>
+    <p><strong>Key endpoints:</strong></p>
+    <table class="cheat">
+      <tr><th>Method</th><th>Endpoint</th><th>Purpose</th><th>Success Code</th></tr>
+      <tr><td>POST</td><td><code>/orders</code></td><td>Create a new order</td><td><code>201 Created</code></td></tr>
+      <tr><td>GET</td><td><code>/orders/{id}</code></td><td>Retrieve order details</td><td><code>200 OK</code></td></tr>
+      <tr><td>GET</td><td><code>/orders?status=pending</code></td><td>List/filter orders</td><td><code>200 OK</code></td></tr>
+      <tr><td>PATCH</td><td><code>/orders/{id}</code></td><td>Partial update (address)</td><td><code>200 OK</code></td></tr>
+      <tr><td>POST</td><td><code>/orders/{id}/cancel</code></td><td>Cancel an order</td><td><code>200 OK</code></td></tr>
+      <tr><td>POST</td><td><code>/orders/{id}/items</code></td><td>Add item to order</td><td><code>201 Created</code></td></tr>
+      <tr><td>DELETE</td><td><code>/orders/{id}/items/{item_id}</code></td><td>Remove item</td><td><code>204 No Content</code></td></tr>
+    </table>
+    <p><strong>Status code strategy:</strong></p>
+    <p><code>201</code> for resource creation — always include a <code>Location</code> header pointing to the new resource. <code>204</code> for deletes — no body needed. <code>400</code> for validation errors (missing fields, invalid quantities). <code>404</code> when the order doesn't exist. <code>409 Conflict</code> if you try to modify a cancelled or shipped order. <code>422 Unprocessable Entity</code> when the request is syntactically valid but semantically wrong (e.g., ordering a discontinued product).</p>
+    <p>Notice I used <code>POST /orders/{id}/cancel</code> instead of <code>DELETE /orders/{id}</code>. Cancellation is a <em>business action</em> with side effects (refunds, inventory release, notifications) — it's not a simple resource deletion. Using a verb-style sub-resource for state transitions like this is a well-accepted REST pattern.</p>
+    <p>I'd also include an <code>order_status</code> field that follows a state machine: <code>pending → confirmed → processing → shipped → delivered</code> (with <code>cancelled</code> reachable from <code>pending</code> or <code>confirmed</code> only). The API should reject transitions that don't follow this state machine with a <code>409</code>.</p>
+  </div>
+
+  <!-- Q2 -->
+  <div class="card" style="border-top-color:var(--color-info)">
+    <h3>Q2: How would you handle API versioning for a public API with 500+ consumers?</h3>
+    <p>With 500+ consumers you cannot break anyone, so versioning strategy is existential. I'd use <strong>URL path versioning</strong> (<code>/v1/orders</code>, <code>/v2/orders</code>) as the primary mechanism. Here's why:</p>
+    <p><strong>Visibility</strong>: Consumers can see which version they're on at a glance. <strong>Routing simplicity</strong>: Load balancers and API gateways can route <code>/v1/*</code> to one service version and <code>/v2/*</code> to another without inspecting headers. <strong>Cacheability</strong>: URL-based versioning works naturally with CDNs and HTTP caches, whereas header-based versioning requires <code>Vary</code> headers that many caches handle poorly.</p>
+    <p><strong>My versioning policy would include:</strong></p>
+    <p>1. <strong>Additive changes are non-breaking</strong> — new fields in responses, new optional query parameters, new endpoints. These don't require a version bump.</p>
+    <p>2. <strong>Breaking changes get a new major version</strong> — removing fields, changing field types, altering behavior. This triggers <code>/v2/</code>.</p>
+    <p>3. <strong>Sunset timeline</strong>: When v2 launches, v1 gets a 12-month sunset window. I'd add a <code>Sunset</code> header (RFC 8594) and a <code>Deprecation</code> header to v1 responses so consumers get programmatic notice.</p>
+    <p>4. <strong>Migration guides</strong>: Every version bump ships with a detailed migration guide and a changelog. For 500+ consumers, communication is half the battle.</p>
+    <p>I'd also run both versions in parallel using an API gateway (like Kong or AWS API Gateway) that routes by path prefix. Internally, I prefer an <strong>adapter pattern</strong> — the v1 handler transforms requests/responses to/from the current internal model, so we're not maintaining two codebases.</p>
+    <div class="aha" style="background:linear-gradient(135deg,#FFF0F0,#FFE8E8);border-left-color:var(--color-error)"><div class="aha-title" style="color:var(--color-error)">🔥 Gauntlet Tip</div><p>Interviewers aren't looking for the "right" versioning scheme — they're looking for you to articulate tradeoffs. Mention URL vs. header vs. query param, say which you prefer and <em>why</em>, then talk about sunset policies. That's what separates a senior answer from a junior one.</p></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="card" style="border-top-color:var(--color-info)">
+    <h3>Q3: Design pagination for a feed with millions of items. Why cursor-based over offset-based?</h3>
+    <p>For a high-volume feed — think a social media timeline or an activity log with tens of millions of rows — I'd use <strong>cursor-based (keyset) pagination</strong>.</p>
+    <p><strong>Why not offset-based?</strong> Offset pagination (<code>?page=2&amp;limit=20</code>) has a fatal flaw at scale: the database still has to <em>scan and skip</em> all the rows before the offset. <code>OFFSET 1000000</code> means the DB reads a million rows and throws them away. On a table with 50 million rows, page 50,000 is brutally slow — <code>O(offset + limit)</code> per query.</p>
+    <p>It also has a <strong>consistency problem</strong>: if a new item is inserted while someone is paginating, they'll either see a duplicate or miss an item entirely because the offset window shifts.</p>
+    <p><strong>Cursor-based pagination</strong> solves both problems:</p>
+    <div class="code-block">{
+  "data": [...],
+  "pagination": {
+    "next_cursor": "eyJpZCI6MTAwMH0=",
+    "has_more": true
+  }
+}</div>
+    <p>The cursor is an opaque, base64-encoded token that encodes the last seen sort key (e.g., <code>{"created_at": "2026-04-06T10:00:00", "id": 1000}</code>). The next query becomes:</p>
+    <div class="code-block"><span class="kw">SELECT</span> * <span class="kw">FROM</span> feed_items
+<span class="kw">WHERE</span> (created_at, id) &lt; (:last_created_at, :last_id)
+<span class="kw">ORDER BY</span> created_at <span class="kw">DESC</span>, id <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="fn">21</span>;  <span class="cm">-- fetch limit+1 to determine has_more</span></div>
+    <p>This query uses an index on <code>(created_at, id)</code> and performs a simple range scan — <code>O(limit)</code> regardless of how deep into the feed you are. It's also immune to the insertion consistency problem because the cursor is anchored to a specific row, not a position.</p>
+    <p><strong>The tradeoff</strong>: you lose the ability to "jump to page 50." If the product requires random page access, cursor pagination isn't appropriate. But for feeds, timelines, and infinite scroll — it's the only sane choice at scale.</p>
+  </div>
+
+  <!-- Q4 -->
+  <div class="card" style="border-top-color:var(--color-info)">
+    <h3>Q4: How do you handle partial updates — PATCH vs PUT?</h3>
+    <p><strong>PUT</strong> replaces the entire resource. If you PUT an order and omit the <code>shipping_address</code>, the server should set it to null or reject the request. PUT is idempotent by definition — calling it twice with the same payload produces the same result.</p>
+    <p><strong>PATCH</strong> applies a partial modification. You send only the fields you want to change. This is what you want 90% of the time in practice because clients rarely have or want to send the full resource representation.</p>
+    <p>My preferred approach for PATCH is <strong>merge patch</strong> (RFC 7386):</p>
+    <div class="code-block"><span class="kw">PATCH</span> /orders/123
+Content-Type: application/merge-patch+json
+
+{
+  <span class="str">"shipping_address"</span>: {
+    <span class="str">"city"</span>: <span class="str">"Bentonville"</span>
+  }
+}</div>
+    <p>The server merges this into the existing resource. To explicitly <em>remove</em> a field, you set it to <code>null</code>. It's simple, intuitive, and widely supported.</p>
+    <p>For more complex operations — like "add item 3 to the list" or "move element from position 2 to position 5" — I'd reach for <strong>JSON Patch</strong> (RFC 6902), which gives you an array of operations (<code>add</code>, <code>remove</code>, <code>replace</code>, <code>move</code>, <code>copy</code>, <code>test</code>):</p>
+    <div class="code-block">[
+  { <span class="str">"op"</span>: <span class="str">"replace"</span>, <span class="str">"path"</span>: <span class="str">"/status"</span>, <span class="str">"value"</span>: <span class="str">"shipped"</span> },
+  { <span class="str">"op"</span>: <span class="str">"add"</span>, <span class="str">"path"</span>: <span class="str">"/tags/-"</span>, <span class="str">"value"</span>: <span class="str">"priority"</span> }
+]</div>
+    <p><strong>In an interview, I'd also mention</strong>: PATCH is <em>not</em> inherently idempotent — applying the same patch twice could have different effects (e.g., "increment quantity by 1"). If idempotency matters (and it usually does for APIs), you should support idempotency keys alongside PATCH requests.</p>
+  </div>
+
+  <!-- Q5 -->
+  <div class="card" style="border-top-color:var(--color-info)">
+    <h3>Q5: Describe a rate limiting strategy for a multi-tenant API.</h3>
+    <p>Multi-tenant rate limiting needs to be <strong>fair</strong> — one noisy tenant shouldn't degrade the experience for everyone else. I'd implement a <strong>tiered, per-tenant strategy</strong>:</p>
+    <p><strong>Layer 1 — Global rate limit</strong>: A hard ceiling across all tenants to protect infrastructure. Example: 50,000 requests/second total.</p>
+    <p><strong>Layer 2 — Per-tenant limits</strong>: Each tenant gets a quota based on their plan (e.g., Free: 100 req/min, Pro: 1,000 req/min, Enterprise: 10,000 req/min). Enforce this with a <strong>sliding window counter</strong> stored in Redis:</p>
+    <div class="code-block">key = <span class="str">f"ratelimit:{tenant_id}:{window_minute}"</span>
+current = redis.incr(key)
+<span class="kw">if</span> current == <span class="fn">1</span>:
+    redis.expire(key, <span class="fn">60</span>)
+<span class="kw">if</span> current > tenant_limit:
+    <span class="kw">raise</span> HTTPException(status_code=<span class="fn">429</span>, ...)</div>
+    <p><strong>Layer 3 — Per-endpoint limits</strong>: Some endpoints are more expensive than others. A search endpoint hitting Elasticsearch might get 30 req/min while a simple GET might get 300 req/min.</p>
+    <p><strong>Response headers</strong> (always include these):</p>
+    <div class="code-block">X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 847
+X-RateLimit-Reset: 1712345678
+Retry-After: 30</div>
+    <p>When a tenant exceeds their limit, return <code>429 Too Many Requests</code> with a <code>Retry-After</code> header. Never silently drop requests or return <code>500</code> — that's a debugging nightmare for consumers.</p>
+    <p><strong>Algorithm choice</strong>: I prefer the <strong>sliding window log</strong> or <strong>token bucket</strong> over the fixed window counter. Fixed windows have a burst problem at window boundaries — a tenant could send 1,000 requests at 11:59:59 and another 1,000 at 12:00:01, effectively doubling their limit. Token bucket smooths this out naturally.</p>
+    <div class="aha" style="background:linear-gradient(135deg,#FFF0F0,#FFE8E8);border-left-color:var(--color-error)"><div class="aha-title" style="color:var(--color-error)">🔥 Gauntlet Tip</div><p>Rate limiting questions are really about fairness and observability. Mention the response headers — most candidates forget them. That tiny detail signals that you've actually built this, not just read about it.</p></div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="card" style="border-top-color:var(--color-info)">
+    <h3>Q6: How would you design error responses that are developer-friendly?</h3>
+    <p>A good error response should answer three questions instantly: <strong>What went wrong?</strong> <strong>Where did it go wrong?</strong> <strong>How do I fix it?</strong></p>
+    <p>I'd use a consistent error envelope across the entire API:</p>
+    <div class="code-block">{
+  <span class="str">"error"</span>: {
+    <span class="str">"code"</span>: <span class="str">"VALIDATION_ERROR"</span>,
+    <span class="str">"message"</span>: <span class="str">"The request body contains invalid fields."</span>,
+    <span class="str">"details"</span>: [
+      {
+        <span class="str">"field"</span>: <span class="str">"quantity"</span>,
+        <span class="str">"issue"</span>: <span class="str">"Must be a positive integer."</span>,
+        <span class="str">"received"</span>: <span class="fn">-3</span>
+      },
+      {
+        <span class="str">"field"</span>: <span class="str">"email"</span>,
+        <span class="str">"issue"</span>: <span class="str">"Not a valid email address."</span>,
+        <span class="str">"received"</span>: <span class="str">"not-an-email"</span>
+      }
+    ],
+    <span class="str">"request_id"</span>: <span class="str">"req_abc123xyz"</span>,
+    <span class="str">"docs_url"</span>: <span class="str">"https://api.example.com/docs/errors#VALIDATION_ERROR"</span>
+  }
+}</div>
+    <p><strong>Key design decisions:</strong></p>
+    <p>1. <strong>Machine-readable error codes</strong> (<code>VALIDATION_ERROR</code>, <code>RESOURCE_NOT_FOUND</code>, <code>RATE_LIMIT_EXCEEDED</code>). Consumers can switch on these programmatically. Never rely on HTTP status codes alone — <code>400</code> is ambiguous.</p>
+    <p>2. <strong>Human-readable message</strong> for developers reading logs.</p>
+    <p>3. <strong>Field-level details</strong> for validation errors — the frontend can map these directly to form fields.</p>
+    <p>4. <strong>Request ID</strong> for correlation. When a consumer opens a support ticket, they paste this ID and your team can find the exact request in your logs.</p>
+    <p>5. <strong>Documentation link</strong> so developers can self-serve. This dramatically reduces support load.</p>
+    <p>6. <strong>Never leak internals</strong> — no stack traces, no SQL errors, no internal service names. In production, these are security vulnerabilities.</p>
+    <p>I'd also ensure that error responses are <em>always</em> JSON, even for 404s and 500s. Nothing is more frustrating than getting an HTML error page when your client expects JSON.</p>
+  </div>
+
+  <!-- Q7 -->
+  <div class="card" style="border-top-color:var(--color-info)">
+    <h3>Q7: Explain idempotency keys for payment APIs. Why are they critical?</h3>
+    <p>In payment processing, the worst possible bug is charging a customer twice. Idempotency keys prevent this.</p>
+    <p><strong>The problem</strong>: A client sends <code>POST /payments</code> to charge $50. The server processes the payment, but the response is lost due to a network timeout. The client retries. Without protection, the customer gets charged $100.</p>
+    <p><strong>The solution</strong>: The client generates a unique <code>Idempotency-Key</code> header (typically a UUID) and sends it with the request:</p>
+    <div class="code-block"><span class="kw">POST</span> /payments
+Idempotency-Key: 550e8400-e29b-41d4-a716-446655440000
+Content-Type: application/json
+
+{<span class="str">"amount"</span>: <span class="fn">5000</span>, <span class="str">"currency"</span>: <span class="str">"USD"</span>, <span class="str">"customer_id"</span>: <span class="str">"cust_123"</span>}</div>
+    <p><strong>Server-side implementation:</strong></p>
+    <p>1. Receive request, extract the idempotency key.</p>
+    <p>2. Check if this key exists in the idempotency store (Redis or database table).</p>
+    <p>3. <strong>Key not found</strong>: Process the payment, store the key → response mapping with a TTL (typically 24-48 hours), return the response.</p>
+    <p>4. <strong>Key found, processing complete</strong>: Return the <em>stored response</em> without reprocessing. The client gets the same <code>201</code> with the same payment object.</p>
+    <p>5. <strong>Key found, still processing</strong>: Return <code>409 Conflict</code> or <code>423 Locked</code> to signal the original request is in-flight.</p>
+    <p><strong>Critical detail</strong>: The idempotency key must be scoped to the <em>client</em> (or API key), not global. Otherwise, two different clients could accidentally collide. So the actual storage key is <code>f"{api_key}:{idempotency_key}"</code>.</p>
+    <p><strong>Another critical detail</strong>: The server must store the <em>response</em>, not just a boolean "seen this key." If the client retries and gets a different response than the original, that's a bug. Stripe gets this right — they store the entire response body and status code.</p>
+    <p>This pattern is non-negotiable for any API that mutates financial data, inventory counts, or any state where duplication causes real-world harm.</p>
+  </div>
+
+  <!-- Q8 -->
+  <div class="card" style="border-top-color:var(--color-info)">
+    <h3>Q8: How would you design a file upload API for large files (100MB+)?</h3>
+    <p>For large files, a single <code>POST</code> with the entire file in the body is fragile — one network hiccup at 95% and the user starts over. I'd implement <strong>chunked (resumable) uploads</strong>, inspired by the tus protocol and Google's resumable upload API.</p>
+    <p><strong>Three-phase flow:</strong></p>
+    <p><strong>Phase 1 — Initiate upload:</strong></p>
+    <div class="code-block"><span class="kw">POST</span> /uploads
+Content-Type: application/json
+
+{<span class="str">"filename"</span>: <span class="str">"dataset.csv"</span>, <span class="str">"size"</span>: <span class="fn">104857600</span>, <span class="str">"content_type"</span>: <span class="str">"text/csv"</span>}</div>
+    <p>Response: <code>201 Created</code> with an <code>upload_id</code> and a <code>Location</code> header pointing to <code>/uploads/{upload_id}</code>.</p>
+    <p><strong>Phase 2 — Upload chunks:</strong></p>
+    <div class="code-block"><span class="kw">PATCH</span> /uploads/{upload_id}
+Content-Type: application/offset+octet-stream
+Upload-Offset: 0
+Content-Length: 5242880
+
+&lt;5MB of binary data&gt;</div>
+    <p>The server validates that <code>Upload-Offset</code> matches where it left off, writes the chunk to temporary storage (S3 multipart, local disk), and responds with the new offset:</p>
+    <div class="code-block">204 No Content
+Upload-Offset: 5242880</div>
+    <p><strong>Phase 3 — Complete upload:</strong> When all chunks are received (total bytes == declared size), the server assembles the file, runs validation (virus scan, file type verification, size limits), and moves it to permanent storage. The client gets the final resource URL.</p>
+    <p><strong>Resumability</strong>: If the connection drops mid-upload, the client sends <code>HEAD /uploads/{upload_id}</code> to discover the current offset, then resumes from there. Zero wasted bandwidth.</p>
+    <p><strong>Design considerations:</strong></p>
+    <p>• <strong>Chunk size</strong>: 5-10MB is the sweet spot. Too small = too many HTTP round-trips. Too large = you lose the resumability benefit.</p>
+    <p>• <strong>TTL on incomplete uploads</strong>: Auto-expire after 24 hours to avoid storage leaks.</p>
+    <p>• <strong>Presigned URLs</strong>: For cloud storage (S3), skip your server entirely — generate presigned URLs and let the client upload directly to the bucket.</p>
+    <p>• <strong>Progress tracking</strong>: Clients can calculate <code>uploaded_bytes / total_bytes</code> for progress bars.</p>
+    <div class="aha" style="background:linear-gradient(135deg,#FFF0F0,#FFE8E8);border-left-color:var(--color-error)"><div class="aha-title" style="color:var(--color-error)">🔥 Gauntlet Tip</div><p>File upload questions are a signal check for whether you've dealt with real infrastructure. Mentioning presigned URLs and resumability instantly tells the interviewer you've operated at scale. Bonus points for mentioning virus scanning and content-type validation — those are security essentials most candidates skip.</p></div>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 2: System Architecture ==================== -->
+<section class="screen screen-alt" id="s2">
+  <h2>🧩 System <span class="accent">Architecture</span></h2>
+  <p>This is where interviews get philosophical. Architecture questions don't have a single right answer — they have <em>reasonable answers with well-articulated tradeoffs</em>. The interviewer is evaluating your judgment, not your memorization. Think out loud. Draw boundaries. Justify your decisions.</p>
+
+  <div class="aha" style="background:linear-gradient(135deg,#FFF0F0,#FFE8E8);border-left-color:var(--color-error)"><div class="aha-title" style="color:var(--color-error)">🔥 Gauntlet Tip</div><p>For architecture questions, use the "I'd start with X because Y, but I'd revisit when Z" framework. It shows you're pragmatic, not dogmatic. Nobody wants to hire someone who says "always microservices" or "always monolith."</p></div>
+
+  <!-- Q1 -->
+  <div class="card" style="border-top-color:var(--color-accent)">
+    <h3>Q1: When would you break a monolith into microservices? What are the tradeoffs?</h3>
+    <p>I would <strong>not</strong> start with microservices. A well-structured monolith is the right default for most teams. You break it apart when specific pressures force you to — and you should be able to name those pressures precisely.</p>
+    <p><strong>Signals it's time to split:</strong></p>
+    <p>1. <strong>Independent scaling needs</strong>: Your order processing is CPU-bound and needs 20 instances, but your product catalog is read-heavy and needs aggressive caching.</p>
+    <p>2. <strong>Team autonomy bottlenecks</strong>: Three teams are stepping on each other in the same codebase. Merge conflicts are daily. Deploys require cross-team coordination.</p>
+    <p>3. <strong>Deployment coupling</strong>: A bug in the recommendation engine shouldn't take down checkout. Blast radius matters.</p>
+    <p>4. <strong>Technology diversity</strong>: One component genuinely benefits from a different language or data store.</p>
+    <p><strong>What you gain</strong>: Independent deployability, team autonomy, targeted scaling, fault isolation, technology flexibility.</p>
+    <p><strong>What you pay</strong>: Network latency instead of function calls. Distributed transactions (no more simple SQL joins). Operational complexity — you now need service discovery, distributed tracing, circuit breakers, and contract testing. Data consistency becomes eventually-consistent by default. Debugging is harder. Your infrastructure cost goes up.</p>
+    <p><strong>My approach</strong>: Start with a <strong>modular monolith</strong> — clear module boundaries, separate database schemas per module, well-defined internal APIs. When a specific module proves it needs independence, extract <em>that one module</em> into a service. This is evolutionary architecture, not big-bang rewrite.</p>
+  </div>
+
+  <!-- Q2 -->
+  <div class="card" style="border-top-color:var(--color-accent)">
+    <h3>Q2: Design a notification service that sends emails, SMS, and push notifications.</h3>
+    <p>The key insight here is that notification <em>dispatch</em> should be decoupled from notification <em>triggering</em>. Services should fire events like "order shipped" — they shouldn't know or care about email templates.</p>
+    <p><strong>Architecture:</strong></p>
+    <div class="code-block">[Order Service] → publishes "order.shipped" event
+       ↓
+[Message Broker (SQS/Kafka)]
+       ↓
+[Notification Service]
+  ├── Determines: who gets notified? Via which channels?
+  ├── Loads user preferences (email only? SMS + push?)
+  ├── Renders templates per channel
+  └── Dispatches to channel workers
+       ├── [Email Worker] → SendGrid/SES
+       ├── [SMS Worker] → Twilio
+       └── [Push Worker] → Firebase/APNs</div>
+    <p><strong>Design decisions:</strong></p>
+    <p>1. <strong>User preferences table</strong>: Stores per-user, per-notification-type channel preferences. "Order updates → email + push. Marketing → email only."</p>
+    <p>2. <strong>Template engine</strong>: Each notification type has templates per channel. Email gets HTML, SMS gets 160-char plain text, push gets title + body.</p>
+    <p>3. <strong>Separate queues per channel</strong>: If Twilio is down, SMS backs up but email and push keep flowing. Channel isolation prevents cascading failures.</p>
+    <p>4. <strong>Retry with exponential backoff</strong>: Transient failures get retried. After N retries, dead-letter queue (DLQ) for manual review.</p>
+    <p>5. <strong>Deduplication</strong>: Use notification ID + channel as a dedup key to prevent sending the same SMS twice.</p>
+    <p>6. <strong>Rate limiting per user</strong>: No user should receive more than X notifications per hour.</p>
+    <p>7. <strong>Audit log</strong>: Every notification sent is logged with timestamp, channel, status, and provider response.</p>
+    <p><strong>Scaling</strong>: Each channel worker pool scales independently. The notification service itself is stateless — scale horizontally behind the message broker.</p>
+  </div>
+
+  <!-- Q3 -->
+  <div class="card" style="border-top-color:var(--color-accent)">
+    <h3>Q3: How does a circuit breaker work? When would you implement one?</h3>
+    <p>A circuit breaker prevents your service from repeatedly calling a downstream dependency that's failing, which would otherwise waste resources, increase latency, and potentially cascade the failure upstream.</p>
+    <p><strong>The three states:</strong></p>
+    <p>• <strong>Closed</strong> (normal): Requests flow through. The breaker monitors failure rate. If failures exceed a threshold (e.g., 50% of the last 100 requests), it trips to <strong>Open</strong>.</p>
+    <p>• <strong>Open</strong> (failing fast): All requests are immediately rejected with a fallback response (cached data, default value, or a graceful error). No calls to the downstream service. After a timeout (e.g., 30 seconds), it transitions to <strong>Half-Open</strong>.</p>
+    <p>• <strong>Half-Open</strong> (probing): A limited number of test requests are allowed through. If they succeed, the breaker resets to <strong>Closed</strong>. If they fail, it goes back to <strong>Open</strong>.</p>
+    <p><strong>When to use one:</strong></p>
+    <p>• Calling an external API (payment provider, third-party service) that you don't control and that has unpredictable availability.</p>
+    <p>• Service-to-service calls where a downstream service is experiencing load and retries would make it worse (the "retry storm" problem).</p>
+    <p>• Any call where you have a reasonable <strong>fallback</strong> — cached data, a degraded experience, or a default value.</p>
+    <p><strong>When NOT to use one:</strong></p>
+    <p>• For database calls within your own service — fix the database instead.</p>
+    <p>• When there's no meaningful fallback and you must fail anyway.</p>
+    <div class="aha" style="background:linear-gradient(135deg,#FFF0F0,#FFE8E8);border-left-color:var(--color-error)"><div class="aha-title" style="color:var(--color-error)">🔥 Gauntlet Tip</div><p>When you explain the circuit breaker, draw the state machine. Literally. Closed → Open → Half-Open → Closed. Interviewers love visual thinkers. And always mention the fallback — a circuit breaker without a fallback is just a fancier way to return 503.</p></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="card" style="border-top-color:var(--color-accent)">
+    <h3>Q4: Explain the saga pattern for a distributed checkout flow.</h3>
+    <p>In a monolith, checkout is a single database transaction: deduct inventory, charge payment, create order — all or nothing. In microservices, each of those is a separate service with its own database. You can't do a distributed <code>BEGIN TRANSACTION</code> across services (well, you can — it's called 2PC, and it's fragile, slow, and hated by everyone).</p>
+    <p>The <strong>saga pattern</strong> breaks a distributed transaction into a sequence of local transactions, each with a <strong>compensating action</strong> if a later step fails.</p>
+    <p><strong>Checkout saga (choreography style):</strong></p>
+    <table class="cheat">
+      <tr><th>Step</th><th>Service</th><th>Action</th><th>Compensation</th></tr>
+      <tr><td>1</td><td>Inventory</td><td>Reserve items</td><td>Release reservation</td></tr>
+      <tr><td>2</td><td>Payment</td><td>Charge customer</td><td>Issue refund</td></tr>
+      <tr><td>3</td><td>Order</td><td>Create order record</td><td>Cancel order</td></tr>
+      <tr><td>4</td><td>Notification</td><td>Send confirmation</td><td>Send cancellation</td></tr>
+    </table>
+    <p><strong>If payment fails at step 2</strong>: The saga triggers the compensation for step 1 (release inventory reservation). Steps 3 and 4 never execute.</p>
+    <p><strong>Two coordination styles:</strong></p>
+    <p>• <strong>Choreography</strong>: Each service publishes events and listens for events. It's decentralized — no single coordinator. Works well for simple sagas (3-4 steps). Gets spaghetti-like with complex flows.</p>
+    <p>• <strong>Orchestration</strong>: A central <strong>saga orchestrator</strong> service explicitly tells each participant what to do and handles compensations. It's a state machine. Easier to understand, debug, and modify. I prefer orchestration for checkout flows because the business logic is explicit and visible in one place.</p>
+    <p><strong>Key concern</strong>: Sagas provide <strong>eventual consistency</strong>, not immediate consistency. Between step 1 and step 3, the system is in an intermediate state. Your UI and other services must handle this gracefully — showing "order processing" instead of "order confirmed" until the saga completes.</p>
+  </div>
+
+  <!-- Q5 -->
+  <div class="card" style="border-top-color:var(--color-accent)">
+    <h3>Q5: How would you implement service discovery in Kubernetes?</h3>
+    <p>In Kubernetes, service discovery is largely <strong>built-in</strong> through Kubernetes Services and DNS.</p>
+    <p>When you create a Kubernetes <code>Service</code> object, you get:</p>
+    <p>1. <strong>DNS-based discovery</strong>: Every service gets a DNS entry at <code>&lt;service-name&gt;.&lt;namespace&gt;.svc.cluster.local</code>. Your payment service can call <code>http://inventory-service:8080/items</code> if they're in the same namespace. CoreDNS handles the resolution.</p>
+    <p>2. <strong>ClusterIP</strong>: A stable virtual IP that load-balances across all healthy pods behind the service. Pods come and go, but the ClusterIP stays the same.</p>
+    <p>3. <strong>Readiness probes</strong>: Kubernetes only routes traffic to pods that pass their readiness probe.</p>
+    <p><strong>When you need more:</strong></p>
+    <p>• <strong>External services</strong>: For databases or third-party APIs outside the cluster, use <code>ExternalName</code> services or <code>Endpoints</code> objects to give them stable DNS names within the cluster.</p>
+    <p>• <strong>Service mesh</strong> (Istio, Linkerd): When you need advanced traffic management — weighted routing, mutual TLS, retry policies, circuit breaking.</p>
+    <p>• <strong>Headless services</strong> (<code>clusterIP: None</code>): When you need to discover individual pod IPs (e.g., for a StatefulSet running Kafka or Cassandra).</p>
+    <p>The beauty of Kubernetes' approach is that your application code doesn't need a service discovery library. You just use DNS hostnames. The infrastructure handles the rest.</p>
+  </div>
+
+  <!-- Q6 -->
+  <div class="card" style="border-top-color:var(--color-accent)">
+    <h3>Q6: Design an event-driven architecture for order processing.</h3>
+    <p>Event-driven architecture replaces synchronous HTTP chains with asynchronous event publication and consumption. For order processing, this is transformative — it decouples services and makes the system resilient to downstream slowdowns.</p>
+    <p><strong>Event flow:</strong></p>
+    <div class="code-block">Customer places order
+       ↓
+[API Gateway] → POST /orders
+       ↓
+[Order Service]
+  ├── Validates order, persists to DB with status "pending"
+  ├── Publishes: "order.created" event to message broker
+  └── Returns 202 Accepted (not 201 — processing is async)
+       ↓
+[Message Broker (Kafka / SQS)]
+       ↓
+  ┌────────────┬────────────┬────────────┬────────────┐
+  ↓            ↓            ↓            ↓
+[Inventory] [Payment]  [Fraud Check] [Analytics]
+Reserves    Authorizes  Scores risk   Records event
+stock       card</div>
+    <p><strong>Event design principles:</strong></p>
+    <p>1. <strong>Events are facts, not commands</strong>: <code>order.created</code> (past tense, factual) not <code>process_order</code> (imperative). Events describe what <em>happened</em>; consumers decide what to <em>do</em>.</p>
+    <p>2. <strong>Fat events vs. thin events</strong>: I lean toward "enriched" events that contain the relevant data so consumers don't need to call back to the Order Service.</p>
+    <p>3. <strong>Schema registry</strong>: Use Avro or JSON Schema with a schema registry to enforce event contracts. Breaking schema changes should be caught at CI time.</p>
+    <p>4. <strong>Ordering guarantees</strong>: Use Kafka with partition keys (e.g., <code>order_id</code>) to ensure all events for a single order are processed in order.</p>
+    <p>5. <strong>Dead letter queues</strong>: Events that repeatedly fail processing go to a DLQ for investigation, not infinite retry loops.</p>
+    <p>6. <strong>Idempotent consumers</strong>: Every consumer must handle duplicate events gracefully. "At least once" delivery is the default for most brokers.</p>
+    <p><strong>The tradeoff</strong>: You lose the simplicity of request-response. Debugging requires distributed tracing. Testing requires spinning up the broker. But the resilience and scalability gains are enormous — if the fraud service is down for 5 minutes, events queue up and are processed when it recovers.</p>
+    <div class="aha" style="background:linear-gradient(135deg,#FFF0F0,#FFE8E8);border-left-color:var(--color-error)"><div class="aha-title" style="color:var(--color-error)">🔥 Gauntlet Tip</div><p>When discussing event-driven architecture, always mention idempotent consumers and dead letter queues. These are the "production-hardened" details that separate someone who's read about events from someone who's operated them at 3 AM.</p></div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="card" style="border-top-color:var(--color-accent)">
+    <h3>Q7: How do you handle distributed tracing across microservices?</h3>
+    <p>Distributed tracing gives you a single view of a request as it flows through multiple services. Without it, debugging in microservices is like solving a murder mystery where every witness is in a different country.</p>
+    <p><strong>The OpenTelemetry approach</strong> (industry standard):</p>
+    <p>1. <strong>Trace context propagation</strong>: When Service A calls Service B, it propagates a <code>traceparent</code> header (W3C Trace Context standard): <code>traceparent: 00-&lt;trace_id&gt;-&lt;span_id&gt;-01</code>. This links all spans across services into a single trace.</p>
+    <p>2. <strong>Instrumentation</strong>: Each service creates <strong>spans</strong> for significant operations — incoming HTTP requests, outgoing HTTP calls, database queries, cache lookups. A span has: start time, duration, status, attributes, and parent span ID.</p>
+    <p>3. <strong>Collection</strong>: An OpenTelemetry collector (deployed as a sidecar or daemonset in K8s) receives spans and exports them to a backend like Jaeger, Zipkin, or a managed service (Datadog, Honeycomb).</p>
+    <p>4. <strong>Correlation</strong>: Every log line includes the <code>trace_id</code> so you can jump from a log entry to the full trace visualization. Structured logging with <code>trace_id</code> and <code>span_id</code> fields is essential.</p>
+    <p><strong>What to look for in traces:</strong></p>
+    <p>• <strong>Latency waterfall</strong>: Which service is the bottleneck?</p>
+    <p>• <strong>Error propagation</strong>: Where did the failure originate vs. where was it observed?</p>
+    <p>• <strong>Fan-out patterns</strong>: Is Service A making 50 sequential calls to Service B when it could batch?</p>
+    <p>• <strong>Missing spans</strong>: If there's a gap in the trace, something isn't instrumented.</p>
+  </div>
+
+  <!-- Q8 -->
+  <div class="card" style="border-top-color:var(--color-accent)">
+    <h3>Q8: Database per service vs. shared database — what are the tradeoffs?</h3>
+    <p><strong>Shared database</strong> means multiple services read from and write to the same database instance, often the same tables.</p>
+    <p><strong>Pros</strong>: Simple. You get ACID transactions across service boundaries. Joins are easy. One backup strategy, one connection pool to manage.</p>
+    <p><strong>Cons</strong>: It's a coupling bomb. Any service can read or modify any table, creating invisible dependencies. Schema migrations require coordinating every team. The database becomes a performance bottleneck and a single point of failure. In practice, the shared database becomes the monolith you thought you escaped.</p>
+    <p><strong>Database per service</strong> means each service owns its data store exclusively. No other service can touch it directly — they must go through the owning service's API.</p>
+    <p><strong>Pros</strong>: True autonomy. Each service chooses the right database for its workload (PostgreSQL for orders, Redis for sessions, Elasticsearch for search). Schema changes are local. Independent scaling. Data encapsulation enforces clean boundaries.</p>
+    <p><strong>Cons</strong>: No cross-service joins. Reporting queries that span multiple services require either a data warehouse or API composition. Distributed transactions require sagas. Data duplication is inevitable.</p>
+    <p><strong>My recommendation</strong>: Default to database-per-service for any serious microservice architecture. Accept the complexity tax because the alternative undermines the core benefit of microservices (independence). For cross-service queries, build a <strong>read-optimized projection</strong> — stream events to a data warehouse or materialized view that aggregates data for analytics and reporting.</p>
+    <p>The hybrid approach also works pragmatically: separate schemas within the same database instance (saves infrastructure cost for small teams) with a strict rule that services may only access their own schema. This gives you logical isolation now and the option to physically separate later.</p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 3: DevOps & Deployment ==================== -->
+<section class="screen" id="s3">
+  <h2>🚀 DevOps &amp; <span class="accent">Deployment</span></h2>
+  <p>Backend engineers are expected to own their services end-to-end. That means knowing how your code gets from a git commit to running in production, and how to keep it healthy once it's there. These questions test operational maturity.</p>
+
+  <div class="aha" style="background:linear-gradient(135deg,#FFF0F0,#FFE8E8);border-left-color:var(--color-error)"><div class="aha-title" style="color:var(--color-error)">🔥 Gauntlet Tip</div><p>DevOps questions are your chance to show you've been on-call. Mention specific tools you've used, specific incidents you've debugged. "I once spent 4 hours chasing an OOM because…" is a more convincing answer than a textbook definition.</p></div>
+
+  <!-- Q1 -->
+  <div class="card" style="border-top-color:var(--color-success)">
+    <h3>Q1: Walk me through your CI/CD pipeline for a Python microservice.</h3>
+    <p>Here's the pipeline I'd set up, triggered on every push and pull request:</p>
+    <p><strong>Stage 1 — Lint &amp; Static Analysis (30s)</strong></p>
+    <div class="code-block"><span class="cm"># Fast quality checks — fail fast</span>
+- ruff check .                    <span class="cm"># Fast linting</span>
+- black --check .                 <span class="cm"># Formatting</span>
+- mypy . --strict                 <span class="cm"># Type checking</span>
+- bandit -r src/                  <span class="cm"># Security scan</span></div>
+    <p><strong>Stage 2 — Unit Tests (1-2 min)</strong></p>
+    <div class="code-block">- pytest tests/unit/ --cov=src --cov-report=xml --cov-fail-under=85</div>
+    <p>Run in parallel with <code>pytest-xdist</code> for speed. These tests mock all external dependencies.</p>
+    <p><strong>Stage 3 — Integration Tests (3-5 min)</strong></p>
+    <div class="code-block">- docker-compose up -d postgres redis
+- pytest tests/integration/ --timeout=30
+- docker-compose down</div>
+    <p>Spin up real dependencies in containers. Test actual database queries, actual Redis operations.</p>
+    <p><strong>Stage 4 — Build &amp; Push Image (1-2 min)</strong></p>
+    <div class="code-block">- docker build -t myservice:$GIT_SHA .
+- docker push registry.example.com/myservice:$GIT_SHA</div>
+    <p>Tag with the git SHA — every image is traceable to a specific commit.</p>
+    <p><strong>Stage 5 — Deploy to Staging (automatic)</strong></p>
+    <div class="code-block">- kubectl set image deployment/myservice myservice=registry.example.com/myservice:$GIT_SHA -n staging
+- kubectl rollout status deployment/myservice -n staging --timeout=120s</div>
+    <p><strong>Stage 6 — Smoke Tests on Staging (1-2 min)</strong>: Hit real staging endpoints. Verify health checks, critical flows, response schemas.</p>
+    <p><strong>Stage 7 — Deploy to Production</strong>: Same as staging but with a canary strategy — route 10% of traffic to the new version, monitor error rates for 10 minutes, then full rollout.</p>
+    <p><strong>Total pipeline time target</strong>: Under 15 minutes from push to production. Anything slower and developers start batching changes, which increases risk per deploy.</p>
+  </div>
+
+  <!-- Q2 -->
+  <div class="card" style="border-top-color:var(--color-success)">
+    <h3>Q2: How do you do zero-downtime deployments?</h3>
+    <p>Zero-downtime deployment means users never see an error or interruption during a deploy. The core technique in Kubernetes is a <strong>rolling update</strong> with proper lifecycle management.</p>
+    <p><strong>Prerequisites:</strong></p>
+    <p>1. <strong>Health checks</strong>: Readiness probes must be configured. Kubernetes won't send traffic to a pod until it's ready.</p>
+    <p>2. <strong>Graceful shutdown</strong>: When Kubernetes sends <code>SIGTERM</code> to your pod, your app must: stop accepting new requests, finish processing in-flight requests, close database connections, and exit cleanly.</p>
+    <div class="code-block"><span class="cm"># FastAPI lifespan for graceful shutdown</span>
+<span class="kw">@asynccontextmanager</span>
+<span class="kw">async def</span> <span class="fn">lifespan</span>(app: FastAPI):
+    <span class="cm"># Startup: initialize connection pools</span>
+    <span class="kw">yield</span>
+    <span class="cm"># Shutdown: drain and close connections</span></div>
+    <p>3. <strong>Rolling update strategy:</strong></p>
+    <div class="code-block">strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1          <span class="cm"># At most 1 extra pod during update</span>
+    maxUnavailable: 0    <span class="cm"># Never reduce below desired count</span></div>
+    <p><code>maxUnavailable: 0</code> is the key — Kubernetes will bring up a new pod, wait for readiness, start routing traffic, <em>then</em> terminate an old pod.</p>
+    <p>4. <strong>Database migrations</strong>: Must be backward-compatible. The old and new versions run simultaneously during the rollout. Add columns → fine. Remove columns → two-phase deploy.</p>
+    <p>5. <strong><code>preStop</code> hook</strong>: Add a small sleep to give the load balancer time to deregister the pod:</p>
+    <div class="code-block">lifecycle:
+  preStop:
+    exec:
+      command: [<span class="str">"sleep"</span>, <span class="str">"5"</span>]</div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="card" style="border-top-color:var(--color-success)">
+    <h3>Q3: A container gets OOMKilled in Kubernetes. How do you debug it?</h3>
+    <p>OOMKilled means the container exceeded its memory limit and the Linux kernel's OOM killer terminated the process. Here's my debugging playbook:</p>
+    <p><strong>Step 1 — Confirm the OOM:</strong></p>
+    <div class="code-block">kubectl describe pod &lt;pod-name&gt; -n &lt;namespace&gt;
+<span class="cm"># Look for: State: Terminated, Reason: OOMKilled</span>
+
+kubectl get events -n &lt;namespace&gt; --sort-by=.lastTimestamp</div>
+    <p><strong>Step 2 — Check the memory limit:</strong></p>
+    <div class="code-block">kubectl get pod &lt;pod-name&gt; -o jsonpath=<span class="str">'{.spec.containers[*].resources}'</span></div>
+    <p>Is the limit reasonable for this workload?</p>
+    <p><strong>Step 3 — Analyze memory usage trends:</strong> Check <code>kubectl top pod</code> or Prometheus/Grafana for historical usage. Is memory gradually climbing (leak) or spiking suddenly (a specific request)?</p>
+    <p><strong>Step 4 — Profile the application:</strong></p>
+    <p>• <strong>Memory leak</strong>: Use <code>tracemalloc</code> in Python to snapshot memory allocations. Common culprits: unbounded caches, growing lists, circular references, SQLAlchemy sessions not being closed.</p>
+    <p>• <strong>Spike on specific requests</strong>: Large file processing in memory, pandas loading a massive CSV. Solution: streaming processing — read in chunks.</p>
+    <p><strong>Step 5 — Fix it:</strong></p>
+    <p>• If the workload legitimately needs more memory: <strong>increase the limit</strong>. But make sure the node can accommodate it.</p>
+    <p>• If it's a leak: fix the leak. Add <code>gc.collect()</code> strategically, use weakrefs, ensure all resources are properly closed.</p>
+    <p>• If it's a spike: implement streaming, add request size limits, or offload to a background worker.</p>
+    <p><strong>A common Python-specific gotcha</strong>: Gunicorn with multiple workers. Each worker is a separate process with its own memory space. 4 workers × 500MB each = 2GB needed. Set your container memory limit to at least <code>(workers × per-worker-memory) + overhead</code>.</p>
+  </div>
+
+  <!-- Q4 -->
+  <div class="card" style="border-top-color:var(--color-success)">
+    <h3>Q4: Design health checks for a service that depends on a database and Redis.</h3>
+    <p>I'd implement three distinct health check endpoints, each serving a different purpose:</p>
+    <p><strong>1. Liveness probe — <code>/health/live</code></strong></p>
+    <div class="code-block"><span class="kw">@app.get</span>(<span class="str">"/health/live"</span>)
+<span class="kw">async def</span> <span class="fn">liveness</span>():
+    <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"alive"</span>}</div>
+    <p>This just confirms the process is running and not deadlocked. <strong>Do not check dependencies here.</strong> If the database is down and your liveness probe fails, Kubernetes restarts your pod — but the database is still down, so the new pod also fails, and now you're in a restart loop.</p>
+    <p><strong>2. Readiness probe — <code>/health/ready</code></strong></p>
+    <div class="code-block"><span class="kw">@app.get</span>(<span class="str">"/health/ready"</span>)
+<span class="kw">async def</span> <span class="fn">readiness</span>():
+    checks = {}
+    <span class="kw">try</span>:
+        <span class="kw">await</span> db.execute(text(<span class="str">"SELECT 1"</span>))
+        checks[<span class="str">"database"</span>] = <span class="str">"ok"</span>
+    <span class="kw">except</span> Exception:
+        checks[<span class="str">"database"</span>] = <span class="str">"unavailable"</span>
+    <span class="kw">try</span>:
+        <span class="kw">await</span> redis.ping()
+        checks[<span class="str">"redis"</span>] = <span class="str">"ok"</span>
+    <span class="kw">except</span> Exception:
+        checks[<span class="str">"redis"</span>] = <span class="str">"unavailable"</span>
+    all_ok = <span class="fn">all</span>(v == <span class="str">"ok"</span> <span class="kw">for</span> v <span class="kw">in</span> checks.values())
+    status_code = <span class="fn">200</span> <span class="kw">if</span> all_ok <span class="kw">else</span> <span class="fn">503</span>
+    <span class="kw">return</span> JSONResponse({...}, status_code=status_code)</div>
+    <p>This checks dependencies. If the database is down, the pod goes unready — Kubernetes removes it from the Service's endpoints. But it does <strong>not</strong> restart the pod.</p>
+    <p><strong>3. Startup probe</strong> — same as liveness, with generous timing for slow-starting services:</p>
+    <div class="code-block">startupProbe:
+  httpGet:
+    path: /health/live
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  failureThreshold: 12  <span class="cm"># 60 seconds total to start up</span></div>
+    <div class="aha" style="background:linear-gradient(135deg,#FFF0F0,#FFE8E8);border-left-color:var(--color-error)"><div class="aha-title" style="color:var(--color-error)">🔥 Gauntlet Tip</div><p>The #1 mistake candidates make is checking the database in the liveness probe. If you say that in an interview, the interviewer <em>will</em> ask "what happens if the DB goes down?" Liveness = is the process healthy. Readiness = can the process serve traffic. Tattoo this distinction on your brain.</p></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="card" style="border-top-color:var(--color-success)">
+    <h3>Q5: How do you manage secrets in Kubernetes?</h3>
+    <p>Kubernetes <code>Secret</code> objects are the baseline, but they're base64-encoded, not encrypted (a common misconception). For production, I'd layer multiple strategies:</p>
+    <p><strong>Layer 1 — Kubernetes Secrets with encryption at rest:</strong> Enable <code>EncryptionConfiguration</code> in the API server to encrypt Secrets in etcd with AES-CBC or AES-GCM.</p>
+    <p><strong>Layer 2 — External secrets management:</strong> Use the <strong>External Secrets Operator</strong> to sync secrets from a vault into Kubernetes Secrets:</p>
+    <div class="code-block"><span class="kw">apiVersion</span>: external-secrets.io/v1beta1
+<span class="kw">kind</span>: ExternalSecret
+<span class="kw">metadata</span>:
+  <span class="kw">name</span>: db-credentials
+<span class="kw">spec</span>:
+  <span class="kw">refreshInterval</span>: 1h
+  <span class="kw">secretStoreRef</span>:
+    <span class="kw">name</span>: vault-backend
+    <span class="kw">kind</span>: ClusterSecretStore
+  <span class="kw">target</span>:
+    <span class="kw">name</span>: db-credentials
+  <span class="kw">data</span>:
+    - <span class="kw">secretKey</span>: password
+      <span class="kw">remoteRef</span>:
+        <span class="kw">key</span>: secret/data/myservice/db
+        <span class="kw">property</span>: password</div>
+    <p><strong>Layer 3 — RBAC restrictions:</strong> Limit which service accounts can read which secrets. The payment service should not be able to read the notification service's API keys.</p>
+    <p><strong>Anti-patterns to call out:</strong></p>
+    <p>• Secrets in environment variables in Deployment manifests checked into git. This is the most common leak.</p>
+    <p>• Secrets baked into Docker images. Anyone who pulls the image gets your credentials.</p>
+    <p>• Shared secrets across environments. Staging and production should never use the same database password.</p>
+    <p><strong>Secret rotation</strong>: The vault should support automatic rotation. The External Secrets Operator's <code>refreshInterval</code> ensures pods pick up new values.</p>
+  </div>
+
+  <!-- Q6 -->
+  <div class="card" style="border-top-color:var(--color-success)">
+    <h3>Q6: Explain blue-green vs canary deployments.</h3>
+    <p>Both strategies aim for safe production releases but they take fundamentally different approaches to risk.</p>
+    <p><strong>Blue-Green Deployment:</strong></p>
+    <p>You maintain two identical environments — Blue (current production) and Green (new version). You deploy the new version to Green, run smoke tests, then flip the load balancer from Blue to Green. 100% of traffic switches instantly.</p>
+    <p>• <strong>Pros</strong>: Simple mental model. Instant rollback — just flip back to Blue. Full pre-production testing in a production-like environment.</p>
+    <p>• <strong>Cons</strong>: You need double the infrastructure. The switch is all-or-nothing. Database migrations need extra care.</p>
+    <p><strong>Canary Deployment:</strong></p>
+    <p>You deploy the new version alongside the old version and gradually shift traffic. Start with 5% of traffic to the canary, monitor error rates and latency, then increase to 25%, 50%, 100%.</p>
+    <p>• <strong>Pros</strong>: Risk exposure is proportional. You get real production traffic validation. You can bake for hours or days.</p>
+    <p>• <strong>Cons</strong>: More complex routing. You're running two versions simultaneously, so your system must handle version skew. Monitoring must be granular enough to distinguish canary metrics.</p>
+    <p><strong>When to use which:</strong></p>
+    <p>• <strong>Blue-Green</strong>: Good for smaller teams, less complex services, when you need fast and simple rollbacks.</p>
+    <p>• <strong>Canary</strong>: Preferred for high-traffic services where a bad deploy could affect millions of users. This is what I'd use by default for user-facing backend services.</p>
+    <p>In Kubernetes, canary deployments can be implemented with Argo Rollouts or Flagger, which automate the traffic shifting and can auto-rollback based on metrics.</p>
+  </div>
+</section>
+
+<!-- ==================== SCREEN 4: Rapid Fire ==================== -->
+<section class="screen screen-alt" id="s4">
+  <h2>⚡ Rapid <span class="accent">Fire</span></h2>
+  <p>No time to think. Answer in 2-3 sentences. Go.</p>
+
+  <div class="aha"><div class="aha-title">Q: What does <code>Depends()</code> do in FastAPI?</div><p>A: <code>Depends()</code> is FastAPI's dependency injection system. It declares that a route depends on a callable (function or class) whose return value is injected as a parameter. It handles caching within a request, supports nested dependencies, and is the idiomatic way to manage database sessions, auth, and shared logic.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: <code>async def</code> vs <code>def</code> for FastAPI route handlers — when does it matter?</div><p>A: Use <code>async def</code> when the handler performs async I/O (awaiting database queries, HTTP calls). Use plain <code>def</code> for CPU-bound or synchronous-only code — FastAPI runs <code>def</code> handlers in a threadpool automatically, so they won't block the event loop. Using <code>async def</code> with blocking calls <em>will</em> block the event loop and kill your throughput.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: What are FastAPI <code>BackgroundTasks</code> and when would you use them?</div><p>A: <code>BackgroundTasks</code> lets you schedule work to run <em>after</em> the response is sent — sending emails, writing audit logs, cache warming. It's perfect for fire-and-forget tasks that shouldn't increase response latency. For anything requiring reliability (retries, persistence), use a proper task queue like Celery instead.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: Explain the FastAPI <code>lifespan</code> context manager.</div><p>A: <code>lifespan</code> is an async context manager passed to the FastAPI app that handles startup and shutdown events. Code before <code>yield</code> runs at startup (initialize DB pools, load ML models); code after <code>yield</code> runs at shutdown (close connections, flush buffers). It replaced the deprecated <code>on_event("startup")</code> and <code>on_event("shutdown")</code> decorators.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: What's a multi-stage Docker build and why use it?</div><p>A: A multi-stage build uses multiple <code>FROM</code> statements in a Dockerfile. You compile/build in a heavy image (e.g., with gcc and dev headers), then copy only the build artifacts into a slim final image. The result is a dramatically smaller production image — often 10x smaller — with a reduced attack surface.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: How does Docker layer caching work?</div><p>A: Each Dockerfile instruction creates an immutable layer. Docker caches layers and only rebuilds from the first changed instruction onward. Put rarely-changing instructions first (install OS packages, copy requirements.txt, pip install) and frequently-changing ones last (copy source code). This means dependency installs are cached and only invalidated when <code>requirements.txt</code> changes.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: Alpine vs slim base images for Python — which do you prefer?</div><p>A: I prefer <code>python:3.12-slim</code> (Debian-based). Alpine uses musl libc instead of glibc, which causes subtle incompatibilities with compiled Python packages (numpy, pandas, cryptography) and often requires installing build tools anyway, negating the size advantage. Slim is ~50MB larger but far less likely to cause mysterious runtime failures.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: What are the three Kubernetes probe types?</div><p>A: Liveness probe — is the process alive? Fails → restart. Readiness probe — can the pod serve traffic? Fails → remove from endpoints. Startup probe — has the app finished initializing? Protects slow-starting containers from premature liveness kills.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: What is a Horizontal Pod Autoscaler (HPA)?</div><p>A: HPA automatically adjusts the number of pod replicas based on observed metrics (CPU utilization, memory, or custom metrics like request latency). You set a target (e.g., 70% CPU average), and HPA scales up when the metric exceeds the target and scales down when it drops. It checks metrics every 15 seconds by default.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: ConfigMap vs Secret in Kubernetes — what's the difference?</div><p>A: ConfigMaps store non-sensitive configuration (feature flags, config files) in plain text. Secrets store sensitive data (passwords, API keys) as base64-encoded values with optional encryption at rest. Both can be mounted as files or injected as environment variables. The key difference is access control — Secrets have separate RBAC policies.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: What does idempotency mean and why does it matter for APIs?</div><p>A: An idempotent operation produces the same result regardless of how many times it's executed. GET, PUT, and DELETE are naturally idempotent; POST is not. Idempotency matters because networks are unreliable — clients will retry, and without idempotency, retries cause duplicate side effects (double charges, duplicate records).</p></div>
+
+  <div class="aha"><div class="aha-title">Q: What is HATEOAS and do you actually use it?</div><p>A: HATEOAS (Hypermedia As The Engine Of Application State) means API responses include links to related actions and resources. In theory, clients navigate the API dynamically without hardcoding URLs. In practice, almost nobody fully implements it — most APIs cherry-pick useful parts like pagination <code>next</code>/<code>prev</code> links. Pure HATEOAS adds complexity most teams don't need.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: What's the difference between 401 and 403?</div><p>A: <code>401 Unauthorized</code> means "I don't know who you are" — no credentials were provided, or they're invalid. The client should authenticate. <code>403 Forbidden</code> means "I know who you are, but you're not allowed to do this." Re-authenticating won't help; the user lacks the required permissions.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: Name the three states of a circuit breaker.</div><p>A: Closed (normal, requests pass through), Open (failing fast, requests are immediately rejected), and Half-Open (testing recovery by allowing a few requests through). A failure threshold triggers Closed → Open, a timeout triggers Open → Half-Open, and success in Half-Open resets to Closed.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: Saga pattern vs two-phase commit (2PC) — when do you choose which?</div><p>A: 2PC provides strong consistency but is blocking — all participants hold locks until the coordinator commits. It's fragile and doesn't scale. Sagas trade strong consistency for availability and resilience — each step commits locally, and failures trigger compensating actions. Use 2PC only when you absolutely need synchronous strong consistency (rare). Use sagas for everything else in microservices.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: What does "eventual consistency" actually mean in practice?</div><p>A: It means that after a write, not all readers will immediately see the updated value — but given enough time without new writes, all replicas will converge to the same state. In practice, "eventual" is usually milliseconds to seconds. Your system must tolerate stale reads during that window.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: What is a 12-factor app?</div><p>A: It's a methodology for building modern cloud-native applications defined by Heroku. The 12 factors cover codebase management, dependency declaration, config via environment variables, backing services as attached resources, strict separation of build/release/run stages, stateless processes, port binding, concurrency via process model, disposability, dev/prod parity, logs as event streams, and admin processes. The key takeaway: treat your app as a stateless, disposable unit that gets its config from the environment.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: Why use structured logging instead of plain text logs?</div><p>A: Structured logs (JSON format) are machine-parseable — your log aggregation system (ELK, Datadog, CloudWatch) can index, filter, and search by any field (trace_id, user_id, status_code) without regex. Plain text logs are readable by humans but useless for automated analysis at scale. Structured logging is non-negotiable for microservices.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: What is connection pooling and why does it matter?</div><p>A: A connection pool maintains a set of pre-established database connections that are reused across requests instead of creating a new connection for each query. Creating a TCP connection + TLS handshake + database auth takes 20-50ms — unacceptable for a request that should take 5ms. Connection pools amortize that cost to zero for steady-state traffic.</p></div>
+
+  <div class="aha"><div class="aha-title">Q: What happens if you don't set resource limits on a Kubernetes pod?</div><p>A: The pod can consume unlimited CPU and memory on its node, potentially starving other pods and triggering node-level instability. Without limits, the Kubernetes scheduler also can't make informed placement decisions. Always set both requests (guaranteed allocation) and limits (hard ceiling). A pod without resource requests/limits is considered "BestEffort" QoS and is the first to be evicted under memory pressure.</p></div>
+</section>
+
+<!-- ==================== SCREEN 5: Key Takeaways ==================== -->
+<section class="screen" id="s5">
+  <h2>🎯 Key <span class="accent">Takeaways</span></h2>
+  <p>You've survived the gauntlet. Now let's crystallize what matters most.</p>
+
+  <h3>Top 10 Things to Remember Going Into a Backend Services Interview</h3>
+  <div class="card-grid">
+    <div class="card" style="border-top-color:var(--color-info)">
+      <h4>1. Consumer-First API Design</h4>
+      <p>Start with "who calls this and what do they need?" not "what's in my database?" The best API designers are empathetic to the developer experience on the other side.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--color-accent)">
+      <h4>2. Know Your Status Codes Cold</h4>
+      <p>200, 201, 204, 400, 401, 403, 404, 409, 422, 429, 500, 503. If you hesitate on the difference between 401 and 403, it signals you haven't built APIs professionally.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--color-success)">
+      <h4>3. "It Depends" Is a Starting Point</h4>
+      <p>Every architecture question is about tradeoffs. State your recommendation, then immediately explain the tradeoffs and under what conditions you'd choose differently.</p>
+    </div>
+    <div class="card" style="border-top-color:#7B5EA7">
+      <h4>4. Monolith-to-Microservices Spectrum</h4>
+      <p>Don't be dogmatic. The right answer is usually "modular monolith, extract when specific pressures demand it." Being able to articulate those pressures is the test.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--color-info)">
+      <h4>5. Idempotent Consumers + DLQs</h4>
+      <p>Async, event-driven systems need idempotent consumers and dead letter queues. These are the two details that separate theory from practice. Always mention them.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--color-accent)">
+      <h4>6. Health Checks Matter</h4>
+      <p>Liveness ≠ readiness ≠ startup. Mixing them up causes cascading failures. This is one of the most common production mistakes and interviewers love to test it.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--color-success)">
+      <h4>7. Backward-Compatible Migrations</h4>
+      <p>Zero-downtime deployments require backward-compatible database migrations. The old and new versions run simultaneously during rolling updates.</p>
+    </div>
+    <div class="card" style="border-top-color:#7B5EA7">
+      <h4>8. Observability Is First-Class</h4>
+      <p>Distributed tracing, structured logging, and metrics aren't afterthoughts — they're how you debug, monitor, and improve production systems. Build them in from day one.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--color-info)">
+      <h4>9. Security Is Embedded, Not Bolted On</h4>
+      <p>Secrets management, input validation, rate limiting, and authentication should be part of your initial design, not a "we'll add it later" item.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--color-error)">
+      <h4>10. Show Your Operational Scars</h4>
+      <p>The best answers come from experience. "We once had a circuit breaker misconfigured…" is infinitely more convincing than a textbook definition. If you have war stories, use them.</p>
+    </div>
+  </div>
+
+  <h3>Common Mistakes Candidates Make</h3>
+
+  <div class="aha" style="background:linear-gradient(135deg,#FFF0F0,#FFE8E8);border-left-color:var(--color-error)">
+    <div class="aha-title" style="color:var(--color-error)">❌ Mistake 1: Overengineering from the start</div>
+    <p>"I'd use Kafka, a service mesh, event sourcing, and CQRS." For a system with 100 users? You just described 18 months of infrastructure work for a team of 3. Start simple. Scale when the numbers demand it.</p>
+  </div>
+
+  <div class="aha" style="background:linear-gradient(135deg,#FFF0F0,#FFE8E8);border-left-color:var(--color-error)">
+    <div class="aha-title" style="color:var(--color-error)">❌ Mistake 2: Ignoring failure modes</div>
+    <p>You design the happy path beautifully but can't answer "what happens when the payment service is down?" Every architecture answer should include at least one failure scenario and your mitigation strategy.</p>
+  </div>
+
+  <div class="aha" style="background:linear-gradient(135deg,#FFF0F0,#FFE8E8);border-left-color:var(--color-error)">
+    <div class="aha-title" style="color:var(--color-error)">❌ Mistake 3: Confusing liveness and readiness probes</div>
+    <p>Checking the database in your liveness probe means a database outage triggers a restart loop across your entire fleet. You just turned a database problem into a total service outage.</p>
+  </div>
+
+  <div class="aha" style="background:linear-gradient(135deg,#FFF0F0,#FFE8E8);border-left-color:var(--color-error)">
+    <div class="aha-title" style="color:var(--color-error)">❌ Mistake 4: Saying "microservices" reflexively</div>
+    <p>Not everything needs to be a microservice. If you can't articulate <em>why</em> you'd split a specific component out, you shouldn't split it out. The interviewer is testing your judgment, not your vocabulary.</p>
+  </div>
+
+  <div class="aha" style="background:linear-gradient(135deg,#FFF0F0,#FFE8E8);border-left-color:var(--color-error)">
+    <div class="aha-title" style="color:var(--color-error)">❌ Mistake 5: Forgetting about data consistency</div>
+    <p>In distributed systems, you can't just assume transactions work across services. If you design an order flow without mentioning sagas, eventual consistency, or compensating actions, the interviewer will push on that.</p>
+  </div>
+
+  <div class="aha" style="background:linear-gradient(135deg,#FFF0F0,#FFE8E8);border-left-color:var(--color-error)">
+    <div class="aha-title" style="color:var(--color-error)">❌ Mistake 6: No mention of observability</div>
+    <p>You design a beautiful 8-service architecture and never mention how you'd debug it. How do you trace a request? How do you know if error rates are spiking? Observability is table stakes.</p>
+  </div>
+
+  <div class="aha" style="background:linear-gradient(135deg,#FFF0F0,#FFE8E8);border-left-color:var(--color-error)">
+    <div class="aha-title" style="color:var(--color-error)">❌ Mistake 7: Treating security as optional</div>
+    <p>"We'd add authentication later." No. How are secrets managed? How is the API authenticated? What happens if someone sends a 10GB payload? Security questions are embedded in every design question.</p>
+  </div>
+
+  <h3>Interview Cheat Sheet 📋</h3>
+  <p>Tear this out and review it in the parking lot before your interview.</p>
+
+  <h4>API Design Patterns</h4>
+  <table class="cheat">
+    <tr><th>Pattern</th><th>When to Use</th><th>Key Detail</th></tr>
+    <tr><td>Cursor pagination</td><td>High-volume feeds</td><td>Encode sort key, not offset</td></tr>
+    <tr><td>Idempotency keys</td><td>Mutations with side effects</td><td>Client-generated UUID in header</td></tr>
+    <tr><td>PATCH (merge patch)</td><td>Partial updates</td><td>RFC 7386, <code>null</code> = delete field</td></tr>
+    <tr><td>Rate limiting</td><td>Multi-tenant APIs</td><td>Token bucket + per-tenant limits</td></tr>
+    <tr><td>Versioning (URL path)</td><td>Public APIs with many users</td><td><code>/v1/</code>, sunset headers, 12-mo window</td></tr>
+    <tr><td>Error envelope</td><td>All APIs</td><td>Code + message + details + req ID</td></tr>
+    <tr><td>Chunked uploads</td><td>Files &gt; 10MB</td><td>Resumable with offset tracking</td></tr>
+  </table>
+
+  <h4>Architecture Patterns</h4>
+  <table class="cheat">
+    <tr><th>Pattern</th><th>Problem It Solves</th><th>Key Tradeoff</th></tr>
+    <tr><td>Circuit breaker</td><td>Cascading failures</td><td>Need a meaningful fallback</td></tr>
+    <tr><td>Saga (orchestration)</td><td>Distributed transactions</td><td>Eventual consistency only</td></tr>
+    <tr><td>Event-driven</td><td>Service coupling</td><td>Harder to debug and test</td></tr>
+    <tr><td>Database per service</td><td>Data autonomy</td><td>No cross-service joins</td></tr>
+    <tr><td>CQRS</td><td>Read/write asymmetry</td><td>More infrastructure complexity</td></tr>
+    <tr><td>Service mesh</td><td>Cross-cutting network concerns</td><td>Operational overhead of sidecars</td></tr>
+  </table>
+
+  <h4>Kubernetes Essentials</h4>
+  <table class="cheat">
+    <tr><th>Concept</th><th>One-Liner</th></tr>
+    <tr><td>Liveness probe</td><td>"Is the process alive?" Fail → restart</td></tr>
+    <tr><td>Readiness probe</td><td>"Can it serve traffic?" Fail → remove from LB</td></tr>
+    <tr><td>Startup probe</td><td>"Has it finished booting?" Protects slow starts</td></tr>
+    <tr><td>HPA</td><td>Auto-scale pods on metrics (CPU, custom)</td></tr>
+    <tr><td>ConfigMap</td><td>Non-sensitive config, plain text</td></tr>
+    <tr><td>Secret</td><td>Sensitive config, base64 + optional encrypt</td></tr>
+    <tr><td>Rolling update</td><td><code>maxUnavailable: 0</code> for zero downtime</td></tr>
+    <tr><td>Resource limits</td><td>Always set — prevents noisy neighbors</td></tr>
+  </table>
+
+  <h4>Deployment Strategies</h4>
+  <table class="cheat">
+    <tr><th>Strategy</th><th>Risk Profile</th><th>Rollback Speed</th></tr>
+    <tr><td>Rolling update</td><td>Gradual, default in K8s</td><td>Medium (rollout undo)</td></tr>
+    <tr><td>Blue-Green</td><td>All-or-nothing switch</td><td>Instant (flip LB)</td></tr>
+    <tr><td>Canary</td><td>Progressive (5% → 100%)</td><td>Fast (shift traffic back)</td></tr>
+  </table>
+
+  <h3>The "Always Mention" List</h3>
+  <p>When discussing any backend system, make sure you touch on:</p>
+  <div class="card-grid">
+    <div class="card" style="border-top-color:var(--color-error)"><h4>✅ Error Handling</h4><p>Error handling and failure modes</p></div>
+    <div class="card" style="border-top-color:var(--color-info)"><h4>✅ Observability</h4><p>Tracing, logging, metrics</p></div>
+    <div class="card" style="border-top-color:var(--color-accent)"><h4>✅ Security</h4><p>Auth, secrets, input validation</p></div>
+    <div class="card" style="border-top-color:var(--color-success)"><h4>✅ Scalability</h4><p>What breaks at 10x traffic?</p></div>
+    <div class="card" style="border-top-color:#7B5EA7"><h4>✅ Data Consistency</h4><p>Strong vs eventual consistency</p></div>
+    <div class="card" style="border-top-color:var(--color-error)"><h4>✅ Deployment Strategy</h4><p>How does new code reach prod safely?</p></div>
+  </div>
+
+  <div class="aha" style="background:linear-gradient(135deg,#FFF0F0,#FFE8E8);border-left-color:var(--color-error)"><div class="aha-title" style="color:var(--color-error)">🔥 Gauntlet Tip — Final Words</div><p>The difference between a good backend interview and a great one isn't knowing more patterns — it's connecting the patterns to <em>real problems you've solved</em>. Before your interview, prepare 3-4 war stories: a time you debugged a production outage, designed an API that scaled, migrated from a monolith, or recovered from a bad deploy. Weave these stories into your answers naturally. Facts inform. Stories convince.</p></div>
+
+  <p style="font-size:1.3rem;font-weight:700;text-align:center;margin-top:2rem;">You've made it through the gauntlet. Now go crush that interview. 🔥</p>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-03-containers-deployment/index.html">← Prev: Containers &amp; Deployment</a>
+  <a href="../index.html">🏠 Course Home</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Chat animation
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Look at the other options — the answer focuses on Spark\'s core advantage.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>
