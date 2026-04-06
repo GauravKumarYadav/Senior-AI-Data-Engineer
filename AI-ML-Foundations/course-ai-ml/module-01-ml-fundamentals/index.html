@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Module 1: ML Fundamentals | AI/ML Foundations</title>
+<title>Module 1: ML Fundamentals | AI &amp; ML Foundations</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
@@ -25,8 +25,7 @@ section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;displ
 .card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
 .card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
 .card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
-.card p,.card ul{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
-.card ul{list-style:none;margin-top:0.3rem}.card ul li{padding:0.2rem 0}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
 .aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
 .aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
 .aha p{font-size:0.95rem;margin:0}
@@ -46,57 +45,92 @@ section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;displ
 .quiz-feedback.show{display:block}
 .quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
 .quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
-.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
-.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
-.screen-alt{background:var(--color-bg-warm)}
-footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
-footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
-footer.module-nav a:hover{opacity:0.7}
 .tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
 .tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
 .tooltip-box.visible{opacity:1}
-@media(max-width:600px){.comparison{grid-template-columns:1fr}}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+table.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+table.info-table th,table.info-table td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+table.info-table th{font-family:var(--font-heading);font-weight:700;background:rgba(0,0,0,0.03)}
+table.info-table tr:last-child td{border-bottom:none}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🤖 AI/ML Foundations</a><div class="nav-dots"><a href="../module-01-ml-fundamentals/" class="nav-dot active"></a><a href="../module-02-deep-learning/" class="nav-dot"></a><a href="../module-03-nlp/" class="nav-dot"></a><a href="../module-04-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🤖 AI &amp; ML Foundations</a><div class="nav-dots"><a href="../module-01-ml-fundamentals/" class="nav-dot active"></a><a href="../module-02-deep-learning/" class="nav-dot"></a><a href="../module-03-nlp/" class="nav-dot"></a><a href="../module-04-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
 
 <!-- Screen 1: The ML Landscape -->
 <section class="screen" id="s1">
-  <h2>The ML Landscape — <span class="accent">Supervised, Unsupervised &amp; Self-Supervised</span></h2>
+  <h2>🧠 The ML Landscape — <span class="accent">Supervised, Unsupervised &amp; Self-Supervised</span></h2>
 
   <h3>Supervised Learning</h3>
-  <p>Supervised learning is the workhorse of production ML. You have labeled data — inputs paired with known outputs — and the model learns the mapping function <code>f(X) → y</code>.</p>
-  <div class="card-grid">
-    <div class="card"><h4>🎯 Classification</h4><p>Discrete categories (spam/not spam). Loss: cross-entropy. Metrics: accuracy, F1, AUC-ROC.</p></div>
-    <div class="card blue"><h4>📈 Regression</h4><p>Continuous values (house prices). Loss: MSE/MAE. Metrics: RMSE, R², MAPE.</p></div>
-  </div>
-  <div class="code-block"><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression, LinearRegression
+  <p>Supervised learning is the workhorse of production ML. You have <strong>labeled data</strong> — inputs paired with known outputs — and the model learns the mapping function <code>f(X) → y</code>.</p>
+
+  <table class="info-table">
+    <tr><th>Aspect</th><th>Classification</th><th>Regression</th></tr>
+    <tr><td>Output</td><td>Discrete categories</td><td>Continuous values</td></tr>
+    <tr><td>Example</td><td>Spam / not spam</td><td>House price prediction</td></tr>
+    <tr><td>Loss function</td><td>Cross-entropy</td><td>MSE / MAE</td></tr>
+    <tr><td>Metrics</td><td>Accuracy, F1, AUC-ROC</td><td>RMSE, R², MAPE</td></tr>
+    <tr><td>Decision boundary</td><td>Separating hyperplane</td><td>Best-fit curve</td></tr>
+  </table>
+
+  <div class="code-block"><span class="cm"># Classification vs Regression</span>
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression, LinearRegression
 
 <span class="cm"># Classification: predict category</span>
-clf = LogisticRegression()
-clf.fit(X_train, y_train)           <span class="cm"># y_train: [0, 1, 1, 0, ...]</span>
-predictions = clf.predict(X_test)   <span class="cm"># outputs: [0, 1, ...]</span>
+clf = <span class="fn">LogisticRegression</span>()
+clf.<span class="fn">fit</span>(X_train, y_train)           <span class="cm"># y_train: [0, 1, 1, 0, ...]</span>
+predictions = clf.<span class="fn">predict</span>(X_test)   <span class="cm"># outputs: [0, 1, ...]</span>
 
 <span class="cm"># Regression: predict continuous value</span>
-reg = LinearRegression()
-reg.fit(X_train, y_train)           <span class="cm"># y_train: [250000, 340000, ...]</span>
-predictions = reg.predict(X_test)   <span class="cm"># outputs: [275340.50, ...]</span></div>
+reg = <span class="fn">LinearRegression</span>()
+reg.<span class="fn">fit</span>(X_train, y_train)           <span class="cm"># y_train: [250000, 340000, ...]</span>
+predictions = reg.<span class="fn">predict</span>(X_test)   <span class="cm"># outputs: [275340.50, ...]</span></div>
 
   <h3>Unsupervised Learning</h3>
   <p>No labels — the model discovers hidden structure in data.</p>
   <div class="card-grid">
-    <div class="card green"><h4>🔬 Clustering</h4><p>Group similar items (K-Means, DBSCAN). Use the elbow method to pick K.</p></div>
-    <div class="card purple"><h4>📉 Dimensionality Reduction</h4><p>Reduce features while preserving info (PCA, t-SNE, UMAP).</p></div>
-    <div class="card"><h4>🔍 Anomaly Detection</h4><p>Find outliers (Isolation Forest). No labels needed.</p></div>
+    <div class="card"><h4>📊 Clustering</h4><p>Group similar items together (K-Means, DBSCAN)</p></div>
+    <div class="card blue"><h4>📐 Dimensionality Reduction</h4><p>Reduce features while preserving info (PCA, t-SNE, UMAP)</p></div>
+    <div class="card green"><h4>🔍 Anomaly Detection</h4><p>Find outliers in data (Isolation Forest)</p></div>
   </div>
 
+  <div class="code-block"><span class="kw">from</span> sklearn.cluster <span class="kw">import</span> KMeans
+<span class="kw">from</span> sklearn.decomposition <span class="kw">import</span> PCA
+
+<span class="cm"># Clustering</span>
+kmeans = <span class="fn">KMeans</span>(n_clusters=<span class="fn">3</span>, random_state=<span class="fn">42</span>, n_init=<span class="fn">10</span>)
+clusters = kmeans.<span class="fn">fit_predict</span>(X)  <span class="cm"># assigns each row a cluster ID</span>
+
+<span class="cm"># Dimensionality reduction</span>
+pca = <span class="fn">PCA</span>(n_components=<span class="fn">2</span>)
+X_reduced = pca.<span class="fn">fit_transform</span>(X)
+<span class="fn">print</span>(f<span class="str">"Variance explained: {pca.explained_variance_ratio_}"</span>)</div>
+
   <h3>Self-Supervised Learning</h3>
-  <p>The model creates its own labels from the data — no human annotation required. This powers modern foundation models.</p>
+  <p>The model creates its own labels from the data itself — no human annotation required. This is the paradigm behind modern foundation models.</p>
   <div class="card-grid">
-    <div class="card"><h4>🎭 Masked LM (BERT)</h4><p>Mask 15% of tokens, predict them. Bidirectional context.</p></div>
-    <div class="card blue"><h4>🔮 Next Token (GPT)</h4><p>Given a sequence, predict the next token. Autoregressive.</p></div>
-    <div class="card green"><h4>🔗 Contrastive (CLIP)</h4><p>Pull similar pairs closer, push dissimilar apart in embedding space.</p></div>
+    <div class="card purple"><h4>🎭 Masked LM (BERT)</h4><p>Mask 15% of tokens, predict them.</p></div>
+    <div class="card"><h4>🔮 Next Token (GPT)</h4><p>Given a sequence, predict the next token.</p></div>
+    <div class="card blue"><h4>🔗 Contrastive (SimCLR)</h4><p>Pull similar pairs closer, push dissimilar apart in embedding space.</p></div>
   </div>
 
   <div class="aha">
@@ -105,84 +139,105 @@ predictions = reg.predict(X_test)   <span class="cm"># outputs: [275340.50, ...]
   </div>
 </section>
 
-<!-- Screen 2: Bias-Variance Tradeoff -->
+<!-- Screen 2: Bias-Variance -->
 <section class="screen screen-alt" id="s2">
-  <h2>Bias-Variance Tradeoff &amp; <span class="accent">Data Splitting</span></h2>
-  <p>Every ML model fights a two-front war:</p>
-  <div class="code-block">Error = Bias² + Variance + Irreducible Noise
+  <h2>⚖️ Bias-Variance <span class="accent">Tradeoff</span> &amp; Data Splitting</h2>
 
-  High Bias                          High Variance
-  (Underfitting)                     (Overfitting)
-  ┌─────────┐                        ┌─────────┐
-  │  ·   ·  │   Model too simple     │ ·~·~·~· │   Model memorizes noise
-  │ · · · · │   Misses the pattern   │·       ·│   Fails on new data
-  │  ·   ·  │                        │ ·~·~·~· │
-  └─────────┘                        └─────────┘
-  Training error: HIGH               Training error: LOW
-  Test error:     HIGH               Test error:     HIGH</div>
+  <p>Every ML model fights a two-front war: <code>Error = Bias² + Variance + Irreducible Noise</code></p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>🎯 High Bias (Underfitting)</h4>
+      <ul>
+        <li>Model too simple — misses the pattern</li>
+        <li>Training error: HIGH</li>
+        <li>Test error: HIGH</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🌊 High Variance (Overfitting)</h4>
+      <ul>
+        <li>Model memorizes noise — fails on new data</li>
+        <li>Training error: LOW</li>
+        <li>Test error: HIGH</li>
+      </ul>
+    </div>
+  </div>
+
   <p><strong>Sweet Spot:</strong> A model complex enough to capture the true pattern but simple enough to generalize. Regularization, cross-validation, and early stopping help you find it.</p>
 
   <h3>Hold-Out Split</h3>
   <div class="code-block"><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
 
 <span class="cm"># Step 1: Separate test set FIRST</span>
-X_temp, X_test, y_temp, y_test = train_test_split(
-    X, y, test_size=<span class="fn">0.2</span>, random_state=<span class="fn">42</span>, stratify=y)
+X_temp, X_test, y_temp, y_test = <span class="fn">train_test_split</span>(
+    X, y, test_size=<span class="fn">0.2</span>, random_state=<span class="fn">42</span>, stratify=y
+)
 <span class="cm"># Step 2: Split remaining into train/val</span>
-X_train, X_val, y_train, y_val = train_test_split(
-    X_temp, y_temp, test_size=<span class="fn">0.25</span>, random_state=<span class="fn">42</span>, stratify=y_temp)
+X_train, X_val, y_train, y_val = <span class="fn">train_test_split</span>(
+    X_temp, y_temp, test_size=<span class="fn">0.25</span>, random_state=<span class="fn">42</span>, stratify=y_temp
+)
 <span class="cm"># Result: 60% train, 20% val, 20% test</span></div>
 
   <h3>K-Fold Cross-Validation</h3>
   <p>When data is limited, K-fold gives you K estimates of model performance by rotating the validation fold.</p>
   <div class="code-block"><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> cross_val_score, StratifiedKFold
 
-cv = StratifiedKFold(n_splits=<span class="fn">5</span>, shuffle=<span class="fn">True</span>, random_state=<span class="fn">42</span>)
-scores = cross_val_score(model, X_train, y_train, cv=cv, scoring=<span class="str">'f1_macro'</span>)
-<span class="kw">print</span>(f<span class="str">"F1: {scores.mean():.4f} ± {scores.std():.4f}"</span>)</div>
+cv = <span class="fn">StratifiedKFold</span>(n_splits=<span class="fn">5</span>, shuffle=<span class="kw">True</span>, random_state=<span class="fn">42</span>)
+scores = <span class="fn">cross_val_score</span>(model, X_train, y_train, cv=cv, scoring=<span class="str">'f1_macro'</span>)
+<span class="fn">print</span>(f<span class="str">"F1: {scores.mean():.4f} ± {scores.std():.4f}"</span>)</div>
 
   <div class="aha">
     <div class="aha-title">💡 Interview Insight</div>
-    <p><strong>"Why can't you use the test set for hyperparameter tuning?"</strong> If you tune on the test set, you leak information about it into your model selection process. The test set becomes another validation set, and you no longer have a true out-of-sample estimate of generalization. Your reported metrics will be optimistically biased.</p>
+    <p><strong>"Why can't you use the test set for hyperparameter tuning?"</strong> If you tune on the test set, you leak information into your model selection process. The test set becomes another validation set, and you no longer have a true out-of-sample estimate of generalization. Your reported metrics will be optimistically biased.</p>
   </div>
 </section>
 
 <!-- Screen 3: Regularization -->
 <section class="screen" id="s3">
-  <h2>Regularization — <span class="accent">L1, L2 &amp; ElasticNet</span></h2>
+  <h2>🛡️ Regularization — <span class="accent">L1, L2 &amp; ElasticNet</span></h2>
   <p>Regularization adds a penalty term to the loss function to discourage overly complex models.</p>
 
-  <div class="card-grid">
-    <div class="card"><h4>L1 (Lasso)</h4><p>Penalty: <code>λ Σ|wᵢ|</code> — drives weights to zero. Use when feature selection needed.</p></div>
-    <div class="card blue"><h4>L2 (Ridge)</h4><p>Penalty: <code>λ Σwᵢ²</code> — shrinks weights uniformly. Use when all features matter.</p></div>
-    <div class="card green"><h4>ElasticNet</h4><p>Combines both L1 + L2. Use when features are correlated in groups.</p></div>
-  </div>
+  <table class="info-table">
+    <tr><th>Method</th><th>Penalty Term</th><th>Effect</th><th>Use When</th></tr>
+    <tr><td>L1 (Lasso)</td><td><code>λ Σ|wᵢ|</code></td><td>Drives weights to zero</td><td>Feature selection needed</td></tr>
+    <tr><td>L2 (Ridge)</td><td><code>λ Σwᵢ²</code></td><td>Shrinks weights uniformly</td><td>All features matter</td></tr>
+    <tr><td>ElasticNet</td><td><code>λ₁ Σ|wᵢ| + λ₂ Σwᵢ²</code></td><td>Combines both</td><td>Correlated features</td></tr>
+  </table>
 
   <div class="code-block"><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> Lasso, Ridge, ElasticNet
 
 <span class="cm"># L1: drives irrelevant feature weights to exactly 0</span>
-lasso = Lasso(alpha=<span class="fn">0.1</span>)
-lasso.fit(X_train, y_train)
-<span class="kw">print</span>(f<span class="str">"Non-zero features: {(lasso.coef_ != 0).sum()} / {len(lasso.coef_)}"</span>)
+lasso = <span class="fn">Lasso</span>(alpha=<span class="fn">0.1</span>)
+lasso.<span class="fn">fit</span>(X_train, y_train)
+<span class="fn">print</span>(f<span class="str">"Non-zero features: {(lasso.coef_ != 0).sum()} / {len(lasso.coef_)}"</span>)
 
 <span class="cm"># L2: shrinks all weights proportionally</span>
-ridge = Ridge(alpha=<span class="fn">1.0</span>)
-ridge.fit(X_train, y_train)
+ridge = <span class="fn">Ridge</span>(alpha=<span class="fn">1.0</span>)
+ridge.<span class="fn">fit</span>(X_train, y_train)
 
 <span class="cm"># ElasticNet: mix of L1 and L2</span>
-enet = ElasticNet(alpha=<span class="fn">0.1</span>, l1_ratio=<span class="fn">0.5</span>)  <span class="cm"># l1_ratio: 0=Ridge, 1=Lasso</span>
-enet.fit(X_train, y_train)</div>
+enet = <span class="fn">ElasticNet</span>(alpha=<span class="fn">0.1</span>, l1_ratio=<span class="fn">0.5</span>)  <span class="cm"># l1_ratio: 0=Ridge, 1=Lasso</span>
+enet.<span class="fn">fit</span>(X_train, y_train)</div>
 
-  <h3>Tree-Based Regularization</h3>
-  <div class="code-block">Tree Regularization Arsenal:
-├── max_depth          → limits tree depth (most impactful)
-├── min_samples_leaf   → minimum samples required at a leaf node
-├── max_features       → random subset of features per split
-├── n_estimators       → more trees = less variance
-├── learning_rate      → shrinks each tree's contribution (boosting)
-├── subsample          → random subset of rows per tree
-├── reg_alpha (L1)     → L1 penalty on leaf weights (XGBoost)
-└── reg_lambda (L2)    → L2 penalty on leaf weights (XGBoost)</div>
+  <h3>Tree Regularization Arsenal</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🌳 max_depth</h4><p>Limits tree depth — most impactful single parameter</p></div>
+    <div class="card blue"><h4>🍃 min_samples_leaf</h4><p>Minimum samples required at a leaf node</p></div>
+    <div class="card green"><h4>📉 learning_rate</h4><p>Shrinks each tree's contribution (boosting)</p></div>
+    <div class="card purple"><h4>🎲 subsample</h4><p>Random subset of rows per tree (stochastic gradient boosting)</p></div>
+  </div>
+
+  <div class="code-block"><span class="kw">import</span> xgboost <span class="kw">as</span> xgb
+
+model = xgb.<span class="fn">XGBClassifier</span>(n_estimators=<span class="fn">1000</span>, learning_rate=<span class="fn">0.05</span>, random_state=<span class="fn">42</span>)
+model.<span class="fn">fit</span>(
+    X_train, y_train,
+    eval_set=[(X_val, y_val)],
+    verbose=<span class="kw">False</span>
+)
+<span class="cm"># early_stopping_rounds via set_params or callbacks in modern XGBoost</span>
+<span class="fn">print</span>(f<span class="str">"Best iteration: {model.best_iteration}"</span>)</div>
 
   <div class="aha">
     <div class="aha-title">💡 Interview Insight</div>
@@ -192,50 +247,66 @@ enet.fit(X_train, y_train)</div>
 
 <!-- Screen 4: Feature Engineering -->
 <section class="screen screen-alt" id="s4">
-  <h2>Feature <span class="accent">Engineering</span></h2>
+  <h2>🔧 Feature <span class="accent">Engineering</span></h2>
   <p>Feature engineering is where domain knowledge meets ML. It's often the difference between a mediocre model and a great one.</p>
 
   <h3>Encoding Categorical Variables</h3>
-  <div class="code-block"><span class="cm"># One-Hot: for nominal categories (no order)</span>
-ohe = OneHotEncoder(sparse_output=<span class="fn">False</span>, handle_unknown=<span class="str">'ignore'</span>)
-X_encoded = ohe.fit_transform(df[[<span class="str">'color'</span>]])
+  <div class="code-block"><span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> OneHotEncoder, OrdinalEncoder
 
-<span class="cm"># Ordinal: for ordered categories [S, M, L, XL] → [0, 1, 2, 3]</span>
-oe = OrdinalEncoder(categories=[[<span class="str">'S'</span>, <span class="str">'M'</span>, <span class="str">'L'</span>, <span class="str">'XL'</span>]])
+<span class="cm"># One-Hot: for nominal categories (no order)</span>
+<span class="cm"># color: [red, blue, green] → [1,0,0], [0,1,0], [0,0,1]</span>
+ohe = <span class="fn">OneHotEncoder</span>(sparse_output=<span class="kw">False</span>, handle_unknown=<span class="str">'ignore'</span>)
+X_encoded = ohe.<span class="fn">fit_transform</span>(df[[<span class="str">'color'</span>]])
 
-<span class="cm"># Target Encoding: replace category with mean of target — BEWARE leakage!</span>
-te = TargetEncoder(smooth=<span class="str">"auto"</span>)
-df[<span class="str">'city_encoded'</span>] = te.fit_transform(df[[<span class="str">'city'</span>]], y_train)</div>
+<span class="cm"># Ordinal: for ordered categories</span>
+<span class="cm"># size: [S, M, L, XL] → [0, 1, 2, 3]</span>
+oe = <span class="fn">OrdinalEncoder</span>(categories=[[<span class="str">'S'</span>, <span class="str">'M'</span>, <span class="str">'L'</span>, <span class="str">'XL'</span>]])
+df[<span class="str">'size_encoded'</span>] = oe.<span class="fn">fit_transform</span>(df[[<span class="str">'size'</span>]])
+
+<span class="cm"># Target Encoding: replace category with mean of target</span>
+<span class="cm"># BEWARE of data leakage! Use sklearn 1.3+ TargetEncoder</span>
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> TargetEncoder
+te = <span class="fn">TargetEncoder</span>(smooth=<span class="str">"auto"</span>)
+df[<span class="str">'city_encoded'</span>] = te.<span class="fn">fit_transform</span>(df[[<span class="str">'city'</span>]], y_train)</div>
 
   <h3>Scaling &amp; Normalization</h3>
-  <div class="card-grid">
-    <div class="card"><h4>StandardScaler</h4><p><code>(x - μ) / σ</code> — Gaussian-ish data, SVM, logistic regression.</p></div>
-    <div class="card blue"><h4>MinMaxScaler</h4><p><code>(x - min) / (max - min)</code> — Neural nets, bounded features.</p></div>
-    <div class="card green"><h4>RobustScaler</h4><p><code>(x - median) / IQR</code> — Data with outliers.</p></div>
-  </div>
+  <table class="info-table">
+    <tr><th>Scaler</th><th>Formula</th><th>Use When</th></tr>
+    <tr><td>StandardScaler</td><td><code>(x - μ) / σ</code></td><td>Gaussian-ish data, SVM, LR</td></tr>
+    <tr><td>MinMaxScaler</td><td><code>(x - min) / (max - min)</code></td><td>Neural nets, bounded features</td></tr>
+    <tr><td>RobustScaler</td><td><code>(x - median) / IQR</code></td><td>Data has outliers</td></tr>
+  </table>
 
   <h3>Handling Missing Values</h3>
-  <div class="code-block"><span class="cm"># Strategy 1: Statistical imputation</span>
-imputer = SimpleImputer(strategy=<span class="str">'median'</span>)
-X_imputed = imputer.fit_transform(X_train)
+  <div class="code-block"><span class="kw">from</span> sklearn.impute <span class="kw">import</span> SimpleImputer, KNNImputer
 
-<span class="cm"># Strategy 2: KNN imputation (uses similar samples)</span>
-knn_imp = KNNImputer(n_neighbors=<span class="fn">5</span>)
+<span class="cm"># Statistical imputation</span>
+imputer = <span class="fn">SimpleImputer</span>(strategy=<span class="str">'median'</span>)
+X_imputed = imputer.<span class="fn">fit_transform</span>(X_train)
 
-<span class="cm"># Strategy 3: Add a missing indicator column</span>
-indicator = MissingIndicator()
-missing_flags = indicator.fit_transform(X_train)</div>
+<span class="cm"># KNN imputation (uses similar samples)</span>
+knn_imp = <span class="fn">KNNImputer</span>(n_neighbors=<span class="fn">5</span>)
+X_imputed = knn_imp.<span class="fn">fit_transform</span>(X_train)
+
+<span class="cm"># Add a missing indicator column</span>
+<span class="kw">from</span> sklearn.impute <span class="kw">import</span> MissingIndicator
+indicator = <span class="fn">MissingIndicator</span>()
+missing_flags = indicator.<span class="fn">fit_transform</span>(X_train)</div>
 
   <h3>Feature Selection Methods</h3>
-  <div class="code-block"><span class="cm"># Correlation — drop features correlated > 0.95</span>
-corr_matrix = X_train.corr().abs()
-to_drop = [col <span class="kw">for</span> col <span class="kw">in</span> upper.columns <span class="kw">if</span> any(upper[col] > <span class="fn">0.95</span>)]
+  <div class="code-block"><span class="kw">from</span> sklearn.feature_selection <span class="kw">import</span> mutual_info_classif, SelectKBest
+<span class="kw">from</span> sklearn.inspection <span class="kw">import</span> permutation_importance
+
+<span class="cm"># Correlation — drop features correlated > 0.95</span>
+corr_matrix = X_train.<span class="fn">corr</span>().<span class="fn">abs</span>()
+upper = corr_matrix.<span class="fn">where</span>(np.<span class="fn">triu</span>(np.<span class="fn">ones</span>(corr_matrix.shape), k=<span class="fn">1</span>).<span class="fn">astype</span>(<span class="kw">bool</span>))
+to_drop = [col <span class="kw">for</span> col <span class="kw">in</span> upper.columns <span class="kw">if</span> <span class="fn">any</span>(upper[col] > <span class="fn">0.95</span>)]
 
 <span class="cm"># Mutual Information — non-linear feature relevance</span>
-mi_scores = mutual_info_classif(X_train, y_train, random_state=<span class="fn">42</span>)
+mi_scores = <span class="fn">mutual_info_classif</span>(X_train, y_train, random_state=<span class="fn">42</span>)
 
 <span class="cm"># Permutation Importance — model-agnostic</span>
-result = permutation_importance(model, X_val, y_val, n_repeats=<span class="fn">10</span>)</div>
+result = <span class="fn">permutation_importance</span>(model, X_val, y_val, n_repeats=<span class="fn">10</span>)</div>
 
   <div class="aha">
     <div class="aha-title">💡 Interview Insight</div>
@@ -245,218 +316,266 @@ result = permutation_importance(model, X_val, y_val, n_repeats=<span class="fn">
 
 <!-- Screen 5: Evaluation Metrics -->
 <section class="screen" id="s5">
-  <h2>Evaluation Metrics <span class="accent">Deep Dive</span></h2>
+  <h2>📊 Evaluation <span class="accent">Metrics</span> Deep Dive</h2>
 
   <h3>Classification Metrics</h3>
-  <div class="code-block">                    Predicted
+  <div class="code-block"><span class="cm">                    Predicted
                   Pos    Neg
 Actual  Pos  │  TP   │  FN  │   ← Recall = TP / (TP + FN)
         Neg  │  FP   │  TN  │
                   ↑
           Precision = TP / (TP + FP)
 
-Accuracy  = (TP + TN) / Total        ← misleading if imbalanced!
-F1-Score  = 2 × (Precision × Recall) / (Precision + Recall)</div>
+Accuracy  = (TP + TN) / (TP + TN + FP + FN)  ← misleading if imbalanced!
+F1-Score  = 2 * (Precision * Recall) / (Precision + Recall)</span></div>
 
-  <div class="card-grid">
-    <div class="card"><h4>🎯 Balanced classes</h4><p>Use Accuracy or F1 — all metrics agree.</p></div>
-    <div class="card blue"><h4>⚠️ Imbalanced (fraud)</h4><p>Use AUC-PR, Recall, F1 — accuracy is misleading.</p></div>
-    <div class="card green"><h4>💸 FP is costly (spam)</h4><p>Optimize Precision — don't annoy users.</p></div>
-    <div class="card purple"><h4>🏥 FN is costly (cancer)</h4><p>Optimize Recall — don't miss cases.</p></div>
-  </div>
+  <table class="info-table">
+    <tr><th>Scenario</th><th>Preferred Metric</th><th>Why</th></tr>
+    <tr><td>Balanced classes</td><td>Accuracy or F1</td><td>All metrics agree</td></tr>
+    <tr><td>Imbalanced (fraud)</td><td>AUC-PR, Recall, F1</td><td>Accuracy is misleading</td></tr>
+    <tr><td>Cost of FP high (spam)</td><td>Precision</td><td>Don't annoy users</td></tr>
+    <tr><td>Cost of FN high (cancer)</td><td>Recall</td><td>Don't miss cases</td></tr>
+    <tr><td>Threshold-free eval</td><td>AUC-ROC or AUC-PR</td><td>Compare models fairly</td></tr>
+  </table>
 
-  <h3>AUC-ROC vs AUC-PR</h3>
-  <div class="comparison">
-    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
-      <h4>AUC-ROC</h4>
-      <ul>
-        <li>TPR vs FPR curve</li>
-        <li>Use for balanced classes</li>
-        <li>Shows overall discrimination</li>
-        <li>⚠️ Misleading when imbalanced</li>
-      </ul>
-    </div>
-    <div class="comp-col" style="border-top:4px solid var(--color-info)">
-      <h4>AUC-PR</h4>
-      <ul>
-        <li>Precision vs Recall curve</li>
-        <li>Use for imbalanced classes</li>
-        <li>Focuses on positive class</li>
-        <li>✅ Honest picture of performance</li>
-      </ul>
-    </div>
-  </div>
+  <div class="code-block"><span class="kw">from</span> sklearn.metrics <span class="kw">import</span> (
+    classification_report, roc_auc_score, average_precision_score
+)
+
+<span class="cm"># Full classification report</span>
+<span class="fn">print</span>(<span class="fn">classification_report</span>(y_test, y_pred, digits=<span class="fn">4</span>))
+
+<span class="cm"># AUC-ROC (use predict_proba, not predict!)</span>
+y_proba = model.<span class="fn">predict_proba</span>(X_test)[:, <span class="fn">1</span>]
+auc_roc = <span class="fn">roc_auc_score</span>(y_test, y_proba)
+
+<span class="cm"># AUC-PR (better for imbalanced data)</span>
+auc_pr = <span class="fn">average_precision_score</span>(y_test, y_proba)
+<span class="fn">print</span>(f<span class="str">"AUC-ROC: {auc_roc:.4f} | AUC-PR: {auc_pr:.4f}"</span>)</div>
 
   <h3>Regression Metrics</h3>
   <div class="code-block"><span class="kw">from</span> sklearn.metrics <span class="kw">import</span> mean_squared_error, mean_absolute_error, r2_score
 
-rmse = np.sqrt(mean_squared_error(y_test, y_pred))   <span class="cm"># Same units as target</span>
-mae = mean_absolute_error(y_test, y_pred)              <span class="cm"># Robust to outliers</span>
-r2 = r2_score(y_test, y_pred)                          <span class="cm"># % variance explained</span>
+rmse = np.<span class="fn">sqrt</span>(<span class="fn">mean_squared_error</span>(y_test, y_pred))
+mae = <span class="fn">mean_absolute_error</span>(y_test, y_pred)
+r2 = <span class="fn">r2_score</span>(y_test, y_pred)
+<span class="fn">print</span>(f<span class="str">"RMSE: ${rmse:,.2f} | MAE: ${mae:,.2f} | R²: {r2:.4f}"</span>)
 <span class="cm"># RMSE > MAE → indicates some large prediction errors (outliers)</span></div>
 
   <div class="aha">
     <div class="aha-title">💡 Interview Insight</div>
-    <p><strong>"You have a fraud detection model with 99.5% accuracy. Is it good?"</strong> If only 0.5% of transactions are fraudulent, a model that predicts "not fraud" for everything achieves 99.5% accuracy — it's useless! Use <strong>AUC-PR</strong>, <strong>recall</strong>, and <strong>precision</strong>. Always check the class distribution first.</p>
+    <p><strong>"You have a fraud detection model with 99.5% accuracy. Is it good?"</strong> If only 0.5% of transactions are fraudulent, a model that predicts "not fraud" for everything achieves 99.5% accuracy. This is useless! Use <strong>AUC-PR</strong>, <strong>recall</strong>, and <strong>precision</strong>. Always check the class distribution first.</p>
   </div>
 </section>
 
 <!-- Screen 6: Tree-Based Models -->
 <section class="screen screen-alt" id="s6">
-  <h2>Tree-Based Models — <span class="accent">Decision Trees to XGBoost</span></h2>
+  <h2>🌲 Tree-Based Models — <span class="accent">Decision Trees to XGBoost</span></h2>
 
   <h3>Decision Trees</h3>
-  <div class="code-block">                   Is income > 50K?
+  <div class="code-block"><span class="cm">                   Is income > 50K?
                   /               \
                Yes                 No
               /                      \
       Credit score > 700?        Deny Loan
       /              \
-   Approve         Check employment
-                   /            \
-                Approve         Deny</div>
-  <p><strong>Splitting criteria:</strong> Gini impurity (default) or entropy. Prone to overfitting — prune with <code>max_depth</code>, <code>min_samples_leaf</code>.</p>
+   Yes                No
+   /                    \
+Approve Loan       Check employment</span></div>
+  <p><strong>Splitting criteria:</strong> Gini impurity (default), Entropy (information gain). Prone to overfitting — use pruning via <code>max_depth</code>, <code>min_samples_leaf</code>.</p>
 
   <h3>Ensemble Methods</h3>
   <div class="comparison">
-    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
-      <h4>🌲 Bagging (Random Forest)</h4>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>🌳 Bagging (Random Forest)</h4>
       <ul>
-        <li>Parallel independent trees</li>
-        <li>Vote / Average predictions</li>
+        <li>Train multiple trees on bootstrap samples</li>
+        <li>Average predictions (parallel)</li>
         <li>Reduces variance</li>
       </ul>
     </div>
-    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
       <h4>🚀 Boosting (XGBoost)</h4>
       <ul>
-        <li>Sequential: each corrects errors</li>
-        <li>Weighted combination</li>
+        <li>Each tree corrects errors of previous</li>
+        <li>Sequential training</li>
         <li>Reduces bias</li>
       </ul>
     </div>
   </div>
 
   <h3>XGBoost vs LightGBM vs CatBoost</h3>
-  <div class="card-grid">
-    <div class="card"><h4>XGBoost</h4><p>Level-wise growth. Mature, good regularization. Manual encoding for categoricals.</p></div>
-    <div class="card blue"><h4>LightGBM</h4><p>Leaf-wise growth — fastest. Histogram-based splitting. Great for large datasets.</p></div>
-    <div class="card green"><h4>CatBoost</h4><p>Symmetric trees. Native categorical support (best). Ordered target statistics avoid leakage.</p></div>
-  </div>
+  <table class="info-table">
+    <tr><th>Feature</th><th>XGBoost</th><th>LightGBM</th><th>CatBoost</th></tr>
+    <tr><td>Tree growth</td><td>Level-wise</td><td>Leaf-wise (faster)</td><td>Symmetric trees</td></tr>
+    <tr><td>Speed</td><td>Fast</td><td>Fastest</td><td>Moderate</td></tr>
+    <tr><td>Categoricals</td><td>Manual encoding</td><td>Built-in (limited)</td><td>Native (best)</td></tr>
+    <tr><td>GPU support</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+  </table>
 
   <div class="code-block"><span class="kw">import</span> xgboost <span class="kw">as</span> xgb
+<span class="kw">from</span> lightgbm <span class="kw">import</span> LGBMClassifier
+<span class="kw">from</span> catboost <span class="kw">import</span> CatBoostClassifier
 
-xgb_clf = xgb.XGBClassifier(
+<span class="cm"># XGBoost</span>
+xgb_clf = xgb.<span class="fn">XGBClassifier</span>(
     n_estimators=<span class="fn">500</span>, max_depth=<span class="fn">6</span>, learning_rate=<span class="fn">0.1</span>,
     subsample=<span class="fn">0.8</span>, colsample_bytree=<span class="fn">0.8</span>,
-    reg_alpha=<span class="fn">0.1</span>, reg_lambda=<span class="fn">1.0</span>,  <span class="cm"># L1, L2 regularization</span>
-    eval_metric=<span class="str">'logloss'</span>, random_state=<span class="fn">42</span>
+    reg_alpha=<span class="fn">0.1</span>, reg_lambda=<span class="fn">1.0</span>,
+    random_state=<span class="fn">42</span>
 )
-xgb_clf.fit(X_train, y_train, eval_set=[(X_val, y_val)], verbose=<span class="fn">False</span>)</div>
+
+<span class="cm"># CatBoost — native categorical support</span>
+cat_clf = <span class="fn">CatBoostClassifier</span>(
+    iterations=<span class="fn">500</span>, depth=<span class="fn">6</span>,
+    cat_features=[<span class="str">'city'</span>, <span class="str">'category'</span>],  <span class="cm"># pass column names!</span>
+    verbose=<span class="fn">0</span>
+)</div>
+
+  <h3>Feature Importance &amp; SHAP</h3>
+  <div class="code-block"><span class="kw">import</span> shap
+
+<span class="cm"># SHAP: the gold standard for model interpretability</span>
+explainer = shap.<span class="fn">TreeExplainer</span>(xgb_clf)
+shap_values = explainer.<span class="fn">shap_values</span>(X_test)
+shap.<span class="fn">summary_plot</span>(shap_values, X_test)</div>
 
   <div class="aha">
     <div class="aha-title">💡 Interview Insight</div>
-    <p><strong>"XGBoost vs LightGBM — when would you pick one over the other?"</strong> LightGBM is typically faster due to leaf-wise growth and histogram-based splitting. XGBoost has slightly better default regularization. CatBoost shines with many categorical features. For most problems, all three perform similarly; pick based on your data characteristics.</p>
+    <p><strong>"XGBoost vs LightGBM — when would you pick one over the other?"</strong> LightGBM is typically faster due to leaf-wise growth and histogram-based splitting. Use it for large datasets. XGBoost has slightly better default regularization. CatBoost shines with many categorical features — it handles them natively with ordered target statistics, avoiding leakage.</p>
   </div>
 </section>
 
 <!-- Screen 7: Hyperparameter Tuning -->
 <section class="screen" id="s7">
-  <h2>Hyperparameter Tuning — <span class="accent">GridSearch &amp; Optuna</span></h2>
+  <h2>🎛️ Hyperparameter <span class="accent">Tuning</span></h2>
 
   <h3>GridSearch: The Brute Force Approach</h3>
-  <div class="code-block">param_grid = {
+  <div class="code-block"><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> GridSearchCV
+
+param_grid = {
     <span class="str">'n_estimators'</span>: [<span class="fn">100</span>, <span class="fn">300</span>, <span class="fn">500</span>],
     <span class="str">'max_depth'</span>: [<span class="fn">4</span>, <span class="fn">6</span>, <span class="fn">8</span>],
     <span class="str">'learning_rate'</span>: [<span class="fn">0.01</span>, <span class="fn">0.05</span>, <span class="fn">0.1</span>],
+    <span class="str">'subsample'</span>: [<span class="fn">0.8</span>, <span class="fn">1.0</span>]
 }
-<span class="cm"># 3 × 3 × 3 = 27 combos × 5 folds = 135 model fits. It explodes!</span>
-grid = GridSearchCV(model, param_grid, cv=<span class="fn">5</span>, scoring=<span class="str">'f1_macro'</span>, n_jobs=-<span class="fn">1</span>)
-grid.fit(X_train, y_train)</div>
+
+grid_search = <span class="fn">GridSearchCV</span>(
+    xgb.<span class="fn">XGBClassifier</span>(random_state=<span class="fn">42</span>),
+    param_grid, cv=<span class="fn">5</span>, scoring=<span class="str">'f1_macro'</span>, n_jobs=-<span class="fn">1</span>
+)
+grid_search.<span class="fn">fit</span>(X_train, y_train)
+<span class="fn">print</span>(f<span class="str">"Best F1: {grid_search.best_score_:.4f}"</span>)</div>
+  <p><strong>Problem:</strong> 3 × 3 × 3 × 2 = 54 combinations × 5 folds = 270 model fits. It explodes combinatorially.</p>
 
   <h3>Optuna: Bayesian Optimization (The Smart Way)</h3>
   <div class="code-block"><span class="kw">import</span> optuna
 
 <span class="kw">def</span> <span class="fn">objective</span>(trial):
     params = {
-        <span class="str">'n_estimators'</span>: trial.suggest_int(<span class="str">'n_estimators'</span>, <span class="fn">100</span>, <span class="fn">1000</span>),
-        <span class="str">'max_depth'</span>: trial.suggest_int(<span class="str">'max_depth'</span>, <span class="fn">3</span>, <span class="fn">10</span>),
-        <span class="str">'learning_rate'</span>: trial.suggest_float(<span class="str">'learning_rate'</span>, <span class="fn">1e-3</span>, <span class="fn">0.3</span>, log=<span class="fn">True</span>),
-        <span class="str">'subsample'</span>: trial.suggest_float(<span class="str">'subsample'</span>, <span class="fn">0.6</span>, <span class="fn">1.0</span>),
+        <span class="str">'n_estimators'</span>: trial.<span class="fn">suggest_int</span>(<span class="str">'n_estimators'</span>, <span class="fn">100</span>, <span class="fn">1000</span>),
+        <span class="str">'max_depth'</span>: trial.<span class="fn">suggest_int</span>(<span class="str">'max_depth'</span>, <span class="fn">3</span>, <span class="fn">10</span>),
+        <span class="str">'learning_rate'</span>: trial.<span class="fn">suggest_float</span>(<span class="str">'learning_rate'</span>, <span class="fn">1e-3</span>, <span class="fn">0.3</span>, log=<span class="kw">True</span>),
+        <span class="str">'subsample'</span>: trial.<span class="fn">suggest_float</span>(<span class="str">'subsample'</span>, <span class="fn">0.6</span>, <span class="fn">1.0</span>),
+        <span class="str">'reg_alpha'</span>: trial.<span class="fn">suggest_float</span>(<span class="str">'reg_alpha'</span>, <span class="fn">1e-8</span>, <span class="fn">10.0</span>, log=<span class="kw">True</span>),
     }
-    model = xgb.XGBClassifier(**params, random_state=<span class="fn">42</span>)
-    scores = cross_val_score(model, X_train, y_train, cv=cv, scoring=<span class="str">'f1_macro'</span>)
-    <span class="kw">return</span> scores.mean()
+    model = xgb.<span class="fn">XGBClassifier</span>(**params, random_state=<span class="fn">42</span>)
+    scores = <span class="fn">cross_val_score</span>(model, X_train, y_train, cv=cv, scoring=<span class="str">'f1_macro'</span>)
+    <span class="kw">return</span> scores.<span class="fn">mean</span>()
 
-study = optuna.create_study(direction=<span class="str">'maximize'</span>)
-study.optimize(objective, n_trials=<span class="fn">100</span>)
-<span class="kw">print</span>(f<span class="str">"Best F1: {study.best_value:.4f}"</span>)</div>
-  <p><strong>Why Optuna wins:</strong> Uses Tree-Structured Parzen Estimators (TPE) to model the search space. Each trial informs the next, focusing on promising regions. Also supports pruning — killing bad trials early.</p>
+study = optuna.<span class="fn">create_study</span>(direction=<span class="str">'maximize'</span>)
+study.<span class="fn">optimize</span>(objective, n_trials=<span class="fn">100</span>)
+<span class="fn">print</span>(f<span class="str">"Best F1: {study.best_value:.4f}"</span>)</div>
+  <p><strong>Why Optuna wins:</strong> It uses Tree-Structured Parzen Estimators (TPE) to model the search space. Each trial informs the next, focusing on promising regions. It also supports pruning — killing bad trials early.</p>
 
   <div class="aha">
     <div class="aha-title">💡 Interview Insight</div>
-    <p><strong>"How do you decide which hyperparameters to tune?"</strong> Focus on the most impactful: <code>learning_rate</code> + <code>n_estimators</code> (coupled), <code>max_depth</code> / <code>num_leaves</code> (complexity), and <code>subsample</code> / <code>colsample_bytree</code> (regularization). Always tune <code>learning_rate</code> on a log scale. Use early stopping instead of tuning <code>n_estimators</code> directly.</p>
+    <p><strong>"How do you decide which hyperparameters to tune?"</strong> Focus on the most impactful: <code>learning_rate</code> + <code>n_estimators</code> (coupled), <code>max_depth</code> / <code>num_leaves</code> (complexity), and <code>subsample</code> / <code>colsample_bytree</code> (regularization via randomness). Always tune <code>learning_rate</code> on a log scale. Use early stopping instead of tuning <code>n_estimators</code> directly.</p>
   </div>
 </section>
 
-<!-- Screen 8: Scikit-Learn Pipelines -->
+<!-- Screen 8: Pipelines -->
 <section class="screen screen-alt" id="s8">
-  <h2>Scikit-Learn Pipelines — <span class="accent">Production-Ready ML</span></h2>
+  <h2>🏗️ Scikit-Learn <span class="accent">Pipelines</span></h2>
+  <p>Pipelines prevent data leakage, ensure reproducibility, and make deployment a breeze.</p>
 
   <div class="card-grid">
-    <div class="card"><h4>🔒 Prevent Leakage</h4><p>Transformers fit only on training data automatically.</p></div>
-    <div class="card blue"><h4>🔄 Reproducibility</h4><p>One object encapsulates the entire workflow.</p></div>
-    <div class="card green"><h4>🚀 Deployment</h4><p>Serialize and deploy as a single artifact.</p></div>
+    <div class="card"><h4>🔒 Prevent Leakage</h4><p>Transformers fit only on training data automatically</p></div>
+    <div class="card blue"><h4>🔄 Reproducible</h4><p>One object encapsulates the entire workflow</p></div>
+    <div class="card green"><h4>🚀 Deployable</h4><p>Serialize and deploy as a single artifact</p></div>
   </div>
 
   <div class="code-block"><span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
 <span class="kw">from</span> sklearn.compose <span class="kw">import</span> ColumnTransformer
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler, OneHotEncoder
+<span class="kw">from</span> sklearn.impute <span class="kw">import</span> SimpleImputer
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+
+numeric_features = [<span class="str">'age'</span>, <span class="str">'income'</span>, <span class="str">'credit_score'</span>]
+categorical_features = [<span class="str">'city'</span>, <span class="str">'employment_type'</span>]
 
 <span class="cm"># Numeric: impute → scale</span>
-numeric_transformer = Pipeline([
-    (<span class="str">'imputer'</span>, SimpleImputer(strategy=<span class="str">'median'</span>)),
-    (<span class="str">'scaler'</span>, StandardScaler())
+numeric_transformer = <span class="fn">Pipeline</span>([
+    (<span class="str">'imputer'</span>, <span class="fn">SimpleImputer</span>(strategy=<span class="str">'median'</span>)),
+    (<span class="str">'scaler'</span>, <span class="fn">StandardScaler</span>())
 ])
+
 <span class="cm"># Categorical: impute → one-hot</span>
-categorical_transformer = Pipeline([
-    (<span class="str">'imputer'</span>, SimpleImputer(strategy=<span class="str">'most_frequent'</span>)),
-    (<span class="str">'onehot'</span>, OneHotEncoder(handle_unknown=<span class="str">'ignore'</span>))
+categorical_transformer = <span class="fn">Pipeline</span>([
+    (<span class="str">'imputer'</span>, <span class="fn">SimpleImputer</span>(strategy=<span class="str">'most_frequent'</span>)),
+    (<span class="str">'onehot'</span>, <span class="fn">OneHotEncoder</span>(handle_unknown=<span class="str">'ignore'</span>))
 ])
-<span class="cm"># Combine</span>
-preprocessor = ColumnTransformer([
+
+<span class="cm"># Combine + model</span>
+preprocessor = <span class="fn">ColumnTransformer</span>([
     (<span class="str">'num'</span>, numeric_transformer, numeric_features),
     (<span class="str">'cat'</span>, categorical_transformer, categorical_features)
 ])
-<span class="cm"># Full pipeline: preprocessing → model</span>
-pipeline = Pipeline([
+
+pipeline = <span class="fn">Pipeline</span>([
     (<span class="str">'preprocessor'</span>, preprocessor),
-    (<span class="str">'classifier'</span>, RandomForestClassifier(n_estimators=<span class="fn">200</span>))
+    (<span class="str">'classifier'</span>, <span class="fn">RandomForestClassifier</span>(n_estimators=<span class="fn">200</span>, random_state=<span class="fn">42</span>))
 ])
-pipeline.fit(X_train, y_train)
-y_pred = pipeline.predict(X_test)</div>
 
-  <h3>Serialization &amp; Deployment</h3>
-  <div class="code-block"><span class="kw">import</span> joblib
+pipeline.<span class="fn">fit</span>(X_train, y_train)
+y_pred = pipeline.<span class="fn">predict</span>(X_test)</div>
 
-<span class="cm"># Save the ENTIRE pipeline (preprocessing + model)</span>
-joblib.dump(grid.best_estimator_, <span class="str">'model_pipeline.joblib'</span>)
+  <h3>Custom Transformers &amp; Serialization</h3>
+  <div class="code-block"><span class="kw">from</span> sklearn.base <span class="kw">import</span> BaseEstimator, TransformerMixin
+<span class="kw">import</span> joblib
+
+<span class="kw">class</span> <span class="fn">TemporalFeatureExtractor</span>(BaseEstimator, TransformerMixin):
+    <span class="str">"""Extract hour, day_of_week, is_weekend from datetime."""</span>
+
+    <span class="kw">def</span> <span class="fn">fit</span>(self, X, y=<span class="kw">None</span>):
+        <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">transform</span>(self, X):
+        X = X.<span class="fn">copy</span>()
+        dt = pd.<span class="fn">to_datetime</span>(X[<span class="str">'timestamp'</span>])
+        X[<span class="str">'hour'</span>] = dt.dt.hour
+        X[<span class="str">'is_weekend'</span>] = (dt.dt.dayofweek >= <span class="fn">5</span>).<span class="fn">astype</span>(<span class="kw">int</span>)
+        <span class="kw">return</span> X.<span class="fn">drop</span>(columns=[<span class="str">'timestamp'</span>])
+
+<span class="cm"># Save entire pipeline</span>
+joblib.<span class="fn">dump</span>(pipeline, <span class="str">'model_pipeline.joblib'</span>)
 
 <span class="cm"># Load and predict — zero preprocessing code needed</span>
-loaded = joblib.load(<span class="str">'model_pipeline.joblib'</span>)
-predictions = loaded.predict(new_data)</div>
+loaded = joblib.<span class="fn">load</span>(<span class="str">'model_pipeline.joblib'</span>)
+predictions = loaded.<span class="fn">predict</span>(new_data)</div>
 
   <div class="aha">
     <div class="aha-title">💡 Interview Insight</div>
-    <p><strong>"How do you deploy an ML model?"</strong> Serialize the entire pipeline (not just the model) with <code>joblib</code>. This ensures the exact same preprocessing at inference time. Wrap it in a FastAPI endpoint, containerize with Docker, serve behind a load balancer. The pipeline pattern eliminates the #1 cause of training-serving skew: inconsistent preprocessing.</p>
+    <p><strong>"How do you deploy an ML model?"</strong> Serialize the entire pipeline (not just the model) with <code>joblib</code>. This ensures the exact same preprocessing at inference time. Wrap in a FastAPI endpoint, containerize with Docker, and serve behind a load balancer. The pipeline pattern eliminates the #1 cause of training-serving skew: inconsistent preprocessing.</p>
   </div>
 </section>
 
 <!-- Screen 9: Quiz -->
 <section class="screen" id="s9">
-  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+  <h2>🧪 Quiz: <span class="accent">Test Yourself</span></h2>
 
   <div class="quiz-box" id="q1">
-    <h4>Q1: You're building a fraud detector (0.1% fraud rate). Which metric is most appropriate?</h4>
+    <h4>Q1: You're building a model to detect fraudulent transactions (0.1% fraud rate). Which metric is most appropriate?</h4>
     <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Accuracy</div>
     <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">B) F1-Score</div>
     <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">C) AUC-PR — focuses on positive class, threshold-independent</div>
@@ -466,10 +585,10 @@ predictions = loaded.predict(new_data)</div>
 
   <div class="quiz-box" id="q2">
     <h4>Q2: Your model has low training error but high validation error. What's happening?</h4>
-    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Underfitting (high bias) — the model is too simple</div>
-    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) Overfitting (high variance) — increase regularization, reduce complexity, more data</div>
-    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) Data leakage — the training set is contaminated</div>
-    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) The learning rate is too high</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Underfitting — the model is too simple</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) Overfitting — increase regularization, reduce complexity, use early stopping</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) Data leakage — test data leaked into training</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) The learning rate is too low</div>
     <div class="quiz-feedback" id="q2-fb"></div>
   </div>
 
@@ -477,34 +596,37 @@ predictions = loaded.predict(new_data)</div>
     <h4>Q3: Why should you fit a scaler on training data only?</h4>
     <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) It's faster to fit on less data</div>
     <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) Fitting on all data leaks test set statistics into preprocessing, causing optimistically biased metrics</div>
-    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) The test set might have different column names</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) Scalers don't work on test data</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Test data has different distributions by definition</div>
     <div class="quiz-feedback" id="q3-fb"></div>
   </div>
 
   <div class="quiz-box" id="q4">
     <h4>Q4: What's the key difference between LightGBM's leaf-wise and XGBoost's level-wise tree growth?</h4>
-    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Level-wise uses more memory</div>
-    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) Leaf-wise picks the leaf with highest loss reduction (faster, but more overfitting-prone on small data). Level-wise grows all nodes at the same depth (balanced trees).</div>
-    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) They produce identical results</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Leaf-wise uses more memory</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) Leaf-wise chooses the leaf with highest loss reduction to split next, creating asymmetric but more accurate trees</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) Level-wise is always more accurate</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) There's no practical difference</div>
     <div class="quiz-feedback" id="q4-fb"></div>
   </div>
 
   <div class="quiz-box" id="q5">
     <h4>Q5: When would you use ElasticNet over Lasso or Ridge alone?</h4>
     <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) When you have very few features</div>
-    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) When features are correlated in groups — Lasso arbitrarily picks one, ElasticNet keeps the group together while still providing sparsity</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) When features are correlated in groups — L2 keeps correlated features together while L1 provides sparsity across groups</div>
     <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) When you need the fastest training time</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) When using tree-based models</div>
     <div class="quiz-feedback" id="q5-fb"></div>
   </div>
 
   <h3>🎯 Key Takeaways</h3>
   <div class="card-grid">
-    <div class="card"><h4>Know Your Problem</h4><p>Classification vs regression determines loss, metrics, and model choices.</p></div>
-    <div class="card blue"><h4>Bias-Variance</h4><p>Central theme — every technique either reduces bias or variance.</p></div>
-    <div class="card green"><h4>Prevent Leakage</h4><p>Use pipelines. Fit only on training data. This is the silent killer.</p></div>
-    <div class="card purple"><h4>Trees Dominate Tabular</h4><p>XGBoost/LightGBM + Optuna is the winning formula.</p></div>
-    <div class="card"><h4>Features > Models</h4><p>Great features beat fancy models every time.</p></div>
-    <div class="card blue"><h4>Pipelines Always</h4><p>Non-negotiable for reproducibility and deployment.</p></div>
+    <div class="card"><h4>📌 Problem Type</h4><p>Classification vs regression determines loss, metrics, and model choices</p></div>
+    <div class="card blue"><h4>⚖️ Bias-Variance</h4><p>The central theme — every technique reduces bias or variance</p></div>
+    <div class="card green"><h4>🔒 Data Leakage</h4><p>The silent killer — use pipelines, fit only on training data</p></div>
+    <div class="card purple"><h4>🌲 Trees Dominate</h4><p>XGBoost/LightGBM/CatBoost are your go-to for tabular data</p></div>
+    <div class="card"><h4>🔧 Features > Models</h4><p>Great features beat fancy models every time</p></div>
+    <div class="card blue"><h4>🏗️ Pipelines</h4><p>Non-negotiable — prevent leakage, enable reproducibility</p></div>
   </div>
 </section>
 
@@ -517,20 +639,24 @@ predictions = loaded.predict(new_data)</div>
 
 <script>
 (function(){
-  const pb=document.getElementById('progressBar');
-  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
-  const tb=document.getElementById('tooltipBox');
-  document.querySelectorAll('.tooltip-term').forEach(el=>{
-    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
-    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
-    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  var pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){var h=document.documentElement;var pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  var tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(function(el){
+    el.addEventListener('mouseenter',function(e){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',function(){tb.classList.remove('visible');});
+    el.addEventListener('click',function(){tb.textContent=el.dataset.tip;var r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
   });
+
   window.checkQuiz=function(el,qid,correct){
-    const box=document.getElementById(qid);if(box.dataset.answered)return;box.dataset.answered='true';
-    const fb=document.getElementById(qid+'-fb');
+    var box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    var fb=document.getElementById(qid+'-fb');
     if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
-    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above for the key concept.';}
-    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above and try to recall the key distinction.';box.querySelectorAll('.quiz-opt').forEach(function(o){if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(function(o){o.style.pointerEvents='none';});
   };
 })();
 </script>

@@ -48,6 +48,14 @@
     "tags": ["6 Modules", "80+ Questions", "20+ Quizzes"]
   },
   {
+    "title": "AI & ML Foundations",
+    "icon": "🤖",
+    "color": "#7B5EA7",
+    "href": "./AI-ML-Foundations/course-ai-ml/",
+    "desc": "ML fundamentals, deep learning, NLP, transformers, scikit-learn pipelines, PyTorch, Hugging Face — from basics to interview-ready.",
+    "tags": ["4 Modules", "60+ Questions", "15+ Quizzes"]
+  },
+  {
     "title": "Data Modeling Interview Mastery",
     "icon": "🏗️",
     "color": "#2A7B9B",

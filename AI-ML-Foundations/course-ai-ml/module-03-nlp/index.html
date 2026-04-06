@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 3: NLP for AI Engineers | AI &amp; ML Foundations</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p,.card ul{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.card ul{list-style:none;padding:0}.card ul li{padding:0.2rem 0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+table.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+table.info-table th,table.info-table td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+table.info-table th{font-family:var(--font-heading);font-weight:700;background:var(--color-bg-warm)}
+table.info-table tr:hover{background:rgba(0,0,0,0.02)}
+.screen-alt{background:var(--color-bg-warm)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🤖 AI &amp; ML Foundations</a><div class="nav-dots"><a href="../module-01-ml-fundamentals/" class="nav-dot"></a><a href="../module-02-deep-learning/" class="nav-dot"></a><a href="../module-03-nlp/" class="nav-dot active"></a><a href="../module-04-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Text Preprocessing -->
+<section class="screen" id="s1">
+  <h2>📝 Text Preprocessing — <span class="accent">Tokenization</span></h2>
+  <p>Raw text is messy. Models need structured numerical input. Preprocessing bridges that gap.</p>
+  <div class="code-block"><span class="cm">Raw Text                    → Cleaned                    → Tokenized</span>
+"I can't BELIEVE it's      "i cannot believe it is     ["i", "cannot", "believe",
+ only $9.99!!!"             only 9.99"                   "it", "is", "only", "9.99"]</div>
+
+  <h3>Tokenization Strategies</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h4>📖 Word-Level</h4>
+      <ul><li>✅ Simple, interpretable</li><li>❌ Huge vocabulary, can't handle OOV words</li></ul>
+    </div>
+    <div class="card blue">
+      <h4>🔤 Character-Level</h4>
+      <ul><li>✅ Tiny vocabulary (26 letters + special)</li><li>❌ Sequences too long, loses word meaning</li></ul>
+    </div>
+    <div class="card green">
+      <h4>✂️ Subword (The Sweet Spot)</h4>
+      <ul><li>✅ Handles any word, 30K-50K vocab</li><li>✅ Rare words decomposed, common stay whole</li></ul>
+    </div>
+  </div>
+
+  <table class="info-table">
+    <tr><th>Method</th><th>Used By</th><th>How It Works</th></tr>
+    <tr><td>BPE</td><td>GPT, Llama, RoBERTa</td><td>Merge most frequent byte pairs iteratively</td></tr>
+    <tr><td>WordPiece</td><td>BERT</td><td>Like BPE but maximizes likelihood</td></tr>
+    <tr><td>SentencePiece</td><td>T5, Llama</td><td>Language-agnostic, operates on raw text</td></tr>
+    <tr><td>tiktoken</td><td>GPT-3.5/4</td><td>OpenAI's fast BPE implementation</td></tr>
+  </table>
+
+  <div class="code-block"><span class="cm"># Practical: using tiktoken (OpenAI's tokenizer)</span>
+<span class="kw">import</span> tiktoken
+enc = tiktoken.encoding_for_model(<span class="str">"gpt-4"</span>)
+tokens = enc.encode(<span class="str">"Hello, world!"</span>)
+<span class="fn">print</span>(tokens)          <span class="cm"># [9906, 11, 1917, 0]</span>
+<span class="fn">print</span>(len(tokens))     <span class="cm"># 4 tokens</span>
+
+<span class="cm"># Using HuggingFace tokenizers</span>
+<span class="kw">from</span> transformers <span class="kw">import</span> AutoTokenizer
+tokenizer = AutoTokenizer.from_pretrained(<span class="str">"bert-base-uncased"</span>)
+encoded = tokenizer(<span class="str">"I love machine learning!"</span>, return_tensors=<span class="str">"pt"</span>)
+<span class="fn">print</span>(encoded[<span class="str">'input_ids'</span>])       <span class="cm"># tensor([[ 101, 1045, 2293, 3698, 4083, 999, 102]])</span>
+<span class="cm"># 101=[CLS], 102=[SEP] — special tokens added automatically</span></div>
+
+  <h3>Stemming vs Lemmatization</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>✂️ Stemming</h4>
+      <ul>
+        <li>Crude, rule-based, fast</li>
+        <li>"studies" → "studi" ❌ not a word!</li>
+        <li>"flies" → "fli" ❌</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>📚 Lemmatization</h4>
+      <ul>
+        <li>Dictionary-based, produces real words</li>
+        <li>"studies" → "study" ✅</li>
+        <li>"better" → "good" ✅</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Why did the industry move to subword tokenization?"</strong> — Word-level creates massive vocabularies (100K+) and can't handle unseen words. Character-level makes sequences too long. Subword (BPE, WordPiece) hits the sweet spot: ~30K-50K vocab, handles any word including code/URLs/multilingual, and preserves meaning for common words.</p>
+  </div>
+</section>
+
+<!-- Screen 2: Word Embeddings -->
+<section class="screen screen-alt" id="s2">
+  <h2>🧮 Word Embeddings — <span class="accent">Word2Vec, GloVe &amp; FastText</span></h2>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-muted)">
+      <h4>One-Hot (Sparse)</h4>
+      <ul>
+        <li>"cat" → [0, 0, 1, 0, …, 0]</li>
+        <li>dim = vocab_size (50,000)</li>
+        <li>cat·dog = 0 (no similarity!)</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>Dense Embedding</h4>
+      <ul>
+        <li>"cat" → [0.21, -0.35, 0.72, …]</li>
+        <li>dim = 100-300</li>
+        <li>cat·dog = 0.95 (similar!)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Word2Vec: Skip-gram vs CBOW</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>Skip-gram</h4>
+      <ul>
+        <li>Given: center word → Predict: context</li>
+        <li>Better for rare words</li>
+        <li>More commonly used</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>CBOW</h4>
+      <ul>
+        <li>Given: context words → Predict: center</li>
+        <li>Better for frequent words</li>
+        <li>Faster training</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="kw">from</span> gensim.models <span class="kw">import</span> Word2Vec
+
+sentences = [[<span class="str">"the"</span>, <span class="str">"cat"</span>, <span class="str">"sat"</span>], [<span class="str">"the"</span>, <span class="str">"dog"</span>, <span class="str">"ran"</span>]]
+model = Word2Vec(sentences, vector_size=<span class="fn">100</span>, window=<span class="fn">5</span>, min_count=<span class="fn">1</span>, sg=<span class="fn">1</span>)
+
+<span class="cm"># Semantic operations!</span>
+<span class="cm"># king - man + woman ≈ queen</span>
+result = model.wv.most_similar(positive=[<span class="str">'king'</span>, <span class="str">'woman'</span>], negative=[<span class="str">'man'</span>])</div>
+
+  <h3>GloVe &amp; FastText</h3>
+  <div class="card-grid">
+    <div class="card blue">
+      <h4>🌐 GloVe</h4>
+      <p>Factorizes the <strong>global co-occurrence matrix</strong>. Learns vectors whose dot product = log probability of co-occurrence. Unlike Word2Vec's local context windows.</p>
+    </div>
+    <div class="card green">
+      <h4>⚡ FastText</h4>
+      <p>Represents each word as a bag of character n-grams. "where" → &lt;wh, whe, her, ere, re&gt;. <strong>Can generate vectors for OOV words!</strong></p>
+    </div>
+  </div>
+
+  <h3>Static vs Contextual Embeddings</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-muted)">
+      <h4>Static (Word2Vec, GloVe)</h4>
+      <ul>
+        <li>"bank" → same vector always</li>
+        <li>One vector per word <em>type</em></li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>Contextual (BERT, GPT)</h4>
+      <ul>
+        <li>"river bank" ≠ "bank account"</li>
+        <li>One vector per word <em>token in context</em></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"What's the fundamental limitation of Word2Vec/GloVe?"</strong> — They produce <strong>static</strong> embeddings — one vector per word regardless of context. Contextual embeddings (BERT, GPT) solve this by computing embeddings as a function of surrounding context. Static embeddings are still useful for fast similarity lookups and as initialization for neural networks.</p>
+  </div>
+</section>
+
+<!-- Screen 3: Sentence & Document Embeddings -->
+<section class="screen" id="s3">
+  <h2>📐 Sentence &amp; <span class="accent">Document Embeddings</span></h2>
+  <div class="card-grid">
+    <div class="card">
+      <h4>📊 Average Word Embeddings</h4>
+      <p>Simple but weak. Loses word order — "dog bites man" = "man bites dog" ❌</p>
+    </div>
+    <div class="card blue">
+      <h4>🏷️ [CLS] from BERT</h4>
+      <p>Common but not ideal. [CLS] wasn't trained for sentence similarity ❌</p>
+    </div>
+    <div class="card green">
+      <h4>🎯 Sentence-BERT</h4>
+      <p>Purpose-built for sentence similarity. Semantically meaningful distance ✅</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="kw">from</span> sentence_transformers <span class="kw">import</span> SentenceTransformer
+<span class="kw">from</span> sklearn.metrics.pairwise <span class="kw">import</span> cosine_similarity
+
+model = SentenceTransformer(<span class="str">'all-MiniLM-L6-v2'</span>)  <span class="cm"># Fast, good quality</span>
+
+sentences = [
+    <span class="str">"The cat sat on the mat"</span>,
+    <span class="str">"A kitten rested on a rug"</span>,
+    <span class="str">"The stock market crashed today"</span>
+]
+embeddings = model.encode(sentences)  <span class="cm"># shape: (3, 384)</span>
+sim_matrix = cosine_similarity(embeddings)
+<span class="cm"># cat/kitten: 0.72 ✅  kitten/stock: 0.05 ✅</span></div>
+
+  <h3>Bi-Encoders vs Cross-Encoders</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>⚡ Bi-Encoder</h4>
+      <ul>
+        <li>✅ Encode once, compare many</li>
+        <li>✅ Pre-compute &amp; index (FAISS)</li>
+        <li>✅ 1M comparisons in ~seconds</li>
+        <li>Use for: retrieval (first stage)</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🎯 Cross-Encoder</h4>
+      <ul>
+        <li>✅ More accurate (sees both at once)</li>
+        <li>❌ Must run for EVERY pair</li>
+        <li>❌ 1M comparisons in ~hours</li>
+        <li>Use for: re-ranking (second stage)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How would you build a semantic search system?"</strong> — Two-stage: (1) <strong>Bi-encoder</strong> encodes all documents offline → FAISS index → ANN search → top-K candidates. (2) <strong>Cross-encoder</strong> re-ranks the top-K for higher accuracy. Speed of bi-encoders + accuracy of cross-encoders. This is exactly how modern RAG systems work.</p>
+  </div>
+</section>
+
+<!-- Screen 4: BERT vs GPT -->
+<section class="screen screen-alt" id="s4">
+  <h2>🏗️ Transformer NLP — <span class="accent">BERT vs GPT</span></h2>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🔍 BERT (Encoder)</h4>
+      <ul>
+        <li>Bidirectional — sees full context</li>
+        <li>Pre-train: Masked Language Model</li>
+        <li>✅ Classification, NER, QA</li>
+        <li>✅ Sentence embeddings</li>
+        <li>base: 12 layers, 768 hidden, 110M params</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>✍️ GPT (Decoder)</h4>
+      <ul>
+        <li>Causal — sees only left context</li>
+        <li>Pre-train: Next Token Prediction</li>
+        <li>✅ Text generation, chatbots</li>
+        <li>✅ Summarization, translation</li>
+        <li>Causal mask prevents future-peeking</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># BERT: Get contextual embeddings</span>
+<span class="kw">from</span> transformers <span class="kw">import</span> AutoTokenizer, AutoModel
+<span class="kw">import</span> torch
+
+tokenizer = AutoTokenizer.from_pretrained(<span class="str">'bert-base-uncased'</span>)
+model = AutoModel.from_pretrained(<span class="str">'bert-base-uncased'</span>)
+
+inputs = tokenizer(<span class="str">"Machine learning is fascinating"</span>, return_tensors=<span class="str">'pt'</span>)
+<span class="kw">with</span> torch.no_grad():
+    outputs = model(**inputs)
+
+<span class="cm"># outputs.last_hidden_state: (batch, seq_len, 768)</span>
+cls_embedding = outputs.last_hidden_state[:, <span class="fn">0</span>, :]  <span class="cm"># [CLS] token</span></div>
+
+  <h3>Encoder-Decoder: T5 &amp; BART</h3>
+  <div class="aha">
+    <div class="aha-title">🔄 Text-to-Text</div>
+    <p>T5 treats <strong>every task</strong> as text-to-text: "translate English to French: Hello" → "Bonjour" | "classify: I love this movie" → "positive" | "summarize: ..." → "...". Encoder understands input bidirectionally, decoder generates output autoregressively via cross-attention.</p>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"When would you use BERT vs GPT?"</strong> — <strong>BERT</strong> for understanding: classification, NER, embeddings for search. <strong>GPT</strong> for generation: chatbots, code, summaries. Modern GPT-scale models handle understanding too via prompting, but BERT-family models are far more efficient for embedding and classification at scale.</p>
+  </div>
+</section>
+
+<!-- Screen 5: NLP Tasks -->
+<section class="screen" id="s5">
+  <h2>🛠️ NLP Tasks — <span class="accent">Classification, NER, QA</span></h2>
+
+  <div class="code-block"><span class="cm"># Zero-shot classification — no training needed!</span>
+<span class="kw">from</span> transformers <span class="kw">import</span> pipeline
+
+classifier = pipeline(<span class="str">"zero-shot-classification"</span>, model=<span class="str">"facebook/bart-large-mnli"</span>)
+result = classifier(
+    <span class="str">"The new iPhone has an incredible camera"</span>,
+    candidate_labels=[<span class="str">"technology"</span>, <span class="str">"sports"</span>, <span class="str">"politics"</span>]
+)
+<span class="cm"># → technology, 0.97</span>
+
+<span class="cm"># Named Entity Recognition</span>
+ner = pipeline(<span class="str">"ner"</span>, model=<span class="str">"dslim/bert-base-NER"</span>, aggregation_strategy=<span class="str">"simple"</span>)
+results = ner(<span class="str">"Apple CEO Tim Cook announced the new iPhone in San Francisco."</span>)
+<span class="cm"># Apple → ORG (0.99), Tim Cook → PER (0.99), San Francisco → LOC (0.99)</span></div>
+
+  <h3>Extractive vs Generative QA</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📋 Extractive (BERT)</h4>
+      <ul>
+        <li>Answer = span from the context</li>
+        <li>✅ Grounded, no hallucination</li>
+        <li>❌ Answer must be in text</li>
+        <li>Great for RAG systems</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>✨ Generative (GPT/T5)</h4>
+      <ul>
+        <li>Answer = generated from model</li>
+        <li>✅ Flexible, can synthesize</li>
+        <li>❌ May hallucinate</li>
+        <li>Modern chatbot approach</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Extractive QA</span>
+qa = pipeline(<span class="str">"question-answering"</span>, model=<span class="str">"deepset/roberta-base-squad2"</span>)
+result = qa(
+    question=<span class="str">"What is the capital of France?"</span>,
+    context=<span class="str">"France is a country in Europe. Paris is the capital of France."</span>
+)
+<span class="cm"># Answer: Paris (confidence: 0.9876)</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How do you choose between extractive and generative QA?"</strong> — <strong>Extractive</strong> when answers must be grounded in a document — no hallucination, easy to verify, great for RAG. <strong>Generative</strong> when you need synthesized answers or multi-hop reasoning. For production: extractive QA + RAG is safer. For user-facing chatbots: generative QA with citation.</p>
+  </div>
+</section>
+
+<!-- Screen 6: Hugging Face Ecosystem -->
+<section class="screen screen-alt" id="s6">
+  <h2>🤗 Hugging Face <span class="accent">Ecosystem</span></h2>
+  <div class="card-grid">
+    <div class="card"><h4>📦 Model Hub</h4><p>300K+ models, any task, any language.</p></div>
+    <div class="card blue"><h4>📊 Datasets</h4><p>70K+ datasets with streaming, map/filter.</p></div>
+    <div class="card green"><h4>🚀 Spaces</h4><p>ML demos with Gradio/Streamlit.</p></div>
+    <div class="card purple"><h4>🔧 Transformers</h4><p>Main library: Auto*, pipeline(), Trainer.</p></div>
+    <div class="card"><h4>⚡ Tokenizers</h4><p>Fast Rust-based tokenizers.</p></div>
+    <div class="card blue"><h4>🖥️ Accelerate</h4><p>Multi-GPU, mixed precision training.</p></div>
+  </div>
+
+  <h3>The pipeline() API — Fastest Path to Inference</h3>
+  <div class="code-block"><span class="kw">from</span> transformers <span class="kw">import</span> pipeline
+
+clf = pipeline(<span class="str">"text-classification"</span>)      <span class="cm"># Sentiment analysis</span>
+summarizer = pipeline(<span class="str">"summarization"</span>)       <span class="cm"># Summarization</span>
+translator = pipeline(<span class="str">"translation_en_to_fr"</span>) <span class="cm"># Translation</span>
+generator = pipeline(<span class="str">"text-generation"</span>)       <span class="cm"># Text generation</span>
+filler = pipeline(<span class="str">"fill-mask"</span>)               <span class="cm"># BERT-style fill</span>
+filler(<span class="str">"Machine learning is [MASK]."</span>)       <span class="cm"># → "fun", "great"...</span></div>
+
+  <h3>AutoModel Pattern</h3>
+  <div class="code-block"><span class="kw">from</span> transformers <span class="kw">import</span> AutoTokenizer, AutoModelForSequenceClassification
+
+tokenizer = AutoTokenizer.from_pretrained(<span class="str">"bert-base-uncased"</span>)
+model = AutoModelForSequenceClassification.from_pretrained(
+    <span class="str">"bert-base-uncased"</span>, num_labels=<span class="fn">3</span>
+)
+
+inputs = tokenizer(<span class="str">"I love this movie"</span>, return_tensors=<span class="str">"pt"</span>, truncation=<span class="fn">True</span>)
+outputs = model(**inputs)
+predicted_class = outputs.logits.argmax(dim=-<span class="fn">1</span>).item()
+probabilities = torch.softmax(outputs.logits, dim=-<span class="fn">1</span>)</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How does the tokenizer handle variable-length inputs?"</strong> — <code>padding=True</code> pads shorter sequences with [PAD] tokens. <code>truncation=True</code> cuts at max_length. An <code>attention_mask</code> marks real tokens (1) vs padding (0). Use <code>padding='longest'</code> instead of <code>padding='max_length'</code> to save computation.</p>
+  </div>
+</section>
+
+<!-- Screen 7: End-to-End Pipeline -->
+<section class="screen" id="s7">
+  <h2>🔄 End-to-End <span class="accent">Fine-Tuning Pipeline</span></h2>
+  <div class="code-block"><span class="kw">from</span> datasets <span class="kw">import</span> load_dataset
+<span class="kw">from</span> transformers <span class="kw">import</span> (
+    AutoTokenizer, AutoModelForSequenceClassification,
+    TrainingArguments, Trainer
+)
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score, f1_score
+
+<span class="cm"># 1. Load dataset &amp; tokenizer</span>
+dataset = load_dataset(<span class="str">"imdb"</span>)
+tokenizer = AutoTokenizer.from_pretrained(<span class="str">"distilbert-base-uncased"</span>)
+
+<span class="kw">def</span> <span class="fn">preprocess</span>(examples):
+    <span class="kw">return</span> tokenizer(examples[<span class="str">'text'</span>], truncation=<span class="fn">True</span>, padding=<span class="str">'max_length'</span>, max_length=<span class="fn">256</span>)
+
+tokenized = dataset.map(preprocess, batched=<span class="fn">True</span>, num_proc=<span class="fn">4</span>)
+tokenized = tokenized.rename_column(<span class="str">"label"</span>, <span class="str">"labels"</span>)
+tokenized.set_format(<span class="str">"torch"</span>, columns=[<span class="str">"input_ids"</span>, <span class="str">"attention_mask"</span>, <span class="str">"labels"</span>])
+
+<span class="cm"># 2. Model + Metrics</span>
+model = AutoModelForSequenceClassification.from_pretrained(<span class="str">"distilbert-base-uncased"</span>, num_labels=<span class="fn">2</span>)
+
+<span class="kw">def</span> <span class="fn">compute_metrics</span>(eval_pred):
+    preds = np.argmax(eval_pred.predictions, axis=-<span class="fn">1</span>)
+    <span class="kw">return</span> {<span class="str">'accuracy'</span>: accuracy_score(eval_pred.label_ids, preds),
+            <span class="str">'f1'</span>: f1_score(eval_pred.label_ids, preds, average=<span class="str">'macro'</span>)}
+
+<span class="cm"># 3. Train!</span>
+trainer = Trainer(
+    model=model,
+    args=TrainingArguments(
+        output_dir=<span class="str">"./results"</span>, num_train_epochs=<span class="fn">3</span>, learning_rate=<span class="fn">2e-5</span>,
+        per_device_train_batch_size=<span class="fn">16</span>, evaluation_strategy=<span class="str">"epoch"</span>,
+        save_strategy=<span class="str">"epoch"</span>, load_best_model_at_end=<span class="fn">True</span>,
+        metric_for_best_model=<span class="str">"f1"</span>, fp16=<span class="fn">True</span>, warmup_ratio=<span class="fn">0.1</span>,
+    ),
+    train_dataset=tokenized[<span class="str">"train"</span>], eval_dataset=tokenized[<span class="str">"test"</span>],
+    compute_metrics=compute_metrics,
+)
+trainer.train()</div>
+
+  <table class="info-table">
+    <tr><th>Parameter</th><th>Typical Range</th><th>Notes</th></tr>
+    <tr><td>Learning rate</td><td>1e-5 to 5e-5</td><td>Most critical parameter</td></tr>
+    <tr><td>Batch size</td><td>8, 16, 32</td><td>Larger = smoother gradients</td></tr>
+    <tr><td>Epochs</td><td>2-5</td><td>More = overfitting risk</td></tr>
+    <tr><td>Weight decay</td><td>0.01</td><td>AdamW regularization</td></tr>
+    <tr><td>Warmup ratio</td><td>0.05-0.1</td><td>Gradual LR increase at start</td></tr>
+    <tr><td>Max seq length</td><td>128-512</td><td>Task-dependent, affects speed</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"Walk me through fine-tuning a pre-trained model."</strong> — (1) Choose model (DistilBERT for speed, RoBERTa for accuracy). (2) Add classification head. (3) Tokenize with model's tokenizer. (4) Small LR (2e-5) with warmup to avoid catastrophic forgetting. (5) Train 2-5 epochs with early stopping on validation F1. (6) fp16 for 2x speed. (7) Evaluate on held-out test set.</p>
+  </div>
+</section>
+
+<!-- Screen 8: Embeddings for RAG -->
+<section class="screen screen-alt" id="s8">
+  <h2>🔎 Embedding Models <span class="accent">for RAG</span></h2>
+  <table class="info-table">
+    <tr><th>Model</th><th>Dims</th><th>Speed</th><th>Quality</th><th>Use Case</th></tr>
+    <tr><td>all-MiniLM-L6-v2</td><td>384</td><td>★★★★★</td><td>★★★</td><td>Fast prototyping</td></tr>
+    <tr><td>bge-base-en-v1.5</td><td>768</td><td>★★★★</td><td>★★★★</td><td>Production RAG</td></tr>
+    <tr><td>e5-large-v2</td><td>1024</td><td>★★★</td><td>★★★★★</td><td>High-quality retrieval</td></tr>
+    <tr><td>text-embedding-3-small</td><td>1536</td><td>★★★★</td><td>★★★★</td><td>OpenAI API</td></tr>
+    <tr><td>gte-Qwen2-7B</td><td>4096</td><td>★★</td><td>★★★★★★</td><td>State-of-the-art</td></tr>
+  </table>
+
+  <div class="code-block"><span class="cm"># Batch encoding for efficiency — always batch!</span>
+model = SentenceTransformer(<span class="str">'all-MiniLM-L6-v2'</span>)
+
+embeddings = model.encode(
+    documents,
+    batch_size=<span class="fn">64</span>,
+    show_progress_bar=<span class="fn">True</span>,
+    normalize_embeddings=<span class="fn">True</span>,  <span class="cm"># Unit vectors for cosine sim</span>
+)
+<span class="cm"># With normalized embeddings, cosine sim = just dot product!</span>
+similarity = embeddings[<span class="fn">0</span>] @ embeddings[<span class="fn">1</span>]</div>
+
+  <h3>Token Counting Matters</h3>
+  <div class="code-block"><span class="kw">import</span> tiktoken
+
+<span class="kw">def</span> <span class="fn">count_tokens</span>(text: <span class="fn">str</span>, model: <span class="fn">str</span> = <span class="str">"gpt-4"</span>) -> <span class="fn">int</span>:
+    enc = tiktoken.encoding_for_model(model)
+    <span class="kw">return</span> len(enc.encode(text))
+
+<span class="cm"># Rule of thumb: 1 token ≈ 4 characters ≈ 0.75 words</span>
+<span class="cm"># Context windows: GPT-4: 128K | BERT: 512 | Claude: 200K</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p><strong>"How do you handle documents longer than the context window?"</strong> — (1) <strong>Chunking</strong>: split into overlapping chunks (512 tokens, 50-token overlap), embed each, retrieve relevant chunks. (2) <strong>Hierarchical</strong>: summarize sections, embed summaries. (3) <strong>Long-context models</strong> (128K+). (4) <strong>Map-reduce</strong>: process chunks independently, aggregate. Chunking with overlap is the RAG standard — chunk size (256-1024 tokens) is a critical hyperparameter.</p>
+  </div>
+</section>
+
+<!-- Screen 9: Quiz & Takeaways -->
+<section class="screen" id="s9">
+  <h2>🧪 Quiz: <span class="accent">Test Yourself</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: What is BPE tokenization and why is it preferred over word-level?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) It splits every word into individual characters for maximum coverage</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) It iteratively merges frequent byte pairs to create subword tokens with ~30K-50K vocab, handling any word including OOV</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) It uses a dictionary to look up each word's preferred split</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) It randomly samples character groups to create a vocabulary</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: How would you build a semantic search system?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Use a cross-encoder to compare the query against every document in the corpus</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) Use TF-IDF with cosine similarity for all comparisons</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">C) Two-stage: bi-encoder for retrieval (FAISS index) + cross-encoder for re-ranking top-K results</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) Average word embeddings from GloVe and use nearest neighbor search</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: You need to classify support tickets into 50 categories with 10K labeled examples. Best approach?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Zero-shot classification with GPT — no training needed</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) Fine-tune DistilBERT/RoBERTa with a 50-class head, LR 2e-5, 3-5 epochs, early stopping on macro F1</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) Train a Word2Vec model and use the average embeddings with logistic regression</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Use regex pattern matching for each category</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: Why does BERT use [CLS] and [SEP] special tokens?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) They're padding tokens that help with batch processing</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) They mark the beginning and end for the tokenizer only — ignored by the model</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">C) [CLS] provides aggregate sequence representation for classification; [SEP] marks segment boundaries for sentence pair tasks</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) They indicate which words should receive the most attention</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: What's the difference between a model's context window and its embedding dimension?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) They're the same thing — both measure model capacity</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) Context window = max tokens the model can process at once; embedding dimension = size of each token/sentence vector representation. They're independent.</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) Context window is always larger than embedding dimension</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Embedding dimension determines context window size</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+
+  <h3>🎯 Key Takeaways</h3>
+  <div class="card-grid">
+    <div class="card"><h4>✂️ Subword Tokenization</h4><p>BPE is the industry standard — handles any word with ~30K-50K vocab.</p></div>
+    <div class="card blue"><h4>🧮 Embeddings</h4><p>Static (Word2Vec) = fast but context-blind. Contextual (BERT) = adapts to context.</p></div>
+    <div class="card green"><h4>📐 Sentence-BERT</h4><p>Purpose-built sentence embeddings. Don't just average word vectors.</p></div>
+    <div class="card purple"><h4>⚡ Bi + Cross</h4><p>Two-stage retrieval: bi-encoder for speed, cross-encoder for accuracy.</p></div>
+    <div class="card"><h4>🏗️ BERT vs GPT</h4><p>BERT = understanding. GPT = generation. Choose the right architecture.</p></div>
+    <div class="card blue"><h4>🤗 Hugging Face</h4><p>pipeline() gets you from zero to NLP in 3 lines of code.</p></div>
+    <div class="card green"><h4>🔧 Fine-Tuning</h4><p>Small LR (2e-5) + warmup + early stopping = the recipe.</p></div>
+    <div class="card purple"><h4>📏 Chunking</h4><p>Overlap chunking is the standard for long docs in RAG systems.</p></div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-02-deep-learning/index.html">← Prev: Deep Learning</a>
+  <a href="../module-04-interview-gauntlet/index.html">Next: Interview Gauntlet →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above — the answer focuses on the core concept.';}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

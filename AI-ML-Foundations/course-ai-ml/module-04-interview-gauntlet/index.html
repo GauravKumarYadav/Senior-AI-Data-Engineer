@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 4: The Interview Gauntlet 🔥 | AI &amp; ML Foundations</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-error);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-error)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen h4{font-family:var(--font-heading);font-size:1.1rem;font-weight:700;margin:1.2rem 0 0.5rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.red{border-top-color:var(--color-error)}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p,.card ul{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.card ul{list-style:none;padding:0}.card ul li{padding:0.2rem 0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+table.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+table.info-table th,table.info-table td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+table.info-table th{font-family:var(--font-heading);font-weight:700;background:var(--color-bg-warm)}
+table.info-table tr:hover{background:rgba(0,0,0,0.02)}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.q-block{background:#fff;border-radius:14px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin:1.5rem 0;border-left:4px solid var(--color-error)}
+.q-block h4{font-family:var(--font-heading);font-weight:700;font-size:1.05rem;margin-bottom:0.8rem;color:var(--color-error)}
+.q-block p{font-size:0.92rem;margin-bottom:0.5rem}
+.q-block ul{font-size:0.9rem;padding-left:1.2rem;margin:0.5rem 0}
+.q-block ul li{margin-bottom:0.3rem}
+.rapid-fire{display:grid;gap:1rem;margin:1rem 0}
+.rf-item{background:#fff;border-radius:12px;padding:1.2rem;box-shadow:0 2px 6px rgba(0,0,0,0.04);cursor:pointer;transition:all 0.2s}
+.rf-item:hover{box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.rf-item strong{font-family:var(--font-heading);display:block;margin-bottom:0.3rem;font-size:0.95rem}
+.rf-item .rf-answer{font-size:0.88rem;color:var(--color-muted);max-height:0;overflow:hidden;transition:max-height 0.3s;line-height:1.6}
+.rf-item.open .rf-answer{max-height:200px}
+.screen-alt{background:var(--color-bg-warm)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🤖 AI &amp; ML Foundations</a><div class="nav-dots"><a href="../module-01-ml-fundamentals/" class="nav-dot"></a><a href="../module-02-deep-learning/" class="nav-dot"></a><a href="../module-03-nlp/" class="nav-dot"></a><a href="../module-04-interview-gauntlet/" class="nav-dot active"></a></div></div></nav>
+
+<!-- Screen 1: ML Design Questions -->
+<section class="screen" id="s1">
+  <h2>🔥 ML Design <span class="accent">Questions</span></h2>
+  <p>These test your ability to think <strong>end-to-end</strong>: from problem framing to deployment. No hand-holding.</p>
+
+  <div class="q-block">
+    <h4>Q1: "Design a model to detect fraudulent credit card transactions."</h4>
+    <ul>
+      <li><strong>Framing:</strong> Binary classification, extreme imbalance (~0.1-0.5% fraud), real-time &lt;100ms</li>
+      <li><strong>Features:</strong> Amount, velocity (txns in last 1hr/24hr), deviation from avg, geo distance, behavioral</li>
+      <li><strong>Model:</strong> XGBoost/LightGBM (NOT deep learning for tabular). Need interpretability + fast inference</li>
+      <li><strong>Imbalance:</strong> SMOTE or class_weight='balanced'. Optimize AUC-PR, not accuracy</li>
+      <li><strong>Threshold:</strong> cost_FN (missed fraud) >> cost_FP (blocked legit) → low threshold</li>
+      <li><strong>Deploy:</strong> Feature store + model server, A/B test, monitor concept drift, human-in-the-loop</li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <h4>Q2: "Build a recommendation system for e-commerce."</h4>
+    <ul>
+      <li><strong>Collaborative Filtering:</strong> Finds surprising items, but cold start problem</li>
+      <li><strong>Content-Based:</strong> No cold start for items, but filter bubble</li>
+      <li><strong>Two-Tower (modern):</strong> User encoder → emb, Item encoder → emb, Score = dot product</li>
+      <li><strong>Two-stage:</strong> Candidate generation (ANN on embeddings → ~1000 items) → Ranking (LightGBM/neural ranker → top 20)</li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <h4>Q3: "Design an ML system to predict customer churn."</h4>
+    <ul>
+      <li><strong>Target definition matters:</strong> No activity in 30 days? 90 days? Business decision!</li>
+      <li><strong>Feature windows:</strong> Lookback (last 90d) to predict churn in prediction window (next 30d). Never leak future data!</li>
+      <li><strong>Action:</strong> Rank by P(churn) × customer_value. Target high-value, high-risk with retention offers</li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <h4>Q4: "Design an email spam classifier."</h4>
+    <ul>
+      <li><strong>Features:</strong> TF-IDF on body, sender reputation, header/URL analysis, HTML/text ratio</li>
+      <li><strong>Model:</strong> Start simple (Logistic Regression + TF-IDF), then gradient boosted trees</li>
+      <li><strong>Precision &gt; Recall:</strong> False positives (legit in spam) worse than false negatives</li>
+      <li><strong>Adversarial:</strong> Spammers adapt! Need regular retraining, drift monitoring</li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <h4>Q5: "500 features, 10K rows. Walk through your approach."</h4>
+    <ul>
+      <li><strong>EDA:</strong> Class distribution, missing values, correlation matrix → drop &gt;0.95 correlated</li>
+      <li><strong>Feature Selection (500→~50-100):</strong> Mutual information, Lasso (L1), RFE with XGBoost</li>
+      <li><strong>Model:</strong> Baseline: Logistic Regression. Primary: XGBoost with strong regularization</li>
+      <li><strong>Validation:</strong> 5-fold stratified CV (10K too few for hold-out). Pipeline to prevent leakage</li>
+      <li><strong>Interpretability:</strong> SHAP values + permutation importance</li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <h4>Q6–Q8: Content Moderation / Search Ranking / Demand Forecasting</h4>
+    <ul>
+      <li><strong>Content Moderation:</strong> Multi-label classification, fine-tuned RoBERTa, human-in-the-loop for edge cases, distilled model for latency</li>
+      <li><strong>Search Ranking:</strong> Learning-to-Rank (LTR), BM25 + semantic → re-rank. Metrics: NDCG@10, MRR, MAP</li>
+      <li><strong>Demand Forecasting:</strong> LightGBM with temporal features beats ARIMA. Hierarchy: SKU×Store×Day → reconcile up. Metric: WMAPE</li>
+    </ul>
+  </div>
+</section>
+
+<!-- Screen 2: Evaluation & Metrics -->
+<section class="screen screen-alt" id="s2">
+  <h2>📊 Evaluation &amp; <span class="accent">Metrics Traps</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: "Your model has 95% accuracy on binary classification. Is it good?"</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Yes — 95% accuracy is excellent for any task</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) It depends on class distribution — with 95/5 imbalance, a dummy model predicting majority class also gets 95%</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) No — you always need at least 99% accuracy</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: "Your AUC-ROC is 0.99 but AUC-PR is 0.15. What's happening?"</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) The model is overfitting to the training data</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) Extreme class imbalance — massive TN count inflates AUC-ROC. AUC-PR reveals terrible precision relative to the small positive class</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) The metrics are calculated incorrectly — they should be similar</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <h3>Precision vs Recall — When to Optimize Which</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🎯 Optimize Precision</h4>
+      <ul>
+        <li>Spam filtering (blocking legit email = bad UX)</li>
+        <li>Content recommendations (irrelevant = frustration)</li>
+        <li>Drug approval (false approval = patient risk)</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>🔍 Optimize Recall</h4>
+      <ul>
+        <li>Cancer screening (missing cancer = harm)</li>
+        <li>Fraud detection (missing fraud = loss)</li>
+        <li>Security threats (missing = breach)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Setting Classification Thresholds</div>
+    <p>Default 0.5 is almost never optimal. Better: <strong>Cost-based</strong> (threshold = C_FP / (C_FP + C_FN)), <strong>Precision-at-recall</strong> ("I need 95% recall"), <strong>F1-optimal</strong>, or <strong>Business constraint</strong> ("max 1% FPR").</p>
+  </div>
+
+  <div class="q-block">
+    <h4>"Model performs great on validation but poorly in production?"</h4>
+    <ul>
+      <li><strong>1. Data drift:</strong> Production distribution differs from training</li>
+      <li><strong>2. Data leakage:</strong> Accidentally used future data or target info</li>
+      <li><strong>3. Preprocessing mismatch:</strong> Different scaling/encoding in serving</li>
+      <li><strong>4. Concept drift:</strong> Feature-target relationship changed over time</li>
+      <li><strong>Debug:</strong> Compare distributions, check leakage, verify pipeline, shadow mode</li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <h4>Type I vs Type II Errors (Medical Test)</h4>
+    <ul>
+      <li><strong>Type I (False Positive):</strong> Test says POSITIVE, reality HEALTHY → unnecessary treatment, anxiety</li>
+      <li><strong>Type II (False Negative):</strong> Test says NEGATIVE, reality SICK → missed diagnosis, progression</li>
+      <li><strong>Which is worse?</strong> Depends! Cancer: Type II worse. Spam: Type I worse.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- Screen 3: Deep Learning & NLP Questions -->
+<section class="screen" id="s3">
+  <h2>🧠 Deep Learning &amp; <span class="accent">NLP Questions</span></h2>
+
+  <div class="q-block">
+    <h4>Q1: "Explain the attention mechanism. Why better than RNNs?"</h4>
+    <ul>
+      <li><strong>RNN Problem 1:</strong> Sequential processing → can't parallelize. Attention: all tokens simultaneously</li>
+      <li><strong>RNN Problem 2:</strong> Vanishing gradients → long-range deps lost. Attention: O(1) path length</li>
+      <li><strong>RNN Problem 3:</strong> Information bottleneck in fixed hidden state. Attention: every token ↔ every token</li>
+      <li><strong>Cost:</strong> O(n²) memory/compute → why context windows are limited. Solutions: Flash Attention, sparse attention</li>
+    </ul>
+  </div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>Self-Attention</h4>
+      <ul>
+        <li>Q, K, V from SAME input</li>
+        <li>Each word attends to every other</li>
+        <li>Used in: BERT encoder, GPT decoder</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>Cross-Attention</h4>
+      <ul>
+        <li>Q from one source, K/V from another</li>
+        <li>Decoder attends to encoder output</li>
+        <li>Used in: T5/BART, image captioning</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="q-block">
+    <h4>Q3: "Why positional encoding in Transformers?"</h4>
+    <ul>
+      <li>Self-attention is permutation-equivariant — treats input as a <em>set</em>, not a sequence</li>
+      <li>Without it: "dog bites man" = "man bites dog" (identical representations!)</li>
+      <li><strong>Sinusoidal:</strong> Fixed, generalizes to longer sequences</li>
+      <li><strong>Learned (BERT):</strong> Trainable, limited to max_position</li>
+      <li><strong>RoPE (Llama):</strong> Relative position via rotation, supports extrapolation</li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <h4>Q4: "How is BERT pre-trained?"</h4>
+    <ul>
+      <li><strong>MLM:</strong> Mask 15% of tokens (80% [MASK], 10% random, 10% unchanged). Predict originals → bidirectional understanding</li>
+      <li><strong>NSP:</strong> Are two sentences consecutive? 50% real, 50% random pairs. (RoBERTa later dropped this — not very useful)</li>
+      <li><strong>Data:</strong> BooksCorpus + Wikipedia (~16GB). Cost: 4 days on 16 TPUs</li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <h4>Q5: "Vanishing gradient problem — how do modern architectures solve it?"</h4>
+    <ul>
+      <li>Gradients shrink exponentially through many layers → product of terms &lt;1 → 0</li>
+      <li><strong>Solutions:</strong> ReLU (gradient=1 for positive), residual connections (gradient highway), layer norm, careful init (He/Kaiming), gradient clipping</li>
+    </ul>
+  </div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🔥 Catastrophic Forgetting</h4>
+      <ul>
+        <li>Small LR (2e-5): gentle updates</li>
+        <li>Warmup: don't shock weights</li>
+        <li>Gradual unfreezing: head first</li>
+        <li>LoRA: only train small adapters</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>⚡ Full Fine-Tune vs LoRA</h4>
+      <ul>
+        <li>Full: update ALL params (e.g., 7B)</li>
+        <li>LoRA: ΔW = A×B, rank r≪d</li>
+        <li>~0.1% trainable parameters</li>
+        <li>QLoRA: + 4-bit quantization</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 4: Practical Coding -->
+<section class="screen screen-alt" id="s4">
+  <h2>💻 Practical <span class="accent">Coding Scenarios</span></h2>
+
+  <h3>Scenario 1: sklearn Pipeline with Mixed Features</h3>
+  <div class="code-block"><span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">from</span> sklearn.compose <span class="kw">import</span> ColumnTransformer
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler, OneHotEncoder
+<span class="kw">from</span> sklearn.impute <span class="kw">import</span> SimpleImputer
+
+preprocessor = ColumnTransformer([
+    (<span class="str">'num'</span>, Pipeline([
+        (<span class="str">'imputer'</span>, SimpleImputer(strategy=<span class="str">'median'</span>)),
+        (<span class="str">'scaler'</span>, StandardScaler()),
+    ]), numeric_features),
+    (<span class="str">'cat'</span>, Pipeline([
+        (<span class="str">'imputer'</span>, SimpleImputer(strategy=<span class="str">'most_frequent'</span>)),
+        (<span class="str">'encoder'</span>, OneHotEncoder(handle_unknown=<span class="str">'ignore'</span>)),
+    ]), categorical_features),
+])
+
+pipeline = Pipeline([
+    (<span class="str">'preprocessor'</span>, preprocessor),
+    (<span class="str">'classifier'</span>, GradientBoostingClassifier(n_estimators=<span class="fn">200</span>, max_depth=<span class="fn">5</span>))
+])
+scores = cross_val_score(pipeline, X, y, cv=<span class="fn">5</span>, scoring=<span class="str">'f1_macro'</span>)</div>
+
+  <h3>Scenario 2: PyTorch Training with Early Stopping</h3>
+  <div class="code-block"><span class="kw">class</span> <span class="fn">EarlyStopping</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, patience=<span class="fn">5</span>, min_delta=<span class="fn">1e-4</span>):
+        self.patience, self.min_delta = patience, min_delta
+        self.counter, self.best_loss, self.best_model = <span class="fn">0</span>, <span class="fn">float</span>(<span class="str">'inf'</span>), <span class="fn">None</span>
+
+    <span class="kw">def</span> <span class="fn">__call__</span>(self, val_loss, model):
+        <span class="kw">if</span> val_loss &lt; self.best_loss - self.min_delta:
+            self.best_loss = val_loss
+            self.best_model = copy.deepcopy(model.state_dict())
+            self.counter = <span class="fn">0</span>
+            <span class="kw">return</span> <span class="fn">False</span>
+        self.counter += <span class="fn">1</span>
+        <span class="kw">return</span> self.counter >= self.patience
+
+<span class="cm"># Training loop essentials:</span>
+<span class="cm"># - AdamW optimizer + CosineAnnealing scheduler</span>
+<span class="cm"># - clip_grad_norm_(max_norm=1.0)</span>
+<span class="cm"># - model.train() / model.eval() + torch.no_grad()</span></div>
+
+  <h3>Scenario 3: Semantic Search with Sentence Embeddings</h3>
+  <div class="code-block"><span class="kw">class</span> <span class="fn">SemanticSearch</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, model_name=<span class="str">'all-MiniLM-L6-v2'</span>):
+        self.model = SentenceTransformer(model_name)
+
+    <span class="kw">def</span> <span class="fn">index</span>(self, documents, batch_size=<span class="fn">64</span>):
+        self.corpus = documents
+        self.corpus_embeddings = self.model.encode(
+            documents, batch_size=batch_size,
+            normalize_embeddings=<span class="fn">True</span>  <span class="cm"># cosine sim = dot product</span>
+        )
+
+    <span class="kw">def</span> <span class="fn">search</span>(self, query, top_k=<span class="fn">5</span>):
+        q_emb = self.model.encode([query], normalize_embeddings=<span class="fn">True</span>)
+        scores = q_emb @ self.corpus_embeddings.T
+        top_idx = np.argsort(scores[<span class="fn">0</span>])[::-<span class="fn">1</span>][:top_k]
+        <span class="kw">return</span> [{<span class="str">"doc"</span>: self.corpus[i], <span class="str">"score"</span>: <span class="fn">float</span>(scores[<span class="fn">0</span>][i])} <span class="kw">for</span> i <span class="kw">in</span> top_idx]</div>
+</section>
+
+<!-- Screen 5: Rapid Fire -->
+<section class="screen" id="s5">
+  <h2>⚡ Rapid Fire — <span class="accent">20 Q&amp;A</span></h2>
+  <p>Click each question to reveal the answer. 2-3 sentences max — testing breadth and precision.</p>
+
+  <div class="rapid-fire">
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>1. What is the bias-variance tradeoff?</strong><div class="rf-answer">Bias = underfitting (too simple); variance = overfitting (too complex). Total error = bias² + variance + irreducible noise. Find the complexity sweet spot.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>2. Why is cross-validation better than a single split?</strong><div class="rf-answer">Uses all data for both training and validation across K folds. Mean ± std tells you both performance and stability. Critical for small datasets.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>3. What does L1 do that L2 doesn't?</strong><div class="rf-answer">L1 drives weights to exactly zero → automatic feature selection. L2 only shrinks toward zero. Use L1 when many features are irrelevant.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>4. XGBoost vs Random Forest?</strong><div class="rf-answer">RF = bagging (parallel trees, majority vote) reduces variance. XGBoost = boosting (sequential trees, correct previous errors) reduces bias. XGBoost also has built-in regularization + handles missing values.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>5. What is data leakage?</strong><div class="rf-answer">Information from outside training (test data, future data, target variable) leaks in. Causes: fitting scalers on full data, target-derived features, ignoring time order. Pipelines prevent most leakage.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>6. What activation do Transformers use?</strong><div class="rf-answer">GELU in feed-forward layers — smooth approximation of ReLU allowing small negative values for better gradient flow. Newer models use SwiGLU.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>7. Purpose of the attention mask?</strong><div class="rf-answer">Tells the model which tokens to attend to. Padding tokens get mask=0 so they don't influence output. In GPT, also prevents attending to future tokens.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>8. Why AdamW over Adam?</strong><div class="rf-answer">AdamW decouples weight decay from gradients, applying it directly to weights. Standard Adam's decay interacts with adaptive LR in unintended ways. Better generalization.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>9. model.train() vs model.eval()?</strong><div class="rf-answer">train() enables dropout + uses batch stats for BatchNorm. eval() disables dropout + uses stored running stats. Always switch to eval before inference.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>10. Explain BPE in one sentence.</strong><div class="rf-answer">Start with individual characters and iteratively merge the most frequent adjacent pair into a new token until reaching the target vocabulary size.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>11. BERT vs GPT?</strong><div class="rf-answer">BERT = encoder, bidirectional, great for understanding/classification. GPT = decoder, autoregressive, great for generation. BERT uses MLM; GPT uses next token prediction.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>12. What is learning rate warmup?</strong><div class="rf-answer">Gradually increasing LR from near-zero to target over initial steps. Prevents large, destructive weight updates when gradients are noisy at the start.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>13. When AUC-PR over AUC-ROC?</strong><div class="rf-answer">When classes are imbalanced. AUC-ROC can be misleadingly high due to massive true negatives. AUC-PR focuses on the positive class for an honest picture.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>14. What is gradient clipping?</strong><div class="rf-answer">Limiting gradient magnitude during backprop (max_norm=1.0). Prevents exploding gradients that cause instability. Doesn't change direction, only scales if too large.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>15. Cold start problem?</strong><div class="rf-answer">New users/items have no interaction history → can't personalize. Solutions: content-based features, popularity fallback, onboarding preferences.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>16. What is SHAP?</strong><div class="rf-answer">SHapley Additive exPlanations — theoretically grounded feature attributions for individual predictions. Shows how much each feature pushed prediction up/down. Essential for interpretability.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>17. Mixed precision training?</strong><div class="rf-answer">float16 for forward/backward (faster, less memory), float32 for weight updates (stability). ~2x speedup, ~50% memory reduction. Use torch.cuda.amp.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>18. Bi-encoder vs cross-encoder?</strong><div class="rf-answer">Bi-encoder: encode texts independently (fast, scalable, pre-computable). Cross-encoder: process both jointly (more accurate, O(n²)). Use bi for retrieval, cross for re-ranking.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>19. How does dropout work at inference?</strong><div class="rf-answer">It doesn't — disabled during inference. All neurons active but scaled by (1 - dropout_rate) to maintain expected magnitude. model.eval() handles this.</div></div>
+    <div class="rf-item" onclick="this.classList.toggle('open')"><strong>20. What is LoRA and why does it matter?</strong><div class="rf-answer">Freezes original weights, trains small rank-decomposed matrices (ΔW = A×B, r≪d). ~99% fewer trainable params. Enables fine-tuning large models on consumer GPUs. QLoRA adds 4-bit quantization.</div></div>
+  </div>
+</section>
+
+<!-- Screen 6: Cheat Sheet & Takeaways -->
+<section class="screen screen-alt" id="s6">
+  <h2>🏆 Interview <span class="accent">Cheat Sheet</span></h2>
+
+  <div class="card-grid">
+    <div class="card red"><h4>1. Problem First</h4><p>"What are we optimizing? What's the business metric?"</p></div>
+    <div class="card blue"><h4>2. Ask About Data</h4><p>"How much labeled data? Class balance? Feature types?"</p></div>
+    <div class="card green"><h4>3. Never Say "Accuracy"</h4><p>For imbalanced problems → AUC-PR, F1, recall. Show you know WHY.</p></div>
+    <div class="card purple"><h4>4. Prevent Leakage</h4><p>Pipelines, proper splits, temporal awareness. Always mention this.</p></div>
+    <div class="card"><h4>5. Bias-Variance</h4><p>Every regularization technique maps to this concept. Know it cold.</p></div>
+    <div class="card red"><h4>6. Trees for Tabular</h4><p>XGBoost/LightGBM + Optuna is the winning formula.</p></div>
+    <div class="card blue"><h4>7. Transformers for Text</h4><p>BERT for understanding, GPT for generation.</p></div>
+    <div class="card green"><h4>8. Evaluate First</h4><p>Metric selection drives every decision downstream.</p></div>
+    <div class="card purple"><h4>9. Deployment Matters</h4><p>Latency, throughput, monitoring, drift detection.</p></div>
+    <div class="card red"><h4>10. Be Honest</h4><p>"This approach is simpler but sacrifices X." Tradeoffs!</p></div>
+  </div>
+
+  <h3>Quick Reference: Model Selection</h3>
+  <table class="info-table">
+    <tr><th>Data Type</th><th>Small (&lt;1K)</th><th>Medium (1K-100K)</th><th>Large (100K+)</th></tr>
+    <tr><td>Tabular</td><td>Logistic Reg, RF</td><td>XGBoost/LightGBM</td><td>XGBoost + feat eng</td></tr>
+    <tr><td>Text</td><td>Zero-shot / few-shot</td><td>Fine-tune DistilBERT</td><td>Fine-tune RoBERTa</td></tr>
+    <tr><td>Image</td><td>Transfer (frozen)</td><td>Fine-tune ResNet</td><td>Fine-tune ViT</td></tr>
+    <tr><td>Time Series</td><td>ARIMA, Prophet</td><td>LSTM / Transformer</td><td>Transformer + features</td></tr>
+  </table>
+
+  <h3>Quick Reference: Metric Selection</h3>
+  <table class="info-table">
+    <tr><th>Task</th><th>Primary Metric</th><th>Secondary</th></tr>
+    <tr><td>Balanced classification</td><td>F1-macro</td><td>Accuracy</td></tr>
+    <tr><td>Imbalanced classification</td><td>AUC-PR</td><td>Recall, Precision</td></tr>
+    <tr><td>Regression</td><td>RMSE</td><td>MAE, R²</td></tr>
+    <tr><td>Ranking / Search</td><td>NDCG@K</td><td>MRR, MAP</td></tr>
+    <tr><td>Recommendation</td><td>Hit Rate@K</td><td>NDCG, Coverage</td></tr>
+  </table>
+
+  <div class="aha">
+    <div class="aha-title">🔥 The Interview Flow</div>
+    <p><strong>1. CLARIFY</strong> → 2. DATA → 3. METRIC → 4. BASELINE → 5. MODEL (tradeoffs!) → 6. EVAL (prevent leakage) → 7. DEPLOY (monitor) → 8. ITERATE</p>
+  </div>
+
+  <div class="code-block"><span class="cm">The best ML engineers don't just know algorithms —</span>
+<span class="cm">they know WHEN to use them, WHY to use them,</span>
+<span class="cm">and HOW to evaluate them honestly.</span>
+<span class="cm"></span>
+<span class="cm">Every model is wrong. Some models are useful.</span>
+<span class="cm">Your job is to find the useful ones and</span>
+<span class="cm">explain WHY they're useful to non-technical stakeholders.</span>
+<span class="cm"></span>
+<span class="str">Now go crush that interview. 🔥</span></div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-03-nlp/index.html">← Prev: NLP</a>
+  <a href="../index.html">Course Home →</a>
+</footer>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s the interview-grade answer.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Think about what the interviewer is really testing here.';}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>
