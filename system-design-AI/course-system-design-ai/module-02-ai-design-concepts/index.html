@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 2: AI System Design Concepts | AI System Design Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#DC2626;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.screen ul{max-width:700px;margin-bottom:1rem;font-size:1rem;padding-left:1.2rem}
+.screen ul li{margin-bottom:0.4rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+.screen-alt.screen{max-width:100%;padding-left:0;padding-right:0}
+.screen-alt .screen-inner{max-width:900px;margin:0 auto;padding:0 1.5rem}
+.divider{width:60px;height:4px;background:var(--color-accent);border-radius:2px;margin:1.5rem 0;opacity:0.5}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🏛️ System Design — AI</a><div class="nav-dots"><a href="../module-01-ai-design-problems/" class="nav-dot"></a><a href="../module-02-ai-design-concepts/" class="nav-dot active"></a><a href="../module-03-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Intro -->
+<section class="screen" id="s1">
+  <h2>🧱 AI System Design <span class="accent">Concepts</span></h2>
+  <p>Every ML system you'll ever design — whether it's a recommendation engine, a fraud detector, or an LLM-powered assistant — shares the same set of <strong>recurring building blocks</strong>. This module is a deep-dive into those building blocks.</p>
+  <p>Master these 14 concepts and you'll be able to reason about <em>any</em> AI system design problem thrown at you, in interviews or in production. The framework is your skeleton. These concepts are the organs.</p>
+
+  <div class="card-grid">
+    <div class="card"><h4>1. ML Design Framework</h4><p>The 6-step repeatable structure for every interview answer.</p></div>
+    <div class="card blue"><h4>2. Feature Stores</h4><p>Centralized feature management, offline + online serving.</p></div>
+    <div class="card green"><h4>3. Model Registries</h4><p>Versioned model catalog with lineage and promotion workflows.</p></div>
+    <div class="card purple"><h4>4. A/B Testing for ML</h4><p>Statistical rigor, interleaving, bandits, guardrail metrics.</p></div>
+    <div class="card"><h4>5. Online vs Offline Eval</h4><p>Shadow mode, canary deploys, and bridging the eval gap.</p></div>
+    <div class="card blue"><h4>6. Data Flywheel</h4><p>The compounding loop: more users → better models → more users.</p></div>
+    <div class="card green"><h4>7. Feedback Loops</h4><p>Implicit vs explicit signals, logging, dangerous loops.</p></div>
+    <div class="card purple"><h4>8. Cold Start Problem</h4><p>New users, new items, new systems — bootstrapping strategies.</p></div>
+    <div class="card"><h4>9. Embedding Infra</h4><p>Text, image, multi-modal embeddings and pipelines.</p></div>
+    <div class="card blue"><h4>10. Vector Search</h4><p>HNSW, IVF-PQ, sharding, hybrid search at scale.</p></div>
+    <div class="card green"><h4>11. LLM Caching</h4><p>Exact match + semantic caching for cost savings.</p></div>
+    <div class="card purple"><h4>12. Prompt Routing</h4><p>Smart model selection: complexity, topic, cost-based.</p></div>
+    <div class="card"><h4>13. Guardrails</h4><p>Input validation, output safety, PII detection.</p></div>
+    <div class="card blue"><h4>14. Human-in-the-Loop</h4><p>Escalation, queue management, feedback as gold labels.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 How to Use This Module</div>
+    <p>These concepts are your <strong>vocabulary</strong>. When you encounter a system design problem, you don't invent from scratch — you compose from these building blocks. A recommendation system? Feature store + embeddings + A/B testing + feedback loops + cold start. An LLM app? Caching + prompt routing + guardrails + human-in-the-loop. Learn them individually, then think about how they connect.</p>
+  </div>
+</section>
+
+<!-- Screen 2: ML System Design Framework -->
+<section class="screen screen-alt" id="s2">
+<div class="screen-inner">
+  <h2>The 6-Step <span class="accent">ML Design Framework</span></h2>
+  <p>The single most important tool in your AI system design toolkit. Without a framework, you'll ramble. With one, you'll be <strong>structured, thorough, and confident</strong>. This works for virtually every ML system design question.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>1️⃣ Clarify Requirements</h4>
+      <p>Ask: business objective, users, latency constraints, scale (RPS, data volume), fairness/compliance. Spend 3–5 min here. Common pitfall: jumping straight to modeling.</p>
+    </div>
+    <div class="card blue">
+      <h4>2️⃣ Data</h4>
+      <p>Where does data come from? Labeling strategy (human, implicit, weak supervision)? Batch vs streaming ingestion? Class imbalance? PII masking? Data versioning?</p>
+    </div>
+    <div class="card green">
+      <h4>3️⃣ Model</h4>
+      <p>Right model for the right job. Tradeoff triangle: accuracy vs latency vs cost. Single model vs multi-stage pipeline? Pretrained vs train-from-scratch? Define offline eval metrics.</p>
+    </div>
+    <div class="card purple">
+      <h4>4️⃣ Serving</h4>
+      <p>Real-time (API), batch (precompute), or streaming? Latency SLAs, throughput, model format (ONNX, TorchScript), hardware (CPU/GPU), autoscaling, load balancing.</p>
+    </div>
+    <div class="card">
+      <h4>5️⃣ Monitoring</h4>
+      <p>Models rot. Data drifts. Monitor: prediction distributions, feature distributions, latency, error rates, business metrics. Alerts for drift (PSI, KL divergence).</p>
+    </div>
+    <div class="card blue">
+      <h4>6️⃣ Iteration</h4>
+      <p>ML is never "done." Feedback loops → retrain on fresh data → A/B test → iterate features. Connects back to Step 2 (new data) and Step 3 (better models).</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>State this framework <strong>up front</strong>: <em>"I'll walk through clarification, data, modeling, serving, monitoring, and iteration."</em> It gives the interviewer a roadmap and shows you think in <strong>systems, not just models</strong>. A senior engineer asks "what does success look like?" before writing a line of code.</p>
+  </div>
+</div>
+</section>
+
+<!-- Screen 3: Feature Stores + Model Registries -->
+<section class="screen" id="s3">
+  <h2>Feature Stores + <span class="accent">Model Registries</span></h2>
+
+  <h3>🗄️ Feature Stores</h3>
+  <p>A centralized system for managing, storing, and serving ML features. Without one, every team computes features independently — duplicated work, inconsistent definitions, and <span class="tooltip-term" data-tip="When the features used during training differ from those used during serving, leading to silently degraded model performance in production.">training-serving skew</span>.</p>
+  <p>Imagine three teams all computing "user's average order value over 30 days." Without a feature store, each writes its own SQL and inevitably gets slightly different numbers. A feature store gives you <strong>one definition, one pipeline, one source of truth</strong>.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📦 Offline Store</h4>
+      <ul>
+        <li>🗃️ Data warehouse (BigQuery, S3 + Parquet)</li>
+        <li>📚 Holds historical feature values</li>
+        <li>🎯 Used for training</li>
+        <li>⏰ Time-travel: "features as of March 15th"</li>
+        <li>🔗 Point-in-time correct joins</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>⚡ Online Store</h4>
+      <ul>
+        <li>🔴 Low-latency KV store (Redis, DynamoDB)</li>
+        <li>📌 Holds latest feature values only</li>
+        <li>🎯 Used for real-time inference</li>
+        <li>⏱️ Sub-millisecond reads</li>
+        <li>🔄 Materialized from batch + streaming</li>
+      </ul>
+    </div>
+  </div>
+
+  <p><strong>Point-in-Time Correctness</strong> is the subtle killer. When training, you need features <em>as they existed at the time of each example</em>. Using future data (e.g., lifetime value to predict first purchase) is <span class="tooltip-term" data-tip="When a model accidentally uses information from the future during training. Offline metrics look amazing, but the model falls flat in production where that future data doesn't exist yet.">feature leakage</span> — offline metrics look amazing while production falls flat.</p>
+
+  <div class="code-block"><span class="cm"># Feast feature definition — one definition, two stores</span>
+<span class="kw">from</span> feast <span class="kw">import</span> Entity, FeatureView, Field
+<span class="kw">from</span> feast.types <span class="kw">import</span> Float64, Int64
+
+user = <span class="fn">Entity</span>(name=<span class="str">"user_id"</span>, join_keys=[<span class="str">"user_id"</span>])
+
+user_features = <span class="fn">FeatureView</span>(
+    name=<span class="str">"user_features"</span>,
+    entities=[user],
+    schema=[
+        <span class="fn">Field</span>(name=<span class="str">"avg_spend_30d"</span>, dtype=Float64),
+        <span class="fn">Field</span>(name=<span class="str">"tx_count_7d"</span>, dtype=Int64),
+        <span class="fn">Field</span>(name=<span class="str">"account_age_days"</span>, dtype=Int64),
+    ],
+    source=bq_source,  <span class="cm"># BigQuery table as offline source</span>
+    ttl=<span class="fn">timedelta</span>(days=<span class="fn">1</span>),  <span class="cm"># Freshness SLA</span>
+)</div>
+
+  <div class="divider"></div>
+
+  <h3>📋 Model Registries</h3>
+  <p>A versioned catalog of trained models with metadata — hyperparameters, training data version, evaluation metrics, lineage, and deployment status. Without one, "which model is in production?" becomes an archaeology exercise involving <code>model_v3_final_FINAL.pkl</code>.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔢 Versioning</h4>
+      <p>Every model gets a version. You can diff v7 vs v8 — what changed in data, hyperparams, metrics?</p>
+    </div>
+    <div class="card blue">
+      <h4>🔗 Lineage</h4>
+      <p>Trace from a production prediction back to the exact training run, dataset, and code commit.</p>
+    </div>
+    <div class="card green">
+      <h4>📊 Metadata</h4>
+      <p>What data was it trained on? Hyperparameters? AUC? F1? All stored and queryable.</p>
+    </div>
+    <div class="card purple">
+      <h4>🚀 Promotion Workflow</h4>
+      <p>None → Staging → Production → Archived. Promotion requires approval, passing tests, meeting metric thresholds.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># MLflow model registry — log, register, promote</span>
+<span class="kw">import</span> mlflow
+
+<span class="kw">with</span> mlflow.<span class="fn">start_run</span>():
+    mlflow.<span class="fn">log_params</span>({<span class="str">"learning_rate"</span>: <span class="fn">0.01</span>, <span class="str">"epochs"</span>: <span class="fn">50</span>})
+    mlflow.<span class="fn">log_metrics</span>({<span class="str">"auc"</span>: <span class="fn">0.92</span>, <span class="str">"f1"</span>: <span class="fn">0.87</span>})
+    mlflow.sklearn.<span class="fn">log_model</span>(
+        model, <span class="str">"model"</span>,
+        registered_model_name=<span class="str">"fraud-detector"</span>
+    )</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>Mentioning feature stores signals you understand <strong>production ML</strong>. Say: <em>"I'd use a feature store to avoid training-serving skew and ensure point-in-time correctness."</em> For model registries, say: <em>"Governance and reproducibility are first-class concerns — the registry lets us trace any prediction back to its training run."</em></p>
+  </div>
+</section>
+
+<!-- Screen 4: A/B Testing + Online vs Offline Evaluation -->
+<section class="screen screen-alt" id="s4">
+<div class="screen-inner">
+  <h2>A/B Testing + <span class="accent">Online vs Offline Eval</span></h2>
+
+  <h3>🧪 A/B Testing for ML</h3>
+  <p>A/B testing ML systems is harder than A/B testing a button color. ML changes are <strong>diffuse</strong> — a new ranking model affects every search result, every session, in complex ways. Effects are often small, noisy, and take time to materialize.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📊 Metrics Selection</h4>
+      <p><strong>Business metrics:</strong> revenue, engagement, retention. <strong>ML metrics:</strong> NDCG, precision@k, accuracy. Danger: optimizing ML metrics that don't correlate with business metrics.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔀 Interleaving</h4>
+      <p>For ranking: show results from both models interleaved in one list. Users "vote" by clicking. 10x more sensitive than traditional 50/50 splits — needs far fewer samples.</p>
+    </div>
+    <div class="card green">
+      <h4>🎰 Multi-Arm Bandits</h4>
+      <p>Dynamically allocate more traffic to the winning variant. Thompson Sampling (Bayesian) or epsilon-greedy. Great for minimizing regret during the test period.</p>
+    </div>
+    <div class="card purple">
+      <h4>🛡️ Guardrail Metrics</h4>
+      <p>Metrics that must NOT degrade: latency p99, crash rate, safety violations. If a guardrail trips, the experiment stops — even if the primary metric improved.</p>
+    </div>
+  </div>
+
+  <p><strong>Statistical rigor matters:</strong> decide on significance thresholds (p &lt; 0.05), minimum detectable effect, and sample size upfront. Underpowered tests → false negatives. Peeking early → inflated false positives. Watch for <strong>novelty effects</strong> — engagement lifts in week 1 that vanish by week 3.</p>
+
+  <div class="divider"></div>
+
+  <h3>📏 Online vs Offline Evaluation</h3>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📋 Offline Evaluation</h4>
+      <ul>
+        <li>📊 Static dataset, before deploying</li>
+        <li>🏷️ Classification: Precision, Recall, F1, AUC</li>
+        <li>📈 Ranking: NDCG, MAP, MRR</li>
+        <li>📝 Generation: BLEU, ROUGE, BERTScore</li>
+        <li>⏰ Always use temporal splits for time-series</li>
+        <li>✅ Fast iteration, cheap to run</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🌐 Online Evaluation</h4>
+      <ul>
+        <li>👥 Real users, real traffic</li>
+        <li>👻 Shadow mode: run alongside, don't show</li>
+        <li>🐤 Canary: 1-5% traffic, monitor for regressions</li>
+        <li>🔬 A/B test: full statistical comparison</li>
+        <li>🔀 Interleaving: merged rankings, implicit votes</li>
+        <li>⚠️ Expensive, slow, but ground truth</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">⚠️ The Offline-Online Gap</div>
+    <p>A model can improve offline metrics by 5% and show <strong>zero lift online</strong>. Why? <strong>1)</strong> Distribution mismatch — test set ≠ real traffic. <strong>2)</strong> Feedback effects — model changes user behavior. <strong>3)</strong> Latency — more accurate but slower model causes abandonment. <strong>4)</strong> Business context — a 2% AUC gain is irrelevant if the bottleneck is inventory, not prediction. Always say: <em>"I'd validate offline first, then shadow deploy, then canary, then full A/B test."</em></p>
+  </div>
+</div>
+</section>
+
+<!-- Screen 5: Data Flywheel + Feedback Loops + Cold Start -->
+<section class="screen" id="s5">
+  <h2>Flywheel, Feedback & <span class="accent">Cold Start</span></h2>
+
+  <h3>🔄 The Data Flywheel</h3>
+  <p>The most powerful competitive moat in AI: <strong>more users → more data → better models → better product → more users</strong>. It's a compounding loop.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔍 Google Search</h4>
+      <p>Billions of queries → click data → better ranking models → better search → more users.</p>
+    </div>
+    <div class="card blue">
+      <h4>🎬 Netflix</h4>
+      <p>Every play, pause, skip, rewatch → trains recommendation models → better content surfacing → more engagement.</p>
+    </div>
+    <div class="card green">
+      <h4>🚗 Tesla</h4>
+      <p>Every mile driven → camera/sensor data → better self-driving models → more compelling product → more drivers.</p>
+    </div>
+    <div class="card purple">
+      <h4>⚠️ When It Stalls</h4>
+      <p>More data ≠ always better. Diminishing returns when: model is architecture-limited, data is noisy/biased, or you're optimizing the wrong metric.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3>🔁 Feedback Loops</h3>
+  <p>How ML systems learn from the real world after deployment. Get them wrong and your model either <strong>stagnates or spirals into dysfunction</strong>.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🤫 Implicit Feedback</h4>
+      <ul>
+        <li>👆 Clicks (abundant but click-bait inflates)</li>
+        <li>⏱️ Dwell time (longer = more engaged)</li>
+        <li>📜 Scroll depth, watch percentage</li>
+        <li>🛒 Conversions, purchases, add-to-cart</li>
+        <li>⏭️ Skip, dismiss, back-button (negative)</li>
+        <li>📊 Abundant but noisy</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🗣️ Explicit Feedback</h4>
+      <ul>
+        <li>👍 Thumbs up/down, star ratings</li>
+        <li>📝 Text reviews, survey responses</li>
+        <li>🚫 "Not relevant" or "report" buttons</li>
+        <li>🎛️ User preference settings</li>
+        <li>💬 Direct complaints or praise</li>
+        <li>✨ Clean but sparse</li>
+      </ul>
+    </div>
+  </div>
+
+  <p><strong>Dangerous loops to watch:</strong> <em>Popularity bias</em> (popular items get more clicks → recommended more → monopolize attention). <em>Filter bubbles</em> (users appear to narrow → model doubles down → diversity drops). <em>Runaway loops</em> (fraud model flags legit user → odd behavior → more fraud signals). Mitigate with exploration, debiasing, and diversity metrics.</p>
+
+  <div class="divider"></div>
+
+  <h3>🥶 Cold Start Problem</h3>
+  <p>What happens when your ML system has <strong>no data</strong> — for a new user, a new item, or an entirely new system.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>👤 New Users</h4>
+      <p>Demographic priors, onboarding flows (select interests), content-based features, popularity-based defaults. Collaborative filtering is useless here.</p>
+    </div>
+    <div class="card blue">
+      <h4>📦 New Items</h4>
+      <p>Content-based features (metadata, embeddings of similar items), exploration strategies (boosted exposure), active learning (show to most informative users).</p>
+    </div>
+    <div class="card green">
+      <h4>🆕 New Systems</h4>
+      <p>Transfer learning from pretrained models, synthetic data, seed data from public datasets, rule-based v1 systems. This is "cold start for the flywheel."</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>When designing a recommendation system, the interviewer <em>will</em> ask about cold start. Have a crisp answer for each scenario. For the flywheel, explicitly name it: <em>"User interactions generate implicit labels that feed back into retraining, creating a data flywheel."</em> For feedback loops: <em>"I'd log all impressions and interactions for continuous learning, while monitoring for popularity bias and filter bubbles."</em></p>
+  </div>
+</section>
+
+<!-- Screen 6: Embedding Infrastructure + Vector Search -->
+<section class="screen screen-alt" id="s6">
+<div class="screen-inner">
+  <h2>Embeddings + <span class="accent">Vector Search at Scale</span></h2>
+
+  <h3>🧬 Embedding Infrastructure</h3>
+  <p>Embeddings are dense vector representations encoding semantic meaning — the <strong>lingua franca of modern ML</strong>. Used in search, recommendations, clustering, classification, and RAG.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📝 Text Embeddings</h4>
+      <p>Sentence-transformers (self-hosted), OpenAI text-embedding-3 (API). 384–3072 dimensions. Map text to dense vectors.</p>
+    </div>
+    <div class="card blue">
+      <h4>🖼️ Image Embeddings</h4>
+      <p>CLIP (shared text-image space), ResNet feature extractors. Enable cross-modal search.</p>
+    </div>
+    <div class="card green">
+      <h4>🌐 Multi-Modal</h4>
+      <p>CLIP, ImageBind — encode different modalities into a shared vector space. Search images with text queries.</p>
+    </div>
+    <div class="card purple">
+      <h4>🔄 Versioning</h4>
+      <p>When you update the embedding model, ALL vectors become incompatible. Re-embed entire corpus and swap atomically. Map model_version → index_version.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Embedding generation pipeline</span>
+<span class="kw">from</span> sentence_transformers <span class="kw">import</span> SentenceTransformer
+
+model = <span class="fn">SentenceTransformer</span>(<span class="str">"all-MiniLM-L6-v2"</span>)  <span class="cm"># 384 dims</span>
+
+<span class="cm"># Batch: embed entire corpus via Spark/Dataflow</span>
+corpus_embeddings = model.<span class="fn">encode</span>(documents, batch_size=<span class="fn">256</span>)
+
+<span class="cm"># Real-time: embed queries on-the-fly</span>
+query_embedding = model.<span class="fn">encode</span>([<span class="str">"How do I reset my password?"</span>])</div>
+
+  <div class="divider"></div>
+
+  <h3>🔍 Vector Search at Scale</h3>
+  <p>Exact nearest-neighbor is O(n) — fine for 10K vectors, useless for 100M. Enter <strong><span class="tooltip-term" data-tip="Approximate Nearest Neighbor search sacrifices a small amount of recall for massive speedups. Instead of checking every vector, it uses clever data structures to find near-optimal neighbors in sub-linear time.">ANN</span> search</strong>.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>📊 HNSW</h4>
+      <ul>
+        <li>📐 Graph-based, in-memory</li>
+        <li>✅ Excellent recall (&gt;95%) at high speed</li>
+        <li>⚠️ High memory (full vectors + graph)</li>
+        <li>🎯 Best for: fits in RAM, latency-critical</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📦 IVF-PQ</h4>
+      <ul>
+        <li>🗂️ Partition into clusters + quantize</li>
+        <li>✅ Much lower memory footprint</li>
+        <li>⚠️ Slightly lower recall than HNSW</li>
+        <li>🎯 Best for: billion-scale, disk-friendly</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>🔗 Hybrid Search</h3>
+  <p>Combine dense vectors (semantic) with sparse vectors (BM25 / keywords). Handles exact keywords (SKUs, proper nouns) alongside semantic understanding.</p>
+
+  <div class="code-block"><span class="cm"># Hybrid search scoring</span>
+<span class="cm"># α controls the balance between semantic and keyword matching</span>
+final_score = α × dense_score + (<span class="fn">1</span> - α) × sparse_score
+
+<span class="cm"># Metadata filtering approaches:</span>
+<span class="cm"># Pre-filter:  filter first → search within subset (precise but slow if selective)</span>
+<span class="cm"># Post-filter: search first → discard non-matching (fast but may return fewer results)</span></div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🌲 Pinecone</h4>
+      <p>Managed, easy to use, scales well. Great for teams that don't want to manage infra.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔷 Weaviate</h4>
+      <p>Open-source, hybrid search built-in. Good community and flexibility.</p>
+    </div>
+    <div class="card green">
+      <h4>🐋 Milvus</h4>
+      <p>Open-source, billion-scale, GPU support. Built for serious scale.</p>
+    </div>
+    <div class="card purple">
+      <h4>🐘 pgvector</h4>
+      <p>Postgres extension. Good for small-medium scale when you already use Postgres.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>When designing retrieval, always specify: <strong>index type</strong> (HNSW vs IVF-PQ), <strong>metadata filtering</strong> (pre vs post), and whether <strong>hybrid search</strong> is warranted. For embeddings, discuss: which model, dimensionality, storage, and how you handle model updates (full re-embed on update vs incremental for new items). This shows depth beyond "just use a vector DB."</p>
+  </div>
+</div>
+</section>
+
+<!-- Screen 7: Caching + Routing + Guardrails + HITL -->
+<section class="screen" id="s7">
+  <h2>Caching, Routing, <span class="accent">Guardrails & HITL</span></h2>
+
+  <h3>💾 Caching for LLMs</h3>
+  <p>LLM inference is expensive — $0.01–$0.10 per call adds up fast. At 1M daily queries without caching: <strong>$20K/day</strong>. With 40% cache hit rate: <strong>$12K/day</strong>. That's $240K/month in savings.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>#️⃣ Exact Match Cache</h4>
+      <ul>
+        <li>🔑 Hash the prompt → Redis/Memcached lookup</li>
+        <li>⚡ Simple, fast, effective for FAQ bots</li>
+        <li>❌ "What's the weather?" ≠ "Tell me the weather"</li>
+        <li>📏 Zero fuzzy matching</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🧠 Semantic Cache</h4>
+      <ul>
+        <li>🔍 Embed query → vector search cached queries</li>
+        <li>✅ Catches paraphrases, near-duplicates</li>
+        <li>⏱️ Adds ~10-50ms for embed + search</li>
+        <li>💰 Saves ~500-2000ms of LLM inference</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Exact match caching with TTL</span>
+<span class="kw">import</span> hashlib, redis
+
+<span class="kw">def</span> <span class="fn">get_or_generate</span>(prompt: <span class="fn">str</span>) -> <span class="fn">str</span>:
+    cache_key = hashlib.<span class="fn">sha256</span>(prompt.<span class="fn">encode</span>()).<span class="fn">hexdigest</span>()
+    cached = redis_client.<span class="fn">get</span>(cache_key)
+    <span class="kw">if</span> cached:
+        <span class="kw">return</span> cached.<span class="fn">decode</span>()
+    response = llm.<span class="fn">generate</span>(prompt)
+    redis_client.<span class="fn">setex</span>(cache_key, ttl=<span class="fn">3600</span>, value=response)
+    <span class="kw">return</span> response</div>
+
+  <div class="divider"></div>
+
+  <h3>🔀 Prompt Routing & Model Selection</h3>
+  <p>Not every query needs GPT-4. Smart routing sends simple queries to cheap, fast models and reserves expensive models for complex ones. Can reduce costs by <strong>50-70%</strong> with minimal quality degradation.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🧠 Complexity-Based</h4>
+      <p>Lightweight classifier estimates query complexity. Simple factual → small model. Complex reasoning → large model.</p>
+    </div>
+    <div class="card blue">
+      <h4>🏷️ Topic-Based</h4>
+      <p>Route to specialized models. Medical → fine-tuned medical model. Code → code model. General → general model.</p>
+    </div>
+    <div class="card green">
+      <h4>💰 Cost-Based</h4>
+      <p>Set a budget. Route to the cheapest model that meets quality threshold for each query type.</p>
+    </div>
+    <div class="card purple">
+      <h4>🔄 Cascading</h4>
+      <p>Try cheapest model first. If confidence is low (log-probs, self-consistency), escalate to expensive model. Most queries are simple.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3>🛡️ Guardrails Architecture</h3>
+  <p>LLMs are powerful but unpredictable. Guardrails are the safety net between the model and the user.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🚫 Input: Injection Detection</h4>
+      <p>Classify if user tries to override system instructions. Fine-tuned classifier or pattern matching.</p>
+    </div>
+    <div class="card blue">
+      <h4>🎯 Input: Off-Topic Detection</h4>
+      <p>Is this query within scope? A customer service bot shouldn't answer nuclear physics questions.</p>
+    </div>
+    <div class="card green">
+      <h4>🔒 Output: PII Detection</h4>
+      <p>Scan for SSNs, credit cards, emails, phone numbers. Redact or block before user sees response.</p>
+    </div>
+    <div class="card purple">
+      <h4>✅ Output: Factuality Check</h4>
+      <p>For RAG: verify response is grounded in retrieved docs (not hallucinated). Check format compliance (valid JSON?).</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Guardrails architecture flow</span>
+[User Input]
+    → [Input Guardrails] → block / pass
+    → [LLM / RAG Pipeline]
+    → [Output Guardrails] → block / redact / pass
+    → [User Response]
+
+<span class="cm"># Frameworks: NeMo Guardrails (NVIDIA), Guardrails AI</span></div>
+
+  <div class="divider"></div>
+
+  <h3>🙋 Human-in-the-Loop Design</h3>
+  <p>No ML system is perfect. The best systems <strong>know when to admit uncertainty</strong> and escalate to a human. This isn't a failure — it's a feature.</p>
+
+  <p><strong>When to escalate:</strong> Low confidence (probability &lt; 0.7), sensitive topics (medical, legal, financial), user requests ("talk to a human"), guardrail triggers that can't be auto-resolved.</p>
+  <p><strong>The gold:</strong> Every human decision becomes a training label. Over time, escalation rate decreases as the model learns from human expertise. Track this rate as a key system health metric.</p>
+
+  <div class="code-block"><span class="cm"># Human-in-the-loop feedback cycle</span>
+[AI handles query] → [Low confidence] → [Escalate to human]
+    → [Human resolves] → [Log decision as training label]
+    → [Retrain model] → [AI handles similar queries next time]
+
+<span class="cm"># Key UX: preserve context, warm handoff, no dead ends</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>In any LLM system design, dedicate a section to guardrails (both input and output). Always mention caching — the cost savings are too significant to ignore. For human-in-the-loop, frame it as: <em>"The system knows what it doesn't know, and uses human expertise to both serve the user and improve itself over time."</em> This shows you think about safety, cost, and continuous improvement — not just the happy path.</p>
+  </div>
+</section>
+
+<!-- Screen 8: Quiz -->
+<section class="screen screen-alt" id="s8">
+<div class="screen-inner">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: Why is point-in-time correctness critical when building training data with a feature store?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) It makes queries run faster against the offline store</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) Without it, you get feature leakage — using future data during training makes offline metrics look amazing while the model fails in production</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) It's required by data privacy regulations like GDPR</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) It reduces the storage cost of the feature store</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: A model improves offline NDCG by 5% but shows zero lift in an A/B test. What is the MOST likely explanation?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) The A/B test didn't run long enough</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) The model was deployed incorrectly</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">C) Distribution mismatch between the test set and real traffic, feedback effects changing user behavior, or latency tradeoffs causing abandonment</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) NDCG is not a valid metric for ranking systems</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: What is the primary advantage of semantic caching over exact-match caching for LLM systems?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Semantic caching is faster to look up</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) Semantic caching uses less memory</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">C) It catches paraphrases and near-duplicate queries that would be cache misses with exact hashing, significantly increasing hit rate</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) It guarantees responses are always up-to-date</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: In the data flywheel, what is the correct strategy when the flywheel hasn't started spinning yet (cold start)?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Wait until enough users sign up organically to generate data</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) Skip ML entirely and use only hand-written rules forever</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">C) Use heuristics/rules as v1, seed data or transfer learning, and build a great product that attracts users even without great ML</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Train on synthetic data exclusively — real user data isn't needed</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+</div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-01-ai-design-problems/index.html">← Previous: AI Design Problems</a>
+  <a href="../module-03-interview-gauntlet/index.html">Next: Interview Gauntlet 🔥 →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above — the answer focuses on the core architectural reason.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

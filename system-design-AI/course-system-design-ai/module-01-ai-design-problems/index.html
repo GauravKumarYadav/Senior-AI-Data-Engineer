@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 1: AI System Design Problems | AI System Design Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#DC2626;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.screen ul{max-width:700px;margin-bottom:1rem;font-size:1rem;padding-left:1.2rem}
+.screen ul li{margin-bottom:0.4rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+.screen-alt.screen{max-width:100%;padding-left:0;padding-right:0}
+.screen-alt .screen-inner{max-width:900px;margin:0 auto;padding:0 1.5rem}
+.divider{width:60px;height:4px;background:var(--color-accent);border-radius:2px;margin:1.5rem 0;opacity:0.5}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🏛️ System Design — AI</a><div class="nav-dots"><a href="../module-01-ai-design-problems/" class="nav-dot active"></a><a href="../module-02-ai-design-concepts/" class="nav-dot"></a><a href="../module-03-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Intro -->
+<section class="screen" id="s1">
+  <h2>🏛️ AI System Design <span class="accent">Problems</span></h2>
+  <p>This module covers <strong>nine foundational AI system design problems</strong> you'll encounter in real-world production environments. These are the "greatest hits" — the patterns that show up again and again across companies, domains, and use cases.</p>
+  <p>The goal isn't to memorize blueprints. It's to internalize the <em>reasoning</em> behind design decisions so you can adapt when the requirements inevitably shift.</p>
+
+  <div class="card-grid">
+    <div class="card"><h4>1. Enterprise RAG Q&A</h4><p>Ground LLMs in private data with retrieval-augmented generation.</p></div>
+    <div class="card blue"><h4>2. Fraud Detection</h4><p>Real-time ML scoring with feature stores and streaming.</p></div>
+    <div class="card green"><h4>3. Search Ranking</h4><p>Multi-stage funnel from millions to top-10 results.</p></div>
+    <div class="card purple"><h4>4. AI Support Agent</h4><p>LLM-powered agents that can look up, act, and escalate.</p></div>
+    <div class="card"><h4>5. LLM Gateway</h4><p>Centralized routing, caching, rate limiting for LLM calls.</p></div>
+    <div class="card blue"><h4>6. Content Moderation</h4><p>Tiered pipeline for text, image, and video moderation at scale.</p></div>
+    <div class="card green"><h4>7. Feature Platform</h4><p>Shared infrastructure for feature engineering and serving.</p></div>
+    <div class="card purple"><h4>8. Model Monitoring</h4><p>Detect data drift, concept drift, and prediction drift.</p></div>
+    <div class="card"><h4>9. Multi-Agent Docs</h4><p>Orchestrated agents for document classification and extraction.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 The 6-Step Framework for Every Problem</div>
+    <p><strong>1. Clarify requirements</strong> — functional vs. non-functional, scale numbers.<br>
+    <strong>2. Define the API / interface</strong> — what goes in, what comes out.<br>
+    <strong>3. High-level architecture</strong> — draw the boxes and arrows.<br>
+    <strong>4. Deep-dive key components</strong> — the 2-3 hardest parts.<br>
+    <strong>5. Discuss tradeoffs</strong> — why this choice over that one?<br>
+    <strong>6. Address scale</strong> — what breaks at 10x, 100x, 1000x?</p>
+  </div>
+</section>
+
+<!-- Screen 2: Problems 1-2 -->
+<section class="screen screen-alt" id="s2">
+<div class="screen-inner">
+  <h2>Problems 1–2: <span class="accent">RAG & Fraud</span></h2>
+
+  <!-- Problem 1: Enterprise RAG -->
+  <h3>📚 1. Enterprise RAG Q&A System</h3>
+  <p><span class="tooltip-term" data-tip="Retrieval-Augmented Generation: retrieve relevant chunks from a knowledge base at query time and feed them as context to an LLM, grounding answers in real data.">RAG</span> is the workhorse pattern for grounding LLMs in private enterprise data. Instead of fine-tuning (expensive, stale), you retrieve relevant chunks at query time and feed them as context. The LLM generates answers <em>from</em> those chunks, with citations.</p>
+
+  <p><strong>Architecture — two pipelines:</strong></p>
+  <p><strong>Ingestion:</strong> Data sources → Document parser → Chunking engine → Embedding model → Vector DB + metadata store.</p>
+  <p><strong>Query:</strong> User question → Auth check → Query embedding → Hybrid retrieval (dense + BM25) → Re-ranker → LLM generation → Response with citations → Semantic cache write.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🧩 Chunking Engine</h4>
+      <p>Deceptively critical. Naive fixed-size chunking breaks semantic boundaries. Use recursive splitting with overlap or semantic chunking that respects document structure. Too small = lost context. Too large = diluted relevance.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔍 Hybrid Search</h4>
+      <p>Pure dense retrieval struggles with exact keywords, acronyms, proper nouns. BM25 handles these well. Combine with reciprocal rank fusion for best of both worlds.</p>
+    </div>
+    <div class="card green">
+      <h4>🏆 Re-Ranker</h4>
+      <p>Cross-encoder (e.g., Cohere Rerank) scores each (query, chunk) pair jointly. More expensive than bi-encoder retrieval but dramatically improves precision for the final top-5 chunks.</p>
+    </div>
+    <div class="card purple">
+      <h4>🔒 Document-Level Auth</h4>
+      <p>Every chunk inherits source permissions. Filter results by user's access groups <em>before</em> re-ranking. Never send unauthorized content to the LLM — even if you don't show the answer, the model "saw" it.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Hybrid search: combine dense + sparse retrieval</span>
+<span class="kw">def</span> <span class="fn">hybrid_search</span>(query: <span class="fn">str</span>, k: <span class="fn">int</span> = <span class="fn">20</span>) -> list[Document]:
+    dense_results = vector_db.<span class="fn">search</span>(<span class="fn">embed</span>(query), top_k=k)
+    sparse_results = bm25_index.<span class="fn">search</span>(query, top_k=k)
+    <span class="kw">return</span> <span class="fn">reciprocal_rank_fusion</span>(dense_results, sparse_results, k=<span class="fn">60</span>)</div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>Option A</h4>
+      <ul>
+        <li>📦 Fixed-size chunking — simple, fast</li>
+        <li>☁️ OpenAI ada-002 — easy, hosted</li>
+        <li>🔧 Managed Pinecone — less ops</li>
+        <li>⏭️ Skip re-ranking — fast, less precise</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>Option B</h4>
+      <ul>
+        <li>🧠 Semantic chunking — better quality, complex</li>
+        <li>🏠 Self-hosted e5-large — control, cost</li>
+        <li>🔧 Self-hosted Qdrant — more control</li>
+        <li>🏆 Cross-encoder — accurate, slower</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>The biggest tradeoff is <strong>retrieval quality vs. latency</strong>. Every stage you add (hybrid search, re-ranking, query expansion) improves answer quality but adds latency. For internal Q&A, 2-3s is fine. For customer-facing chat, you need &lt;1s for retrieval. At 10M docs, you need ANN indices (HNSW) and sharding. At 1000 concurrent users, semantic cache becomes critical — 30-40% of enterprise questions are near-duplicates.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Problem 2: Fraud Detection -->
+  <h3>🛡️ 2. Real-Time Fraud Detection</h3>
+  <p>The canonical ML systems problem — it touches <strong>everything</strong>: feature engineering, real-time serving, class imbalance, feedback loops, and the tension between precision and recall. Block a legit transaction → lose a customer. Miss fraud → lose money.</p>
+
+  <p><strong>Training path:</strong> Historical transactions → Feature engineering (Spark batch) → Feature store (offline) → Model training → Model registry → Deploy.<br>
+  <strong>Serving path:</strong> Incoming transaction → Feature enrichment → Model server → Score → Decision engine (approve/decline/review) → Response (&lt;50ms).<br>
+  <strong>Feedback path:</strong> Fraud analyst labels → Periodic retraining → Shadow deploy → Champion/challenger → Promote.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🗄️ Feature Store (Feast)</h4>
+      <p>Dual-store pattern: <strong>offline store</strong> (data warehouse) for training with point-in-time correct joins. <strong>Online store</strong> (Redis/DynamoDB) for single-digit ms inference lookups.</p>
+    </div>
+    <div class="card blue">
+      <h4>⚡ Batch vs. Streaming</h4>
+      <p>Batch features (daily Spark): avg monthly spend, account age. Streaming features (Flink): tx count in last 5 min, geographic velocity. The interplay between these is where model power comes from.</p>
+    </div>
+    <div class="card green">
+      <h4>🌳 Model Choice</h4>
+      <p>XGBoost/LightGBM dominate. Fast inference (sub-ms), handle tabular data, interpretable for compliance. Deep learning might gain 0.5% AUC at 10x latency cost.</p>
+    </div>
+    <div class="card purple">
+      <h4>⚖️ Decision Engine</h4>
+      <p>Model outputs probability, but <em>business logic</em> decides action. Separate component with configurable thresholds — tune without redeploying the model.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Point-in-time correct feature retrieval for training</span>
+training_df = feast_store.<span class="fn">get_historical_features</span>(
+    entity_df=transactions_with_timestamps,
+    features=[
+        <span class="str">"user_features:avg_spend_30d"</span>,
+        <span class="str">"user_features:tx_count_7d"</span>,
+        <span class="str">"merchant_features:risk_score"</span>,
+    ],
+).<span class="fn">to_df</span>()</div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p><strong>Precision vs. recall is the existential tradeoff.</strong> Most systems optimize for high recall with a manual review queue for borderline cases — the "approve / decline / review" trichotomy. At 10x volume, streaming feature computation becomes the bottleneck. At 100x, use tiered scoring: lightweight rules catch 80% of obvious cases, ML handles only borderline ones.</p>
+  </div>
+</div>
+</section>
+
+<!-- Screen 3: Problems 3-4 -->
+<section class="screen" id="s3">
+  <h2>Problems 3–4: <span class="accent">Search & Agents</span></h2>
+
+  <!-- Problem 3: Search Ranking -->
+  <h3>🔎 3. Search Ranking System</h3>
+  <p>Search ranking is a <strong>multi-stage funnel</strong>: you can't run an expensive model on millions of documents, so you progressively narrow the candidate set while increasing model complexity at each stage.</p>
+
+  <p><strong>Query flow:</strong> User query → Query understanding (spell check, expansion, intent) → Stage 1: Candidate retrieval (ANN, top-1000) → Stage 2: Re-ranking (LambdaMART, top-50) → Stage 3: Personalization + business rules (final top-10).</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🎯 Stage 1 — Retrieval</h4>
+      <p>Embedding-based ANN (HNSW). Bi-encoder encodes query + docs into same vector space. Prioritizes <em>recall</em> — good results must be in the set. Budget: ~10ms for top-1000.</p>
+    </div>
+    <div class="card blue">
+      <h4>🏆 Stage 2 — Re-ranking</h4>
+      <p>LambdaMART (GBM optimized for ranking loss) is the industry workhorse. Uses richer features: BM25 score, CTR, freshness, authority. BERT cross-encoders are more accurate but 10-100x slower.</p>
+    </div>
+    <div class="card green">
+      <h4>👤 Stage 3 — Personalization</h4>
+      <p>User-level features (history, department, role). Business rules: boost promoted content, enforce diversity, apply recency bias. This is where business value meets ML.</p>
+    </div>
+    <div class="card purple">
+      <h4>🧪 A/B Testing</h4>
+      <p>Interleaving experiments merge results from two rankers into one list and measure clicks. 10-100x more sensitive than traditional 50/50 A/B splits.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># LambdaMART feature vector per (query, doc) pair</span>
+features = {
+    <span class="str">"bm25_score"</span>: <span class="fn">12.4</span>,
+    <span class="str">"embedding_similarity"</span>: <span class="fn">0.82</span>,
+    <span class="str">"doc_click_rate"</span>: <span class="fn">0.15</span>,
+    <span class="str">"doc_freshness_days"</span>: <span class="fn">3</span>,
+    <span class="str">"query_doc_token_overlap"</span>: <span class="fn">0.4</span>,
+    <span class="str">"doc_authority_score"</span>: <span class="fn">0.91</span>,
+}</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p><strong>Online vs. offline metrics often diverge.</strong> A model can improve NDCG on held-out data but hurt CTR in production because it doesn't account for position bias. Always validate with online experiments. At 100x query volume, caching is essential — top 1% of queries account for 30%+ of traffic.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Problem 4: AI Customer Support Agent -->
+  <h3>🤖 4. AI Customer Support Agent</h3>
+  <p>LLM-powered agents that can <em>actually do things</em> — look up orders, process refunds, answer from a knowledge base. The key challenge is <strong>reliability and safety</strong>. An agent that confidently gives wrong answers or processes unauthorized refunds is worse than no agent at all.</p>
+
+  <p><strong>Runtime flow:</strong> User message → Conversation manager → <span class="tooltip-term" data-tip="A framework for building stateful, multi-step LLM agents as directed graphs. Each node is a step (retrieve, call API, generate), edges are transitions based on tool-calling decisions.">LangGraph</span> agent → Tool selection → Tool execution (RAG / API / escalation) → Guardrail check → Stream response.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔀 LangGraph State Machine</h4>
+      <p>Each node = a step (retrieve, call API, generate). Edges = transitions based on intent classification. Superior to simple ReAct loops because you can enforce structure.</p>
+    </div>
+    <div class="card blue">
+      <h4>🧠 Conversation Memory</h4>
+      <p>Short-term: last N turns. Long-term: user preferences stored in DB, retrieved per session. Summarize older turns instead of stuffing full history into context.</p>
+    </div>
+    <div class="card green">
+      <h4>🛡️ Guardrails</h4>
+      <p>Topic restriction, PII detection/redaction, escalation triggers (frustration detection), output validation (no hallucinated order numbers). Non-negotiable.</p>
+    </div>
+    <div class="card purple">
+      <h4>🙋 Human-in-the-Loop</h4>
+      <p>When confidence is low or case is sensitive (large refund, legal threat), package conversation summary and route to human agent queue with full context.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># LangGraph agent with conditional routing</span>
+<span class="kw">from</span> langgraph.graph <span class="kw">import</span> StateGraph
+
+graph = <span class="fn">StateGraph</span>(AgentState)
+graph.<span class="fn">add_node</span>(<span class="str">"classify_intent"</span>, classify_intent)
+graph.<span class="fn">add_node</span>(<span class="str">"retrieve_knowledge"</span>, retrieve_from_kb)
+graph.<span class="fn">add_node</span>(<span class="str">"call_order_api"</span>, lookup_order)
+graph.<span class="fn">add_node</span>(<span class="str">"process_refund"</span>, handle_refund)
+graph.<span class="fn">add_node</span>(<span class="str">"escalate"</span>, escalate_to_human)
+
+graph.<span class="fn">add_conditional_edges</span>(<span class="str">"classify_intent"</span>, route_by_intent, {
+    <span class="str">"question"</span>: <span class="str">"retrieve_knowledge"</span>,
+    <span class="str">"order_status"</span>: <span class="str">"call_order_api"</span>,
+    <span class="str">"refund"</span>: <span class="str">"process_refund"</span>,
+    <span class="str">"complex"</span>: <span class="str">"escalate"</span>,
+})</div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>⚡ High Autonomy</h4>
+      <ul>
+        <li>✅ Processes refunds, updates orders</li>
+        <li>✅ Higher deflection rate, more value</li>
+        <li>⚠️ Higher risk of errors</li>
+        <li>⚠️ Needs spending limits + guardrails</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>🔒 Conservative Start</h4>
+      <ul>
+        <li>✅ Read-only: lookups, knowledge retrieval</li>
+        <li>✅ Lower risk, build trust first</li>
+        <li>⚠️ Lower deflection, less value</li>
+        <li>✅ Gradually expand as system proves itself</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 4: Problems 5-6 -->
+<section class="screen screen-alt" id="s4">
+<div class="screen-inner">
+  <h2>Problems 5–6: <span class="accent">Gateway & Moderation</span></h2>
+
+  <!-- Problem 5: LLM Gateway -->
+  <h3>🚪 5. LLM Gateway / Router</h3>
+  <p>As organizations adopt LLMs, you end up with chaos: different teams, different providers, different API keys, no cost visibility, no fallback when a provider goes down. The LLM Gateway is your <strong>centralized control plane</strong>.</p>
+
+  <p><strong>Request flow:</strong> Client → API Gateway (auth, rate limiting) → Router (complexity analysis, model selection) → Cache check (exact + semantic) → LLM provider call → Response processing (logging, cost tracking) → Cache write → Response.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔀 Model Router</h4>
+      <p>Routes to optimal model. Simple queries → GPT-4o-mini (cheap). Complex reasoning → GPT-4o or Claude. Router can be rule-based or ML-based (classifier on prompt complexity).</p>
+    </div>
+    <div class="card blue">
+      <h4>🚦 Rate Limiting</h4>
+      <p>Three tiers: per-user, per-team, global. Track both request count and token count — one long prompt costs more than 100 short ones. Token bucket or sliding window.</p>
+    </div>
+    <div class="card green">
+      <h4>🔄 Fallback Chain</h4>
+      <p>Claude → GPT-4 → GPT-4-mini → cached response → error. Each step has its own timeout. Resilience without manual intervention.</p>
+    </div>
+    <div class="card purple">
+      <h4>💰 Cost Tracking</h4>
+      <p>Every request logs model, token counts, computed cost. Aggregate by team/project/user. Budget alerts at 80%, hard caps at 100%. Prevent runaway scripts burning $50K overnight.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Smart model routing based on prompt complexity</span>
+<span class="kw">def</span> <span class="fn">route_request</span>(prompt: <span class="fn">str</span>, metadata: <span class="fn">dict</span>) -> <span class="fn">str</span>:
+    <span class="kw">if</span> metadata.<span class="fn">get</span>(<span class="str">"force_model"</span>):
+        <span class="kw">return</span> metadata[<span class="str">"force_model"</span>]
+    complexity = <span class="fn">estimate_complexity</span>(prompt)
+    <span class="kw">if</span> complexity < <span class="fn">0.3</span>:
+        <span class="kw">return</span> <span class="str">"gpt-4o-mini"</span>
+    <span class="kw">elif</span> complexity < <span class="fn">0.7</span>:
+        <span class="kw">return</span> <span class="str">"gpt-4o"</span>
+    <span class="kw">else</span>:
+        <span class="kw">return</span> <span class="str">"claude-3-5-sonnet"</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p><strong>Semantic caching</strong> is a game-changer. Beyond exact-match caching, embed the prompt and check for similar recent queries (cosine > 0.95). "What's the capital of France?" and "What is France's capital city?" should hit the same cache. At 10x traffic, a 30-40% cache hit rate = 30-40% fewer LLM calls. At 100x, the gateway itself must be horizontally scalable — stateless processing with shared Redis cache.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Problem 6: Content Moderation -->
+  <h3>🛡️ 6. Content Moderation System</h3>
+  <p>Every platform that accepts user-generated content needs moderation. The challenge: doing it at scale, across modalities (text, images, video), with acceptable latency, and without drowning your human review team.</p>
+
+  <p><strong>Pipeline:</strong> Content upload → Stage 1: Fast classifier (&lt;50ms) → If clear, auto-action → Stage 2: LLM analysis (~500ms, nuanced cases) → Stage 3: Human review queue (ambiguous cases, prioritized by severity × reach).</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🎭 Multi-Modal Analysis</h4>
+      <p>Text: fine-tuned BERT for hate speech, spam, toxicity. Images: vision models for NSFW, violence. Video: sample key frames + audio transcription. Each modality needs its own pipeline.</p>
+    </div>
+    <div class="card blue">
+      <h4>📊 Tiered Pipeline</h4>
+      <p>The core design insight. Fast classifier handles 85-90% (obvious). LLM handles 8-12% (nuanced). Humans handle 1-3% (genuinely ambiguous). Single model can't do millions/day.</p>
+    </div>
+    <div class="card green">
+      <h4>📋 Priority Queue</h4>
+      <p>Not all pending reviews are equal. Score by: severity × content reach × classifier confidence gap. Violent post on public page with millions of followers → top of queue.</p>
+    </div>
+    <div class="card purple">
+      <h4>🏷️ Category Taxonomy</h4>
+      <p>Categories aren't binary. "Violence" ranges from boxing (allowed) to graphic gore (blocked). Multi-label predictions with confidence scores per category + severity level.</p>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🔍 Pre-Upload Screening</h4>
+      <ul>
+        <li>✅ Bad content never goes live</li>
+        <li>⚠️ Adds latency to upload flow</li>
+        <li>📸 Best for images/video</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📤 Post-Upload Screening</h4>
+      <ul>
+        <li>✅ Non-blocking upload experience</li>
+        <li>⚠️ Window where bad content is live</li>
+        <li>📝 Best for text (fast enough to be near-sync)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p><strong>Different categories get different thresholds.</strong> For child safety: near-100% recall, accept high false positives. For satire misclassified as hate speech: higher precision, over-moderation kills UX. At 10x scale, use perceptual hashes for images and fingerprinting for videos to instantly catch re-uploads of previously blocked content.</p>
+  </div>
+</div>
+</section>
+
+<!-- Screen 5: Problems 7-8 -->
+<section class="screen" id="s5">
+  <h2>Problems 7–8: <span class="accent">Features & Monitoring</span></h2>
+
+  <!-- Problem 7: ML Feature Platform -->
+  <h3>🏗️ 7. ML Feature Platform</h3>
+  <p>The feature platform makes feature engineering a <strong>first-class, reusable concern</strong> rather than ad-hoc code scattered across notebooks. If the model is the brain, the feature platform is the nervous system — it determines what signals reach the model and how fast.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>⏱️ Point-in-Time Correctness</h4>
+      <p>The #1 most important concept. Training data must use features as they existed <em>at the event time</em>, not today. Getting this wrong = feature leakage → silently inflated offline metrics.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔄 Offline–Online Consistency</h4>
+      <p>Same feature definition must produce identical values in batch (training) and real-time (serving). Feast solves this with a single definition materialized to both stores.</p>
+    </div>
+    <div class="card green">
+      <h4>📖 Feature Registry</h4>
+      <p>Catalog of all features: name, description, owner, data type, computation logic, freshness SLA, downstream consumers. Prevents three teams independently computing the same feature.</p>
+    </div>
+    <div class="card purple">
+      <h4>⚙️ Materialization</h4>
+      <p>Computing features and writing to online store. Batch runs on schedule (daily 2 AM). Streaming writes near-real-time. Must handle backfills when logic changes.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># WRONG: uses current feature values for historical events</span>
+features = feature_store.<span class="fn">get_online_features</span>(entity_ids)
+
+<span class="cm"># RIGHT: uses feature values as of each event's timestamp</span>
+features = feature_store.<span class="fn">get_historical_features</span>(
+    entity_df=events_with_timestamps,  <span class="cm"># each row has event_timestamp</span>
+    features=[<span class="str">"user:avg_spend_30d"</span>, <span class="str">"user:tx_count_7d"</span>],
+)</div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🔧 Build (Feast OSS)</h4>
+      <ul>
+        <li>✅ Open-source, flexible</li>
+        <li>✅ No vendor dependency</li>
+        <li>⚠️ Requires operational investment</li>
+        <li>⚠️ Team must manage infra</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>💳 Buy (Tecton / Databricks)</h4>
+      <ul>
+        <li>✅ Reduced ops burden</li>
+        <li>✅ Enterprise support</li>
+        <li>⚠️ Vendor lock-in</li>
+        <li>⚠️ Higher cost</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p><strong>Freshness vs. cost is the key tradeoff.</strong> Streaming features (updated in seconds) are expensive. Batch features (updated daily) are cheap and reliable. Most features don't need real-time freshness — only compute in real-time what genuinely changes the model's decision at serving time. At 10x features, the registry prevents sprawl. At 10x models, Redis cluster with read replicas handles online store throughput.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Problem 8: Model Monitoring -->
+  <h3>📡 8. Model Monitoring & Drift Detection</h3>
+  <p>Deploying a model isn't the finish line — it's the <strong>starting line</strong>. Models degrade silently. Data distributions shift, user behavior changes, upstream pipelines break. Without monitoring, you won't know your model is broken until a business metric craters weeks later.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📊 Data Drift</h4>
+      <p>Input feature distributions change. Measured via KL divergence, PSI, or KS tests. Example: fraud model trained on US transactions starts receiving 40% international transactions.</p>
+    </div>
+    <div class="card blue">
+      <h4>🔄 Concept Drift</h4>
+      <p>The relationship between inputs and outputs changes. Example: COVID shifted spending patterns — pre-COVID features became unreliable. Harder to detect because you need ground truth labels (which arrive late).</p>
+    </div>
+    <div class="card green">
+      <h4>📈 Prediction Drift</h4>
+      <p>Model output distribution shifts. If your fraud model flags 20% of transactions instead of the usual 2%, something's wrong — even without knowing the root cause yet.</p>
+    </div>
+    <div class="card purple">
+      <h4>🚨 Alerting Strategy</h4>
+      <p>Not every blip is actionable. Severity levels: INFO (minor shift, log it), WARNING (moderate, investigate), CRITICAL (severe, trigger rollback). Windowed comparisons smooth out noise.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="kw">from</span> scipy.stats <span class="kw">import</span> ks_2samp
+
+<span class="kw">def</span> <span class="fn">detect_drift</span>(reference: np.ndarray, current: np.ndarray,
+                 threshold: <span class="fn">float</span> = <span class="fn">0.05</span>) -> <span class="fn">bool</span>:
+    <span class="str">"""KS test for distribution drift on a single feature."""</span>
+    statistic, p_value = <span class="fn">ks_2samp</span>(reference, current)
+    <span class="kw">return</span> p_value < threshold  <span class="cm"># True = drift detected</span></div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p><strong>Automated retraining on drift sounds appealing but can be dangerous</strong> — if drift is caused by a data pipeline bug, retraining on bad data makes things worse. Safer pattern: automated <em>detection</em> and <em>alerting</em>, but human-approved <em>response</em> (retrain, rollback, or investigate). At 100x features per model, use feature importance to prioritize — monitor top-20 features intensively, sample the rest.</p>
+  </div>
+</section>
+
+<!-- Screen 6: Problem 9 + Cross-cutting -->
+<section class="screen screen-alt" id="s6">
+<div class="screen-inner">
+  <h2>Problem 9 + <span class="accent">Cross-Cutting Patterns</span></h2>
+
+  <!-- Problem 9: Multi-Agent Document Processing -->
+  <h3>📄 9. Multi-Agent Document Processing</h3>
+  <p>When documents require complex processing — classification, extraction, validation, routing — a single monolithic model struggles. <strong>Multi-agent architectures</strong> decompose the problem: each agent specializes in one task, and an orchestrator coordinates the workflow. Think: insurance claims, legal review, invoice handling, healthcare intake.</p>
+
+  <p><strong>Pipeline:</strong> Document upload → OCR/parsing → Agent 1: Classification (type, urgency) → Agent 2: Extraction (key fields, entities) → Agent 3: Validation (business rules, cross-referencing) → Agent 4: Routing (approve, reject, escalate) → Output + human review queue for low-confidence items.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🏷️ Classification Agent</h4>
+      <p>Determines document type (invoice, contract, claim) and metadata (urgency, department). Classification accuracy is critical — a misclassified doc enters the wrong downstream pipeline.</p>
+    </div>
+    <div class="card blue">
+      <h4>📋 Extraction Agent</h4>
+      <p>Extracts structured fields from unstructured text. Uses LLM with structured output (JSON mode / function calling). Validates against expected field types.</p>
+    </div>
+    <div class="card green">
+      <h4>✅ Validation Agent</h4>
+      <p>Cross-references extracted data against business rules and external systems. Vendor exists? Amount in expected range? Duplicate invoice check? Catches extraction errors and fraud.</p>
+    </div>
+    <div class="card purple">
+      <h4>🎯 Supervisor Orchestrator</h4>
+      <p>LangGraph supervisor coordinates agents. Maintains shared state accumulating results. On failure or low confidence: retry, invoke fallback agent, or route to human review.</p>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Shared state object across agents</span>
+<span class="kw">class</span> <span class="fn">DocumentState</span>(TypedDict):
+    raw_text: <span class="fn">str</span>
+    doc_type: <span class="fn">str</span> | <span class="kw">None</span>
+    confidence: <span class="fn">float</span>
+    extracted_fields: <span class="fn">dict</span>
+    validation_results: list[ValidationResult]
+    action: <span class="fn">str</span> | <span class="kw">None</span>
+    needs_human_review: <span class="fn">bool</span></div>
+
+  <div class="code-block"><span class="cm"># Extraction prompt with structured output</span>
+extraction_prompt = <span class="str">"""
+Extract the following fields from this invoice:
+- vendor_name: str
+- invoice_number: str
+- total_amount: float
+- due_date: str (YYYY-MM-DD)
+- line_items: list[{description, quantity, unit_price}]
+
+Return as JSON. If a field is not found, use null.
+"""</span></div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🧠 LLM Agents</h4>
+      <ul>
+        <li>✅ Flexible, handles novel document types</li>
+        <li>⚠️ Slower, more expensive per call</li>
+        <li>📋 Best for long-tail / rare documents</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>⚡ Specialized Models</h4>
+      <ul>
+        <li>✅ Faster, cheaper, more accurate on known types</li>
+        <li>⚠️ Rigid, requires retraining for new types</li>
+        <li>📋 Best for high-volume, well-defined doc types</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p><strong>Confidence thresholds are a business decision.</strong> Too low → humans review everything (defeats the purpose). Too high → errors slip through. Start conservative (30-40% to humans), measure error rates, and tighten. At 100x volume, you need a job queue (Celery, Temporal) with priority levels and fine-tuned models for top-5 document types.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Cross-Cutting Patterns -->
+  <h3>🔗 Cross-Cutting Patterns</h3>
+  <p>After studying all nine problems, these patterns emerge again and again:</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📊 Tiered Processing</h4>
+      <p>Cheap-fast tier for easy cases, expensive-slow tier for hard cases. Fraud detection, content moderation, search ranking, document processing — all follow this pattern.</p>
+    </div>
+    <div class="card blue">
+      <h4>🗄️ Feature Stores Everywhere</h4>
+      <p>Fraud detection and search ranking both rely on offline/online feature store pattern. If building multiple ML systems, invest in the feature platform early.</p>
+    </div>
+    <div class="card green">
+      <h4>🙋 Human-in-the-Loop</h4>
+      <p>Every production AI system needs an escape hatch to humans. Start conservative and expand as you build trust. This is not optional.</p>
+    </div>
+    <div class="card purple">
+      <h4>📡 Monitoring First</h4>
+      <p>Drift detection isn't a nice-to-have. Models degrade silently. Build monitoring from day one, not as an afterthought.</p>
+    </div>
+    <div class="card">
+      <h4>💾 Caching as Architecture</h4>
+      <p>Semantic caching in RAG & LLM Gateway, result caching in search, content hash caching in moderation. Caching appears at every layer and often gives the biggest bang for your infra buck.</p>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">🎯 The Big Takeaway</div>
+    <p>These nine problems give you the <strong>vocabulary and structural intuition</strong> to tackle most AI system design challenges. The specific technologies will change — <em>the architectural patterns won't.</em></p>
+  </div>
+</div>
+</section>
+
+<!-- Screen 7: Quiz -->
+<section class="screen" id="s7">
+  <h2>Quiz: <span class="accent">Test Yourself</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: In an Enterprise RAG system, why is hybrid search (dense + BM25) preferred over pure vector search?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) BM25 is always more accurate than vector search</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) Pure dense retrieval struggles with exact keyword matches, acronyms, and proper nouns — BM25 handles these well, and combining both via reciprocal rank fusion gives the best results</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) Vector search is too expensive to run at scale</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) BM25 supports multi-modal search while vector search doesn't</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: In a fraud detection system, why is the decision engine a SEPARATE component from the ML model?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) The decision engine is faster than the ML model</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) ML models can't output probability scores</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">C) Separating model from business logic lets you tune thresholds (approve/decline/review) without redeploying the model</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) Compliance regulations require two separate systems</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: What is the MOST dangerous mistake when building training data for an ML feature platform?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Using too many features</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) Training on too little data</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">C) Using current feature values instead of point-in-time correct values, causing feature leakage that silently inflates offline metrics</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Not normalizing feature values</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: Which cross-cutting pattern appears in fraud detection, content moderation, search ranking, AND document processing?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Semantic caching</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) LangGraph state machines</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">C) Tiered processing — a cheap-fast tier for easy cases and an expensive-slow tier for hard cases</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Vector database sharding</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../index.html">← Course Home</a>
+  <a href="../module-02-ai-design-concepts/index.html">Next: AI Design Concepts →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  // Progress bar
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  // Tooltips
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  // Chat animation
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  // Quiz
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above — the answer focuses on the core architectural reason.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

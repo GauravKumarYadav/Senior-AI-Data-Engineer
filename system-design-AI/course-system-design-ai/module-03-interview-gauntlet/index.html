@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 3: The Interview Gauntlet 🔥 | AI System Design Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#DC2626;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}.nav-dots{display:flex;gap:6px}.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none}.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}.screen h2 .accent{color:var(--color-accent)}.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.qa-card{background:#fff;border-radius:16px;padding:1.8rem;margin:1rem 0;box-shadow:0 2px 12px rgba(0,0,0,0.04);border-left:4px solid var(--color-accent);cursor:pointer;transition:all 0.2s}
+.qa-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.08)}
+.qa-card h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.3rem;display:flex;align-items:center;gap:0.5rem}
+.qa-card .badge{font-size:0.7rem;padding:0.15rem 0.5rem;border-radius:100px;color:#fff;font-weight:600}
+.badge-hot{background:var(--color-error)}.badge-tricky{background:#7B5EA7}.badge-senior{background:var(--color-info)}.badge-basic{background:var(--color-success)}
+.qa-answer{max-height:0;overflow:hidden;transition:max-height 0.5s ease;font-size:0.93rem;color:var(--color-muted);line-height:1.7}
+.qa-card.open .qa-answer{max-height:2000px}
+.qa-answer p{margin-top:0.8rem}.qa-answer strong{color:var(--color-text)}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.2rem 0}.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.05rem}.quiz-opt{display:block;padding:0.7rem 1rem;margin:0.4rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:all 0.2s;font-size:0.93rem}.quiz-opt:hover{border-color:var(--color-accent);background:#FFF5F5}.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}.quiz-feedback{margin-top:0.8rem;padding:0.7rem 1rem;border-radius:8px;font-size:0.88rem;display:none}.quiz-feedback.show{display:block}.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}.aha p{font-size:0.95rem;margin:0}
+.score-tracker{background:var(--color-bg-code);color:#CDD6F4;border-radius:14px;padding:1.5rem;margin:1.5rem 0;text-align:center}
+.score-tracker .score{font-family:var(--font-heading);font-size:2.5rem;font-weight:800;color:var(--color-accent)}
+.score-tracker .label{font-size:0.9rem;color:var(--color-muted)}
+.screen-alt{background:var(--color-bg-warm)}
+.rapid-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin:1.5rem 0}
+.rapid-card{background:#fff;border-radius:12px;padding:1rem;box-shadow:0 2px 6px rgba(0,0,0,0.04)}
+.rapid-card .q{font-family:var(--font-heading);font-weight:700;font-size:0.88rem;margin-bottom:0.3rem;color:var(--color-text)}
+.rapid-card .a{font-size:0.82rem;color:var(--color-muted)}
+footer.module-nav{display:flex;justify-content:space-between;padding:2rem 1.5rem;max-width:900px;margin:0 auto}footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem}
+@media(max-width:600px){.rapid-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🏛️ System Design — AI</a><div class="nav-dots"><a href="../module-01-ai-design-problems/" class="nav-dot"></a><a href="../module-02-ai-design-concepts/" class="nav-dot"></a><a href="../module-03-interview-gauntlet/" class="nav-dot active"></a></div></div></nav>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- SCREEN 1: Design an AI System                   -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="screen" id="s1">
+  <h2>🔥 Design an <span class="accent">AI System</span></h2>
+  <p>Full system design problems. Spend 5 minutes sketching your answer, then click to reveal the solution walkthrough. No peeking.</p>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">HOT</span> Design a RAG system for 10M internal documents</h4>
+    <div class="qa-answer">
+      <p><strong>Requirements:</strong> Document types (PDFs, wikis, Slack)? Access controls? Latency — internal tool (2-3s) or customer-facing (sub-second)?</p>
+      <p><strong>Architecture — Two pipelines:</strong> <em>Ingestion:</em> Connectors (Confluence, SharePoint, S3) → parse → semantic chunking (~512 tokens, 50-token overlap) → embed via e5-large-v2 → write to Qdrant (self-hosted for data sovereignty). Metadata store tracks permissions, source URLs, freshness. <em>Query:</em> Auth check → query embedding → hybrid retrieval (dense + BM25 via reciprocal rank fusion) → cross-encoder re-ranking (top 100 → top 5) → LLM generation with context → response with citations.</p>
+      <p><strong>Key Components:</strong> Document-level auth filtering happens <em>before</em> re-ranking so the LLM never sees unauthorized content. Semantic cache (cosine > 0.95) catches 30-40% near-duplicate queries in enterprise settings, saving significant LLM costs.</p>
+      <p><strong>Tradeoffs:</strong> Self-hosted embedding (control, cost) vs API-based (simpler ops). Cross-encoder adds ~200ms but dramatically improves precision. Full re-indexing vs incremental — at 10M docs, incremental is mandatory with periodic full rebuilds.</p>
+      <p><strong>Scale:</strong> Vector DB needs sharding with HNSW across nodes. LLM is the throughput bottleneck — request queuing, multiple instances, aggressive caching. Feedback loop: thumbs-up/down → retrieval quality dashboards → periodic embedding fine-tuning.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Design a real-time fraud detection pipeline at 50K TPS</h4>
+    <div class="qa-answer">
+      <p><strong>Requirements:</strong> Latency budget (<100ms for most processors)? Fraud rate? Cost asymmetry between false negatives and false positives?</p>
+      <p><strong>Architecture — Three paths:</strong> <em>Training:</em> Historical transactions + feature store (point-in-time correct) → XGBoost/LightGBM → MLflow registry → shadow deploy. <em>Serving:</em> Transaction → Kafka → feature enrichment (online store for batch features + Flink for streaming features like tx_count_last_5min) → Triton model server → score → decision engine → approve/decline/review. <em>Feedback:</em> Analyst labels → label store → periodic retraining.</p>
+      <p><strong>Components:</strong> Flink partitioned by user ID with RocksDB state backends. Redis Cluster for online features (sub-ms latency, sharded by user ID). XGBoost chosen deliberately — sub-ms inference, handles tabular features well, interpretable for compliance.</p>
+      <p><strong>Data Flow:</strong> Three-way decision split — auto-approve (score < 0.1), auto-decline (score > 0.95), manual review (between). Review queue prioritized by amount × probability.</p>
+      <p><strong>Scale:</strong> Tiered scoring — lightweight rule-based filter catches 80% of obvious cases, only 20% hit the ML model, reducing serving costs 5x.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-tricky">TRICKY</span> Design a search ranking system for e-commerce</h4>
+    <div class="qa-answer">
+      <p><strong>Requirements:</strong> Catalog size? Query volume? Optimizing for clicks, add-to-cart, or revenue?</p>
+      <p><strong>Architecture — Multi-stage funnel:</strong> <em>Stage 1 — Candidate Retrieval (~10ms):</em> Bi-encoder embeds query, HNSW retrieves top 1,000, BM25 in parallel, reciprocal rank fusion. Optimizes for recall. <em>Stage 2 — Re-ranking (~20ms):</em> LambdaMART scores each (query, candidate) pair with BM25 score, embedding similarity, CTR, conversion rate, freshness, seller rating. Top 50. <em>Stage 3 — Personalization (~5ms):</em> User features adjust scores. Business rules enforce diversity, boost promoted products, filter availability. Final top 10-20.</p>
+      <p><strong>Tradeoffs:</strong> NDCG improvements offline don't always translate to conversion gains online — always validate with live experiments. BERT cross-encoders beat LambdaMART on accuracy but cost 100x latency — reserve for re-ranking top 20 at most. Head query caching is essential (top 1% queries = 30%+ traffic).</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-hot">HOT</span> Design an AI chatbot that handles 80% of tickets</h4>
+    <div class="qa-answer">
+      <p><strong>Requirements:</strong> The 80% target is the key constraint. Must be good enough to resolve most queries autonomously, smart enough to know when to escalate the remaining 20%.</p>
+      <p><strong>Architecture:</strong> User message → Conversation manager → Intent classifier → LangGraph state machine routing to specialized nodes: retrieve_knowledge (RAG over help docs), call_order_api, process_refund, generate_response, escalate_to_human. Conditional edges route by intent.</p>
+      <p><strong>Components:</strong> Comprehensive, fresh knowledge base (weekly sync). Tool-calling — read-only actions launch immediately; write actions have guardrails (spending limits, confirmation). Confidence-based escalation when context has low relevance or user expresses frustration twice.</p>
+      <p><strong>Guardrails:</strong> PII redaction, topic restrictions, output validation, hard "talk to a human" escape hatch. Every conversation logged. Human agents label escalated responses → weekly retraining. Track automation rate and CSAT per channel.</p>
+      <p><strong>Tradeoffs:</strong> Start with read-only actions, expand to write actions as confidence grows. Streaming improves perceived latency but complicates guardrail checking — run async checks and retract if needed.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Design an LLM gateway for 500 internal teams</h4>
+    <div class="qa-answer">
+      <p><strong>Requirements:</strong> Without a gateway, 500 teams = 500 API keys, zero cost tracking, no fallback when providers go down.</p>
+      <p><strong>Architecture:</strong> Client request → API Gateway (auth, rate limiting) → Router (complexity analysis, model selection) → Cache check (exact + semantic) → LLM provider call → Response logging (model, tokens, cost) → Cache write → Response.</p>
+      <p><strong>Components:</strong> Router sends simple queries to GPT-4o-mini, complex reasoning to GPT-4o/Claude. Start rule-based, evolve to ML-based. Rate limiting at three levels: per-user, per-team (budgets with 80% alerts, 100% hard caps), global. Track request count and token count.</p>
+      <p><strong>Data Flow:</strong> Fallback chain: primary model → secondary → cached response → error, with circuit breakers. Cost tracking aggregates by team, project, user. Semantic caching (cosine > 0.95) provides 30-40% hit rates.</p>
+      <p><strong>Tradeoffs:</strong> Centralization adds latency and SPOF. Mitigate with multi-region deployment and circuit breakers. The visibility benefits far outweigh the complexity.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-tricky">TRICKY</span> Design a content moderation system for social media</h4>
+    <div class="qa-answer">
+      <p><strong>Requirements:</strong> What modalities? What volume? Async (post-upload) or must it block publishing?</p>
+      <p><strong>Architecture — Tiered pipeline:</strong> <em>Stage 1 — Fast classifier (<50ms):</em> Lightweight models (distilled BERT, MobileNet) handle 85-90%. Safe → approve. Violating → block. <em>Stage 2 — LLM (~500ms):</em> Nuanced cases — sarcasm, context-dependent. 8-12%. <em>Stage 3 — Human review:</em> Ambiguous cases, 1-3%. Queue prioritized by severity × reach × confidence gap.</p>
+      <p><strong>Components:</strong> Multi-modal: text classifiers for hate speech/spam/self-harm, vision models for NSFW/violence, video via keyframe sampling + audio transcription. Content hashing (perceptual hashes) catches re-uploads in O(1).</p>
+      <p><strong>Tradeoffs:</strong> Category taxonomy needs severity levels, not binary labels. Child safety demands near-100% recall; humor/satire detection prioritizes precision. Human decisions retrain Stage 1 weekly. User appeals enter the review queue.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Design an ML feature platform for 200 models</h4>
+    <div class="qa-answer">
+      <p><strong>Requirements:</strong> At 200 models, ad-hoc feature computation is chaos. The feature platform centralizes everything.</p>
+      <p><strong>Architecture — Four layers:</strong> <em>Computation:</em> Batch (Spark, daily/hourly) + streaming (Flink, real-time). <em>Storage:</em> Offline store (BigQuery/Snowflake) for training; online store (Redis Cluster) for sub-ms serving. <em>Serving:</em> Feature server API returns feature vectors by entity ID. <em>Registry:</em> Feature catalog with owners, definitions, freshness SLAs, lineage.</p>
+      <p><strong>Key Challenge:</strong> Point-in-time correctness — training data must use feature values as they existed at event time, not current values. Getting this wrong causes feature leakage. Offline-online consistency is the hardest problem — same definition must produce identical values in batch and real-time.</p>
+      <p><strong>Tradeoffs:</strong> Feast (open-source, operational investment) vs Tecton (managed, vendor dependency). Freshness vs cost: only compute in real-time what genuinely changes the decision at serving time. Redis Cluster with read replicas, federated team ownership over shared infra.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- SCREEN 2: Component Deep Dives                  -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="screen screen-alt" id="s2">
+  <h2>🔬 Component <span class="accent">Deep Dives</span></h2>
+  <p>Technical questions about specific AI/ML infrastructure components. Click to reveal:</p>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> How does a feature store achieve point-in-time correctness?</h4>
+    <div class="qa-answer">
+      <p>The offline store maintains timestamped feature values. When building training data, you pass an entity DataFrame where each row has an entity ID and event timestamp. The store performs an <strong>asof-join</strong>: for each row, it finds the most recent feature value with a timestamp <em>before</em> the event timestamp. This prevents feature leakage — e.g., a fraud model training on a January transaction gets spending patterns as of January, not April.</p>
+      <p>Without this, features from future data leak information about the label, causing inflated offline metrics that don't transfer to production. Feast implements this via <code style="font-family:var(--font-code)">get_historical_features()</code>. Key detail: feature values must be stored with computation timestamps, and join logic must handle late-arriving data and out-of-order events.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> How would you design a model registry for 50 ML engineers?</h4>
+    <div class="qa-answer">
+      <p>Four core capabilities: <strong>versioning, metadata, lineage, and promotion workflows.</strong> Every model gets an immutable version with its artifact, hyperparameters, training data version, eval metrics, and git commit. Lineage traces from production prediction → model version → training run → dataset version → feature definitions.</p>
+      <p>Promotion follows stage gates: Development → Staging → Production → Archived. Staging requires automated tests (latency, schema validation, metric thresholds). Production requires shadow deployment + peer approval. For 50 engineers: ownership per model, audit logs, automated alerts for stale staging models. Build on MLflow with custom CI/CD — PR merging triggers validation, shadow deploy, and Slack notification for approval.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Describe the architecture of a semantic cache for LLMs</h4>
+    <div class="qa-answer">
+      <p>Three components: <strong>embedding service</strong> (~5ms per query), <strong>vector index</strong> (HNSW in Redis, ~5-10ms search), and <strong>response store</strong> (Redis, keyed by cache entry ID). New queries are embedded and similarity-searched against the index. If cosine > 0.95, the cached response is returned without calling the LLM.</p>
+      <p>The similarity threshold is the critical tuning knob — too low (0.85) gives false matches ("return an item" ≠ "return a library book"); too high (0.99) rarely hits. TTL-based expiration prevents staleness. Version tagging invalidates entries when underlying data changes. Total overhead: ~10-50ms, but hits save 500-2000ms of LLM inference. At enterprise scale, 30-40% hit rates = massive cost savings.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> How does HNSW work and when to choose it over IVF-PQ?</h4>
+    <div class="qa-answer">
+      <p><strong>HNSW</strong> builds a multi-layer graph. Bottom layer has all vectors; upper layers have progressively fewer ("express lanes"). Search starts at top, greedily navigates to nearest node, drops down, repeats. Parameters M (connections/node) and efConstruction (search width) control accuracy-memory tradeoff. >95% recall with microsecond queries.</p>
+      <p><strong>IVF-PQ</strong> partitions into clusters (IVF) and compresses via product quantization (10-50x memory reduction). Disk-friendly, handles billions, but lower recall (85-93%) and higher latency. <strong>Choose HNSW</strong> for latency-critical apps under ~100M vectors. <strong>Choose IVF-PQ</strong> when data exceeds RAM or cost demands compression. Many systems use HNSW for hot tier, IVF-PQ for cold tier.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Design a model monitoring system for concept drift</h4>
+    <div class="qa-answer">
+      <p>Three layers: <strong>Data collection</strong> — log every prediction with input features, output, and ground truth (when available). <strong>Metrics computation</strong> — scheduled statistical tests: PSI/KS tests on feature distributions (data drift), output score distribution comparison (prediction drift), performance metrics on labeled subsets (concept drift). <strong>Alerting</strong> — INFO for minor shifts, WARNING for moderate drift triggering investigation, CRITICAL for severe degradation triggering automated rollback.</p>
+      <p>Hardest part: ground truth labels arrive with delay (fraud labels take weeks). Rely on proxy signals — prediction distribution shifts, feature drift on high-importance features, business metric anomalies — as early warning while waiting for labels.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> How would you build an embedding refresh pipeline?</h4>
+    <div class="qa-answer">
+      <p>Four phases: <strong>Trigger</strong> — new model registered (quarterly or on quality regression). <strong>Batch re-embedding</strong> — distributed Spark/Ray job reads all docs, chunks, generates new embeddings. For 10M docs (~50M chunks), takes hours on GPU clusters. <strong>Atomic swap</strong> — write to a fresh vector index (not live), validate retrieval quality on a golden test set, swap alias. <strong>Cleanup</strong> — keep old index 48 hours as rollback target.</p>
+      <p>Incremental re-embedding (only new/modified docs) saves compute but creates a mixed-version index where vector spaces aren't aligned — degrades search quality. Full re-embedding is cleaner and worth the cost at reasonable corpus sizes.</p>
+    </div>
+  </div>
+
+  <div class="qa-card" onclick="this.classList.toggle('open')">
+    <h4><span class="badge badge-senior">SENIOR</span> Explain the architecture of LLM guardrails</h4>
+    <div class="qa-answer">
+      <p>Two-stage filter: <strong>Input guardrails</strong> — prompt injection detection (fine-tuned classifier or patterns), topic boundary enforcement (intent classifier blocks off-topic queries), PII detection/redaction, rate limiting. <strong>Output guardrails</strong> — PII scanning of response, factuality grounding checks for RAG (verify citations aren't hallucinated), toxicity classification, format validation (valid JSON if requested).</p>
+      <p>Pipeline: User Input → Input Guardrails → LLM → Output Guardrails → Response. Each guardrail returns pass/block/redact. Blocked requests get a safe fallback. All triggers logged for auditing. NeMo Guardrails (dialogue flow) and Guardrails AI (schema validation) provide building blocks, but production systems customize heavily.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- SCREEN 3: Trade-offs & Decisions (Quiz)         -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="screen" id="s3">
+  <h2>⚖️ Trade-offs & <span class="accent">Decisions</span></h2>
+  <p>Both options have merit. The right answer depends on context — and saying so is the point.</p>
+
+  <div class="score-tracker"><div class="score" id="scoreVal">0/8</div><div class="label">Trade-off Score</div></div>
+
+  <div class="quiz-box" id="q1"><h4>Real-time inference vs batch prediction for a recommendation system?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">A) Always use real-time — users expect personalized, up-to-the-second recommendations</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">B) Always use batch — it's cheaper and simpler to operate at scale</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',true)">C) Hybrid: batch for homepage/category pages + real-time re-ranking for in-session contexts like "similar items" on product pages</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q1',false)">D) Use a streaming pipeline to update recommendations every second</div>
+    <div class="quiz-feedback" id="q1-fb"></div></div>
+
+  <div class="quiz-box" id="q2"><h4>Fine-tuning vs RAG for a domain-specific Q&A system?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">A) Always RAG — it's easier to update and provides citations</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">B) Always fine-tune — the model needs to deeply understand the domain</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',true)">C) They're complementary: fine-tune for style/domain fluency, use RAG for factual grounding with up-to-date, citable facts</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q2',false)">D) Neither — use a larger base model and it will handle domain questions</div>
+    <div class="quiz-feedback" id="q2-fb"></div></div>
+
+  <div class="quiz-box" id="q3"><h4>Single large model vs ensemble of specialists for fraud detection?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',true)">A) Start with a single model for simplicity, graduate to specialists when specific fraud types need different features, cadences, or thresholds</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">B) Always use an ensemble — more models means better accuracy</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q3',false)">C) Always use a single model — operational complexity of ensembles isn't worth it</div>
+    <div class="quiz-feedback" id="q3-fb"></div></div>
+
+  <div class="quiz-box" id="q4"><h4>Pre-filter vs post-filter for metadata filtering in vector search?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">A) Always pre-filter — you only want to search relevant documents</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">B) Always post-filter — it's simpler and leverages the full index</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',true)">C) Pre-filter when the subset is large (>10% of corpus); post-filter when filters are loose or variable; some DBs support hybrid approaches</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q4',false)">D) Avoid metadata filtering entirely — it degrades ANN quality</div>
+    <div class="quiz-feedback" id="q4-fb"></div></div>
+
+  <div class="quiz-box" id="q5"><h4>Synchronous vs asynchronous model serving?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',false)">A) Always synchronous — callers need immediate results</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',true)">B) Sync for user-facing hot paths (search, checkout); async for batch-like workloads where results can be consumed later, enabling request batching for GPU efficiency</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q5',false)">C) Always async — it decouples everything and improves throughput</div>
+    <div class="quiz-feedback" id="q5-fb"></div></div>
+
+  <div class="quiz-box" id="q6"><h4>Feature store vs ad-hoc feature computation?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',false)">A) Always use a feature store — consistency is non-negotiable</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',true)">B) Ad-hoc is fine for 1-2 models; the tipping point is ~5-10 models / 3+ teams — above that, the consistency and reuse benefits compound rapidly</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q6',false)">C) Ad-hoc is always better — feature stores add unnecessary complexity</div>
+    <div class="quiz-feedback" id="q6-fb"></div></div>
+
+  <div class="quiz-box" id="q7"><h4>Shadow deployment vs canary deployment for a new ML model?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q7',false)">A) Always canary — you need real user signal to measure impact</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q7',false)">B) Always shadow — it's zero-risk and you can compare outputs offline</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q7',true)">C) They're sequential, not competing — shadow first to catch catastrophic failures, then canary to measure real business impact</div>
+    <div class="quiz-feedback" id="q7-fb"></div></div>
+
+  <div class="quiz-box" id="q8"><h4>Exact match cache vs semantic cache for an LLM gateway?</h4>
+    <div class="quiz-opt" onclick="checkQ(this,'q8',true)">A) Use exact match as the first layer (free and fast), semantic as the second layer — together they maximize hit rate while minimizing false matches</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q8',false)">B) Only exact match — semantic caching has too many false positives</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q8',false)">C) Only semantic — it subsumes exact match anyway</div>
+    <div class="quiz-opt" onclick="checkQ(this,'q8',false)">D) No caching — LLM responses should always be fresh</div>
+    <div class="quiz-feedback" id="q8-fb"></div></div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- SCREEN 4: Rapid Fire                            -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="screen screen-alt" id="s4">
+  <h2>⚡ Rapid <span class="accent">Fire</span></h2>
+  <p>Short questions, short answers. If you can't answer in one breath, review Modules 1 & 2.</p>
+  <div class="rapid-grid">
+    <div class="rapid-card"><div class="q">What is HNSW?</div><div class="a">Hierarchical Navigable Small World — a multi-layer graph-based ANN index. High recall, high memory, best when data fits in RAM.</div></div>
+    <div class="rapid-card"><div class="q">What is PSI?</div><div class="a">Population Stability Index — measures distribution shift between two time periods. <0.1 stable, 0.1-0.25 moderate, >0.25 significant drift.</div></div>
+    <div class="rapid-card"><div class="q">Data drift vs concept drift?</div><div class="a">Data drift = input distributions change. Concept drift = input→output relationship changes. Data drift may be harmless; concept drift always breaks the model.</div></div>
+    <div class="rapid-card"><div class="q">What is a cold start problem?</div><div class="a">Insufficient data for good predictions — new users, new items, or new systems. Solve with content-based features, popularity defaults, or onboarding flows.</div></div>
+    <div class="rapid-card"><div class="q">What is interleaving in A/B testing?</div><div class="a">Merge results from two ranking models into one list. Users implicitly vote by clicking. 10-100x more sensitive than traditional split tests.</div></div>
+    <div class="rapid-card"><div class="q">What is a data flywheel?</div><div class="a">More users → more data → better models → better product → more users. The strongest competitive moat in AI.</div></div>
+    <div class="rapid-card"><div class="q">What is point-in-time correctness?</div><div class="a">Training data uses feature values as they existed at event time, not current values. Prevents feature leakage. Implemented via temporal asof-joins.</div></div>
+    <div class="rapid-card"><div class="q">What is product quantization?</div><div class="a">Split high-dim vectors into subvectors, quantize each with a learned codebook. 10-50x memory reduction with moderate recall loss. Used in IVF-PQ.</div></div>
+    <div class="rapid-card"><div class="q">What does a model registry store?</div><div class="a">Artifacts, hyperparameters, training data version, eval metrics, lineage (code commit, dataset, features), deployment stage, and ownership metadata.</div></div>
+    <div class="rapid-card"><div class="q">What is a feature store's online store?</div><div class="a">Low-latency key-value store (Redis, DynamoDB) holding latest feature values for real-time inference. Sub-ms reads, updated by materialization pipelines.</div></div>
+    <div class="rapid-card"><div class="q">What is Thompson Sampling?</div><div class="a">Bayesian bandit algorithm — maintains probability distributions over reward rates, samples to decide which option to try. Balances explore vs exploit naturally.</div></div>
+    <div class="rapid-card"><div class="q">What is a guardrail metric?</div><div class="a">A metric that must not degrade during an experiment (latency p99, crash rate, safety violations). If it trips, experiment stops regardless of primary gains.</div></div>
+    <div class="rapid-card"><div class="q">What is shadow mode deployment?</div><div class="a">New model runs on production traffic but predictions aren't served to users. Logged and compared offline. Zero user risk — use before canary.</div></div>
+    <div class="rapid-card"><div class="q">What is semantic caching?</div><div class="a">Cache LLM responses indexed by query embedding. If a similar query exists (cosine > 0.95), return cached response. Catches paraphrases that exact-match misses.</div></div>
+    <div class="rapid-card"><div class="q">What is BM25?</div><div class="a">Sparse retrieval based on TF-IDF. Excels at exact keyword matching, acronyms, proper nouns. Often combined with dense vectors in hybrid retrieval.</div></div>
+    <div class="rapid-card"><div class="q">What is NDCG?</div><div class="a">Normalized Discounted Cumulative Gain — ranking metric that rewards placing relevant results near the top. Accounts for position and graded relevance.</div></div>
+    <div class="rapid-card"><div class="q">What is a cross-encoder?</div><div class="a">Scores a (query, document) pair jointly — more accurate than bi-encoders but O(n). Use only for re-ranking small candidate sets, not retrieval.</div></div>
+    <div class="rapid-card"><div class="q">What is model lineage?</div><div class="a">Full provenance: prediction → model version → training run → dataset → features → code commit. Essential for debugging, compliance, reproducibility.</div></div>
+    <div class="rapid-card"><div class="q">What is feature leakage?</div><div class="a">Training data accidentally includes future info or label-derived info. Causes inflated offline metrics that don't transfer to production.</div></div>
+    <div class="rapid-card"><div class="q">What is the LLM cascading pattern?</div><div class="a">Try cheapest model first. If confidence is low (log-probs or quality classifier), escalate to a more expensive model. Reduces costs 50-70%.</div></div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- SCREEN 5: Key Takeaways                         -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="screen" id="s5">
+  <h2>🏆 Key <span class="accent">Takeaways</span></h2>
+  <p>Everything you've learned across all three modules, distilled:</p>
+  <div class="rapid-grid">
+    <div class="rapid-card"><div class="q">✅ Module 1</div><div class="a">Full system design problems — RAG, fraud detection, search ranking, chatbots, LLM gateways, moderation, feature platforms</div></div>
+    <div class="rapid-card"><div class="q">✅ Module 2</div><div class="a">AI design concepts — feature stores, model registries, vector search, drift detection, embedding pipelines, guardrails</div></div>
+    <div class="rapid-card"><div class="q">✅ Module 3</div><div class="a">The Interview Gauntlet — design walkthroughs, component deep dives, trade-off quizzes, rapid fire</div></div>
+  </div>
+
+  <div class="aha"><div class="aha-title">🧠 The 6-Step Framework (State It First!)</div>
+    <p>1. <strong>Clarify Requirements</strong> — business objective, users, latency, scale, compliance (3-5 min)<br>
+    2. <strong>Data</strong> — sources, labeling, volume, schema, privacy, batch vs streaming<br>
+    3. <strong>Model</strong> — right model for the job, accuracy vs latency vs cost triangle<br>
+    4. <strong>Serving</strong> — real-time/batch/streaming, latency SLAs, autoscaling<br>
+    5. <strong>Monitoring</strong> — data drift, concept drift, prediction drift, alerting<br>
+    6. <strong>Iteration</strong> — feedback loops, retraining cadence, A/B testing, data flywheel</p></div>
+
+  <div class="aha"><div class="aha-title">🔥 Top 5 Patterns Across All Problems</div>
+    <p><strong>Tiered processing</strong> — cheap tier for easy cases, expensive tier for hard cases (fraud, moderation, search, LLM routing).<br>
+    <strong>Offline-online duality</strong> — feature stores, evaluation, models all live in two worlds: batch learning and real-time serving.<br>
+    <strong>Human-in-the-loop</strong> — every production AI system needs an escape hatch. Start conservative, expand autonomy.<br>
+    <strong>Caching is architecture</strong> — semantic cache in RAG, result cache in search, content hash in moderation, exact+semantic in LLM gateways.<br>
+    <strong>Feedback loops power the flywheel</strong> — user interactions = implicit labels, escalations = gold labels. The system that learns fastest wins.</p></div>
+
+  <div class="aha"><div class="aha-title">🚀 Final Interview Tips</div>
+    <p><strong>Structure beats brilliance.</strong> A well-organized answer covering all 6 steps outscore a brilliant but rambling deep-dive.<br>
+    <strong>Tradeoffs are the point.</strong> "I'd choose HNSW over IVF-PQ because latency is critical and data fits in RAM, but at 1B vectors we'd revisit."<br>
+    <strong>Numbers matter.</strong> "p99 under 50ms to fit the payment processor's timeout" beats "the system needs to be fast."<br>
+    <strong>Draw the diagram.</strong> Describe flows so the interviewer can draw your system from your words.<br>
+    <strong>Know when to stop.</strong> Touch all 6 steps, then offer: "I can go deeper into the feature store, re-ranking, or monitoring — what interests you?"</p></div>
+
+  <div style="text-align:center;margin-top:2rem">
+    <a href="../index.html" style="display:inline-block;background:var(--color-accent);color:#fff;padding:1rem 2.5rem;border-radius:100px;font-family:var(--font-heading);font-weight:700;font-size:1.1rem;text-decoration:none;transition:transform 0.2s">Back to Course Home 🏛️</a>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-02-ai-design-concepts/index.html">← Previous: AI Design Concepts</a>
+  <a href="../index.html">Course Home</a>
+</footer>
+<script>
+(function(){
+  var pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){var h=document.documentElement;pb.style.width=((h.scrollTop/(h.scrollHeight-h.clientHeight))*100)+'%';},{passive:true});
+  var score=0,total=8;
+  window.checkQ=function(el,qid,correct){
+    var box=document.getElementById(qid);if(box.dataset.answered)return;box.dataset.answered='true';
+    var fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='\u2705 Exactly! The nuanced, context-dependent answer is what interviewers want to hear.';score++;}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='\u274c Not quite. The best answer acknowledges both sides and explains when each choice wins.';}
+    box.querySelectorAll('.quiz-opt').forEach(function(o){o.style.pointerEvents='none';});
+    document.getElementById('scoreVal').textContent=score+'/'+total;
+  };
+})();
+</script>
+</body>
+</html>
