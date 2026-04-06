@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 4: The Interview Gauntlet 🔥 | Real-Time Streaming Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-error);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-error)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h2 .fire{color:var(--color-error)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}.card.red{border-top-color:var(--color-error)}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p,.card ul{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.card ul{list-style:none;padding:0}.card ul li{padding:0.2rem 0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.qa-block{background:#fff;border-radius:16px;padding:1.8rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;border-left:4px solid var(--color-error)}
+.qa-block h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.8rem;font-size:1.05rem;color:var(--color-error)}
+.qa-block p{font-size:0.95rem;margin-bottom:0.6rem}
+.qa-block .model-answer{background:var(--color-bg-warm);border-radius:10px;padding:1rem 1.2rem;margin-top:0.8rem;font-size:0.92rem;cursor:pointer;position:relative}
+.qa-block .model-answer::before{content:'👁️ Click to reveal model answer';display:block;font-family:var(--font-heading);font-weight:600;font-size:0.85rem;color:var(--color-accent);margin-bottom:0.5rem}
+.qa-block .model-answer.revealed::before{content:'📋 Model Answer'}
+.qa-block .model-answer .answer-text{max-height:0;overflow:hidden;transition:max-height 0.4s ease}
+.qa-block .model-answer.revealed .answer-text{max-height:2000px}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.arch-diagram{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.5rem;font-family:var(--font-code);font-size:0.75rem;overflow-x:auto;margin:1rem 0;white-space:pre;line-height:1.5}
+.debug-block{background:#fff;border-radius:16px;padding:1.8rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;border-left:4px solid var(--color-info)}
+.debug-block h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.5rem;font-size:1.05rem;color:var(--color-info)}
+.debug-block p{font-size:0.92rem;margin-bottom:0.5rem}
+.debug-block .diagnosis{background:#FFF5F5;border-radius:8px;padding:0.8rem 1rem;margin:0.5rem 0;font-size:0.9rem;border-left:3px solid var(--color-error)}
+.debug-block .fix{background:#F0FAF4;border-radius:8px;padding:0.8rem 1rem;margin:0.5rem 0;font-size:0.9rem;border-left:3px solid var(--color-success)}
+.rapid-fire{background:#fff;border-radius:14px;padding:1.2rem 1.5rem;margin:0.8rem 0;box-shadow:0 1px 6px rgba(0,0,0,0.04);cursor:pointer;transition:all 0.2s}
+.rapid-fire:hover{box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+.rapid-fire h4{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0}
+.rapid-fire .rf-answer{max-height:0;overflow:hidden;transition:max-height 0.3s ease;font-size:0.9rem;color:var(--color-muted);line-height:1.6}
+.rapid-fire.open .rf-answer{max-height:200px;margin-top:0.5rem}
+table.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+table.info-table th{background:var(--color-bg-warm);font-family:var(--font-heading);font-weight:700;text-align:left;padding:0.7rem 1rem;border-bottom:2px solid rgba(0,0,0,0.1)}
+table.info-table td{padding:0.6rem 1rem;border-bottom:1px solid rgba(0,0,0,0.05)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">📡 Real-Time Streaming Mastery</a><div class="nav-dots"><a href="../module-01-kafka-architecture/" class="nav-dot"></a><a href="../module-02-kafka-advanced/" class="nav-dot"></a><a href="../module-03-apache-flink/" class="nav-dot"></a><a href="../module-04-interview-gauntlet/" class="nav-dot active"></a></div></div></nav>
+
+<!-- Screen 1: Architecture Design Questions -->
+<section class="screen" id="s1">
+  <h2>🔥 Architecture <span class="fire">Design Questions</span></h2>
+  <p><strong>Format:</strong> Practice these until you can answer confidently in 60-90 seconds. Every answer follows the <strong>Situation → Approach → Trade-offs</strong> structure.</p>
+
+  <div class="qa-block">
+    <h4>Q1: "Design a Kafka-based system for an e-commerce platform processing 100K orders/hour with real-time inventory updates."</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"I'd create three topics: <code>order-events</code> (12 partitions — 100K orders/hour ≈ 28/sec, room for 12 parallel consumers), <code>inventory-updates</code> (compacted, key=<code>warehouse-sku</code>, 20 partitions), and <code>payment-results</code> (6 partitions). All with RF=3, <code>min.insync.replicas=2</code>, <code>acks=all</code>.</p>
+        <p>Partition key for orders is <code>order_id</code> for lifecycle event ordering. Inventory uses compaction so consumers always see latest stock level. Schema Registry with Avro and BACKWARD compatibility.</p>
+        <p>Three consumer groups: order processing (EOS with transactions), inventory service (reads compacted topic), and analytics (Flink). Trade-off: EOS transaction complexity, but data integrity justifies it."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q2: "You have a clickstream of 50K events/second. Design the Kafka topic configuration."</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"50K events/sec × 500-byte avg = 25 MB/s. Each partition ~10 MB/s, so 3 minimum — but I'd provision <strong>40 partitions</strong> for consumer parallelism and growth.</p>
+        <p>Config: <code>acks: 1</code> (clickstream tolerates some loss), <code>retention.ms: 604800000</code> (7 days), <code>compression.type: lz4</code> (~60% reduction), <code>batch.size: 65536</code> and <code>linger.ms: 10</code> for producer batching.</p>
+        <p>Key = <code>user_id</code> for per-user ordering. If ordering isn't needed, use <code>null</code> keys with sticky partitioning. Trade-off: 40 partitions increases rebalancing time but throughput benefits outweigh this."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q3: "Design a partition key strategy for a multi-tenant SaaS platform."</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"The naive approach — <code>tenant_id</code> — creates <strong>hot partitions</strong>. If Walmart has 10M events/day and a small business has 100, Walmart's partition is 100,000x hotter.</p>
+        <p><strong>Option A: Composite key</strong> — <code>tenant_id + entity_id</code>. Distributes large tenants across partitions while maintaining per-entity ordering.</p>
+        <p><strong>Option B: Dedicated topics per tier</strong> — Premium tenants get their own topic (SLA isolation). Standard tenants share a multi-tenant topic.</p>
+        <p><strong>Option C: Custom partitioner</strong> — Hash on <code>entity_id</code> for large tenants, <code>tenant_id</code> for small ones.</p>
+        <p>I'd choose Option A — simple, distributes load, maintains per-entity ordering."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q4: "How would you migrate from a monolithic Kafka topic to a microservices event architecture?"</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"Strangler fig pattern: (1) <strong>Shadow topic</strong> — Create domain-specific topics, deploy a 'splitter' consumer that routes events by type. (2) <strong>Dual write</strong> — New services produce to both monolith and domain topic. (3) <strong>Consumer migration</strong> — Migrate consumers one-by-one, each independently reversible. (4) <strong>Decommission</strong> — Stop dual write once all consumers migrated.</p>
+        <p>Key: Register schemas in advance with <code>RecordNameStrategy</code>. Each phase should be independently deployable and rollbackable."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q5: "Design a system where Kafka consumers need strict global order."</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"<strong>Option A: Single partition</strong> — Guarantees global order but limits throughput to one consumer. Viable only for &lt;1K events/sec.</p>
+        <p><strong>Option B: Sequential processing layer</strong> — Multiple partitions for transport, then a downstream service buffers and reorders by sequence number. Scalable but complex.</p>
+        <p><strong>Option C: Challenge the requirement</strong> — Most 'global ordering' requirements are actually 'per-entity ordering.' Does order-123's events really need ordering relative to order-456? Usually no. Use entity ID as partition key.</p>
+        <p>I'd always challenge the requirement first. In 15 years I've seen exactly two legitimate global ordering needs."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q6: "Design Kafka-based event sourcing for an order management system."</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"<strong>Event store</strong>: <code>order-events</code> topic, compacted + 90-day retention, key = <code>order_id</code>. Events: <code>OrderCreated</code>, <code>ItemAdded</code>, <code>PaymentReceived</code>, <code>Shipped</code>.</p>
+        <p><strong>Materialized views</strong>: Consumer groups rebuild state — one CG → PostgreSQL, another → Elasticsearch, another → Redis.</p>
+        <p><strong>Snapshots</strong>: For orders with 50+ events, publish snapshots to <code>order-snapshots</code> compacted topic. On startup, read snapshot first, then replay.</p>
+        <p><strong>Schema evolution</strong>: Schema Registry with FULL_TRANSITIVE compatibility — every version must be cross-readable since events live forever."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q7: "How would you handle Kafka across multiple data centers?"</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"<strong>Active-Passive</strong>: One primary, one DR. MirrorMaker 2 for async replication. RPO = seconds. Challenge: offset translation.</p>
+        <p><strong>Active-Active</strong>: Both accept writes. MM2 replicates bidirectionally with topic prefixing. Challenge: deduplication, conflict resolution.</p>
+        <p><strong>Stretch cluster</strong>: Single cluster across DCs with rack-aware replication. Zero RPO but requires &lt;10ms inter-DC latency.</p>
+        <p>For most cases: Active-Passive for simplicity. Test failover monthly."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 2: Debugging Scenarios -->
+<section class="screen screen-alt" id="s2">
+  <h2>🔍 Debugging <span class="fire">Scenarios</span></h2>
+  <p>These are the "tell me about a time..." questions. Show your debugging instincts.</p>
+
+  <div class="debug-block">
+    <h4>S1: "Consumer lag growing on 3 of 12 partitions. Others are fine."</h4>
+    <div class="diagnosis">📛 <strong>Diagnosis:</strong> Hot partitions — disproportionate data on 3 partitions (hot keys) or one consumer is slower (GC, resource-constrained host).</div>
+    <div class="fix">✅ <strong>Fix:</strong> If hot keys → custom partitioner or add random suffix to hot keys. If consumer issue → check the specific host's CPU, memory, GC logs.</div>
+  </div>
+
+  <div class="debug-block">
+    <h4>S2: "After deployment, consumers rebalancing every 60 seconds in a loop."</h4>
+    <div class="diagnosis">📛 <strong>Diagnosis:</strong> Rebalancing storm — consumers evicted faster than they can rejoin. <code>max.poll.interval.ms</code> too low, or <code>session.timeout.ms</code> too low.</div>
+    <div class="fix">✅ <strong>Fix:</strong> Increase <code>max.poll.interval.ms</code> to 300000 (5 min). Reduce <code>max.poll.records</code>. Use <code>group.instance.id</code> for static membership during rolling deploys.</div>
+  </div>
+
+  <div class="debug-block">
+    <h4>S3: "We lost messages in production. acks=1, replication.factor=3."</h4>
+    <div class="diagnosis">📛 <strong>Diagnosis:</strong> With <code>acks=1</code>, only leader acknowledges. Leader dies before followers replicate → messages lost. Classic unacknowledged replication gap.</div>
+    <div class="fix">✅ <strong>Fix:</strong> Change to <code>acks=all</code> + <code>min.insync.replicas=2</code>. Trade-off: ~3-5ms additional latency per produce.</div>
+  </div>
+
+  <div class="debug-block">
+    <h4>S4: "Consumer group shows 'EMPTY' state but application pods are running."</h4>
+    <div class="diagnosis">📛 <strong>Diagnosis:</strong> Consumers aren't connecting — wrong <code>bootstrap.servers</code>, wrong <code>group.id</code>, or SASL/SSL misconfiguration.</div>
+    <div class="fix">✅ <strong>Fix:</strong> Verify connection config. Common cause: environment variable overrides — production pods reading staging Kafka config.</div>
+  </div>
+
+  <div class="debug-block">
+    <h4>S5: "Debezium CDC connector: 'WAL segment already removed' error."</h4>
+    <div class="diagnosis">📛 <strong>Diagnosis:</strong> PostgreSQL removed WAL segments Debezium hasn't consumed. Connector fell behind and replication slot's WAL was recycled.</div>
+    <div class="fix">✅ <strong>Fix:</strong> Increase <code>max_wal_size</code> and <code>wal_keep_size</code>. For recovery: recreate connector with <code>snapshot.mode=initial</code>. Monitor replication slot lag.</div>
+  </div>
+
+  <div class="debug-block">
+    <h4>S6: "Producer getting 'NOT_ENOUGH_REPLICAS' intermittently."</h4>
+    <div class="diagnosis">📛 <strong>Diagnosis:</strong> <code>acks=all</code> with <code>min.insync.replicas=2</code> but ISR has shrunk below minimum. A broker is down, disk full, or network partition.</div>
+    <div class="fix">✅ <strong>Fix:</strong> Identify unhealthy broker and restore. If disk full, add disk or lower retention. Temporary (dangerous): lower <code>min.insync.replicas=1</code> but this sacrifices durability.</div>
+  </div>
+
+  <div class="debug-block">
+    <h4>S7: "Offset commits failing with 'CommitFailedException'."</h4>
+    <div class="diagnosis">📛 <strong>Diagnosis:</strong> Consumer was evicted (processing took longer than <code>max.poll.interval.ms</code>), partitions reassigned. Old consumer tries to commit for partitions it no longer owns → duplicates!</div>
+    <div class="fix">✅ <strong>Fix:</strong> Increase <code>max.poll.interval.ms</code> or reduce <code>max.poll.records</code>. Implement <code>ConsumerRebalanceListener</code> to detect partition revocation.</div>
+  </div>
+
+  <div class="debug-block">
+    <h4>S8: "Kafka cluster disk usage growing faster than expected despite retention.ms."</h4>
+    <div class="diagnosis">📛 <strong>Diagnosis:</strong> Log compaction backlog, abandoned consumer groups (<code>__consumer_offsets</code> growth), transaction markers, or <code>retention.bytes</code> not set.</div>
+    <div class="fix">✅ <strong>Fix:</strong> Check per-topic disk with <code>kafka-log-dirs.sh</code>. Delete abandoned consumer groups. Increase <code>log.cleaner.threads</code>. Set both <code>retention.ms</code> AND <code>retention.bytes</code>.</div>
+  </div>
+</section>
+
+<!-- Screen 3: Exactly-Once & Ordering -->
+<section class="screen" id="s3">
+  <h2>🎯 Exactly-Once & <span class="fire">Ordering</span></h2>
+
+  <div class="qa-block">
+    <h4>Q1: "Can you have exactly-once without Kafka transactions?"</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"Yes — if your sink is <strong>idempotent</strong>. Writing to a database with an upsert using the Kafka record's offset or business key as dedup key. The consumer may process twice (at-least-once), but the idempotent sink ensures the effect is applied only once. Many teams achieve 'effectively exactly-once' this way without transaction overhead."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q2: "Messages ordered by customer_id, 12 partitions, some customers 100x more traffic. How to handle hot partition?"</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"<strong>Approach 1: Sub-key partitioning</strong> — Use <code>customer_id + order_id</code> as key. Spreads load but loses per-customer ordering.</p>
+        <p><strong>Approach 2: Separate topic for hot customers</strong> — Route VIP customers (top 1%) to a dedicated topic.</p>
+        <p><strong>Approach 3: Local ordering buffer</strong> — Keep <code>customer_id</code> as key, scale the consumer vertically for the hot partition.</p>
+        <p>The right answer depends on whether per-customer ordering is a hard business requirement."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q3: "Explain 'exactly-once' within Kafka vs end-to-end exactly-once."</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"<strong>Within Kafka</strong>: Idempotent producers + transactions guarantee consume-transform-produce pipelines process each record exactly once via producer IDs and sequence numbers.</p>
+        <p><strong>End-to-end</strong>: Sink must participate. (1) <strong>2PC</strong>: Flink pre-commits during checkpoint, full commit on completion. (2) <strong>Idempotent sink</strong>: Upsert with dedup key. Works with any upsert-capable store.</p>
+        <p>Hard truth: true E2E exactly-once requires BOTH source AND sink to cooperate. Non-transactional REST API? Best you get is at-least-once with client-side dedup."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q4: "Kafka Streams app writes to DB. How to prevent duplicates on crash?"</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"The <strong>changelog + offset pattern</strong>: Store Kafka consumer offset alongside business data in the same DB transaction.</p>
+        <div class="code-block"><span class="kw">BEGIN TRANSACTION</span>;
+  <span class="kw">INSERT INTO</span> orders (order_id, ...) <span class="kw">VALUES</span> (...);
+  <span class="kw">UPDATE</span> consumer_offsets <span class="kw">SET</span> offset = <span class="fn">42</span>
+    <span class="kw">WHERE</span> topic = <span class="str">'order-events'</span> <span class="kw">AND</span> partition = <span class="fn">3</span>;
+<span class="kw">COMMIT</span>;</div>
+        <p>On restart, read stored offset from DB and seek consumer there. DB becomes source of truth for consumption progress."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q5: "max.in.flight.requests.per.connection=5 with idempotence — how does Kafka maintain ordering?"</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"With idempotence, the broker tracks sequence numbers per producer per partition. Even with 5 in-flight requests, if request 3 arrives before request 2, the broker <strong>buffers request 3 and waits</strong>. Once request 2 arrives and is written, request 3 follows in order. Without idempotence, <code>max.in.flight > 1</code> can cause ordering issues on retries. With idempotence, <code>max.in.flight=5</code> is safe AND gives better throughput."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>Q6: "A consumer reads from a compacted topic. Can it see duplicates for the same key?"</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"Yes! Compaction is <strong>asynchronous</strong>. Between runs, the topic contains multiple records per key. Also, the <strong>active segment</strong> (currently written to) is never compacted. Consumers should always treat compacted topic records as upserts — apply the latest value per key and handle duplicates gracefully."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 4: Flink Challenges -->
+<section class="screen screen-alt" id="s4">
+  <h2>⚡ Flink <span class="fire">Challenges</span></h2>
+
+  <div class="qa-block">
+    <h4>F1: "Flink watermark is stuck. Events consumed but no windows firing."</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"Common causes: (1) <strong>Idle source partition</strong> — one Kafka partition has no data, watermark is min across all partitions. Fix: <code>withIdleness(Duration.ofMinutes(5))</code>. (2) <strong>Wrong timestamp extraction</strong> — extracting seconds instead of milliseconds. (3) <strong>Single key dominating</strong> with monotonous watermarks.</p>
+        <p>Debugging: Check Flink web UI → watermarks tab. Per-subtask watermarks — the lowest is your bottleneck."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>F2: "200GB state, checkpoints taking 10 minutes, causing backpressure."</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"Five optimizations: (1) <strong>Incremental checkpoints</strong> (RocksDB only) — only delta since last checkpoint. (2) <strong>Increase checkpoint interval</strong> — 15-20 min with <code>minPauseBetweenCheckpoints = 5 min</code>. (3) <strong>Local recovery</strong> — <code>state.backend.local-recovery=true</code>. (4) <strong>Tune RocksDB</strong> — increase block cache. (5) <strong>State TTL</strong> — review if all 200GB is necessary."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>F3: "Two Kafka topics joined by user_id. One has 50 events/sec, the other 5000/sec. Handling skew?"</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"(1) <strong>Pre-aggregate</strong> the high-volume stream into 1-minute summaries per user before the join. (2) <strong>Broadcast the small stream</strong> — 50/sec × small events fits in memory, avoids shuffle entirely. (3) <strong>Salting</strong> — add random salt (0-9) to hot keys, join 10 copies, then de-duplicate.</p>
+        <p>I'd start with broadcast since 50/sec easily fits in memory."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>F4: "Implement a real-time leaderboard (top 10 products by sales) in Flink."</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p><code>order-events → KeyBy(product_id) → Sliding Window (1hr, 1min slide) → Sum(amount) → WindowAll → Top-N → Sink (Redis)</code></p>
+        <p>The <code>WindowAll</code> is a single-parallelism bottleneck — acceptable because input is already aggregated. Sliding window (1hr/1min) means 60 overlapping windows per key — monitor state size."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>F5: "Enrich order events with user profile data from a REST API without blocking?"</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"Use Flink's <strong>AsyncIO</strong> operator — non-blocking REST calls, maintains throughput. <code>ordered_wait</code> preserves order (buffers); <code>unordered_wait</code> for higher throughput.</p>
+        <p>Better for hot path: <strong>cache user profiles in Flink state</strong> (refreshed periodically) or use a broadcast stream of profile changes. REST calls per event don't scale at 50K events/sec."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>F6: "Handle schema evolution in a running Flink job without downtime?"</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"(1) Take a savepoint. (2) Update job code with new schema handling. (3) Update Schema Registry with compatible version. (4) Redeploy from savepoint.</p>
+        <p>For state schema evolution: Flink supports migration with Avro/POJO serializers. For breaking changes: new job with fresh state from historical offset.</p>
+        <p><strong>Critical rule:</strong> never change the <code>uid()</code> of a stateful operator between versions — Flink maps savepoint state to operators by UID."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 5: Rapid Fire -->
+<section class="screen" id="s5">
+  <h2>⚡ Rapid Fire — <span class="fire">20 Quick Q&A</span></h2>
+  <p>Click each question to reveal the answer. Aim for <strong>&lt;30 seconds each</strong>.</p>
+
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>1. What is a Kafka consumer group?</h4><div class="rf-answer">A set of consumers that cooperate to consume from a topic. Each partition is read by exactly one consumer in the group.</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>2. What happens when a Kafka broker dies?</h4><div class="rf-answer">Partitions where it was leader get new leaders from ISR. Producers/consumers reconnect. No data loss if RF>1 and ISR maintained.</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>3. What is ISR?</h4><div class="rf-answer">In-Sync Replicas — replicas (including leader) that are fully caught up. <code>acks=all</code> waits for all ISR members.</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>4. What is auto.offset.reset?</h4><div class="rf-answer">What consumers do with no committed offset: <code>earliest</code> (from beginning), <code>latest</code> (only new), <code>none</code> (throw error).</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>5. What is log compaction?</h4><div class="rf-answer">Kafka retains only the latest record per key, removing older duplicates. Used for stateful topics (inventory, config).</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>6. What is a tombstone in Kafka?</h4><div class="rf-answer">A record with a valid key but <code>null</code> value. After compaction, tells Kafka to eventually delete the key entirely.</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>7. What is min.insync.replicas?</h4><div class="rf-answer">Minimum replicas that must acknowledge when <code>acks=all</code>. If ISR < min.insync, writes fail with <code>NOT_ENOUGH_REPLICAS</code>.</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>8. How does Kafka ensure ordering?</h4><div class="rf-answer">Ordering guaranteed within a partition. Use a consistent message key to route related messages to the same partition.</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>9. What is a Flink watermark?</h4><div class="rf-answer">A timestamp assertion: "No events with time ≤ W will arrive." Used to trigger windows and track event-time progress.</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>10. What is backpressure in Flink?</h4><div class="rf-answer">When a downstream operator can't keep up, it signals upstream to slow down. Flink handles this via credit-based flow control.</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>11. What is operator chaining in Flink?</h4><div class="rf-answer">Combining compatible operators (map + filter) into a single task to avoid serialization overhead. Broken at shuffle boundaries (keyBy).</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>12. What is a Flink savepoint?</h4><div class="rf-answer">A manual, portable snapshot of job state. Used for upgrades, rescaling, migration. Persists until manually deleted.</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>13. What is the Outbox Pattern?</h4><div class="rf-answer">Write business data + event to the database in one transaction. CDC captures the outbox table and publishes to Kafka. Avoids dual-write inconsistency.</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>14. What is Debezium?</h4><div class="rf-answer">Open-source CDC platform. Reads database WAL/binlog and produces change events to Kafka. Supports PostgreSQL, MySQL, MongoDB.</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>15. What is read_committed isolation?</h4><div class="rf-answer">Consumer setting that filters out records from aborted Kafka transactions. Required for end-to-end exactly-once.</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>16. What is a Flink checkpoint barrier?</h4><div class="rf-answer">A marker injected into the data stream. When an operator receives barriers from all inputs, it snapshots state. Based on Chandy-Lamport algorithm.</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>17. What is session.timeout.ms?</h4><div class="rf-answer">How long a consumer can go without a heartbeat before being evicted. Default: 45s (Kafka 3.x).</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>18. What is RocksDB in Flink?</h4><div class="rf-answer">An embedded key-value store used as a state backend. Stores state on local disk, supports incremental checkpoints, handles terabytes.</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>19. What is Schema Registry compatibility?</h4><div class="rf-answer">BACKWARD: new schema reads old data. FORWARD: old reads new. FULL: both directions. FULL_TRANSITIVE: all versions cross-compatible.</div></div>
+  <div class="rapid-fire" onclick="this.classList.toggle('open')"><h4>20. What is MirrorMaker 2?</h4><div class="rf-answer">Kafka's cross-cluster replication tool. Replicates topics, offsets, and ACLs between clusters. Used for DR and geo-replication.</div></div>
+</section>
+
+<!-- Screen 6: Technology Choice Scenarios -->
+<section class="screen screen-alt" id="s6">
+  <h2>🧭 Technology <span class="fire">Choice Scenarios</span></h2>
+
+  <div class="qa-block">
+    <h4>TC1: "Batch data in Spark, now need real-time with sub-second latency. Flink or Spark Streaming?"</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"If sub-second is a hard requirement, <strong>Flink</strong>. Spark's micro-batch adds 100ms+ inherent latency. However, if 1-2 seconds is acceptable, Spark Streaming reduces operational complexity — one framework for both.</p>
+        <p>My recommendation: Start with Spark Streaming. If latency proves insufficient, introduce Flink for the specific sub-second pipelines."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>TC2: "Message queue for task distribution across 50 worker pods. Kafka, SQS, or RabbitMQ?"</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"<strong>SQS</strong> (or RabbitMQ if on-prem). This is a task queue pattern, not event streaming. Kafka is optimized for ordered logs and replay. For task distribution, you want: competing consumers, message-level acknowledgment, automatic DLQ.</p>
+        <p>SQS: visibility timeouts, DLQ, auto-scaling with queue depth, serverless. Kafka would work but adds unnecessary complexity. RabbitMQ if you need on-prem, priority queues, or complex routing."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>TC3: "Event-driven microservices — events through Kafka or direct REST?"</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"<strong>Kafka for async events, REST for sync queries.</strong></p>
+        <p>Kafka when: no immediate response needed, multiple consumers, temporal decoupling, event replay. REST when: immediate response required, request-reply pattern.</p>
+        <p>Hybrid: <code>Order → REST → Payment</code> (sync, need result). <code>Order → Kafka → Notification</code> (async). <code>Order → Kafka → Analytics</code> (async). Anti-pattern: Kafka as synchronous request-reply."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>TC4: "Replicate DB changes to data lake in real-time. Kafka + Debezium or direct pipeline?"</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"<strong>Kafka + Debezium</strong>. Three advantages: (1) <strong>Decoupling</strong> — DB doesn't know about the lake. Kafka buffers if lake goes down. (2) <strong>Fan-out</strong> — multiple consumers: lake, search index, cache invalidation. (3) <strong>Minimal DB impact</strong> — WAL reading, zero query load.</p>
+        <p>Direct pipeline only for: simple one-off migration, very low volume, or when operational simplicity outweighs architectural benefits."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>TC5: "100K events/sec, 500GB state. Managed Flink or self-managed?"</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"At this scale, <strong>self-managed</strong> on Kubernetes (Flink K8s Operator). Managed services have state size caps, limited RocksDB tuning, and scaling isn't instant.</p>
+        <p><strong>Middle ground:</strong> Start managed for faster time-to-market. When you hit limitations (and you will at 500GB state), migrate via savepoints. Key question: can your team handle K8s + Flink operations?"</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <h4>TC6: "Financial transactions with exactly-once and audit compliance. What stack?"</h4>
+    <div class="model-answer" onclick="this.classList.toggle('revealed')">
+      <div class="answer-text">
+        <p>"<strong>Kafka (EOS) + Flink + PostgreSQL</strong> with comprehensive audit:</p>
+        <p><strong>Kafka:</strong> <code>acks=all</code>, <code>min.insync.replicas=2</code>, idempotence, transactions. Long retention (1 year) — it IS your audit log.</p>
+        <p><strong>Flink:</strong> Exactly-once checkpointing with RocksDB. 2PC sinks to PostgreSQL.</p>
+        <p><strong>PostgreSQL:</strong> Idempotent upserts with transaction ID as dedup key. PITR enabled.</p>
+        <p><strong>Monitoring:</strong> Periodically reconcile Kafka offsets with DB record counts. This is NOT over-engineering for financial data."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 7: Final Takeaways -->
+<section class="screen" id="s7">
+  <h2>🏆 Final <span class="fire">Takeaways</span></h2>
+  <p>The Interview Gauntlet survival guide — nail these principles and you'll crush any streaming interview.</p>
+
+  <div class="card-grid">
+    <div class="card red"><h4>1. Structure Answers</h4><p>Situation → Approach → Trade-offs. Interviewers reward structured thinking.</p></div>
+    <div class="card"><h4>2. Discuss Trade-offs</h4><p>There's no perfect solution — show you understand the costs.</p></div>
+    <div class="card blue"><h4>3. Draw Diagrams</h4><p>Even verbally: "imagine three boxes..." Visuals signal architectural thinking.</p></div>
+    <div class="card green"><h4>4. Challenge Requirements</h4><p>"Do you really need global ordering, or per-entity?" shows senior thinking.</p></div>
+    <div class="card purple"><h4>5. Know the Numbers</h4><p>Partition throughput (~10MB/s), checkpoint overhead (~5%), EOS latency (~5-10%).</p></div>
+    <div class="card red"><h4>6. Lead with Simple</h4><p>"Start with X, if we hit limitation Y, evolve to Z." Shows pragmatism.</p></div>
+    <div class="card"><h4>7. Name Real Tools</h4><p>"I'd use Debezium for CDC" beats "I'd use a change capture tool." Specificity = experience.</p></div>
+    <div class="card blue"><h4>8. Admit Boundaries</h4><p>"I haven't used Pulsar in production, but my understanding is..." beats making things up.</p></div>
+    <div class="card green"><h4>9. Connect to Business</h4><p>"This prevents duplicate charges" beats "this achieves exactly-once."</p></div>
+    <div class="card purple"><h4>10. Practice Rapid Fire</h4><p>If you can answer all 20 in &lt;30 seconds each, you're interview-ready. 🔥</p></div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-03-apache-flink/index.html">← Module 3: Apache Flink</a>
+  <a href="../index.html">Course Home →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+})();
+</script>
+</body>
+</html>

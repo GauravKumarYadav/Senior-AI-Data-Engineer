@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 3: Apache Flink — True Stream Processing | Real-Time Streaming Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.arch-diagram{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.5rem;font-family:var(--font-code);font-size:0.75rem;overflow-x:auto;margin:1rem 0;white-space:pre;line-height:1.5}
+table.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+table.info-table th{background:var(--color-bg-warm);font-family:var(--font-heading);font-weight:700;text-align:left;padding:0.7rem 1rem;border-bottom:2px solid rgba(0,0,0,0.1)}
+table.info-table td{padding:0.6rem 1rem;border-bottom:1px solid rgba(0,0,0,0.05)}
+.screen-alt{background:var(--color-bg-warm)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">📡 Real-Time Streaming Mastery</a><div class="nav-dots"><a href="../module-01-kafka-architecture/" class="nav-dot"></a><a href="../module-02-kafka-advanced/" class="nav-dot"></a><a href="../module-03-apache-flink/" class="nav-dot active"></a><a href="../module-04-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Flink Architecture -->
+<section class="screen" id="s1">
+  <h2>🏗️ Flink Architecture — <span class="accent">JobManager, TaskManagers & Parallelism</span></h2>
+  <p>Apache Flink is a <strong>true stream processing engine</strong> — it processes events one at a time (not micro-batches). This gives it lower latency and more natural semantics for event-driven applications.</p>
+  <div class="arch-diagram">┌─────────────────────────────────────────────────────────────┐
+│                     Flink Cluster                           │
+│  ┌───────────────────────┐                                  │
+│  │    JobManager (JM)    │    ← The "brain"                 │
+│  │  • Schedules tasks    │                                  │
+│  │  • Manages checkpoints│                                  │
+│  │  • Coordinates recovery│                                 │
+│  │  • REST API (:8081)   │                                  │
+│  └──────────┬────────────┘                                  │
+│             │  distributes work                             │
+│    ┌────────┼─────────┬────────────┐                        │
+│    ▼        ▼         ▼            ▼                        │
+│  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐                       │
+│  │ TM-1 │ │ TM-2 │ │ TM-3 │ │ TM-4 │  ← TaskManagers      │
+│  │[slot]│ │[slot]│ │[slot]│ │[slot]│    ("the muscles")    │
+│  │[slot]│ │[slot]│ │[slot]│ │[slot]│  ← Task slots         │
+│  └──────┘ └──────┘ └──────┘ └──────┘    (unit of resource) │
+└─────────────────────────────────────────────────────────────┘</div>
+
+  <table class="info-table">
+    <tr><th>Component</th><th>Role</th><th>Analogy</th></tr>
+    <tr><td><strong>JobManager</strong></td><td>Schedules tasks, checkpoints, recovery</td><td>Orchestra conductor</td></tr>
+    <tr><td><strong>TaskManager</strong></td><td>Executes tasks, manages memory/network</td><td>Musicians</td></tr>
+    <tr><td><strong>Task Slot</strong></td><td>Fixed resource partition within a TM</td><td>A seat in the orchestra</td></tr>
+    <tr><td><strong>Parallelism</strong></td><td>Number of parallel instances of an operator</td><td>How many musicians play same part</td></tr>
+  </table>
+
+  <h3>Parallelism Levels</h3>
+  <div class="code-block"><span class="cm"># Operator-level parallelism</span>
+stream.key_by(<span class="kw">lambda</span> x: x.user_id) \
+      .window(TumblingEventTimeWindows.of(Time.minutes(<span class="fn">5</span>))) \
+      .aggregate(CountAgg()) \
+      .set_parallelism(<span class="fn">8</span>)    <span class="cm"># This operator runs 8 parallel instances</span>
+
+<span class="cm"># Job-level parallelism</span>
+env.set_parallelism(<span class="fn">4</span>)       <span class="cm"># Default for all operators</span></div>
+
+  <p><strong>Task Slots vs Parallelism:</strong> A TaskManager has a fixed number of slots. Each slot gets a fraction of the TM's memory. Operators from the <em>same</em> job can share a slot (<span class="tooltip-term" data-tip="Combining compatible operators (map + filter) into a single task to avoid serialization overhead. Broken at shuffle boundaries like keyBy.">operator chaining</span>), reducing serialization overhead. Total cluster parallelism = <code>num_task_managers × slots_per_task_manager</code>.</p>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Flink has a JobManager (coordinator) and TaskManagers (workers). The key difference from Spark Streaming: Flink processes events <strong>one at a time</strong> with continuous operators, not micro-batches. This means lower latency (milliseconds vs seconds), true event-time processing, and more natural windowing semantics."</p>
+  </div>
+</section>
+
+<!-- Screen 2: DataStream API -->
+<section class="screen screen-alt" id="s2">
+  <h2>🔀 DataStream API — <span class="accent">Sources, Transformations & Sinks</span></h2>
+  <p>The DataStream API is Flink's core programming model — a pipeline of transformations on an unbounded stream of events.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span class="cm"># ShopStream Revenue Pipeline</span>
+<span class="kw">from</span> pyflink.datastream <span class="kw">import</span> StreamExecutionEnvironment
+
+env = StreamExecutionEnvironment.get_execution_environment()
+env.set_parallelism(<span class="fn">4</span>)
+
+<span class="cm"># SOURCE: Read from Kafka</span>
+kafka_source = KafkaSource.builder() \
+    .set_bootstrap_servers(<span class="str">"kafka:9092"</span>) \
+    .set_topics(<span class="str">"order-events"</span>) \
+    .set_group_id(<span class="str">"flink-order-processor"</span>) \
+    .build()
+
+order_stream = env.from_source(
+    kafka_source,
+    WatermarkStrategy.for_bounded_out_of_orderness(
+        Duration.of_seconds(<span class="fn">5</span>)),
+    <span class="str">"Kafka Order Source"</span>)
+
+<span class="cm"># TRANSFORMATIONS</span>
+parsed = order_stream \
+    .map(parse_order_json) \
+    .filter(<span class="kw">lambda</span> e: e.amount > <span class="fn">0</span>)
+
+<span class="cm"># KEY BY + WINDOW</span>
+revenue = parsed \
+    .key_by(<span class="kw">lambda</span> e: e.category) \
+    .window(TumblingEventTimeWindows.of(
+        Time.minutes(<span class="fn">1</span>))) \
+    .reduce(<span class="kw">lambda</span> a, b: a.amount + b.amount)
+
+revenue.print()
+env.execute(<span class="str">"ShopStream Revenue"</span>)</div>
+    <div class="translate-eng">
+      <div class="line">📦 Import Flink execution environment</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔧 Create env with 4 parallel operators</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📡 Configure Kafka source</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">⏰ Allow 5 seconds out-of-orderness</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔄 Parse JSON, filter invalid</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">📊 Group by category, 1-min windows</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🚀 Execute the pipeline</div>
+    </div>
+  </div>
+
+  <h3>Core Transformations</h3>
+  <table class="info-table">
+    <tr><th>Transformation</th><th>Type</th><th>Description</th></tr>
+    <tr><td><code>map()</code></td><td>1:1</td><td>Transform each element</td></tr>
+    <tr><td><code>flat_map()</code></td><td>1:N</td><td>Transform, possibly emit multiple</td></tr>
+    <tr><td><code>filter()</code></td><td>1:0/1</td><td>Keep or discard elements</td></tr>
+    <tr><td><code>key_by()</code></td><td>Partition</td><td>Partition stream by key</td></tr>
+    <tr><td><code>window()</code></td><td>Group</td><td>Group elements by time/count</td></tr>
+    <tr><td><code>reduce()</code></td><td>Aggregate</td><td>Combine elements in window</td></tr>
+    <tr><td><code>process()</code></td><td>Flexible</td><td>Full access to context, state, timers</td></tr>
+    <tr><td><code>connect()</code></td><td>Join</td><td>Connect two streams (different types)</td></tr>
+  </table>
+
+  <h3>Operator Chaining</h3>
+  <div class="code-block"><span class="cm">Before chaining:</span>
+  Source → [serialize] → Map → [serialize] → Filter → [serialize] → KeyBy
+
+<span class="cm">After chaining:</span>
+  [Source → Map → Filter] → [serialize] → KeyBy
+   ─── single task ───       network shuffle
+
+  <span class="cm">Chaining is broken at: keyBy, rebalance, shuffle, rescale</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"For real-time fraud detection, I'd consume from `order-events`, parse and enrich with user profiles via async I/O, then key by `user_id`. Apply multiple fraud checks in parallel: rule-based (amount thresholds), ML scoring, and velocity checks (sliding window). Merge scores and route high-risk orders to `fraud-alerts` via side outputs. Flink's keyed state tracks per-user history, and checkpointing ensures exactly-once."</p>
+  </div>
+</section>
+
+<!-- Screen 3: Event Time vs Processing Time -->
+<section class="screen" id="s3">
+  <h2>⏰ Event Time vs <span class="accent">Processing Time</span></h2>
+  <p>Time semantics are <strong>the most critical concept</strong> in stream processing. Getting this wrong means your results are wrong.</p>
+
+  <div class="arch-diagram">                 Event happens        Enters Kafka       Flink processes
+                 at source            (broker time)      (wall clock)
+                     │                     │                  │
+Timeline: ───────────┼─────────────────────┼──────────────────┼──────
+                     │                     │                  │
+                EVENT TIME           INGESTION TIME     PROCESSING TIME
+
+Example — Mobile order placed at 2:00 PM, phone was offline:
+  Event Time:      2:00 PM  ← when the user clicked "Buy"
+  Ingestion Time:  2:05 PM  ← when phone reconnected, event hit Kafka
+  Processing Time: 2:05.3 PM ← when Flink processed the event</div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Processing Time Approach</h4>
+      <ul>
+        <li>2:00-2:01 window: 100 orders</li>
+        <li>2:01-2:02 window: 200 orders ← includes delayed mobile orders from 2:00!</li>
+        <li>⚠️ Result: <strong>WRONG</strong> — attributes revenue to the wrong minute</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ Event Time Approach</h4>
+      <ul>
+        <li>2:00-2:01 window: 150 orders ← includes late mobile orders, correctly placed</li>
+        <li>2:01-2:02 window: 150 orders</li>
+        <li>✅ Result: <strong>CORRECT</strong> — revenue attributed to when orders happened</li>
+      </ul>
+    </div>
+  </div>
+
+  <table class="info-table">
+    <tr><th>Time Semantic</th><th>Use When</th><th>ShopStream Example</th></tr>
+    <tr><td><strong>Event Time</strong></td><td>Results must reflect when events happened</td><td>Revenue reports, fraud time windows</td></tr>
+    <tr><td><strong>Processing Time</strong></td><td>Low latency matters more than accuracy</td><td>Real-time monitoring dashboards</td></tr>
+    <tr><td><strong>Ingestion Time</strong></td><td>No event timestamp available</td><td>Legacy systems without timestamps</td></tr>
+  </table>
+
+  <div class="code-block"><span class="cm"># Bounded out-of-orderness (most common)</span>
+<span class="cm"># "Events may arrive up to 5 seconds late"</span>
+strategy = WatermarkStrategy \
+    .for_bounded_out_of_orderness(Duration.of_seconds(<span class="fn">5</span>)) \
+    .with_timestamp_assigner(
+        <span class="kw">lambda</span> event, _: event.timestamp_ms
+    )
+
+order_stream = env.from_source(kafka_source, strategy, <span class="str">"Orders"</span>)</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Event time whenever correctness matters — revenue calculations, fraud detection windows, SLA measurements. Processing time when you need lowest latency and approximate results are acceptable. The cost of event time is complexity (watermarks, late data handling). In practice, <strong>90% of production streaming jobs should use event time</strong>."</p>
+  </div>
+</section>
+
+<!-- Screen 4: Watermarks & Late Data -->
+<section class="screen screen-alt" id="s4">
+  <h2>🌊 Watermarks & <span class="accent">Late Data Handling</span></h2>
+  <p><strong>Watermarks</strong> are Flink's mechanism to track progress in event time. A watermark <code>W(t)</code> declares: "No events with timestamp ≤ t will arrive after this point."</p>
+
+  <div class="arch-diagram">Event stream (time on x-axis, arrival order top-to-bottom):
+
+  Events:     e(2:01)  e(2:03)  e(2:02)  e(2:04)  e(2:03)  e(2:06)
+  Watermarks: W(1:56)  W(1:58)  W(1:58)  W(1:59)  W(1:59)  W(2:01)
+              ────────────────────────────────────────────────────→
+
+  With boundedOutOfOrderness = 5 seconds:
+  Watermark = max_event_time_seen - 5 seconds
+
+  After seeing e(2:06): watermark = 2:06 - 5s = 2:01
+  → Window [2:00-2:01) can now FIRE
+  → Any event with timestamp < 2:01 arriving after this is "late"</div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📏 forBoundedOutOfOrderness</h4>
+      <p>Best for most real-world streams with some disorder. watermark = maxTimestamp - maxOutOfOrderness. Higher bound → more late events accepted but higher latency.</p>
+    </div>
+    <div class="card blue">
+      <h4>📐 forMonotonousTimestamps</h4>
+      <p>Best for perfectly ordered sources (rare). watermark = lastEventTimestamp. Zero tolerance for out-of-order = potential data loss.</p>
+    </div>
+    <div class="card green">
+      <h4>🔧 Custom WatermarkStrategy</h4>
+      <p>Best for sources with known delay patterns. You implement the logic — e.g., different delays per data center.</p>
+    </div>
+  </div>
+
+  <h3>Handling Late Data</h3>
+  <div class="code-block">result = order_stream \
+    .key_by(<span class="kw">lambda</span> e: e.category) \
+    .window(TumblingEventTimeWindows.of(Time.minutes(<span class="fn">1</span>))) \
+    .allowed_lateness(Time.minutes(<span class="fn">5</span>))           <span class="cm"># Accept late data up to 5 min</span>
+    .side_output_late_data(late_output_tag)       <span class="cm"># Route very late data to side output</span>
+    .aggregate(RevenueAggregator())
+
+<span class="cm"># Late data flow:</span>
+<span class="cm">#   Within window → normal processing</span>
+<span class="cm">#   After watermark but within allowedLateness → window RE-FIRES</span>
+<span class="cm">#   After allowedLateness → routed to side output (too late)</span></div>
+
+  <h3>ShopStream Watermark Design</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🛒 Order Events</h4><p><code>boundedOutOfOrderness = 10s</code>. Mobile app orders may have slight delays, but 10s covers most cases.</p></div>
+    <div class="card blue"><h4>🖱️ Clickstream</h4><p><code>boundedOutOfOrderness = 30s</code>. Browser events from slow connections can be significantly delayed.</p></div>
+    <div class="card green"><h4>📦 Inventory Updates</h4><p><code>forMonotonousTimestamps()</code>. Database CDC events arrive in WAL order — perfectly monotonic.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"By default, late data is dropped. With `allowedLateness`, the window state is kept longer and the window re-fires with updated results. For data after even the allowed lateness, I use side outputs for batch reconciliation. The key trade-off: longer watermark delays increase accuracy but also increase <strong>state size and result latency</strong>."</p>
+  </div>
+</section>
+
+<!-- Screen 5: Window Types -->
+<section class="screen" id="s5">
+  <h2>🪟 Window Types — <span class="accent">Tumbling, Sliding, Session & Global</span></h2>
+  <p>Windows group elements for bounded computations over an unbounded stream. Choosing the right window type is a critical design decision.</p>
+
+  <div class="arch-diagram">TUMBLING WINDOWS (fixed size, no overlap)
+  ┌────────┐┌────────┐┌────────┐┌────────┐
+  │ 0-5min ││ 5-10m  ││10-15m  ││15-20m  │  Every event in exactly ONE window
+  └────────┘└────────┘└────────┘└────────┘
+
+SLIDING WINDOWS (fixed size, with overlap)
+  ┌──────────────┐
+  │  0-10 min    │
+  └──┬───────────┘     Size=10min, Slide=5min
+     ┌──────────────┐  → each event in 2 windows
+     │  5-15 min    │
+     └──┬───────────┘
+
+SESSION WINDOWS (dynamic, gap-based)
+  ┌───────────────┐    ┌────────┐    ┌──────────────────────┐
+  │ User A session│    │ (gap   │    │ User A session       │
+  │ click,click   │    │ >30min)│    │ click,add-cart,buy   │
+  └───────────────┘    └────────┘    └──────────────────────┘
+
+GLOBAL WINDOWS (you control trigger)
+  ┌──────────────────────────────────────────────────────┐
+  │ Everything in one window, custom trigger decides     │
+  └──────────────────────────────────────────────────────┘</div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📊 Tumbling</h4>
+      <p>Revenue per minute for dashboard. <code>TumblingEventTimeWindows.of(Time.minutes(1))</code></p>
+    </div>
+    <div class="card blue">
+      <h4>📈 Sliding</h4>
+      <p>Avg order value, last hour, updated every 5 min. <code>SlidingEventTimeWindows.of(Time.hours(1), Time.minutes(5))</code></p>
+    </div>
+    <div class="card green">
+      <h4>👤 Session</h4>
+      <p>Shopping session duration per user. <code>EventTimeSessionWindows.withGap(Time.minutes(30))</code></p>
+    </div>
+    <div class="card purple">
+      <h4>🌍 Global + Trigger</h4>
+      <p>Process every 100 orders per warehouse. <code>GlobalWindows.create()</code> + <code>CountTrigger.of(100)</code></p>
+    </div>
+  </div>
+
+  <h3>⚠️ Memory Impact</h3>
+  <div class="code-block"><span class="cm">Tumbling (1 min):</span>    State = <span class="fn">1</span> window per key
+<span class="cm">Sliding (1hr/5min):</span>  State = <span class="fn">12</span> overlapping windows per key ← <span class="str">12x more!</span>
+<span class="cm">Session (30min gap):</span> State = variable, depends on user activity
+<span class="cm">Global:</span>              State grows <span class="str">unbounded</span> without proper trigger/evictor ← <span class="str">dangerous!</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Session windows with a 30-minute gap. Unlike tumbling or sliding windows which have fixed boundaries, session windows are <strong>dynamic</strong> — they open when a user's first event arrives and close when no event arrives for 30 minutes. One consideration: session windows can <strong>merge</strong> — if a late event bridges the gap between two sessions, Flink automatically merges them."</p>
+  </div>
+</section>
+
+<!-- Screen 6: State Management -->
+<section class="screen screen-alt" id="s6">
+  <h2>🧠 State Management — <span class="accent">The Heart of Stateful Streaming</span></h2>
+  <p>State is what makes Flink powerful. Unlike stateless map/filter, stateful operators <strong>remember information across events</strong>.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🔑 Keyed State (most common)</h4>
+      <ul>
+        <li><code>ValueState&lt;T&gt;</code> → single value per key</li>
+        <li><code>ListState&lt;T&gt;</code> → list of values per key</li>
+        <li><code>MapState&lt;K,V&gt;</code> → map of key-values per key</li>
+        <li><code>ReducingState</code> → aggregated value per key</li>
+        <li>Partitioned by key — each key has independent state</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>⚙️ Operator State (rare)</h4>
+      <ul>
+        <li>Not partitioned by key</li>
+        <li>Each parallel instance has its own state</li>
+        <li>Used in sources/sinks</li>
+        <li>Example: Kafka source stores partition offsets</li>
+        <li>Instance 0: {P0: offset 45023}</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>State Backends</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid #7B5EA7">
+      <h4>🏎️ HashMapStateBackend</h4>
+      <ul>
+        <li>✅ In JVM heap memory — very fast (ns access)</li>
+        <li>⚠️ Limited by heap size, GC pressure</li>
+        <li>❌ Checkpoints: full snapshot only</li>
+        <li>Best: state &lt; 10 GB, low latency critical</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>🪨 EmbeddedRocksDBStateBackend</h4>
+      <ul>
+        <li>✅ On local disk (SSD) — no GC pressure</li>
+        <li>✅ Supports incremental checkpoints!</li>
+        <li>⚠️ Slower (μs access, serde overhead)</li>
+        <li>Best: state &gt; 10 GB, production workloads</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Fraud Detection with Keyed State</h3>
+  <div class="code-block"><span class="kw">class</span> <span class="fn">FraudDetector</span>(KeyedProcessFunction):
+    <span class="kw">def</span> <span class="fn">open</span>(self, runtime_context):
+        self.order_count = runtime_context.get_state(
+            ValueStateDescriptor(<span class="str">"order-count"</span>, Types.INT()))
+        self.last_reset_time = runtime_context.get_state(
+            ValueStateDescriptor(<span class="str">"last-reset"</span>, Types.LONG()))
+
+    <span class="kw">def</span> <span class="fn">process_element</span>(self, event, ctx):
+        current_count = self.order_count.value() <span class="kw">or</span> <span class="fn">0</span>
+        current_count += <span class="fn">1</span>
+        self.order_count.update(current_count)
+
+        <span class="cm"># Register timer to reset count after 5 minutes</span>
+        ctx.timer_service().register_event_time_timer(
+            event.timestamp + <span class="fn">5</span> * <span class="fn">60</span> * <span class="fn">1000</span>)
+
+        <span class="cm"># Fraud rule: more than 10 orders in 5 minutes</span>
+        <span class="kw">if</span> current_count > <span class="fn">10</span>:
+            <span class="kw">yield</span> FraudAlert(user_id=ctx.get_current_key(),
+                           count=current_count, severity=<span class="str">"HIGH"</span>)
+
+    <span class="kw">def</span> <span class="fn">on_timer</span>(self, timestamp, ctx):
+        self.order_count.clear()  <span class="cm"># Reset counter</span></div>
+
+  <h3>State TTL — Preventing Unbounded Growth</h3>
+  <div class="code-block">ttl_config = StateTtlConfig \
+    .new_builder(Time.hours(<span class="fn">24</span>)) \
+    .set_update_type(StateTtlConfig.UpdateType.OnCreateAndWrite) \
+    .set_state_visibility(StateTtlConfig.StateVisibility.NeverReturnExpired) \
+    .build()
+
+state_descriptor = ValueStateDescriptor(<span class="str">"user-profile"</span>, Types.STRING())
+state_descriptor.enable_time_to_live(ttl_config)
+<span class="cm"># State auto-cleaned after 24 hours of no updates</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Three strategies: (1) <strong>State TTL</strong> — configure automatic expiration. (2) <strong>RocksDB state backend</strong> — stores state on disk, supports terabytes without GC pressure. (3) <strong>Application-level cleanup</strong> — use timers to explicitly clear state after a business-defined period. Without these, state grows indefinitely and eventually crashes the TaskManager."</p>
+  </div>
+</section>
+
+<!-- Screen 7: Checkpointing & Fault Tolerance -->
+<section class="screen" id="s7">
+  <h2>🛡️ Checkpointing & <span class="accent">Fault Tolerance</span></h2>
+  <p>Checkpointing is how Flink achieves <strong>exactly-once processing</strong> even when failures occur. It's based on the <span class="tooltip-term" data-tip="A distributed snapshot algorithm that captures a consistent global state by injecting markers (barriers) into the data streams. Each operator snapshots its state when it receives markers from all inputs.">Chandy-Lamport distributed snapshot algorithm</span>.</p>
+
+  <div class="arch-diagram">HOW CHECKPOINTING WORKS:
+
+1. JobManager injects checkpoint BARRIERS into all source streams
+2. Barriers flow through the dataflow graph with the data
+3. When an operator receives barriers from ALL inputs → snapshot state
+4. State snapshots stored to durable storage (S3, HDFS)
+
+  Source 1: ──[e1]──[e2]──║BARRIER║──[e3]──[e4]──→
+                            │
+  Source 2: ──[e5]──[e6]──║BARRIER║──[e7]──→
+                            │
+                    ┌───────┴───────┐
+                    │   Operator    │
+                    │ waits for ALL │
+                    │ barriers      │
+                    │ → snapshot    │
+                    └───────┬───────┘
+                            │
+                   ──║BARRIER║──→ downstream</div>
+
+  <h3>Barrier Alignment = Exactly-Once</h3>
+  <div class="code-block"><span class="cm">Operator with 2 inputs:</span>
+
+  Input 1: ──[e1]──║B║──[e2]──[e3]──→
+  Input 2: ──[e4]──[e5]──[e6]──║B║──→
+
+  Step 1: Barrier arrives on Input 1 → <span class="str">BLOCK</span> Input 1, buffer e2, e3
+  Step 2: Continue processing Input 2 (e4, e5, e6)
+  Step 3: Barrier arrives on Input 2 → <span class="fn">snapshot state</span> → release barrier
+  Step 4: Unblock Input 1, process buffered e2, e3
+
+  <span class="cm">Result: Snapshot reflects exactly events BEFORE barrier on ALL inputs
+         → exactly-once semantics!</span></div>
+
+  <h3>Checkpoints vs Savepoints</h3>
+  <table class="info-table">
+    <tr><th>Feature</th><th>Checkpoint</th><th>Savepoint</th></tr>
+    <tr><td>Triggered by</td><td>Flink (automatic, periodic)</td><td>User (manual)</td></tr>
+    <tr><td>Purpose</td><td>Fault recovery</td><td>Planned operations</td></tr>
+    <tr><td>Use case</td><td>Crash recovery</td><td>Job upgrade, rescale, migration</td></tr>
+    <tr><td>Incremental</td><td>Yes (RocksDB)</td><td>No (always full)</td></tr>
+    <tr><td>Cleanup</td><td>Auto-cleaned on job cancel</td><td>Persisted until manual delete</td></tr>
+  </table>
+
+  <h3>Recovery from Failure</h3>
+  <div class="code-block"><span class="cm">Normal operation:</span> CP1 ─────── CP2 ─────── CP3 ──── <span class="str">CRASH!</span>
+                                           ↑
+<span class="cm">Recovery:</span>                          Restore from CP3
+  • Kafka offsets → reset to CP3 position
+  • State → restored from CP3 snapshot
+  • Reprocess events from CP3 offset
+  → <span class="fn">exactly-once</span>: uncommitted transaction aborted,
+    downstream read_committed consumers never see duplicates</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Three mechanisms: (1) <strong>Checkpointing</strong> snapshots state and Kafka offsets atomically using Chandy-Lamport with barrier alignment. (2) <strong>Kafka consumer</strong> offsets rewind on recovery. (3) <strong>Kafka producer</strong> uses transactions — output committed only when checkpoint completes via 2PC. If the job crashes, the incomplete transaction is aborted. End result: each input event affects the output exactly once."</p>
+  </div>
+</section>
+
+<!-- Screen 8: Flink SQL & CDC -->
+<section class="screen screen-alt" id="s8">
+  <h2>📝 Flink SQL, Table API & <span class="accent">CDC</span></h2>
+  <p>Flink SQL brings SQL to stream processing. <strong>Dynamic tables</strong> are the key abstraction — a SQL table that continuously updates as new events arrive.</p>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-muted)">
+      <h4>Traditional SQL</h4>
+      <ul>
+        <li><code>SELECT category, SUM(amount) FROM orders GROUP BY category;</code></li>
+        <li>Runs once, returns static result</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✨ Flink SQL</h4>
+      <ul>
+        <li>Same SQL — but continuously updates as new orders arrive!</li>
+        <li>Result is a "dynamic table" (changelog stream)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="cm">-- Real-time revenue per category per minute</span>
+<span class="kw">SELECT</span>
+    category,
+    TUMBLE_START(event_time, <span class="kw">INTERVAL</span> <span class="str">'1'</span> MINUTE) <span class="kw">AS</span> window_start,
+    COUNT(*) <span class="kw">AS</span> order_count,
+    SUM(amount) <span class="kw">AS</span> total_revenue,
+    AVG(amount) <span class="kw">AS</span> avg_order_value
+<span class="kw">FROM</span> order_events
+<span class="kw">WHERE</span> event_type = <span class="str">'CREATED'</span>
+<span class="kw">GROUP BY</span> category, TUMBLE(event_time, <span class="kw">INTERVAL</span> <span class="str">'1'</span> MINUTE);
+
+<span class="cm">-- Temporal join: price valid AT THE TIME of the order</span>
+<span class="kw">SELECT</span> o.order_id, p.price, o.quantity, o.quantity * p.price <span class="kw">AS</span> total
+<span class="kw">FROM</span> orders <span class="kw">AS</span> o
+<span class="kw">JOIN</span> product_prices <span class="kw">FOR SYSTEM_TIME AS OF</span> o.event_time <span class="kw">AS</span> p
+<span class="kw">ON</span> o.product_id = p.product_id;</div>
+
+  <h3>Flink CDC — Stream Database Changes Directly</h3>
+  <div class="code-block"><span class="cm">-- Read directly from PostgreSQL via CDC (no Kafka needed!)</span>
+<span class="kw">CREATE TABLE</span> inventory (
+    sku          <span class="fn">STRING</span>,
+    warehouse_id <span class="fn">STRING</span>,
+    quantity     <span class="fn">INT</span>,
+    updated_at   <span class="fn">TIMESTAMP(3)</span>,
+    <span class="kw">PRIMARY KEY</span> (sku, warehouse_id) NOT ENFORCED
+) <span class="kw">WITH</span> (
+    <span class="str">'connector'</span> = <span class="str">'postgres-cdc'</span>,
+    <span class="str">'hostname'</span> = <span class="str">'postgres'</span>,
+    <span class="str">'database-name'</span> = <span class="str">'shopstream'</span>,
+    <span class="str">'table-name'</span> = <span class="str">'inventory'</span>
+);
+
+<span class="cm">-- Real-time low-stock alerts</span>
+<span class="kw">SELECT</span> sku, warehouse_id, quantity
+<span class="kw">FROM</span> inventory
+<span class="kw">WHERE</span> quantity < <span class="fn">10</span>;   <span class="cm">-- Continuously emits when stock drops below 10</span></div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Flink SQL for standard analytics — aggregations, joins, windowed computations. DataStream API for complex event processing — custom state, async I/O, ML model inference. In practice, <strong>start with SQL and drop to DataStream only when SQL can't express the logic</strong>. Flink also allows mixing both in the same pipeline."</p>
+  </div>
+</section>
+
+<!-- Screen 9: Flink vs Spark Structured Streaming -->
+<section class="screen" id="s9">
+  <h2>⚡ Flink vs <span class="accent">Spark Structured Streaming</span></h2>
+  <p>This comparison comes up in virtually every streaming interview.</p>
+
+  <table class="info-table">
+    <tr><th>Aspect</th><th>Apache Flink</th><th>Spark Structured Streaming</th></tr>
+    <tr><td>Processing Model</td><td>True per-event streaming</td><td>Micro-batch (continuous experimental)</td></tr>
+    <tr><td>Latency</td><td>Milliseconds</td><td>Seconds (100ms+ micro-batch)</td></tr>
+    <tr><td>State Management</td><td>First-class: keyed state, timers, TTL, RocksDB</td><td>mapGroupsWithState, limited types</td></tr>
+    <tr><td>Windowing</td><td>Tumbling, sliding, session, global, custom</td><td>Tumbling, sliding (no native session)</td></tr>
+    <tr><td>Event Time</td><td>Native, first-class watermarks</td><td>Supported but less flexible</td></tr>
+    <tr><td>Exactly-Once</td><td>Chandy-Lamport + 2PC sinks</td><td>Micro-batch + idempotent sinks</td></tr>
+    <tr><td>CEP</td><td>Built-in CEP library</td><td>No native CEP</td></tr>
+    <tr><td>Ecosystem</td><td>Growing, strong in streaming</td><td>Huge — MLlib, GraphX, SparkR</td></tr>
+  </table>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🚀 Choose Flink when</h4>
+      <ul>
+        <li>✅ Sub-second latency required</li>
+        <li>✅ Complex stateful processing (fraud, CEP)</li>
+        <li>✅ Session windows needed</li>
+        <li>✅ Fine-grained event-time control</li>
+        <li>✅ Large state (100s of GB) with RocksDB</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>⚡ Choose Spark Streaming when</h4>
+      <ul>
+        <li>✅ Team already uses Spark for batch</li>
+        <li>✅ Seconds-level latency is acceptable</li>
+        <li>✅ Need batch + streaming unification</li>
+        <li>✅ Heavy ML integration (MLlib)</li>
+        <li>✅ Broader ecosystem (Delta Lake, Iceberg)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"I'd choose Flink for fraud detection. Three reasons: (1) <strong>Latency</strong> — millisecond response time; Spark adds 100ms+ delay. (2) <strong>State management</strong> — first-class keyed state with RocksDB, TTL, and timers. (3) <strong>Session windows</strong> — native in Flink; Spark doesn't have them. I'd choose Spark Streaming if the team already had Spark expertise and latency requirements were relaxed to seconds."</p>
+  </div>
+</section>
+
+<!-- Screen 10: Quiz -->
+<section class="screen screen-alt" id="s10">
+  <h2>🧪 Quiz: <span class="accent">Test Yourself</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: Your Flink job crashes 45 seconds into a 60-second checkpoint interval. What happens?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) 45 seconds of data is lost permanently</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) Flink restores from the last checkpoint, reprocesses ~45 seconds, transactions prevent duplicate output</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) Kafka replays all data from the beginning</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) The job fails permanently</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: You set boundedOutOfOrderness = 10s. An event with timestamp 2:00:05 arrives when the watermark is at 2:00:20. What happens?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) Processed normally</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">B) Dropped — late data, past watermark</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) Processed if within allowedLateness</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">D) Either B or C depending on allowedLateness configuration</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: Track unique visitors per product page over 1-hour windows, updated every 5 minutes. Which window type?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Tumbling window of 1 hour</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) Sliding window of 1 hour with 5-minute slide</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) Session window with 5-minute gap</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Global window with time trigger</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: Your Flink job has 100GB of keyed state. Which state backend?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) HashMapStateBackend</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) EmbeddedRocksDBStateBackend</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) Either works equally well</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Neither — Flink can't handle 100GB state</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: What is the key difference between a Flink checkpoint and a savepoint?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Checkpoints are faster</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) Checkpoints are automatic for fault tolerance; savepoints are manual for planned operations like upgrades</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) Savepoints use less storage</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Checkpoints work with RocksDB; savepoints don't</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<!-- Screen 11: Key Takeaways -->
+<section class="screen" id="s11">
+  <h2>🎯 Key <span class="accent">Takeaways</span></h2>
+  <div class="card-grid">
+    <div class="card"><h4>1. True Streaming</h4><p>Flink processes per-event with millisecond latency, not micro-batches.</p></div>
+    <div class="card blue"><h4>2. Architecture</h4><p>JobManager coordinates; TaskManagers execute. Parallelism = slots × TMs.</p></div>
+    <div class="card green"><h4>3. Event Time</h4><p>Almost always correct for business logic. Processing time only for monitoring.</p></div>
+    <div class="card purple"><h4>4. Watermarks</h4><p>Track event-time progress. boundedOutOfOrderness handles real-world disorder.</p></div>
+    <div class="card"><h4>5. Windows</h4><p>Tumbling for fixed reports, sliding for rolling metrics, session for user behavior.</p></div>
+    <div class="card blue"><h4>6. Keyed State</h4><p>Enables complex per-entity processing. Use RocksDB for production-scale state.</p></div>
+    <div class="card green"><h4>7. State TTL</h4><p>Prevents unbounded growth — always configure cleanup for production jobs.</p></div>
+    <div class="card purple"><h4>8. Checkpointing</h4><p>Chandy-Lamport + Kafka transactions = end-to-end exactly-once.</p></div>
+    <div class="card"><h4>9. Flink SQL</h4><p>Fast path for standard analytics. DataStream API for complex stateful logic.</p></div>
+    <div class="card blue"><h4>10. Flink vs Spark</h4><p>Flink wins for low-latency, stateful, event-driven. Spark wins for batch-heavy teams.</p></div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-02-kafka-advanced/index.html">← Module 2: Kafka Advanced</a>
+  <a href="../module-04-interview-gauntlet/index.html">Next: Interview Gauntlet →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above and try to understand why the correct answer works.';}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

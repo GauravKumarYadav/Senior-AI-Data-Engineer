@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 2: Kafka Advanced — EOS, Schema Registry & Connect | Real-Time Streaming Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.chat-container{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0;max-width:500px}
+.chat-msg{display:flex;gap:0.6rem;margin-bottom:0.8rem;opacity:0;transform:translateY(10px);transition:all 0.4s}
+.chat-msg.visible{opacity:1;transform:translateY(0)}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.chat-bubble{background:var(--color-bg-warm);padding:0.6rem 1rem;border-radius:12px;font-size:0.88rem;max-width:340px;line-height:1.5}
+.chat-controls{display:flex;gap:0.5rem;margin-top:1rem}
+.chat-btn{padding:0.4rem 1rem;border-radius:100px;border:2px solid var(--color-accent);background:none;color:var(--color-accent);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.8rem;transition:all 0.2s}
+.chat-btn:hover{background:var(--color-accent);color:#fff}
+.screen-alt{background:var(--color-bg-warm)}
+table.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+table.info-table th,table.info-table td{padding:0.6rem 0.8rem;text-align:left;border-bottom:1px solid rgba(0,0,0,0.08)}
+table.info-table th{font-family:var(--font-heading);font-weight:700;background:rgba(0,0,0,0.03)}
+table.info-table tr:last-child td{border-bottom:none}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">📡 Real-Time Streaming Mastery</a><div class="nav-dots"><a href="../module-01-kafka-architecture/" class="nav-dot"></a><a href="../module-02-kafka-advanced/" class="nav-dot active"></a><a href="../module-03-apache-flink/" class="nav-dot"></a><a href="../module-04-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Exactly-Once Semantics -->
+<section class="screen" id="s1">
+  <h2>🎯 Exactly-Once <span class="accent">Semantics</span> (EOS)</h2>
+  <p>The holy grail of stream processing: every record is processed <strong>exactly once</strong> — no duplicates, no data loss. Kafka achieves this through three layered mechanisms.</p>
+  <h3>Layer 1 — Idempotent Producer</h3>
+  <div class="code-block"><span class="cm">Without idempotence:</span>
+  Producer sends r5 → Broker writes r5 → ACK lost
+  Producer retries  → Broker writes r5 AGAIN → <span class="kw">duplicate!</span>
+
+<span class="cm">With idempotence (enable.idempotence=true):</span>
+  Each producer gets a <span class="fn">Producer ID (PID)</span>
+  Each record gets a <span class="fn">sequence number</span> per partition
+  Broker deduplicates: "PID=7, seq=5 already written → skip"</div>
+  <h3>Layer 2 — Transactions</h3>
+  <p>Transactions let you atomically write to multiple topics and commit consumer offsets together — essential for "consume-transform-produce" patterns.</p>
+  <div class="code-block">┌─────────────────────────────────────────────────┐
+│              <span class="fn">TRANSACTION BOUNDARY</span>                │
+│                                                  │
+│  1. Read from <span class="str">"order-events"</span> (offset 42)         │
+│  2. Process: enrich order with user profile       │
+│  3. Write to <span class="str">"enriched-orders"</span> topic             │
+│  4. Write to <span class="str">"notification-events"</span> topic         │
+│  5. Commit consumer offset (42 → 43)             │
+│                                                  │
+│  ALL succeed together, or ALL roll back          │
+└─────────────────────────────────────────────────┘</div>
+  <h3>Layer 3 — <code>read_committed</code> Consumers</h3>
+  <p>Setting <code>isolation.level=read_committed</code> makes consumers only see records from <strong>committed transactions</strong>:</p>
+  <div class="code-block">Timeline of partition:
+  [r1:committed] [r2:txn-A] [r3:txn-A] [r4:committed] [r5:txn-A]
+
+  <span class="kw">read_uncommitted</span>: sees r1, r2, r3, r4, r5 (all records)
+  <span class="fn">read_committed</span>:   sees r1, then waits...
+    txn-A commits → sees r2, r3, r4, r5
+    txn-A aborts  → sees r1, r4 (r2, r3, r5 filtered out)</div>
+  <table class="info-table">
+    <tr><th>Component</th><th>Overhead</th></tr>
+    <tr><td>Idempotent producer</td><td>~1-3% latency increase</td></tr>
+    <tr><td>Transactions</td><td>~5-10% throughput decrease</td></tr>
+    <tr><td><code>read_committed</code></td><td>Slight delay (waits for txn)</td></tr>
+  </table>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Through three layers: (1) <strong>Idempotent producers</strong> assign sequence numbers per partition so the broker deduplicates retries. (2) <strong>Transactions</strong> extend this across partitions and topics — you atomically produce to multiple topics and commit offsets in one operation. (3) <strong><code>read_committed</code> consumers</strong> only see records from committed transactions. Together, these enable end-to-end exactly-once in consume-transform-produce pipelines."</p>
+  </div>
+</section>
+
+<!-- Screen 2: Schema Registry -->
+<section class="screen screen-alt" id="s2">
+  <h2>📜 Schema Registry — <span class="accent">Data Contracts</span></h2>
+  <p>When 15 microservices produce and consume events, you need <strong>data contracts</strong>. Without schema enforcement, a producer can change a field name and silently break every downstream consumer.</p>
+  <div class="code-block">┌──────────┐     ┌─────────────────┐     ┌──────────┐
+│ Producer │ ──→ │ Schema Registry │ ←── │ Consumer │
+│          │     │                 │     │          │
+│ 1. Register    │  Stores:        │     │ 3. Fetch schema
+│    schema      │  • Schema ID    │     │    by ID
+│ 2. Send msg    │  • Versions     │     │ 4. Deserialize
+│    with ID=1   │  • Compat rules │     │    with schema
+└──────────┘     └─────────────────┘     └──────────┘
+
+Wire format:
+┌──────┬───────────┬──────────────────────────┐
+│ <span class="fn">0x00</span> │ <span class="fn">Schema ID</span> │ Avro/Protobuf payload    │
+│ 1B   │ 4 bytes   │ variable                 │
+└──────┴───────────┴──────────────────────────┘</div>
+  <p>The schema is <strong>not embedded</strong> in every message — only a 4-byte ID. This saves enormous bandwidth. The consumer fetches and caches the schema from the registry.</p>
+  <h3>Avro vs Protobuf vs JSON Schema</h3>
+  <table class="info-table">
+    <tr><th>Feature</th><th>Avro</th><th>Protobuf</th><th>JSON Schema</th></tr>
+    <tr><td>Encoding</td><td>Binary, compact</td><td>Binary, compact</td><td>Text, verbose</td></tr>
+    <tr><td>Schema evolution</td><td>Excellent</td><td>Good</td><td>Limited</td></tr>
+    <tr><td>Code generation</td><td>Optional</td><td>Required</td><td>N/A</td></tr>
+    <tr><td>Size (1000 orders)</td><td>~45 KB</td><td>~42 KB</td><td>~180 KB</td></tr>
+    <tr><td>Best for</td><td>Data pipelines</td><td>gRPC + streaming</td><td>REST APIs</td></tr>
+  </table>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Three reasons: (1) <strong>Contract enforcement</strong> — Schema Registry validates every message against a registered schema. (2) <strong>Size efficiency</strong> — only a 4-byte ID per message, cutting sizes by 70-80% vs JSON. (3) <strong>Compatibility checking</strong> — the registry enforces evolution rules so schema changes are guaranteed non-breaking. In microservices with 15 teams, this prevents 'schema surprise' production incidents."</p>
+  </div>
+</section>
+
+<!-- Screen 3: Schema Evolution -->
+<section class="screen" id="s3">
+  <h2>🔄 Schema <span class="accent">Evolution</span> &amp; Compatibility</h2>
+  <p>Schemas change — that's inevitable. The question is: <strong>how do you change them without breaking running consumers?</strong></p>
+  <div class="code-block"><span class="fn">BACKWARD</span> (default): New schema can READ old data
+  → Deploy new <span class="fn">CONSUMERS</span> first, then new PRODUCERS
+
+<span class="fn">FORWARD</span>: Old schema can READ new data
+  → Deploy new <span class="fn">PRODUCERS</span> first, then new CONSUMERS
+
+<span class="fn">FULL</span>: Both BACKWARD + FORWARD
+  → Deploy in any order — safest, but most restrictive
+
+<span class="kw">NONE</span>: No compatibility checking
+  → Chaos mode. Don't do this in production!</div>
+  <h3>What Changes Are Safe?</h3>
+  <table class="info-table">
+    <tr><th>Change</th><th>BACKWARD</th><th>FORWARD</th><th>FULL</th></tr>
+    <tr><td>Add field with default</td><td>✅</td><td>✅</td><td>✅</td></tr>
+    <tr><td>Add field without default</td><td>❌</td><td>✅</td><td>❌</td></tr>
+    <tr><td>Remove field with default</td><td>✅</td><td>❌</td><td>❌</td></tr>
+    <tr><td>Remove field without default</td><td>❌</td><td>❌</td><td>❌</td></tr>
+    <tr><td>Rename field</td><td>❌</td><td>❌</td><td>❌</td></tr>
+  </table>
+  <h3>Safe Evolution Example</h3>
+  <div class="translate">
+    <div class="translate-code"><span class="cm">// Version 1 (current)</span>
+{<span class="str">"order_id"</span>: <span class="str">"string"</span>},
+{<span class="str">"amount"</span>: <span class="str">"double"</span>},
+{<span class="str">"customer_id"</span>: <span class="str">"string"</span>}
+
+<span class="cm">// Version 2 (add optional field)</span>
+{<span class="str">"order_id"</span>: <span class="str">"string"</span>},
+{<span class="str">"amount"</span>: <span class="str">"double"</span>},
+{<span class="str">"customer_id"</span>: <span class="str">"string"</span>},
+{<span class="str">"shipping_address"</span>:
+  [<span class="str">"null"</span>,<span class="str">"string"</span>],
+  <span class="str">"default"</span>: <span class="kw">null</span>}</div>
+    <div class="translate-eng">
+      <div class="line">📦 Original schema — 3 required fields</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">✅ BACKWARD compatible change</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🆕 New field with default=null</div>
+      <div class="line">→ Old records read as null</div>
+      <div class="line">→ Old consumers ignore it</div>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Never make a breaking change directly. Use a multi-step approach: (1) Add the new field with a default value (backward compatible). (2) Deploy all consumers to handle both formats. (3) Deploy producers to write the new field. (4) After a full retention period, optionally remove the deprecated field. For truly incompatible changes, create a new topic (e.g., <code>order-events-v2</code>) and run both in parallel during migration."</p>
+  </div>
+</section>
+
+<!-- Screen 4: Kafka Connect -->
+<section class="screen screen-alt" id="s4">
+  <h2>🔌 Kafka Connect — <span class="accent">Bridging</span> the Data World</h2>
+  <p>Kafka Connect streams data between Kafka and external systems without custom producer/consumer code. It's the <strong>integration backbone</strong> of ShopStream.</p>
+  <div class="code-block">                    Kafka Connect Cluster
+                    ┌────────────────────────┐
+                    │    Connect Workers     │
+External Systems    │                        │    Kafka Topics
+                    │  <span class="fn">Source Connectors</span>     │
+  PostgreSQL   ────►│  Debezium PG          │──► inventory-cdc
+  MySQL        ────►│  Debezium MySQL       │──► orders-cdc
+                    │                        │
+                    │  <span class="fn">Sink Connectors</span>       │
+  Elasticsearch◄───│  ES Sink              │◄── order-events
+  S3 (archive) ◄───│  S3 Sink              │◄── clickstream
+                    └────────────────────────┘</div>
+  <h3>Debezium CDC (Change Data Capture)</h3>
+  <p>Debezium reads the PostgreSQL WAL to capture every INSERT, UPDATE, DELETE as a Kafka event. No polling, no application changes, no triggers.</p>
+  <div class="code-block"><span class="cm">PostgreSQL WAL → Debezium → Kafka Topic</span>
+
+Before:  inventory table: {sku: <span class="str">"A100"</span>, qty: <span class="fn">50</span>}
+UPDATE:  SET qty = <span class="fn">45</span> WHERE sku = <span class="str">'A100'</span>
+
+Debezium emits:
+{
+  <span class="str">"before"</span>: {<span class="str">"sku"</span>: <span class="str">"A100"</span>, <span class="str">"qty"</span>: <span class="fn">50</span>},
+  <span class="str">"after"</span>:  {<span class="str">"sku"</span>: <span class="str">"A100"</span>, <span class="str">"qty"</span>: <span class="fn">45</span>},
+  <span class="str">"op"</span>: <span class="str">"u"</span>,
+  <span class="str">"source"</span>: {<span class="str">"table"</span>: <span class="str">"inventory"</span>}
+}</div>
+  <h3>Dead Letter Queue (DLQ)</h3>
+  <p>Records that can't be processed (deserialization errors, schema mismatches) go to the DLQ topic instead of crashing the connector:</p>
+  <div class="code-block">{
+  <span class="str">"errors.tolerance"</span>: <span class="str">"all"</span>,
+  <span class="str">"errors.deadletterqueue.topic.name"</span>: <span class="str">"dlq-inventory-sink"</span>,
+  <span class="str">"errors.deadletterqueue.topic.replication.factor"</span>: <span class="fn">3</span>,
+  <span class="str">"errors.deadletterqueue.context.headers.enable"</span>: <span class="kw">true</span>
+}</div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Kafka Connect for standard integrations — databases (via Debezium CDC), cloud storage, search engines. It handles offset management, parallelism, fault tolerance, and schema translation out of the box. I'd write a custom consumer only when I need complex business logic or the target system has no existing connector. Connect also supports SMTs for lightweight transforms and DLQs for poison pill handling."</p>
+  </div>
+</section>
+
+<!-- Screen 5: Operations & Monitoring -->
+<section class="screen" id="s5">
+  <h2>📊 Operations &amp; <span class="accent">Monitoring</span></h2>
+  <p>Running Kafka in production requires mastering CLI tools, understanding consumer lag, and building observability.</p>
+  <div class="code-block"><span class="cm"># Topic management</span>
+kafka-topics.sh --create --topic order-events \
+  --partitions <span class="fn">12</span> --replication-factor <span class="fn">3</span> \
+  --config retention.ms=<span class="fn">7776000000</span>  <span class="cm"># 90 days</span>
+
+<span class="cm"># Consumer group inspection</span>
+kafka-consumer-groups.sh --describe --group order-processing
+<span class="cm"># GROUP        TOPIC         PARTITION  CURRENT  LOG-END  LAG</span>
+<span class="cm"># order-proc   order-events  0          145023   145030   7</span>
+<span class="cm"># order-proc   order-events  2          112044   112200   156</span>
+
+<span class="cm"># Reset offsets (careful!)</span>
+kafka-consumer-groups.sh --reset-offsets \
+  --group order-processing --topic order-events \
+  --to-datetime <span class="str">2025-01-15T00:00:00.000</span> --execute</div>
+  <h3>Consumer Lag — The #1 Metric</h3>
+  <div class="code-block">Consumer Lag = Log End Offset - Committed Offset
+
+  Partition 0: |=====[consumed]======|---[<span class="kw">lag: 156</span>]---|→
+                                     ↑                ↑
+                              committed offset    log-end offset
+
+  Lag <span class="kw">growing</span> → consumer can't keep up → investigate!
+  Lag <span class="fn">stable</span>  → consumer is healthy
+  Lag <span class="str">= 0</span>     → consumer is caught up (real-time)</div>
+  <h3>Critical Metrics to Alert On</h3>
+  <table class="info-table">
+    <tr><th>Metric</th><th>Warning</th><th>Critical</th></tr>
+    <tr><td>Consumer lag (records)</td><td>&gt;1,000</td><td>&gt;10,000</td></tr>
+    <tr><td>Under-replicated partitions</td><td>&gt;0</td><td>&gt;0 for 5min</td></tr>
+    <tr><td>Offline partitions</td><td>&gt;0</td><td>&gt;0</td></tr>
+    <tr><td>Request latency p99</td><td>&gt;100ms</td><td>&gt;500ms</td></tr>
+    <tr><td>Disk usage %</td><td>&gt;70%</td><td>&gt;85%</td></tr>
+  </table>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"I monitor consumer lag via Kafka Exporter + Prometheus + Grafana. Alert at two thresholds: warning if lag &gt;1000 records, critical if &gt;10000. Root causes: (1) slow processing — profile and increase parallelism. (2) producer burst — auto-scale consumers. (3) rebalancing storm — check for flapping consumers. (4) GC pauses — tune JVM. Immediate mitigation: scale consumers up to partition count."</p>
+  </div>
+</section>
+
+<!-- Screen 6: Managed Kafka -->
+<section class="screen screen-alt" id="s6">
+  <h2>☁️ Managed Kafka — <span class="accent">Cloud Offerings</span></h2>
+  <p>Running your own Kafka cluster is operationally complex. Managed services handle the infrastructure so you focus on building.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🟣 Confluent Cloud</h4>
+      <p>Full Kafka ecosystem: Schema Registry, ksqlDB, managed connectors. Multi-cloud (AWS, GCP, Azure). Best for rich ecosystem needs.</p>
+    </div>
+    <div class="card blue">
+      <h4>🟠 AWS MSK</h4>
+      <p>Kafka-native on AWS. Glue Schema Registry. MSK Connect. Cost-effective for AWS-native teams. Serverless mode available.</p>
+    </div>
+    <div class="card green">
+      <h4>🔵 Azure Event Hubs</h4>
+      <p>Kafka protocol compatible (not actual Kafka). Simple event streaming for Azure shops. Per-throughput-unit pricing.</p>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Self-managed makes sense when you need full control or strict data residency. Managed services are better for most teams — they handle broker provisioning, patching, replication, and monitoring. I'd evaluate: (1) team Kafka expertise, (2) operational budget, (3) feature needs (Schema Registry, Connect, ksqlDB), and (4) cloud lock-in tolerance."</p>
+  </div>
+</section>
+
+<!-- Screen 7: Pub/Sub Comparison -->
+<section class="screen" id="s7">
+  <h2>🔍 Pub/Sub Technology <span class="accent">Comparison</span></h2>
+  <table class="info-table">
+    <tr><th>Feature</th><th>Kafka</th><th>Kinesis</th><th>GCP Pub/Sub</th><th>SQS/SNS</th><th>Pulsar</th></tr>
+    <tr><td>Model</td><td>Log-based</td><td>Log-based</td><td>True pub/sub</td><td>Queue/fanout</td><td>Log + queue</td></tr>
+    <tr><td>Ordering</td><td>Per-partition</td><td>Per-shard</td><td>Per-key</td><td>FIFO only</td><td>Per-partition</td></tr>
+    <tr><td>Retention</td><td>Unlimited</td><td>7 days max</td><td>31 days max</td><td>14 days max</td><td>Unlimited</td></tr>
+    <tr><td>Replay</td><td>Full (offset)</td><td>Full (seq#)</td><td>Seek to time</td><td>No replay</td><td>Full</td></tr>
+    <tr><td>Exactly-once</td><td>Yes (native)</td><td>No</td><td>At-least-once</td><td>At-least-once</td><td>Yes (txn)</td></tr>
+    <tr><td>Ecosystem</td><td>Huge</td><td>AWS only</td><td>GCP only</td><td>AWS only</td><td>Growing</td></tr>
+  </table>
+  <h3>Decision Framework</h3>
+  <div class="code-block">Need replay / event sourcing?     → <span class="fn">Kafka</span> or Pulsar
+AWS-only, simple ingest?          → <span class="fn">Kinesis</span>
+GCP, serverless triggers?         → <span class="fn">Google Pub/Sub</span>
+Task queue / work distribution?   → <span class="fn">SQS</span>
+Fan-out notifications?            → <span class="fn">SNS → SQS</span>
+Multi-tenant / geo-replication?   → <span class="fn">Pulsar</span>
+Full ecosystem (CDC, schemas)?    → <span class="fn">Kafka</span></div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Kinesis for fully AWS-native, zero-ops event ingestion with 7-day retention. Kafka when you need longer retention, log compaction, exactly-once semantics, Schema Registry, Connect for 200+ integrations, or multi-cloud portability. Kafka is the choice for event-driven architectures; Kinesis is great for AWS-native data pipelines."</p>
+  </div>
+</section>
+
+<!-- Screen 8: Advanced Patterns -->
+<section class="screen screen-alt" id="s8">
+  <h2>🧩 Advanced Producer &amp; Consumer <span class="accent">Patterns</span></h2>
+  <h3>Pattern 1 — Outbox Pattern</h3>
+  <p>Solves the dual-write problem: service writes to DB AND produces to Kafka. If Kafka fails after DB commit → inconsistency.</p>
+  <div class="code-block">┌─────────────────────────────┐
+│ PostgreSQL                  │
+│ ┌─────────────┬───────────┐ │     ┌─────────┐
+│ │ orders      │ outbox    │ │────►│ Debezium│───► Kafka
+│ │ (business)  │ (events)  │ │ CDC │         │
+│ └─────────────┴───────────┘ │     └─────────┘
+│   <span class="kw">BEGIN</span>;                    │
+│   <span class="fn">INSERT INTO</span> orders(...);  │
+│   <span class="fn">INSERT INTO</span> outbox(...);  │
+│   <span class="kw">COMMIT</span>;                   │
+└─────────────────────────────┘</div>
+  <h3>Pattern 2 — Dead Letter Topic + Retry</h3>
+  <div class="code-block">Main Topic ──► Consumer ──► Process
+                  │ (failure)
+                  ▼
+              <span class="fn">Retry-1</span> Topic ──► (delay 1 min) ──► Consumer
+                                                      │ (failure)
+                                                      ▼
+                                                  <span class="fn">Retry-2</span> Topic ──► (delay 5 min)
+                                                                        │ (failure)
+                                                                        ▼
+                                                                    <span class="kw">DLQ</span> Topic
+                                                                    (manual review)</div>
+  <h3>Pattern 3 — Event Sourcing</h3>
+  <div class="code-block">Command: <span class="str">"Place Order #123"</span>
+  │
+  ▼
+┌──────────────────────────────────────────────────────────┐
+│ order-events (compacted, key=order_id)                   │
+│ [order-123:<span class="fn">Created</span>] [order-123:<span class="fn">Paid</span>] [order-123:<span class="fn">Shipped</span>] │
+└──────────────────────────────────────────────────────────┘
+  │
+  ▼  Materialize (consumer rebuilds state)
+┌──────────────────────┐
+│ Order #123           │
+│ Status: Shipped      │
+│ Amount: $99.50       │
+│ History: full audit  │
+└──────────────────────┘</div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"The Outbox Pattern: instead of writing to the database and Kafka separately (dual-write problem), I write the business data and an outbox event in a single database transaction. Then Debezium CDC captures the outbox table changes and publishes them to Kafka. This guarantees that if the DB transaction commits, the event will eventually reach Kafka. It's eventual consistency with guaranteed delivery."</p>
+  </div>
+</section>
+
+<!-- Screen 9: Quiz -->
+<section class="screen" id="s9">
+  <h2>🧪 Quiz: <span class="accent">Test Yourself</span></h2>
+  <div class="quiz-box" id="q1">
+    <h4>Q1: An idempotent producer retries sending a record. How does the broker detect the duplicate?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) By checking the message hash</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) By matching the Producer ID (PID) and sequence number</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) By comparing timestamps</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) By checking consumer offsets</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Your Avro schema has <code>amount: double</code>. You want to add <code>currency: string</code>. Under BACKWARD compatibility, which is correct?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) <code>{"name": "currency", "type": "string"}</code></div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) <code>{"name": "currency", "type": "string", "default": "USD"}</code></div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) Either works</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) You must create a new topic</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: A Debezium connector captures a database DELETE. What does the Kafka record look like?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) The record is deleted from Kafka</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) A tombstone record (key = PK, value = null) is published</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) A record with <code>"op": "d"</code> and the before state is published</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">D) Both B and C — Debezium publishes the delete event AND a tombstone</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: You set <code>isolation.level=read_committed</code>. An in-progress transaction has written records. What does the consumer see?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) All records including uncommitted</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) Only committed records; uncommitted are invisible until commit/abort</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) An error</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Uncommitted records marked with a flag</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: When should you prefer the Outbox Pattern over direct Kafka produce?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">A) When you need to atomically update a database AND publish an event</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">B) When you want higher Kafka throughput</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) When you don't have Schema Registry</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) When using log compaction</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<!-- Screen 10: Key Takeaways -->
+<section class="screen screen-alt" id="s10">
+  <h2>🎯 Key <span class="accent">Takeaways</span></h2>
+  <div class="card-grid">
+    <div class="card">
+      <h4>🎯 Exactly-Once</h4>
+      <p>Three layers: idempotent producer + transactions + read_committed consumers.</p>
+    </div>
+    <div class="card blue">
+      <h4>📜 Schema Registry</h4>
+      <p>Essential governance — use Avro for data pipelines, enforce BACKWARD compatibility.</p>
+    </div>
+    <div class="card green">
+      <h4>🔄 Schema Evolution</h4>
+      <p>Always add fields with defaults, never rename or remove directly. Plan multi-step migrations.</p>
+    </div>
+    <div class="card purple">
+      <h4>🔌 Kafka Connect</h4>
+      <p>Standard integrations out of the box. Debezium CDC is the gold standard for database change capture.</p>
+    </div>
+    <div class="card">
+      <h4>📊 Consumer Lag</h4>
+      <p>The #1 production metric. Monitor, alert, and have a scaling playbook ready.</p>
+    </div>
+    <div class="card blue">
+      <h4>☁️ Managed Kafka</h4>
+      <p>Confluent for ecosystem, MSK for AWS-native, Event Hubs for Azure simplicity.</p>
+    </div>
+    <div class="card green">
+      <h4>🏗️ Outbox Pattern</h4>
+      <p>Solves the dual-write problem between databases and Kafka via CDC.</p>
+    </div>
+    <div class="card purple">
+      <h4>💰 EOS Overhead</h4>
+      <p>Transactions cost ~5-10% throughput. Use where exactly-once matters (payments), not everywhere.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-01-kafka-architecture/index.html">← Prev: Kafka Architecture</a>
+  <a href="../module-03-apache-flink/index.html">Next: Apache Flink →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  const chatState={};
+  window.nextChat=function(id){const c=document.getElementById(id);if(!chatState[id])chatState[id]=0;const msgs=c.querySelectorAll('.chat-msg');if(chatState[id]<msgs.length){msgs[chatState[id]].classList.add('visible');chatState[id]++;}};
+  window.playChat=function(id){chatState[id]=0;const c=document.getElementById(id);const msgs=c.querySelectorAll('.chat-msg');msgs.forEach(m=>m.classList.remove('visible'));let i=0;const t=setInterval(()=>{if(i<msgs.length){msgs[i].classList.add('visible');i++;}else clearInterval(t);},800);};
+  window.resetChat=function(id){chatState[id]=0;document.getElementById(id).querySelectorAll('.chat-msg').forEach(m=>m.classList.remove('visible'));};
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above and try to understand why.';box.querySelectorAll('.quiz-opt').forEach(o=>{if(!o.classList.contains('wrong'))o.style.pointerEvents='none';});}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

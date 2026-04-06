@@ -62,5 +62,21 @@
     "href": "./data-infra-DevOps/course-dbt-mastery/",
     "desc": "8 modules from core concepts to production — models, materializations, incremental strategies, testing, snapshots, Jinja macros, CI/CD, and interview scenarios.",
     "tags": ["8 Modules", "100+ Questions", "25+ Quizzes"]
+  },
+  {
+    "title": "Real-Time Streaming Mastery",
+    "icon": "📡",
+    "color": "#0F766E",
+    "href": "./realtime-streaming/course-streaming/",
+    "desc": "Kafka architecture, exactly-once semantics, Schema Registry, Kafka Connect, Apache Flink, watermarks, state management — from core concepts to interview-ready.",
+    "tags": ["4 Modules", "60+ Questions", "15+ Quizzes"]
+  },
+  {
+    "title": "Cloud AWS Mastery",
+    "icon": "☁️",
+    "color": "#FF9900",
+    "href": "./cloud-platform/course-cloud-aws/",
+    "desc": "S3, Glue, Athena, EMR, Kinesis, Redshift, Lake Formation, Step Functions — complete AWS data engineering coverage for interviews.",
+    "tags": ["6 Modules", "80+ Questions", "20+ Quizzes"]
   }
 ]
