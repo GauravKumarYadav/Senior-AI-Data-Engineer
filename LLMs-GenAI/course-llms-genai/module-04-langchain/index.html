@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 4: LangChain | LLMs &amp; GenAI Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+table.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.88rem}
+table.info-table th{background:var(--color-bg-warm);font-family:var(--font-heading);font-weight:700;text-align:left;padding:0.6rem 0.8rem;border-bottom:2px solid rgba(0,0,0,0.1)}
+table.info-table td{padding:0.6rem 0.8rem;border-bottom:1px solid rgba(0,0,0,0.05)}
+table.info-table tr:hover{background:rgba(0,0,0,0.02)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}table.info-table{font-size:0.78rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🧠 LLMs &amp; GenAI Mastery</a><div class="nav-dots"><a href="../module-01-llm-fundamentals/" class="nav-dot"></a><a href="../module-02-prompt-engineering/" class="nav-dot"></a><a href="../module-03-rag-architecture/" class="nav-dot"></a><a href="../module-04-langchain/" class="nav-dot active"></a><a href="../module-05-langgraph/" class="nav-dot"></a><a href="../module-06-ai-agents/" class="nav-dot"></a><a href="../module-07-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Core Abstractions -->
+<section class="screen" id="s1">
+  <h2>🧱 Core <span class="accent">Abstractions</span></h2>
+  <p>LangChain wraps LLM APIs behind a <strong>uniform <span class="tooltip-term" data-tip="Every LangChain component implements .invoke(), .batch(), .stream() — the same interface everywhere, enabling composability and model swapping.">Runnable interface</span></strong>. Swap GPT-4o for Claude without changing chain logic. Add streaming with one method call. Batch 100 requests with auto concurrency.</p>
+  <h3>ChatModels — The Modern API</h3>
+  <div class="code-block"><span class="kw">from</span> langchain_openai <span class="kw">import</span> ChatOpenAI
+<span class="kw">from</span> langchain_anthropic <span class="kw">import</span> ChatAnthropic
+
+gpt = <span class="fn">ChatOpenAI</span>(model=<span class="str">"gpt-4o"</span>, temperature=<span class="fn">0</span>)
+claude = <span class="fn">ChatAnthropic</span>(model=<span class="str">"claude-sonnet-4-20250514"</span>, temperature=<span class="fn">0</span>)
+
+<span class="cm"># Identical API — swap models without changing code</span>
+messages = [
+    <span class="fn">SystemMessage</span>(content=<span class="str">"You are ShopAssist."</span>),
+    <span class="fn">HumanMessage</span>(content=<span class="str">"What's your return policy?"</span>),
+]
+response = gpt.<span class="fn">invoke</span>(messages)   <span class="cm"># AIMessage with .content, .usage_metadata</span></div>
+  <h3>Output Parsers</h3>
+  <div class="code-block"><span class="kw">class</span> <span class="fn">TicketClassification</span>(BaseModel):
+    category: <span class="fn">str</span> = <span class="fn">Field</span>(description=<span class="str">"billing, shipping, product, account"</span>)
+    priority: <span class="fn">str</span> = <span class="fn">Field</span>(description=<span class="str">"low, medium, high, urgent"</span>)
+
+<span class="cm"># Full chain: prompt → model → parser</span>
+classify_chain = prompt | gpt | <span class="fn">PydanticOutputParser</span>(pydantic_object=TicketClassification)</div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"LangChain's value isn't the wrappers — it's composability via the Runnable interface. The real killer feature is LCEL, which gives you automatic streaming, batching, and tracing for free. For simple single-call apps, raw APIs are fine."</p>
+  </div>
+</section>
+
+<!-- Screen 2: LCEL -->
+<section class="screen screen-alt" id="s2">
+  <h2>⛓️ <span class="accent">LCEL</span> — Expression Language</h2>
+  <p>The <code>|</code> pipe operator creates a <strong>RunnableSequence</strong> where each step's output becomes the next step's input.</p>
+  <div class="code-block"><span class="cm"># The | operator composes components into a chain</span>
+chain = (
+    <span class="fn">ChatPromptTemplate</span>.<span class="fn">from_messages</span>([
+        (<span class="str">"system"</span>, <span class="str">"You are ShopAssist. Answer concisely."</span>),
+        (<span class="str">"human"</span>, <span class="str">"{question}"</span>),
+    ])
+    | llm
+    | <span class="fn">StrOutputParser</span>()
+)
+
+<span class="cm"># Streaming works end-to-end automatically!</span>
+<span class="kw">for</span> chunk <span class="kw">in</span> chain.<span class="fn">stream</span>({<span class="str">"question"</span>: <span class="str">"How do I track my order?"</span>}):
+    <span class="fn">print</span>(chunk, end=<span class="str">""</span>)</div>
+  <h3>LCEL Building Blocks</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🔗 RunnableSequence</h4><p><code>A | B | C</code> — sequential pipeline, output flows forward.</p></div>
+    <div class="card blue"><h4>🔀 RunnableParallel</h4><p><code>{"a": A, "b": B}</code> — fan-out, run concurrently, merge results.</p></div>
+    <div class="card green"><h4>➡️ RunnablePassthrough</h4><p>Pass input unchanged. Identity function for forwarding originals.</p></div>
+    <div class="card purple"><h4>🔧 RunnableLambda</h4><p>Wrap any function as a Runnable. Gets .invoke/.batch/.stream free.</p></div>
+    <div class="card"><h4>🔀 RunnableBranch</h4><p>Conditional routing — if/else chains based on input conditions.</p></div>
+    <div class="card blue"><h4>➕ .assign()</h4><p>Add new keys to state while keeping existing ones. Accumulate context.</p></div>
+  </div>
+  <h3>RAG Chain with LCEL</h3>
+  <div class="code-block">rag_chain = (
+    {
+        <span class="str">"context"</span>: retriever | format_docs,      <span class="cm"># question → docs → text</span>
+        <span class="str">"question"</span>: <span class="fn">RunnablePassthrough</span>(),    <span class="cm"># question unchanged</span>
+    }
+    | prompt | llm | <span class="fn">StrOutputParser</span>()
+)</div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"LCEL matters for production because: (1) streaming is automatic across every step; (2) .batch() runs inputs in parallel with configurable concurrency; (3) every step is traced in LangSmith; (4) .with_fallbacks() adds model failover."</p>
+  </div>
+</section>
+
+<!-- Screen 3: Document Loaders & Text Splitters -->
+<section class="screen" id="s3">
+  <h2>📦 Loaders &amp; <span class="accent">Splitters</span></h2>
+  <div class="code-block"><span class="cm"># PDF, Web, CSV, Directory — one loader per source</span>
+<span class="kw">from</span> langchain_community.document_loaders <span class="kw">import</span> PyPDFLoader, WebBaseLoader
+
+docs = <span class="fn">PyPDFLoader</span>(<span class="str">"return_policy.pdf"</span>).<span class="fn">load</span>()  <span class="cm"># List[Document]</span>
+docs = <span class="fn">WebBaseLoader</span>(<span class="str">"https://shopassist.com/faq"</span>).<span class="fn">load</span>()</div>
+  <h3>The Document Class</h3>
+  <div class="code-block"><span class="cm"># Document = page_content + metadata — universal text unit</span>
+doc = <span class="fn">Document</span>(
+    page_content=<span class="str">"Returns accepted within 30 days."</span>,
+    metadata={<span class="str">"source"</span>: <span class="str">"policy.pdf"</span>, <span class="str">"page"</span>: <span class="fn">3</span>},
+)</div>
+  <h3>Text Splitters</h3>
+  <div class="code-block"><span class="cm"># RecursiveCharacterTextSplitter — the default (95% of cases)</span>
+<span class="cm"># Tries: "\\n\\n" → "\\n" → ". " → " " → ""</span>
+splitter = <span class="fn">RecursiveCharacterTextSplitter</span>(
+    chunk_size=<span class="fn">200</span>, chunk_overlap=<span class="fn">30</span>,
+    separators=[<span class="str">"\\n\\n"</span>, <span class="str">"\\n"</span>, <span class="str">". "</span>, <span class="str">" "</span>, <span class="str">""</span>],
+)
+chunks = splitter.<span class="fn">split_documents</span>(docs)  <span class="cm"># inherits metadata</span></div>
+  <table class="info-table">
+    <tr><th>Splitter</th><th>Splits On</th><th>Best For</th></tr>
+    <tr><td>RecursiveCharacter</td><td>Hierarchy of separators</td><td>General text (default)</td></tr>
+    <tr><td>Character</td><td>Single separator</td><td>Simple structured text</td></tr>
+    <tr><td>Token</td><td>Token count</td><td>Precise token budgets</td></tr>
+    <tr><td>Semantic</td><td>Embedding similarity</td><td>Topic boundaries</td></tr>
+  </table>
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p>"Start with RecursiveCharacterTextSplitter at 500-1000 chars, 10-20% overlap. Smaller chunks (200-500) = precise retrieval. Larger (1000-2000) = richer context. Always validate 20-30 random chunks manually before building the index."</p>
+  </div>
+</section>
+
+<!-- Screen 4: Vector Stores & Retrievers -->
+<section class="screen screen-alt" id="s4">
+  <h2>🔎 Vector Stores &amp; <span class="accent">Retrievers</span></h2>
+  <div class="code-block"><span class="cm"># Chroma (dev), FAISS (fast), PGVector (production)</span>
+chroma = <span class="fn">Chroma</span>.<span class="fn">from_documents</span>(chunks, embeddings, persist_directory=<span class="str">"./db"</span>)
+faiss = <span class="fn">FAISS</span>.<span class="fn">from_documents</span>(chunks, embeddings)
+
+<span class="cm"># Basic retriever</span>
+retriever = chroma.<span class="fn">as_retriever</span>(search_type=<span class="str">"mmr"</span>, search_kwargs={<span class="str">"k"</span>: <span class="fn">5</span>})</div>
+  <h3>Retriever Types</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🔍 VectorStore</h4><p>Basic similarity or MMR search. MMR balances relevance with diversity.</p></div>
+    <div class="card blue"><h4>🔄 MultiQuery</h4><p>LLM generates query variants, retrieves for all, deduplicates results.</p></div>
+    <div class="card green"><h4>🏷️ SelfQuery</h4><p>Extracts metadata filters from natural language: "laptops under $500" → semantic + price filter.</p></div>
+    <div class="card purple"><h4>🔀 Ensemble</h4><p>Combines BM25 (keyword) + vector (semantic). Catches both exact IDs and paraphrases.</p></div>
+    <div class="card"><h4>👪 ParentDocument</h4><p>Small 400-char chunks for search, returns parent 2000-char chunks for context.</p></div>
+  </div>
+  <h3>Similarity vs MMR</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>📋 Similarity (top 3)</h4>
+      <ul>
+        <li>1. General return policy (0.95)</li>
+        <li>2. Return policy FAQ (0.93)</li>
+        <li>3. Return policy update (0.91)</li>
+        <li>⚠️ All say basically the same thing</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>🎯 MMR (top 3)</h4>
+      <ul>
+        <li>1. General return policy (0.95)</li>
+        <li>2. Electronics returns (0.88)</li>
+        <li>3. Refund process (0.82)</li>
+        <li>✅ Covers more ground with diversity</li>
+      </ul>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"EnsembleRetriever (BM25 + vector) as foundation, MultiQueryRetriever for query expansion, SelfQueryRetriever for metadata-rich docs, ParentDocumentRetriever for precision + context. Tune weights against a golden test set."</p>
+  </div>
+</section>
+
+<!-- Screen 5: Memory -->
+<section class="screen" id="s5">
+  <h2>🧠 <span class="accent">Memory</span></h2>
+  <p>Without memory, every message is independent — the bot forgets your order ID the next turn.</p>
+  <h3>Legacy Memory Classes (Interview Favorites)</h3>
+  <table class="info-table">
+    <tr><th>Memory Type</th><th>Token Growth</th><th>Detail</th><th>Best For</th></tr>
+    <tr><td>Buffer</td><td>O(n) linear</td><td>100% — perfect</td><td>Short conversations</td></tr>
+    <tr><td>BufferWindow(k)</td><td>O(k) bounded</td><td>Recent only</td><td>Cost-sensitive</td></tr>
+    <tr><td>Summary</td><td>O(1) constant</td><td>Compressed</td><td>Long conversations</td></tr>
+    <tr><td>Entity</td><td>O(entities)</td><td>Entity-focused</td><td>Support/CRM</td></tr>
+  </table>
+  <h3>RunnableWithMessageHistory (Modern Way)</h3>
+  <div class="code-block"><span class="cm"># Step 1: Base chain (no memory baked in)</span>
+chain = prompt | <span class="fn">ChatOpenAI</span>(model=<span class="str">"gpt-4o"</span>) | <span class="fn">StrOutputParser</span>()
+
+<span class="cm"># Step 2: Session store (prod: Redis/PostgreSQL)</span>
+sessions: <span class="fn">dict</span>[<span class="fn">str</span>, InMemoryChatMessageHistory] = {}
+<span class="kw">def</span> <span class="fn">get_history</span>(session_id): <span class="kw">return</span> sessions.<span class="fn">setdefault</span>(session_id, <span class="fn">InMemoryChatMessageHistory</span>())
+
+<span class="cm"># Step 3: Wrap with history</span>
+agent = <span class="fn">RunnableWithMessageHistory</span>(chain, get_history,
+    input_messages_key=<span class="str">"question"</span>, history_messages_key=<span class="str">"chat_history"</span>)
+
+<span class="cm"># Step 4: Invoke with session_id</span>
+agent.<span class="fn">invoke</span>({<span class="str">"question"</span>: <span class="str">"Where's ORD-7788?"</span>},
+    config={<span class="str">"configurable"</span>: {<span class="str">"session_id"</span>: <span class="str">"cust-123"</span>}})</div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"RunnableWithMessageHistory separates chain logic from history. In prod: last 10 messages verbatim + rolling summary of older ones via GPT-4o-mini. Session ID maps to support ticket ID. Max history window prevents prompt injection."</p>
+  </div>
+</section>
+
+<!-- Screen 6: Tools & Tool Calling -->
+<section class="screen screen-alt" id="s6">
+  <h2>🔧 Tools &amp; <span class="accent">Tool Calling</span></h2>
+  <p>An LLM can <em>talk</em> about tracking orders, but it can't <em>actually</em> track them. Tools bridge language → action.</p>
+  <h3>Defining Tools</h3>
+  <div class="code-block"><span class="kw">from</span> langchain_core.tools <span class="kw">import</span> tool
+
+<span class="fn">@tool</span>
+<span class="kw">def</span> <span class="fn">track_order</span>(order_id: <span class="fn">str</span>) -> <span class="fn">dict</span>:
+    <span class="str">"""Look up current status and ETA for a customer order."""</span>
+    <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"shipped"</span>, <span class="str">"eta"</span>: <span class="str">"2026-04-08"</span>}
+
+<span class="fn">@tool</span>
+<span class="kw">def</span> <span class="fn">process_return</span>(order_id: <span class="fn">str</span>, reason: <span class="fn">str</span>) -> <span class="fn">dict</span>:
+    <span class="str">"""Initiate a return for a customer order."""</span>
+    <span class="kw">return</span> {<span class="str">"return_id"</span>: <span class="str">"RET-001"</span>, <span class="str">"status"</span>: <span class="str">"initiated"</span>}</div>
+  <h3>Binding & Executing Tools</h3>
+  <div class="code-block">llm_with_tools = llm.<span class="fn">bind_tools</span>([track_order, process_return])
+response = llm_with_tools.<span class="fn">invoke</span>([<span class="fn">HumanMessage</span>(<span class="str">"Where is ORD-7788?"</span>)])
+
+<span class="cm"># response.tool_calls → [{'name': 'track_order', 'args': {'order_id': 'ORD-7788'}}]</span>
+<span class="cm"># Execute tool → send ToolMessage back → LLM synthesizes final answer</span></div>
+  <h3>AgentExecutor — The Tool Loop</h3>
+  <div class="code-block">agent = <span class="fn">create_tool_calling_agent</span>(llm, tools, prompt)
+executor = <span class="fn">AgentExecutor</span>(agent=agent, tools=tools,
+    max_iterations=<span class="fn">5</span>, verbose=<span class="fn">True</span>)
+
+<span class="cm"># Handles the full loop: LLM → tool call → result → LLM → ...</span>
+result = executor.<span class="fn">invoke</span>({<span class="str">"input"</span>: <span class="str">"Return ORD-7788, item was defective"</span>})</div>
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p>"The LLM doesn't execute tools — our code does. Failure modes: wrong tool (fix descriptions), hallucinated params (validate with Pydantic), infinite loops (max_iterations). Add confirmation steps before destructive actions."</p>
+  </div>
+</section>
+
+<!-- Screen 7: LangSmith -->
+<section class="screen" id="s7">
+  <h2>🔬 <span class="accent">LangSmith</span> — Observability</h2>
+  <p>Without observability, you're flying blind with probabilistic systems.</p>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-error)">
+      <h4>❌ Without LangSmith</h4>
+      <ul>
+        <li>"Wrong answer"… but why?</li>
+        <li>"It's slow"… which step?</li>
+        <li>"New prompt better?"… no comparison</li>
+        <li>"Production-ready?"… vibes only</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-success)">
+      <h4>✅ With LangSmith</h4>
+      <ul>
+        <li>Full trace: prompt → LLM → tool → result</li>
+        <li>Latency per step: retrieval 200ms, LLM 1.2s</li>
+        <li>A/B: v1 72% correct → v2 89% correct</li>
+        <li>100 test cases, scored automatically</li>
+      </ul>
+    </div>
+  </div>
+  <h3>Setup — It's Three Lines</h3>
+  <div class="code-block"><span class="kw">import</span> os
+os.environ[<span class="str">"LANGCHAIN_TRACING_V2"</span>] = <span class="str">"true"</span>
+os.environ[<span class="str">"LANGCHAIN_API_KEY"</span>] = <span class="str">"ls__..."</span>
+os.environ[<span class="str">"LANGCHAIN_PROJECT"</span>] = <span class="str">"shopassist-production"</span>
+<span class="cm"># That's it! All chain.invoke() calls are now traced.</span></div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Three-layer evaluation: (1) offline — golden dataset of 100+ Q&A pairs scored by LLM judges; (2) online — tracing on 100% production traffic with latency/cost/error alerts; (3) user feedback — thumbs up/down feeding back into the golden set."</p>
+  </div>
+</section>
+
+<!-- Screen 8: Full ShopAssist Agent -->
+<section class="screen screen-alt" id="s8">
+  <h2>🏗️ Putting It <span class="accent">All Together</span></h2>
+  <p>The complete ShopAssist agent: model + retriever + tools + memory + observability.</p>
+  <div class="code-block"><span class="cm"># 1. Models</span>
+llm = <span class="fn">ChatOpenAI</span>(model=<span class="str">"gpt-4o"</span>, temperature=<span class="fn">0</span>)
+<span class="cm"># 2. Retriever (MMR for diverse results)</span>
+retriever = vectorstore.<span class="fn">as_retriever</span>(search_type=<span class="str">"mmr"</span>, search_kwargs={<span class="str">"k"</span>: <span class="fn">5</span>})
+<span class="cm"># 3. Tools: track_order, search_kb, process_return, escalate</span>
+<span class="cm"># 4. Agent + Executor (max 5 iterations)</span>
+agent = <span class="fn">create_tool_calling_agent</span>(llm, tools, prompt)
+executor = <span class="fn">AgentExecutor</span>(agent=agent, tools=tools, max_iterations=<span class="fn">5</span>)
+<span class="cm"># 5. Memory (session-based, Redis in prod)</span>
+agent_with_memory = <span class="fn">RunnableWithMessageHistory</span>(executor, get_history,
+    input_messages_key=<span class="str">"input"</span>, history_messages_key=<span class="str">"chat_history"</span>)
+<span class="cm"># 6. Invoke!</span>
+response = agent_with_memory.<span class="fn">invoke</span>(
+    {<span class="str">"input"</span>: <span class="str">"Where's my order ORD-7788?"</span>},
+    config={<span class="str">"configurable"</span>: {<span class="str">"session_id"</span>: <span class="str">"cust-alice-001"</span>}},
+)</div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Architecture in layers: Model (GPT-4o + mini), Retrieval (Ensemble as tool), Tools (@tool + Pydantic validation), Memory (RunnableWithMessageHistory + Redis), Safety (max_iterations, confirmation prompts), Observability (LangSmith 100% tracing). Runs behind FastAPI with WebSocket streaming."</p>
+  </div>
+</section>
+
+<!-- Screen 9: Quiz -->
+<section class="screen" id="s9">
+  <h2>🧪 Quiz: <span class="accent">Test Yourself</span></h2>
+  <div class="quiz-box" id="q1">
+    <h4>Q1: What is the main advantage of LCEL's pipe operator over manual function chaining?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) It makes code run faster</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) It automatically provides streaming, batching, async, and tracing across the entire chain</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) It reduces API calls to the LLM</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) It eliminates the need for prompt templates</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+  <div class="quiz-box" id="q2">
+    <h4>Q2: Which retriever combines BM25 (keyword) and vector (semantic) search?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) MultiQueryRetriever</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) EnsembleRetriever</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) SelfQueryRetriever</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) ParentDocumentRetriever</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+  <div class="quiz-box" id="q3">
+    <h4>Q3: After the LLM outputs tool_calls, what happens next?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) The LLM executes the tool internally</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) Your code executes the tool and sends the result back as a ToolMessage</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) LangChain sends it to the API provider</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) The tool call is logged but not executed</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+  <div class="quiz-box" id="q4">
+    <h4>Q4: What does RunnableWithMessageHistory solve vs legacy memory classes?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) It makes conversations faster</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) It separates chain logic from history management, supporting multiple sessions and swappable backends</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) It reduces token usage</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) It auto-summarizes long conversations</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+  <div class="quiz-box" id="q5">
+    <h4>Q5: "Laptops under $500 updated this month" — which retriever auto-extracts metadata filters?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) MultiQueryRetriever</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) SelfQueryRetriever</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) EnsembleRetriever</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) VectorStoreRetriever with MMR</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-03-rag-architecture/index.html">← Prev: RAG Architecture</a>
+  <a href="../module-05-langgraph/index.html">Next: LangGraph →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);if(box.dataset.answered)return;box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above for the key concept.';}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

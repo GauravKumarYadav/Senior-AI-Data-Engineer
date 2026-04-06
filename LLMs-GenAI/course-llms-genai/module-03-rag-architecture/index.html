@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 3: RAG Architecture | LLMs &amp; GenAI Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+table.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.88rem}
+table.info-table th{background:var(--color-bg-warm);font-family:var(--font-heading);font-weight:700;text-align:left;padding:0.6rem 0.8rem;border-bottom:2px solid rgba(0,0,0,0.1)}
+table.info-table td{padding:0.6rem 0.8rem;border-bottom:1px solid rgba(0,0,0,0.05)}
+table.info-table tr:hover{background:rgba(0,0,0,0.02)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}table.info-table{font-size:0.78rem}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🧠 LLMs &amp; GenAI Mastery</a><div class="nav-dots"><a href="../module-01-llm-fundamentals/" class="nav-dot"></a><a href="../module-02-prompt-engineering/" class="nav-dot"></a><a href="../module-03-rag-architecture/" class="nav-dot active"></a><a href="../module-04-langchain/" class="nav-dot"></a><a href="../module-05-langgraph/" class="nav-dot"></a><a href="../module-06-ai-agents/" class="nav-dot"></a><a href="../module-07-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Why RAG -->
+<section class="screen" id="s1">
+  <h2>🔍 Why <span class="accent">RAG</span>?</h2>
+  <p>Your GPT-4o-powered support agent is great at language, but it <strong>doesn't know your business</strong>: your return policy (updated last Tuesday), order #7788's tracking info, or your 50K-product catalog.</p>
+  <p>Fine-tuning is expensive & stale. <span class="tooltip-term" data-tip="Retrieval-Augmented Generation — the model retrieves relevant documents at query time and uses them as context to generate grounded answers.">RAG</span> gives the model access to current, authoritative information at query time.</p>
+  <h3>RAG vs Fine-Tuning vs Long Context</h3>
+  <table class="info-table">
+    <tr><th>Approach</th><th>Cost</th><th>Freshness</th><th>Accuracy</th><th>Best For</th></tr>
+    <tr><td>RAG</td><td>Low (~$0.01/query)</td><td>Real-time</td><td>High (grounded)</td><td>Dynamic knowledge</td></tr>
+    <tr><td>Fine-Tuning</td><td>High ($500-5K)</td><td>Stale</td><td>Moderate</td><td>Behavior/style</td></tr>
+    <tr><td>Long Context</td><td>Medium</td><td>Per-request</td><td>Good</td><td>Small docs (&lt;100pg)</td></tr>
+    <tr><td>RAG + Fine-Tuning</td><td>Highest</td><td>Real-time</td><td>Highest</td><td>Mission-critical</td></tr>
+  </table>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"RAG is my default for knowledge-grounded apps. Freshness — re-index, no retraining. Attribution — cite the source doc. Cost — ~$0.01/query vs thousands for fine-tuning. I'd fine-tune only for behavior/style, then combine both for production."</p>
+  </div>
+</section>
+
+<!-- Screen 2: Document Loading -->
+<section class="screen screen-alt" id="s2">
+  <h2>📄 Document <span class="accent">Loading</span></h2>
+  <p>Before you retrieve anything, you need to load, parse, and clean your documents. Quality extraction is foundational — bad extraction → bad chunks → bad retrieval.</p>
+  <h3>PDF Loading with PyMuPDF</h3>
+  <div class="code-block"><span class="kw">import</span> pymupdf
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+
+<span class="kw">def</span> <span class="fn">load_pdf</span>(file_path: <span class="fn">str</span>) -> <span class="fn">list</span>[<span class="fn">dict</span>]:
+    doc = pymupdf.<span class="fn">open</span>(file_path)
+    pages = []
+    <span class="kw">for</span> page_num, page <span class="kw">in</span> <span class="fn">enumerate</span>(doc):
+        text = page.<span class="fn">get_text</span>(<span class="str">"text"</span>)
+        tables = page.<span class="fn">find_tables</span>()
+        pages.<span class="fn">append</span>({
+            <span class="str">"text"</span>: text,
+            <span class="str">"tables"</span>: [t.<span class="fn">extract</span>() <span class="kw">for</span> t <span class="kw">in</span> tables],
+            <span class="str">"page_number"</span>: page_num + <span class="fn">1</span>,
+            <span class="str">"source"</span>: Path(file_path).name,
+        })
+    doc.<span class="fn">close</span>()
+    <span class="kw">return</span> pages</div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"I build a document loader registry — a factory pattern that routes files to the right parser based on MIME type. The critical step most teams skip is quality validation: sample 5% of loaded docs and compare extracted text to the original visually."</p>
+  </div>
+</section>
+
+<!-- Screen 3: Chunking Strategies -->
+<section class="screen" id="s3">
+  <h2>✂️ Chunking <span class="accent">Strategies</span></h2>
+  <p>Chunking is where many RAG systems fail. <strong>Too large</strong> → imprecise retrieval. <strong>Too small</strong> → lost context.</p>
+  <h3>Recursive Character Splitting</h3>
+  <div class="code-block">splitter = <span class="fn">RecursiveCharacterTextSplitter</span>(
+    chunk_size=<span class="fn">512</span>,
+    chunk_overlap=<span class="fn">50</span>,
+    separators=[<span class="str">"\\n\\n"</span>, <span class="str">"\\n"</span>, <span class="str">". "</span>, <span class="str">" "</span>, <span class="str">""</span>],  <span class="cm"># Try larger splits first</span>
+)</div>
+  <h3>Parent-Child Chunking (Best of Both Worlds)</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🔎 Child Chunks (256 tok)</h4><p>Small chunks used for RETRIEVAL — precise semantic matching in vector search.</p></div>
+    <div class="card blue"><h4>📖 Parent Chunks (1024 tok)</h4><p>Large chunks sent to the LLM — full context for generating complete answers.</p></div>
+  </div>
+  <div class="code-block"><span class="cm"># Small chunks for retrieval, large for generation</span>
+child_splitter = <span class="fn">RecursiveCharacterTextSplitter</span>(chunk_size=<span class="fn">256</span>, chunk_overlap=<span class="fn">30</span>)
+parent_splitter = <span class="fn">RecursiveCharacterTextSplitter</span>(chunk_size=<span class="fn">1024</span>, chunk_overlap=<span class="fn">100</span>)
+
+retriever = <span class="fn">ParentDocumentRetriever</span>(
+    vectorstore=vectorstore, docstore=<span class="fn">InMemoryStore</span>(),
+    child_splitter=child_splitter, parent_splitter=parent_splitter,
+)</div>
+  <h3>Chunk Size Tradeoffs</h3>
+  <table class="info-table">
+    <tr><th>Chunk Size</th><th>Retrieval Precision</th><th>Context Quality</th><th>Best For</th></tr>
+    <tr><td>128-256</td><td>★★★★★</td><td>★★☆☆☆</td><td>FAQ, short answers</td></tr>
+    <tr><td>512</td><td>★★★★☆</td><td>★★★★☆</td><td>General purpose (default)</td></tr>
+    <tr><td>1024</td><td>★★★☆☆</td><td>★★★★★</td><td>Complex policies</td></tr>
+  </table>
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p>"Start with recursive splitting at 512 tokens + 50-token overlap. If precision is low, go smaller or use parent-child. If answers are incomplete, increase size. Semantic chunking sounds appealing but adds latency and cost."</p>
+  </div>
+</section>
+
+<!-- Screen 4: Embeddings -->
+<section class="screen screen-alt" id="s4">
+  <h2>🧮 Embedding <span class="accent">Models</span></h2>
+  <p>Embeddings are the bridge between text and math. Your choice of embedding model <strong>directly determines retrieval quality</strong>.</p>
+  <div class="code-block"><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+client = <span class="fn">OpenAI</span>()
+
+<span class="kw">def</span> <span class="fn">embed_texts</span>(texts: <span class="fn">list</span>[<span class="fn">str</span>], model=<span class="str">"text-embedding-3-small"</span>):
+    response = client.embeddings.<span class="fn">create</span>(
+        model=model, input=texts,
+        dimensions=<span class="fn">512</span>,  <span class="cm"># Matryoshka: truncate with graceful quality loss</span>
+    )
+    <span class="kw">return</span> [item.embedding <span class="kw">for</span> item <span class="kw">in</span> response.data]</div>
+  <h3>Embedding Model Comparison</h3>
+  <table class="info-table">
+    <tr><th>Model</th><th>Provider</th><th>Dims</th><th>MTEB</th><th>Open?</th></tr>
+    <tr><td>text-embedding-3-large</td><td>OpenAI</td><td>3072</td><td>64.6</td><td>❌</td></tr>
+    <tr><td>text-embedding-3-small</td><td>OpenAI</td><td>1536</td><td>62.3</td><td>❌</td></tr>
+    <tr><td>GTE-Qwen2-7B</td><td>Alibaba</td><td>3584</td><td>67.2</td><td>✅</td></tr>
+    <tr><td>NV-Embed-v2</td><td>NVIDIA</td><td>4096</td><td>69.3</td><td>✅</td></tr>
+  </table>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"I evaluate on quality (recall@5 on real queries), cost (50K queries/day × embedding cost), and ops complexity. Start with text-embedding-3-small for speed-to-market, then evaluate self-hosted GTE-Qwen2 at scale."</p>
+  </div>
+</section>
+
+<!-- Screen 5: Vector Databases -->
+<section class="screen" id="s5">
+  <h2>🗄️ Vector <span class="accent">Databases</span></h2>
+  <p>Purpose-built for storing high-dimensional vectors and performing fast similarity search.</p>
+  <h3>ChromaDB — Quick Start</h3>
+  <div class="code-block">collection = client.<span class="fn">get_or_create_collection</span>(
+    name=<span class="str">"support_knowledge"</span>,
+    embedding_function=embedding_fn,
+    metadata={<span class="str">"hnsw:space"</span>: <span class="str">"cosine"</span>},
+)
+<span class="cm"># Query with metadata filtering</span>
+results = collection.<span class="fn">query</span>(
+    query_texts=[<span class="str">"Can I return my opened laptop?"</span>],
+    n_results=<span class="fn">3</span>,
+    where={<span class="str">"category"</span>: <span class="str">"returns"</span>},
+)</div>
+  <h3>Vector DB Comparison</h3>
+  <table class="info-table">
+    <tr><th>Database</th><th>Type</th><th>Scale</th><th>Best For</th></tr>
+    <tr><td>ChromaDB</td><td>Embedded/local</td><td>100K vectors</td><td>Prototyping</td></tr>
+    <tr><td>pgvector</td><td>Postgres ext</td><td>1M vectors</td><td>Existing Postgres</td></tr>
+    <tr><td>Pinecone</td><td>Managed cloud</td><td>1B+ vectors</td><td>Zero-ops production</td></tr>
+    <tr><td>Qdrant</td><td>Self-hosted/cloud</td><td>100M+ vectors</td><td>Performance-critical</td></tr>
+  </table>
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p>"If you already run Postgres, start with pgvector — zero new infra, SQL filtering, handles up to 1M vectors. Only move to a dedicated vector DB at 10M+ vectors or when you need multi-tenancy."</p>
+  </div>
+</section>
+
+<!-- Screen 6: Similarity Search -->
+<section class="screen screen-alt" id="s6">
+  <h2>📐 Similarity <span class="accent">Search</span></h2>
+  <p>Understanding how vectors are compared and indexed is essential for tuning retrieval quality.</p>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">cosine_similarity</span>(a, b):
+    <span class="cm">"""Most common for normalized embeddings. Range: -1 to 1."""</span>
+    <span class="kw">return</span> np.<span class="fn">dot</span>(a, b) / (np.linalg.<span class="fn">norm</span>(a) * np.linalg.<span class="fn">norm</span>(b))
+
+query_emb = <span class="fn">embed_texts</span>([<span class="str">"How do I return electronics?"</span>])[<span class="fn">0</span>]
+doc1_emb = <span class="fn">embed_texts</span>([<span class="str">"Electronics return policy: 30 days"</span>])[<span class="fn">0</span>]
+<span class="fn">print</span>(<span class="fn">cosine_similarity</span>(query_emb, doc1_emb))  <span class="cm"># ~0.85</span></div>
+  <h3>ANN Algorithms: HNSW vs IVF-PQ</h3>
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🕸️ HNSW</h4>
+      <ul>
+        <li>✅ ~99% recall@10, &lt;5ms for 1M vectors</li>
+        <li>✅ Multi-layer graph, greedy descent</li>
+        <li>⚠️ High memory (stores graph + vectors)</li>
+        <li>Best for: &lt;10M vectors, quality-critical</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-info)">
+      <h4>📦 IVF-PQ</h4>
+      <ul>
+        <li>✅ ~95% recall@10, &lt;10ms for 1B vectors</li>
+        <li>✅ Cluster + compress vectors</li>
+        <li>⚠️ Lower recall than HNSW</li>
+        <li>Best for: &gt;10M vectors, memory-tight</li>
+      </ul>
+    </div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"Three levers for retrieval quality: (1) embedding model — biggest impact, benchmark on real queries; (2) index params — tune ef_construction and ef_search for HNSW; (3) metadata filtering — pre-filter by category before vector search."</p>
+  </div>
+</section>
+
+<!-- Screen 7: Advanced RAG -->
+<section class="screen" id="s7">
+  <h2>🚀 Advanced <span class="accent">RAG</span></h2>
+  <p>Naive RAG works for 70% of cases. These techniques handle the other 30%.</p>
+  <div class="card-grid">
+    <div class="card"><h4>🔀 Hybrid Search</h4><p>Combine vector similarity (semantic) with BM25 keyword search (lexical). Catches exact IDs + paraphrased queries.</p></div>
+    <div class="card blue"><h4>🏆 Re-Ranking</h4><p>Retrieve top-20 fast, then re-rank with a cross-encoder. Improves precision@5 by 15-25%.</p></div>
+    <div class="card green"><h4>🌀 HyDE</h4><p>Generate a hypothetical answer, embed THAT instead of the query. Closer in embedding space to real docs.</p></div>
+    <div class="card purple"><h4>🔄 Multi-Query</h4><p>LLM rephrases query from multiple angles, retrieves for each, deduplicates results.</p></div>
+  </div>
+  <h3>Hybrid Search Code</h3>
+  <div class="code-block"><span class="kw">def</span> <span class="fn">search</span>(self, query, query_embedding, alpha=<span class="fn">0.7</span>):
+    <span class="cm"># Dense scores (cosine similarity)</span>
+    dense_scores = np.<span class="fn">dot</span>(self.embeddings, q_emb) / norms
+    <span class="cm"># Sparse scores (BM25)</span>
+    sparse_scores = self.bm25.<span class="fn">get_scores</span>(query.lower().split())
+    <span class="cm"># Normalize both to [0, 1], then weighted fusion</span>
+    combined = alpha * dense_norm + (<span class="fn">1</span> - alpha) * sparse_norm</div>
+  <div class="aha">
+    <div class="aha-title">🎯 Interview Tip</div>
+    <p>"I categorize failures first: retrieval miss → try smaller chunks, hybrid search. Ranking issue → add cross-encoder re-ranker. Query-doc style mismatch → try HyDE. Each change evaluated on 50+ query-answer test pairs."</p>
+  </div>
+</section>
+
+<!-- Screen 8: RAG Evaluation -->
+<section class="screen screen-alt" id="s8">
+  <h2>📊 RAG <span class="accent">Evaluation</span></h2>
+  <p>You can't improve what you can't measure. RAG evaluation has unique challenges because failures occur at multiple points.</p>
+  <h3>RAGAS Framework</h3>
+  <div class="card-grid">
+    <div class="card"><h4>📋 Context Relevance</h4><p>Are the retrieved documents relevant to the question? Measures retrieval quality.</p></div>
+    <div class="card blue"><h4>🎯 Faithfulness</h4><p>Is the answer grounded in the retrieved context? Detects hallucination.</p></div>
+    <div class="card green"><h4>✅ Answer Relevance</h4><p>Does the answer actually address the question? End-to-end quality.</p></div>
+  </div>
+  <h3>RAG Failure Taxonomy</h3>
+  <div class="card-grid">
+    <div class="card"><h4>1. Retrieval Miss</h4><p>Correct doc isn't in results. Fix: add missing docs, improve chunking, try hybrid search.</p></div>
+    <div class="card blue"><h4>2. Context Stuffing</h4><p>Too many loosely related chunks. Fix: reduce top_k, add re-ranking, raise threshold.</p></div>
+    <div class="card green"><h4>3. Hallucination</h4><p>Model ignores or misreads context. Fix: better prompts, faithfulness checks.</p></div>
+    <div class="card purple"><h4>4. Wrong Context</h4><p>Retrieved related but wrong category. Fix: metadata filters, multi-query retrieval.</p></div>
+  </div>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"I evaluate RAG at three levels: (1) retrieval recall@5 weekly on 200 query-doc pairs; (2) RAGAS metrics for generation quality; (3) production sampling — 50 conversations/day through LLM-as-Judge. The failure taxonomy guides interventions."</p>
+  </div>
+</section>
+
+<!-- Screen 9: GraphRAG -->
+<section class="screen" id="s9">
+  <h2>🕸️ <span class="accent">GraphRAG</span></h2>
+  <p>Some questions require understanding <strong>relationships</strong> between entities — something vector search alone can't handle.</p>
+  <p><em>"Which products from the same manufacturer as my laptop are on sale?"</em> — Vector RAG can't traverse: laptop → manufacturer → other products → sales.</p>
+  <h3>When to Use Graph vs Vector</h3>
+  <table class="info-table">
+    <tr><th>Question Type</th><th>Vector</th><th>Graph</th></tr>
+    <tr><td>"What's the return policy?"</td><td>★★★★★</td><td>★★☆☆☆</td></tr>
+    <tr><td>"Accessories for my laptop?"</td><td>★★☆☆☆</td><td>★★★★★</td></tr>
+    <tr><td>"All issues with Product X?"</td><td>★★★☆☆</td><td>★★★★★</td></tr>
+    <tr><td>"How do I reset my password?"</td><td>★★★★★</td><td>★☆☆☆☆</td></tr>
+  </table>
+  <div class="aha">
+    <div class="aha-title">💡 Interview Insight</div>
+    <p>"I add GraphRAG when I see two signals: (1) users ask relationship questions vector search can't answer; (2) I need global summarization across many documents. Use a query router to direct to the right retrieval strategy."</p>
+  </div>
+</section>
+
+<!-- Screen 10: Quiz -->
+<section class="screen screen-alt" id="s10">
+  <h2>🧪 Quiz: <span class="accent">Test Yourself</span></h2>
+  <div class="quiz-box" id="q1">
+    <h4>Q1: What is the primary advantage of RAG over fine-tuning for keeping an LLM current?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) RAG is always cheaper than fine-tuning</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) RAG updates are instant — just re-index documents, no retraining needed</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) RAG eliminates all hallucinations</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) RAG makes the model run faster</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+  <div class="quiz-box" id="q2">
+    <h4>Q2: In parent-child chunking, why use small chunks for retrieval but large chunks for generation?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) It reduces total embeddings needed</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) Small chunks = precise retrieval; large parents = full context for complete answers</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) It makes the vector database smaller</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) It eliminates the need for re-ranking</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+  <div class="quiz-box" id="q3">
+    <h4>Q3: The LLM's answer contradicts retrieved context. Which RAGAS metric detects this?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) Context Relevance</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">B) Faithfulness</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">C) Answer Relevance</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) Precision</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+  <div class="quiz-box" id="q4">
+    <h4>Q4: Which technique works best when the user's query language differs from document language?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Increasing chunk size</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">B) HyDE (Hypothetical Document Embeddings)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">C) Adding more metadata filters</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Using a smaller embedding model</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+  <div class="quiz-box" id="q5">
+    <h4>Q5: When should you add GraphRAG to a support system?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) When documents are too large to embed</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) When users ask relationship and cross-entity questions vector search can't answer</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) When the vector database is too slow</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) When you need to reduce API costs</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-02-prompt-engineering/index.html">← Prev: Prompt Engineering</a>
+  <a href="../module-04-langchain/index.html">Next: LangChain →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);if(box.dataset.answered)return;box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above for the key concept.';}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>

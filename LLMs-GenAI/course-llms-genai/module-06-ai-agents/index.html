@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 6: AI Agents | LLMs &amp; GenAI Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--color-bg:#FAF7F2;--color-bg-warm:#F5F0E8;--color-bg-code:#1E1E2E;--color-text:#2C2A28;--color-accent:#D94F30;--color-success:#2D8B55;--color-error:#C93B3B;--color-info:#2A7B9B;--color-muted:#8A8580;--font-heading:'Bricolage Grotesque',sans-serif;--font-body:'DM Sans',sans-serif;--font-code:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.7}
+nav.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.06)}
+.progress-bar{height:3px;background:var(--color-accent);width:0%;transition:width 0.2s}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.5rem;max-width:1100px;margin:0 auto}
+.nav-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;text-decoration:none;color:var(--color-text)}
+.nav-dots{display:flex;gap:6px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd;text-decoration:none;transition:background 0.2s}
+.nav-dot.active{background:var(--color-accent)}
+section.screen{min-height:100vh;min-height:100dvh;padding:6rem 1.5rem 4rem;display:flex;flex-direction:column;justify-content:center;max-width:900px;margin:0 auto}
+.screen h2{font-family:var(--font-heading);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.screen h2 .accent{color:var(--color-accent)}
+.screen h3{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin:1.5rem 0 0.8rem}
+.screen p{max-width:700px;margin-bottom:1rem;font-size:1.05rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1.5rem 0}
+.card{background:#fff;border-radius:14px;padding:1.4rem;border-top:4px solid var(--color-accent);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card.blue{border-top-color:var(--color-info)}.card.green{border-top-color:var(--color-success)}.card.purple{border-top-color:#7B5EA7}
+.card h4{font-family:var(--font-heading);font-weight:700;margin-bottom:0.4rem;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--color-muted);margin-bottom:0}
+.aha{background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border-left:4px solid var(--color-accent);border-radius:0 12px 12px 0;padding:1.2rem 1.5rem;margin:1.5rem 0}
+.aha-title{font-family:var(--font-heading);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;color:var(--color-accent)}
+.aha p{font-size:0.95rem;margin:0}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{background:#fff;border-radius:14px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.comp-col h4{font-family:var(--font-heading);font-weight:700;font-size:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem}
+.comp-col ul{list-style:none;font-size:0.9rem}
+.comp-col ul li{padding:0.4rem 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:0.5rem}
+.comp-col ul li:last-child{border:none}
+.quiz-box{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin:1.5rem 0}
+.quiz-box h4{font-family:var(--font-heading);font-weight:700;margin-bottom:1rem;font-size:1.1rem}
+.quiz-opt{display:block;padding:0.8rem 1rem;margin:0.5rem 0;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:0.95rem}
+.quiz-opt:hover{border-color:var(--color-accent);background:#FFF8F5}
+.quiz-opt.correct{border-color:var(--color-success);background:#F0FAF4}
+.quiz-opt.wrong{border-color:var(--color-error);background:#FFF5F5}
+.quiz-feedback{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.success{background:#F0FAF4;color:var(--color-success)}
+.quiz-feedback.error{background:#FFF5F5;color:var(--color-error)}
+.tooltip-term{border-bottom:2px dashed var(--color-accent);cursor:pointer;position:relative}
+.tooltip-box{position:fixed;background:var(--color-bg-code);color:#CDD6F4;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;max-width:280px;z-index:200;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.5}
+.tooltip-box.visible{opacity:1}
+.code-block{background:var(--color-bg-code);color:#CDD6F4;border-radius:12px;padding:1.2rem 1.5rem;font-family:var(--font-code);font-size:0.85rem;overflow-x:auto;margin:1rem 0;white-space:pre-wrap;line-height:1.7}
+.code-block .kw{color:#CBA6F7}.code-block .fn{color:#89B4FA}.code-block .str{color:#A6E3A1}.code-block .cm{color:#6C7086}
+.translate{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.5rem 0;border-radius:14px;overflow:hidden}
+.translate-code{background:var(--color-bg-code);color:#CDD6F4;padding:1.3rem;font-family:var(--font-code);font-size:0.82rem;white-space:pre-wrap;line-height:1.8}
+.translate-eng{background:var(--color-bg-warm);padding:1.3rem;font-size:0.92rem;line-height:1.8}
+.translate-eng .line{padding:0.15rem 0}
+footer.module-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+footer.module-nav a{text-decoration:none;font-family:var(--font-heading);font-weight:600;color:var(--color-accent);font-size:0.95rem;transition:opacity 0.2s}
+footer.module-nav a:hover{opacity:0.7}
+.screen-alt{background:var(--color-bg-warm)}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}.translate{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="progress-bar" id="progressBar"></div><div class="nav-inner"><a href="../index.html" class="nav-title">🧠 LLMs &amp; GenAI Mastery</a><div class="nav-dots"><a href="../module-01-llm-fundamentals/" class="nav-dot"></a><a href="../module-02-prompt-engineering/" class="nav-dot"></a><a href="../module-03-rag-architecture/" class="nav-dot"></a><a href="../module-04-langchain/" class="nav-dot"></a><a href="../module-05-langgraph/" class="nav-dot"></a><a href="../module-06-ai-agents/" class="nav-dot active"></a><a href="../module-07-interview-gauntlet/" class="nav-dot"></a></div></div></nav>
+
+<!-- Screen 1: Agent Architectures -->
+<section class="screen" id="s1">
+  <h2>🤖 What Is an <span class="accent">AI Agent</span>?</h2>
+  <p>An AI agent is an LLM that can <strong>observe</strong>, <strong>reason</strong>, <strong>plan</strong>, and <strong>act</strong> in a loop — using <span class="tooltip-term" data-tip="Functions the agent can call to interact with external systems: databases, APIs, file systems, web browsers, etc.">tools</span> to interact with the real world until a goal is achieved.</p>
+
+  <div class="card-grid">
+    <div class="card"><h4>👁️ Observe</h4><p>Take in environment info — tool results, user messages, system state.</p></div>
+    <div class="card blue"><h4>🧠 Reason</h4><p>LLM thinks about what to do next based on observations.</p></div>
+    <div class="card green"><h4>📋 Plan</h4><p>Break the goal into steps and select the right tool.</p></div>
+    <div class="card purple"><h4>🔧 Act</h4><p>Call a tool or return a final response. Loop back if not done.</p></div>
+  </div>
+
+  <h3>Single-Agent Tool Loop</h3>
+  <div class="code-block"><span class="cm"># The simplest agent: one LLM, tools, a loop</span>
+<span class="kw">def</span> <span class="fn">run_agent</span>(user_message: <span class="fn">str</span>) -> <span class="fn">str</span>:
+    messages = [system_msg, {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: user_message}]
+
+    <span class="kw">while</span> <span class="kw">True</span>:
+        response = client.chat.completions.create(
+            model=<span class="str">"gpt-4o"</span>, messages=messages, tools=tools
+        )
+        msg = response.choices[<span class="fn">0</span>].message
+
+        <span class="kw">if not</span> msg.tool_calls:     <span class="cm"># No tools → done!</span>
+            <span class="kw">return</span> msg.content
+
+        messages.append(msg)     <span class="cm"># Add assistant msg</span>
+        <span class="kw">for</span> tc <span class="kw">in</span> msg.tool_calls:
+            result = execute_tool(tc.function.name, tc.function.arguments)
+            messages.append({<span class="str">"role"</span>: <span class="str">"tool"</span>, <span class="str">"tool_call_id"</span>: tc.id,
+                             <span class="str">"content"</span>: json.dumps(result)})</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"I follow the <strong>'cognitive load' heuristic</strong>: if a single agent needs &gt;10 tools or must reason across unrelated domains, it makes poor tool choices. At that point, I split into specialists with a <strong>supervisor pattern</strong> — one routing agent delegates to domain experts, each with 3-5 focused tools."</p>
+  </div>
+</section>
+
+<!-- Screen 2: Tool Use & MCP -->
+<section class="screen screen-alt" id="s2">
+  <h2>🔧 Tool Use: Function Calling &amp; <span class="accent">MCP</span></h2>
+  <p>Function calling lets the LLM output <strong>structured JSON</strong> mapping to a tool. The LLM never executes — it just says <em>which</em> tool with <em>what</em> arguments. <strong>You</strong> execute.</p>
+
+  <div class="code-block"><span class="cm"># Anthropic function calling</span>
+response = client.messages.create(
+    model=<span class="str">"claude-sonnet-4-20250514"</span>,
+    tools=[{
+        <span class="str">"name"</span>: <span class="str">"lookup_order"</span>,
+        <span class="str">"description"</span>: <span class="str">"Look up order details by ID"</span>,
+        <span class="str">"input_schema"</span>: {<span class="str">"type"</span>: <span class="str">"object"</span>, <span class="str">"properties"</span>: {
+            <span class="str">"order_id"</span>: {<span class="str">"type"</span>: <span class="str">"string"</span>}
+        }}
+    }],
+    messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Where is order #5521?"</span>}]
+)
+<span class="cm"># Response: tool_use block → {name: "lookup_order", input: {"order_id": "5521"}}</span></div>
+
+  <h3>MCP — Model Context Protocol</h3>
+  <p>An <strong>open standard</strong> (by Anthropic) that lets agents discover and use tools from external servers — like a <span class="tooltip-term" data-tip="Write a tool once as an MCP server, and any MCP client (Claude, LangChain, custom agents) can discover and call it without custom integration.">USB port for AI tools</span>.</p>
+
+  <div class="translate">
+    <div class="translate-code"><span class="cm"># MCP Server (tool provider)</span>
+<span class="kw">from</span> mcp.server.fastmcp <span class="kw">import</span> FastMCP
+
+mcp = FastMCP(<span class="str">"ShopAssist Tools"</span>)
+
+@mcp.tool()
+<span class="kw">def</span> <span class="fn">lookup_order</span>(order_id: <span class="fn">str</span>) -> <span class="fn">dict</span>:
+    <span class="str">"""Look up order details."""</span>
+    <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"shipped"</span>,
+            <span class="str">"tracking"</span>: <span class="str">"1Z999AA1..."</span>}
+
+<span class="cm"># MCP Client (your agent)</span>
+tools = <span class="kw">await</span> session.list_tools()
+result = <span class="kw">await</span> session.call_tool(
+    <span class="str">"lookup_order"</span>,
+    arguments={<span class="str">"order_id"</span>: <span class="str">"ORD-5521"</span>}
+)</div>
+    <div class="translate-eng">
+      <div class="line">🔌 Create an MCP server that hosts tools</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔧 Decorate functions as tools — auto JSON schema</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">🔍 Client DISCOVERS tools at runtime</div>
+      <div class="line">📞 Then CALLS them — all via protocol</div>
+      <div class="line">&nbsp;</div>
+      <div class="line">&nbsp;</div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <div class="comp-col" style="border-top:4px solid var(--color-muted)">
+      <h4>📞 Direct Function Calling</h4>
+      <ul>
+        <li>🔒 Hardcoded tools in prompt</li>
+        <li>📍 Same process only</li>
+        <li>🔧 Manual schema validation</li>
+        <li>🔌 Provider-specific format</li>
+        <li>🛠️ Rewire per project</li>
+      </ul>
+    </div>
+    <div class="comp-col" style="border-top:4px solid var(--color-accent)">
+      <h4>🔌 MCP</h4>
+      <ul>
+        <li>🔍 Dynamic tool discovery</li>
+        <li>🌐 Any server (local/remote)</li>
+        <li>✅ Built-in schema validation</li>
+        <li>🌍 Universal standard</li>
+        <li>🔌 Plug &amp; play servers</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"MCP decouples <strong>tool definition</strong> from <strong>agent implementation</strong>. Before MCP, you'd rewrite the same 'query database' tool for LangChain, CrewAI, and OpenAI separately. With MCP, write it once as an MCP server, any client can discover and call it. Transport: <strong>stdio</strong> for local dev, <strong>SSE/Streamable HTTP</strong> for production. It also exposes <strong>resources</strong> (data) and <strong>prompts</strong> (templates), not just tools."</p>
+  </div>
+</section>
+
+<!-- Screen 3: Planning & Reasoning -->
+<section class="screen" id="s3">
+  <h2>📋 Planning &amp; <span class="accent">Reasoning</span></h2>
+  <p>Complex goals must be broken into subtasks. The LLM acts as a <strong>planner</strong>.</p>
+
+  <div class="code-block"><span class="cm"># Plan-and-Execute with replanning</span>
+plan = {<span class="str">"steps"</span>: [
+    {<span class="str">"id"</span>: <span class="fn">1</span>, <span class="str">"action"</span>: <span class="str">"Look up customer profile"</span>,      <span class="str">"tool"</span>: <span class="str">"lookup_customer"</span>},
+    {<span class="str">"id"</span>: <span class="fn">2</span>, <span class="str">"action"</span>: <span class="str">"Fetch all transactions"</span>,         <span class="str">"tool"</span>: <span class="str">"get_transactions"</span>},
+    {<span class="str">"id"</span>: <span class="fn">3</span>, <span class="str">"action"</span>: <span class="str">"Identify duplicate charges"</span>,     <span class="str">"tool"</span>: <span class="str">"analyze_duplicates"</span>},
+    {<span class="str">"id"</span>: <span class="fn">4</span>, <span class="str">"action"</span>: <span class="str">"Check payment gateway logs"</span>,     <span class="str">"tool"</span>: <span class="str">"query_payment_logs"</span>},
+    {<span class="str">"id"</span>: <span class="fn">5</span>, <span class="str">"action"</span>: <span class="str">"Determine root cause"</span>,          <span class="str">"tool"</span>: <span class="str">"llm_reasoning"</span>},
+    {<span class="str">"id"</span>: <span class="fn">6</span>, <span class="str">"action"</span>: <span class="str">"Process refund if confirmed"</span>,   <span class="str">"tool"</span>: <span class="str">"process_refund"</span>}
+]}</div>
+
+  <h3>Self-Reflection &amp; Critique</h3>
+  <div class="code-block"><span class="cm"># After each step, evaluate and potentially replan</span>
+<span class="kw">def</span> <span class="fn">execute_with_reflection</span>(plan, tools):
+    completed, remaining = [], <span class="fn">list</span>(plan)
+
+    <span class="kw">while</span> remaining:
+        step = remaining.pop(<span class="fn">0</span>)
+        result = tools[step[<span class="str">"tool"</span>]](step[<span class="str">"action"</span>])
+        reflection = llm_reflect(step, result)
+
+        <span class="kw">if</span> reflection[<span class="str">"success"</span>]:
+            completed.append({<span class="str">"step"</span>: step, <span class="str">"result"</span>: result})
+        <span class="kw">else</span>:
+            <span class="cm"># REPLAN from current state</span>
+            remaining = llm_replan(completed, step, reflection)
+
+    <span class="kw">return</span> synthesize_answer(completed)</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"I implement <strong>plan-and-execute with dynamic replanning</strong>. After each step, a reflection module evaluates: did the tool return useful data? If a step fails — say, the payment API times out — the agent <strong>replans</strong>: maybe it can get the info from the transaction DB instead. I set a <strong>max step count</strong> (10-15) to prevent infinite loops, and implement <strong>backtracking</strong> — revert to last known good state. This is where LangGraph's checkpointing shines."</p>
+  </div>
+</section>
+
+<!-- Screen 4: Memory -->
+<section class="screen screen-alt" id="s4">
+  <h2>🧠 Agent <span class="accent">Memory</span></h2>
+  <p>Agents need different types of memory for different purposes. It's more than just chat history.</p>
+
+  <div class="card-grid">
+    <div class="card"><h4>⚡ Short-Term</h4><p>Current conversation buffer. Last N messages with sliding window + summarization. Cleared each session.</p></div>
+    <div class="card blue"><h4>💾 Long-Term</h4><p>Vector store of past interactions. Semantic search. Survives across sessions. "Have we helped this user before?"</p></div>
+    <div class="card green"><h4>📖 Episodic</h4><p>Specific experiences with outcomes. "Last time this approach worked." Task traces with success/fail metadata.</p></div>
+    <div class="card purple"><h4>📚 Semantic</h4><p>Domain facts and policies. "Refund policy is 30 days." Retrieved via similarity search from knowledge base.</p></div>
+    <div class="card"><h4>⚙️ Procedural</h4><p>Learned workflow rules. "For international returns, always check customs first." Updated as agent discovers better patterns.</p></div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Multi-tier memory system</span>
+<span class="kw">class</span> <span class="fn">AgentMemory</span>:
+    conversation_buffer: <span class="fn">list</span>[<span class="fn">dict</span>]    <span class="cm"># Short-term: last 20 msgs</span>
+    vector_store: ChromaDB              <span class="cm"># Long-term: semantic search</span>
+    episodes: <span class="fn">list</span>[<span class="fn">dict</span>]              <span class="cm"># Episodic: past experiences</span>
+
+    <span class="kw">def</span> <span class="fn">add_message</span>(self, role, content):
+        self.conversation_buffer.append({...})
+        <span class="cm"># Sliding window: summarize old msgs before discarding</span>
+        <span class="kw">if</span> <span class="fn">len</span>(self.conversation_buffer) > self.max_buffer_size:
+            summary = self._summarize(self.conversation_buffer[:5])
+            self.conversation_buffer = [{<span class="str">"role"</span>: <span class="str">"system"</span>,
+                <span class="str">"content"</span>: <span class="str">f"Earlier: {summary}"</span>}] + self.conversation_buffer[<span class="fn">5</span>:]
+
+    <span class="kw">def</span> <span class="fn">recall_similar</span>(self, task, k=<span class="fn">3</span>):
+        <span class="kw">return</span> self.vector_store.query(query_texts=[task], n_results=k)</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"I use a <strong>tiered memory architecture</strong>. Short-term: conversation buffer with last 15-20 messages, summarizing older ones. Long-term: vector store — every completed interaction gets embedded. Episodic: task traces with outcomes — 'last time a double-charge investigation failed because we didn't check payment logs early.' The most overlooked is <strong>procedural memory</strong> — learned rules injected into system prompts for relevant tasks."</p>
+  </div>
+</section>
+
+<!-- Screen 5: Framework Comparison -->
+<section class="screen" id="s5">
+  <h2>⚔️ Multi-Agent <span class="accent">Frameworks</span> Compared</h2>
+
+  <div class="card-grid">
+    <div class="card"><h4>🔗 LangGraph</h4><p>Graph-based. Maximum control. Built-in persistence, HITL, streaming. Steep learning curve. <strong>Best for production.</strong></p></div>
+    <div class="card blue"><h4>🚢 CrewAI</h4><p>Role-based crews. High-level, easy setup. Define agents by role &amp; backstory. <strong>Best for rapid prototyping.</strong></p></div>
+    <div class="card green"><h4>💬 AutoGen</h4><p>Conversation-based. Agents talk to each other. UserProxyAgent can execute code. <strong>Best for research &amp; code gen.</strong></p></div>
+    <div class="card purple"><h4>🐝 OpenAI Swarm</h4><p>Lightweight handoff-based. Experimental. Minimal state. <strong>Best for simple routing demos.</strong></p></div>
+  </div>
+
+  <div class="code-block"><span class="cm"># LangGraph — maximum control</span>
+graph = StateGraph(AgentState)
+graph.add_node(<span class="str">"supervisor"</span>, supervisor_agent)
+graph.add_edge(START, <span class="str">"supervisor"</span>)
+
+<span class="cm"># CrewAI — rapid prototyping</span>
+researcher = Agent(role=<span class="str">"Research Analyst"</span>, tools=[search_tool])
+crew = Crew(agents=[researcher, writer], tasks=[...])
+
+<span class="cm"># AutoGen — conversation-based</span>
+user_proxy = UserProxyAgent(<span class="str">"user"</span>, code_execution_config={...})
+user_proxy.initiate_chat(assistant, message=<span class="str">"Analyze sales"</span>)
+
+<span class="cm"># Swarm — lightweight handoffs</span>
+triage = Agent(name=<span class="str">"Triage"</span>, functions=[transfer_to_billing])</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"<strong>LangGraph</strong> for production — explicit control, persistence, HITL. <strong>CrewAI</strong> for rapid prototyping — role-based agents in 20 lines. <strong>AutoGen</strong> for code gen &amp; research — agents converse naturally, execute code in sandbox. <strong>Swarm</strong> is experimental — good for understanding handoffs, not production. For ShopAssist in production, LangGraph wins: deterministic routing, approval workflows, crash recovery."</p>
+  </div>
+</section>
+
+<!-- Screen 6: Agent Evaluation -->
+<section class="screen screen-alt" id="s6">
+  <h2>📊 Agent <span class="accent">Evaluation</span></h2>
+  <p>Measuring agent quality across five dimensions — "does it work?" is only the beginning.</p>
+
+  <div class="card-grid">
+    <div class="card"><h4>✅ Completion Rate</h4><p>Did the agent finish the task? Target: &gt;85% for production.</p></div>
+    <div class="card blue"><h4>🎯 Tool-Use Accuracy</h4><p>Precision: right tools only? Recall: all needed tools called? Unnecessary calls waste tokens.</p></div>
+    <div class="card green"><h4>⚡ Efficiency</h4><p>Steps taken, total tokens, latency. A 3-step solution beats a 10-step one for the same task.</p></div>
+    <div class="card purple"><h4>🛡️ Safety</h4><p>Zero unauthorized actions. Log every tool call, audit for boundary violations.</p></div>
+    <div class="card"><h4>📝 Answer Quality</h4><p>Factual accuracy, format adherence, helpfulness of the final response.</p></div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Agent evaluation harness</span>
+<span class="kw">def</span> <span class="fn">evaluate_agent</span>(agent, test_cases):
+    results = []
+    <span class="kw">for</span> case <span class="kw">in</span> test_cases:
+        result = agent.run(case[<span class="str">"input"</span>])
+        eval_result = AgentEvalResult(
+            completed=result.completed,
+            correct=judge_correctness(result.output, case[<span class="str">"expected"</span>]),
+            tools_called=result.tool_log,
+            expected_tools=case[<span class="str">"expected_tools"</span>],
+        )
+        results.append(eval_result)
+
+    <span class="kw">return</span> {
+        <span class="str">"completion_rate"</span>: <span class="fn">sum</span>(r.completed <span class="kw">for</span> r <span class="kw">in</span> results) / <span class="fn">len</span>(results),
+        <span class="str">"accuracy"</span>: <span class="fn">sum</span>(r.correct <span class="kw">for</span> r <span class="kw">in</span> results) / <span class="fn">len</span>(results),
+        <span class="str">"safety_violations"</span>: <span class="fn">sum</span>(<span class="kw">not</span> r.is_safe <span class="kw">for</span> r <span class="kw">in</span> results),
+    }</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"I evaluate across five dimensions. <strong>Task completion</strong> (&gt;85% for prod). <strong>Tool-use accuracy</strong> — precision and recall. <strong>Efficiency</strong> — fewer steps = better. <strong>Safety</strong> — zero unauthorized actions is non-negotiable. <strong>Answer quality</strong> — correctness and format. I build a test suite of ~50 representative tasks with expected tool sequences, run it on every agent change like a <strong>regression test suite</strong>."</p>
+  </div>
+</section>
+
+<!-- Screen 7: Agent Safety -->
+<section class="screen" id="s7">
+  <h2>🛡️ Agent Safety &amp; <span class="accent">Reliability</span></h2>
+  <p>Production agents need defense-in-depth. Five safety layers, from the inside out.</p>
+
+  <div class="card-grid">
+    <div class="card"><h4>1. 📦 Sandboxing</h4><p>Code execution in Docker/E2B containers. No filesystem, no network unless whitelisted.</p></div>
+    <div class="card blue"><h4>2. ⏱️ Rate Limiting</h4><p>Max 5 tool calls/minute, max 15 steps/task. Prevents runaway loops and cost explosions.</p></div>
+    <div class="card green"><h4>3. 🔑 Permissions</h4><p>Role-based: read-only agent vs. read-write agent. Each agent only calls authorized tools.</p></div>
+    <div class="card purple"><h4>4. 🙋 Human-in-the-Loop</h4><p>Require approval for high-risk actions: refunds &gt;$100, account deletions, data exports.</p></div>
+    <div class="card"><h4>5. 📋 Audit Logging</h4><p>Every tool call, every decision → immutable audit log. Full replay capability.</p></div>
+  </div>
+
+  <div class="code-block"><span class="cm"># Defense-in-depth: all layers combined</span>
+<span class="kw">async def</span> <span class="fn">safe_tool_call</span>(tool_name, args, agent_role, rate_limiter):
+    <span class="kw">try</span>:
+        rate_limiter.check_rate()          <span class="cm"># Layer 1: Rate limit</span>
+        rate_limiter.check_steps()         <span class="cm"># Prevent infinite loops</span>
+        check_permission(agent_role, tool_name)    <span class="cm"># Layer 2: Permission</span>
+        <span class="kw">await</span> maybe_require_approval(tool_name, args)  <span class="cm"># Layer 3: HITL</span>
+        result = <span class="kw">await</span> execute_tool(tool_name, args)
+        <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"success"</span>, <span class="str">"result"</span>: result}
+    <span class="kw">except</span> RateLimitExceeded:
+        <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"rate_limited"</span>}
+    <span class="kw">except</span> PermissionDenied <span class="kw">as</span> e:
+        <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"denied"</span>, <span class="str">"message"</span>: <span class="fn">str</span>(e)}
+    <span class="kw">except</span> ActionDenied:
+        <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"human_denied"</span>}</div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"Defense-in-depth with five layers: <strong>Sandboxing</strong> (Docker/E2B), <strong>Rate limiting</strong> (prevent cost explosions), <strong>Permissions</strong> (role-based tool access), <strong>HITL</strong> (approval for high-risk actions), <strong>Audit logging</strong> (immutable replay). The key principle is <strong>graceful degradation</strong>: if any check fails, the agent gets a structured error and adapts its plan — it doesn't crash."</p>
+  </div>
+</section>
+
+<!-- Screen 8: Production Agent -->
+<section class="screen screen-alt" id="s8">
+  <h2>🏗️ Building a <span class="accent">Production Agent</span></h2>
+  <p>ShopAssist v3: memory → classify → plan → execute → reflect → respond. All pieces connected.</p>
+
+  <div class="code-block"><span class="cm"># Production agent: memory-enriched with safety</span>
+<span class="kw">class</span> <span class="fn">ShopAssistState</span>(TypedDict):
+    messages: Annotated[<span class="fn">list</span>, add_messages]
+    intent: <span class="fn">str</span>
+    plan: <span class="fn">list</span>[<span class="fn">dict</span>]
+    memory_context: <span class="fn">str</span>
+    safety_log: <span class="fn">list</span>[<span class="fn">str</span>]
+
+graph = StateGraph(ShopAssistState)
+graph.add_node(<span class="str">"memory"</span>, enrich_with_memory)    <span class="cm"># Recall past interactions</span>
+graph.add_node(<span class="str">"classify"</span>, classify_intent)     <span class="cm"># Route by intent</span>
+graph.add_node(<span class="str">"plan"</span>, create_plan)             <span class="cm"># Break into steps</span>
+graph.add_node(<span class="str">"execute"</span>, execute_step)         <span class="cm"># Run one step</span>
+graph.add_node(<span class="str">"reflect"</span>, reflect_on_result)    <span class="cm"># Evaluate result</span>
+graph.add_node(<span class="str">"respond"</span>, generate_response)    <span class="cm"># Final answer</span>
+
+graph.add_edge(START, <span class="str">"memory"</span>)
+graph.add_edge(<span class="str">"memory"</span>, <span class="str">"classify"</span>)
+graph.add_edge(<span class="str">"classify"</span>, <span class="str">"plan"</span>)
+graph.add_edge(<span class="str">"plan"</span>, <span class="str">"execute"</span>)
+graph.add_edge(<span class="str">"execute"</span>, <span class="str">"reflect"</span>)
+graph.add_conditional_edges(<span class="str">"reflect"</span>, should_continue,
+    {<span class="str">"continue"</span>: <span class="str">"execute"</span>, <span class="str">"replan"</span>: <span class="str">"plan"</span>, <span class="str">"done"</span>: <span class="str">"respond"</span>})
+graph.add_edge(<span class="str">"respond"</span>, END)
+
+app = graph.compile(checkpointer=MemorySaver())</div>
+
+  <h3>Agent Design Checklist</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🏛️ Architecture</h4><p>Single-agent for simple, multi-agent (supervisor) for complex. Don't over-engineer.</p></div>
+    <div class="card blue"><h4>🔧 Tools</h4><p>Well-defined JSON schemas. MCP for reusability across agents.</p></div>
+    <div class="card green"><h4>📋 Planning</h4><p>Task decomposition with replanning on failure. Max step limits.</p></div>
+    <div class="card purple"><h4>🧠 Memory</h4><p>Short-term buffer + long-term vector store + episodic recall.</p></div>
+    <div class="card"><h4>🛡️ Safety</h4><p>Sandboxing → Rate limits → Permissions → HITL → Audit logs.</p></div>
+    <div class="card blue"><h4>📊 Evaluation</h4><p>Regression suite: completion rate, tool accuracy, safety metrics.</p></div>
+  </div>
+
+  <div class="aha">
+    <div class="aha-title">💡 Interview Gold</div>
+    <p>"I start with <strong>task analysis</strong>: what tools? What failure modes? Build a single-agent prototype with 5-6 tools, test on 50 queries, measure completion rate. If tool accuracy drops below 80%, split into <strong>supervisor + specialists</strong>. Add memory incrementally: buffer → vector store → episodic. Safety from day one. Build an evaluation harness. Deploy behind a feature flag for gradual rollout."</p>
+  </div>
+</section>
+
+<!-- Screen 9: Quiz -->
+<section class="screen" id="s9">
+  <h2>🧪 Quiz: <span class="accent">Test Yourself</span></h2>
+
+  <div class="quiz-box" id="q1">
+    <h4>Q1: In a supervisor multi-agent architecture, what is the supervisor's primary role?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">A) Execute all tool calls directly</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',true)">B) Route tasks to the appropriate specialist agent</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">C) Store all conversation memory</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q1',false)">D) Generate the final user-facing response</div>
+    <div class="quiz-feedback" id="q1-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2">
+    <h4>Q2: What does MCP (Model Context Protocol) standardize?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">A) The format of LLM training data</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',true)">B) How agents discover and call tools from external servers</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">C) The tokenization algorithm used by models</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q2',false)">D) The prompt template format across frameworks</div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3">
+    <h4>Q3: In the plan-and-execute pattern, what happens when a step fails?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">A) The entire task is aborted immediately</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">B) The same step is retried infinitely</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',true)">C) The agent replans based on completed steps and the failure reason</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q3',false)">D) The agent skips the step and continues</div>
+    <div class="quiz-feedback" id="q3-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4">
+    <h4>Q4: Which memory type stores "last time this approach worked for a similar task"?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">A) Short-term (conversation buffer)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">B) Semantic (facts and knowledge)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',true)">C) Episodic (specific experiences with outcomes)</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q4',false)">D) Procedural (learned workflow rules)</div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5">
+    <h4>Q5: What is the purpose of rate limiting in the agent safety stack?</h4>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">A) Ensure the agent responds quickly</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',true)">B) Prevent runaway loops and uncontrolled API cost</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">C) Encrypt tool call arguments</div>
+    <div class="quiz-opt" onclick="checkQuiz(this,'q5',false)">D) Validate the agent's final response format</div>
+    <div class="quiz-feedback" id="q5-fb"></div>
+  </div>
+</section>
+
+<footer class="module-nav">
+  <a href="../module-05-langgraph/index.html">← Module 5: LangGraph</a>
+  <a href="../module-07-interview-gauntlet/index.html">Next: Interview Gauntlet →</a>
+</footer>
+
+<div class="tooltip-box" id="tooltipBox"></div>
+
+<script>
+(function(){
+  const pb=document.getElementById('progressBar');
+  window.addEventListener('scroll',function(){const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;pb.style.width=pct+'%';},{passive:true});
+
+  const tb=document.getElementById('tooltipBox');
+  document.querySelectorAll('.tooltip-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.add('visible');});
+    el.addEventListener('mouseleave',()=>tb.classList.remove('visible'));
+    el.addEventListener('click',e=>{tb.textContent=el.dataset.tip;const r=el.getBoundingClientRect();tb.style.left=Math.min(r.left,window.innerWidth-300)+'px';tb.style.top=(r.bottom+8)+'px';tb.classList.toggle('visible');});
+  });
+
+  window.checkQuiz=function(el,qid,correct){
+    const box=document.getElementById(qid);
+    if(box.dataset.answered)return;
+    box.dataset.answered='true';
+    const fb=document.getElementById(qid+'-fb');
+    if(correct){el.classList.add('correct');fb.className='quiz-feedback show success';fb.textContent='✅ Correct! That\'s exactly what interviewers want to hear.';}
+    else{el.classList.add('wrong');fb.className='quiz-feedback show error';fb.textContent='❌ Not quite. Review the section above and try to understand why.';}
+    box.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  };
+})();
+</script>
+</body>
+</html>
