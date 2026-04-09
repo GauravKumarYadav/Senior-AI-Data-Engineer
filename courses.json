@@ -5,7 +5,8 @@
     "color": "#D94F30",
     "href": "./spark/course-spark-interview/",
     "desc": "12 interactive modules covering RDDs, DataFrames, architecture, performance tuning, Spark UI, optimization, lakehouse, structured streaming, and 200+ real interview questions.",
-    "tags": ["12 Modules", "200+ Questions", "40+ Quizzes"]
+    "tags": ["12 Modules", "200+ Questions", "40+ Quizzes"],
+    "category": "Data Engineering Core"
   },
   {
     "title": "Scala Interview Mastery",
@@ -13,7 +14,8 @@
     "color": "#DC322F",
     "href": "./scala-interview/course-scala-interview/",
     "desc": "8 modules from basics to Spark integration — case classes, pattern matching, collections, concurrency, implicits, and a final battle plan.",
-    "tags": ["8 Modules", "60+ Questions", "25+ Quizzes"]
+    "tags": ["8 Modules", "60+ Questions", "25+ Quizzes"],
+    "category": "Data Engineering Core"
   },
   {
     "title": "Real-Time Streaming Mastery",
@@ -21,7 +23,8 @@
     "color": "#0F766E",
     "href": "./realtime-streaming/course-streaming/",
     "desc": "Kafka architecture, exactly-once semantics, Schema Registry, Kafka Connect, Apache Flink, watermarks, state management — from core concepts to interview-ready.",
-    "tags": ["4 Modules", "60+ Questions", "15+ Quizzes"]
+    "tags": ["4 Modules", "60+ Questions", "15+ Quizzes"],
+    "category": "Data Engineering Core"
   },
   {
     "title": "Cloud AWS Mastery",
@@ -29,7 +32,8 @@
     "color": "#FF9900",
     "href": "./cloud-platform/course-cloud-aws/",
     "desc": "S3, Glue, Athena, EMR, Kinesis, Redshift, Lake Formation, Step Functions — complete AWS data engineering coverage for interviews.",
-    "tags": ["6 Modules", "80+ Questions", "20+ Quizzes"]
+    "tags": ["6 Modules", "80+ Questions", "20+ Quizzes"],
+    "category": "Engineering & Cloud"
   },
   {
     "title": "dbt Mastery",
@@ -37,7 +41,8 @@
     "color": "#E07B39",
     "href": "./data-infra-DevOps/course-dbt-mastery/",
     "desc": "8 modules from core concepts to production — models, materializations, incremental strategies, testing, snapshots, Jinja macros, CI/CD, and interview scenarios.",
-    "tags": ["8 Modules", "100+ Questions", "25+ Quizzes"]
+    "tags": ["8 Modules", "100+ Questions", "25+ Quizzes"],
+    "category": "Data Operations"
   },
   {
     "title": "SQL & Databases Mastery",
@@ -45,7 +50,8 @@
     "color": "#2A7B9B",
     "href": "./databases-SQL/course-sql-databases/",
     "desc": "Window functions, CTEs, recursive queries, query optimization, PostgreSQL internals, NoSQL essentials — from fundamentals to interview-ready.",
-    "tags": ["6 Modules", "80+ Questions", "20+ Quizzes"]
+    "tags": ["6 Modules", "80+ Questions", "20+ Quizzes"],
+    "category": "Data Engineering Core"
   },
   {
     "title": "Backend Services Mastery",
@@ -53,7 +59,8 @@
     "color": "#0284C7",
     "href": "./backend-services/course-backend/",
     "desc": "FastAPI, Pydantic, REST APIs, microservice patterns, Docker, Kubernetes, CI/CD pipelines, monitoring — full backend engineering for interviews.",
-    "tags": ["4 Modules", "60+ Questions", "15+ Quizzes"]
+    "tags": ["4 Modules", "60+ Questions", "15+ Quizzes"],
+    "category": "Engineering & Cloud"
   },
   {
     "title": "AI & ML Foundations",
@@ -61,7 +68,8 @@
     "color": "#7B5EA7",
     "href": "./AI-ML-Foundations/course-ai-ml/",
     "desc": "ML fundamentals, deep learning, NLP, transformers, scikit-learn pipelines, PyTorch, Hugging Face — from basics to interview-ready.",
-    "tags": ["4 Modules", "60+ Questions", "15+ Quizzes"]
+    "tags": ["4 Modules", "60+ Questions", "15+ Quizzes"],
+    "category": "AI & Machine Learning"
   },
   {
     "title": "LLMs & GenAI Mastery",
@@ -69,7 +77,8 @@
     "color": "#8B5CF6",
     "href": "./LLMs-GenAI/course-llms-genai/",
     "desc": "LLM fundamentals, prompt engineering, RAG architecture, LangChain, LangGraph, AI agents — 7 modules from transformers to production agents.",
-    "tags": ["7 Modules", "120+ Questions", "25+ Quizzes"]
+    "tags": ["7 Modules", "120+ Questions", "25+ Quizzes"],
+    "category": "AI & Machine Learning"
   },
   {
     "title": "MLOps & AI Infrastructure",
@@ -77,7 +86,8 @@
     "color": "#059669",
     "href": "./MLOps-AI-Infra/course-mlops/",
     "desc": "MLOps pipelines, model serving, LLMOps, fine-tuning LLMs — experiment tracking, deployment, monitoring, and production ML systems.",
-    "tags": ["5 Modules", "80+ Questions", "20+ Quizzes"]
+    "tags": ["5 Modules", "80+ Questions", "20+ Quizzes"],
+    "category": "AI & Machine Learning"
   },
   {
     "title": "System Design — Data Engineering",
@@ -85,7 +95,8 @@
     "color": "#B45309",
     "href": "./system-design-DE/course-system-design-de/",
     "desc": "Design data platforms, real-time CDC pipelines, batch systems — end-to-end architecture scenarios with tradeoff discussions.",
-    "tags": ["4 Modules", "60+ Questions", "15+ Quizzes"]
+    "tags": ["4 Modules", "60+ Questions", "15+ Quizzes"],
+    "category": "Architecture & Design"
   },
   {
     "title": "System Design — AI/ML",
@@ -93,7 +104,8 @@
     "color": "#DC2626",
     "href": "./system-design-AI/course-system-design-ai/",
     "desc": "Design RAG systems, fraud detection, search ranking, AI agents, ML platforms — 9 full system design problems with solutions.",
-    "tags": ["3 Modules", "50+ Questions", "12+ Quizzes"]
+    "tags": ["3 Modules", "50+ Questions", "12+ Quizzes"],
+    "category": "Architecture & Design"
   },
   {
     "title": "Data Modeling Interview Mastery",
@@ -101,7 +113,8 @@
     "color": "#2A7B9B",
     "href": "./data-modeling/course-data-modeling/",
     "desc": "Star schemas, SCDs, Data Vault, modern patterns, lakehouse modeling — everything interviewers ask about dimensional modeling.",
-    "tags": ["9 Modules", "120+ Questions", "45+ Quizzes"]
+    "tags": ["9 Modules", "120+ Questions", "45+ Quizzes"],
+    "category": "Data Engineering Core"
   },
   {
     "title": "Data Quality Interview Mastery",
@@ -109,7 +122,8 @@
     "color": "#2D8B55",
     "href": "./data-quality/course-data-quality/",
     "desc": "Quality dimensions, data contracts, anomaly detection, schema drift, quarantine patterns, testing strategies, and real-world failure modes.",
-    "tags": ["6 Modules", "Interactive", "Scenario Quizzes"]
+    "tags": ["6 Modules", "Interactive", "Scenario Quizzes"],
+    "category": "Data Operations"
   },
   {
     "title": "Cost Optimization Interview Mastery",
@@ -117,7 +131,8 @@
     "color": "#D4A843",
     "href": "./cost-optmization/course-cost-optimization/",
     "desc": "Partitioning, shuffle reduction, small files problem, backfill estimation, FinOps metrics, join optimization, and cluster management.",
-    "tags": ["6 Modules", "Interactive", "Scenario Quizzes"]
+    "tags": ["6 Modules", "Interactive", "Scenario Quizzes"],
+    "category": "Data Operations"
   },
   {
     "title": "Data Governance Interview Mastery",
@@ -125,7 +140,8 @@
     "color": "#7B6DAA",
     "href": "./data-governance/course-data-governance/",
     "desc": "RBAC vs ABAC, PII handling, GDPR compliance, data catalogs, retention policies, masking, tokenization, and audit strategies.",
-    "tags": ["6 Modules", "Interactive", "Scenario Quizzes"]
+    "tags": ["6 Modules", "Interactive", "Scenario Quizzes"],
+    "category": "Data Operations"
   },
   {
     "title": "DSA & Coding Mastery",
@@ -133,7 +149,8 @@
     "color": "#DC2626",
     "href": "./DSA-coding/course-dsa/",
     "desc": "Arrays, hashmaps, trees, graphs, DP, sorting, heaps, plus DE-specific coding (Pandas/Spark) and SQL coding problems.",
-    "tags": ["8 Modules", "100+ Questions", "25+ Quizzes"]
+    "tags": ["8 Modules", "100+ Questions", "25+ Quizzes"],
+    "category": "Engineering & Cloud"
   },
   {
     "title": "Behavioral & Leadership",
@@ -141,6 +158,16 @@
     "color": "#9333EA",
     "href": "./behavioral-leadership/course-behavioral/",
     "desc": "STAR method, communication, project management, incident management — prepare compelling stories for behavioral rounds.",
-    "tags": ["5 Modules", "60+ Questions", "15+ Quizzes"]
+    "tags": ["5 Modules", "60+ Questions", "15+ Quizzes"],
+    "category": "Behavioral"
+  },
+  {
+    "title": "Agentic RAG Masterclass",
+    "icon": "🤖",
+    "color": "#6D28D9",
+    "href": "./agentic-rag/",
+    "desc": "Build a production multi-agent RAG chatbot — LangGraph orchestration, hybrid search, cross-encoder reranking, Redis memory, and Docker deployment. 65 interview Q&As grounded in real code.",
+    "tags": ["8 Modules", "65 Questions", "40+ Code Walkthroughs"],
+    "category": "Project Based"
   }
 ]
